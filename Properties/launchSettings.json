@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "FSGaryityTool_Win11 (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "FSGaryityTool_Win11 (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

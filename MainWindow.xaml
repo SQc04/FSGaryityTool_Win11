@@ -1,0 +1,47 @@
+﻿<Window
+    x:Class="FSGaryityTool_Win11.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FSGaryityTool_Win11"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Window.SystemBackdrop>
+        <!--<MicaBackdrop Kind="BaseAlt"/>-->
+        <DesktopAcrylicBackdrop/>
+    </Window.SystemBackdrop>
+    <Grid>
+
+        <NavigationView x:Name="FSnv" IsTitleBarAutoPaddingEnabled="False" SelectionChanged="NavigationView_SelectionChanged" >
+            <NavigationView.MenuItems>
+                <NavigationViewItem Icon="Sort" Content="Serial Port" Tag="MainPage1" />
+                <NavigationViewItem Icon="SaveLocal" Content="Download FLASH" Tag="Page2" />
+            </NavigationView.MenuItems>
+            <Frame x:Name="FSnvf" />
+        </NavigationView>
+
+    </Grid>
+
+    <!-- <Grid>
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="0"/>
+        <ColumnDefinition Width="264" />
+        <ColumnDefinition x:Name="GC2" />
+    </Grid.ColumnDefinitions>
+    
+    </Grid> -->
+    <!--
+    <TabControl>
+    <TabItem Header="Tab 1">
+
+    </TabItem>
+    <TabItem Header="Tab 2">
+        
+    </TabItem>
+    </TabControl> -->
+
+
+    <!-- <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"></StackPanel> -->
+    
+</Window>

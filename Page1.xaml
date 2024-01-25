@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="FSGaryityTool_Win11.Page1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FSGaryityTool_Win11"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    NavigationCacheMode="Disabled" 
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0"/>
+            <ColumnDefinition Width="264" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="112"/>
+            <ColumnDefinition Width="58"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="52" />
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Stretch" Margin="6,6,0,6">
+            
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="COMButton" Click="COMButton_Click" Width="120" Margin="6">Search COM</Button>
+                <ComboBox x:Name="COMComboBox" SelectionChanged="COMComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <ComboBox x:Name="BANDComboBox" SelectionChanged="BANDComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <ComboBox x:Name="PARComboBox" SelectionChanged="PARComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <ComboBox x:Name="STOPComboBox" SelectionChanged="STOPComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <ComboBox x:Name="DATAComboBox" SelectionChanged="DATAComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <CheckBox x:Name="RXHEXCheckBox" Checked="RXHEXCheckBox_Checked" Width="100" Margin="6">RX HEX</CheckBox>
+                <CheckBox x:Name="TXHEXCheckBox" Checked="TXHEXCheckBox_Checked" Width="100" Margin="6">TX HEX</CheckBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <CheckBox x:Name="DTRCheckBox" Checked="DTRCheckBox_Checked" Width="100" Margin="6">DTR</CheckBox>
+                <CheckBox x:Name="RTSCheckBox" Checked="RTSCheckBox_Checked" Width="100" Margin="6">RTS</CheckBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <CheckBox x:Name="ShowTimeCheckBox" Checked="ShowTimeCheckBox_Checked" Width="100" Margin="6">ShowTime</CheckBox>
+                <CheckBox x:Name="AUTOScrollCheckBox" Checked="AUTOScrollCheckBox_Checked" Width="100" Margin="6">AUTOScroll</CheckBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <CheckBox x:Name="RXTCheckBox" Checked="RXTCheckBox_Checked" Width="100" Margin="6">TEST</CheckBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="800" />
+
+        </StackPanel>
+
+        <Button x:Name="CONTButton" Grid.Column="1" Grid.Row="1" Click="CONTButton_Click" Width="240" Margin="12,6,12,12">CONNECT</Button>
+        
+        <TextBox x:Name="RXTextBox" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="3" TextChanged="RXTextBox_TextChanged" IsReadOnly="True"  AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,12,12,6" />
+
+        <TextBox x:Name="TXTextBox" Grid.Column="2" Grid.Row="1" TextChanged="TXTextBox_TextChanged" Margin="0,6,6,12" PlaceholderText="Type your notes here"/>
+        <Button x:Name="TXButton" Grid.Column="3" Grid.Row="1" Click="TXButton_Click" Width="100" Margin="6,6,6,12">SEND DATA</Button>
+        <Button x:Name="CLEARButton" Grid.Column="4" Grid.Row="1" Click="CLEARButton_Click" Width="40" Margin="6,6,12,12">⨉</Button>
+        
+    </Grid>
+</Page>
