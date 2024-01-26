@@ -46,8 +46,10 @@ namespace FSGaryityTool_Win11
         public static int txf = 0;
         public static int tx = 0;
         public static int rx = 0;
+        private bool _isLoaded;
         public static string str;
         private DateTime current_time = new DateTime();
+
 
         public static class CommonRes
         {
@@ -59,40 +61,51 @@ namespace FSGaryityTool_Win11
         {
             this.InitializeComponent();
 
+            this.Loaded += Page1_Loaded;
+
             DTRCheckBox.IsChecked = true;
             //RTSCheckBox.IsChecked = true;
 
-            BANDComboBox.Items.Add("300");
-            BANDComboBox.Items.Add("1200");
-            BANDComboBox.Items.Add("2400");
-            BANDComboBox.Items.Add("4800");
-            BANDComboBox.Items.Add("9600");
-            BANDComboBox.Items.Add("19200");
-            BANDComboBox.Items.Add("38400");
-            BANDComboBox.Items.Add("57600");
-            BANDComboBox.Items.Add("74880");
-            BANDComboBox.Items.Add("115200");
-            BANDComboBox.Items.Add("230400");
-            BANDComboBox.Items.Add("250000");
-            BANDComboBox.Items.Add("500000");
-            BANDComboBox.Items.Add("1000000");
-            BANDComboBox.Items.Add("2000000");
+            // 在你的代码后台，定义一个List<string>作为数据源
+            List<string> BaudRates = new List<string>()
+            {
+                "75", "110", "134", "150", "300", "600", "1200", "1800", "2400", "4800", "7200", "9600", "14400", "19200", "38400", "57600", "74880","115200", "128000", "230400", "250000", "500000", "1000000", "2000000"
+            };
+            // 将ComboBox的ItemsSource属性绑定到这个数据源
+            BANDComboBox.ItemsSource = BaudRates;
+            // 设置默认选项
+            BANDComboBox.SelectedItem = "115200"; // 将"9600"设置为默认选项
 
-            PARComboBox.Items.Add("None");
-            PARComboBox.Items.Add("Odd");
-            PARComboBox.Items.Add("Even");
-            PARComboBox.Items.Add("Mark");
-            PARComboBox.Items.Add("Space");
+            List<string> ParRates = new List<string>()
+            {
+                "None", "Odd", "Even", "Mark", "Space"
+            };
+            PARComboBox.ItemsSource = ParRates;
+            PARComboBox.SelectedItem = "None";
 
-            STOPComboBox.Items.Add("None");
-            STOPComboBox.Items.Add("One");
-            STOPComboBox.Items.Add("OnePointFive");
-            STOPComboBox.Items.Add("Two");
-
+            List<string> StopRates = new List<string>()
+            {
+                "None", "One", "OnePointFive", "Two"
+            };
+            STOPComboBox.ItemsSource = StopRates;
+            STOPComboBox.SelectedItem = "One";
+            
             for (int j = 5; j < 10; ++j)
             {
                 DATAComboBox.Items.Add(j);
             }
+            DATAComboBox.SelectedItem = 8;
+            
+        }
+
+        private void Page1_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (!_isLoaded)
+            {
+                COMButton_Click(this, new RoutedEventArgs());
+                _isLoaded = true;
+            }
+                
         }
 
         private void COMButton_Click(object sender, RoutedEventArgs e)
@@ -113,6 +126,7 @@ namespace FSGaryityTool_Win11
                     MyBox.Items.Add(ArryPort[i]);                           // 将所有的可用串口号添加到端口对应的组合框中
                 }
                 RXTextBox.Text = RXTextBox.Text + "Search SerialPort succeed!\r\n";
+
             }
         }
         private void CONTButton_Click(object sender, RoutedEventArgs e)

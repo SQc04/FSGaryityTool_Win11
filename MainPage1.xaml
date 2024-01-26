@@ -10,6 +10,11 @@
     NavigationCacheMode="Enabled">
 
     <Grid>
-        <TabView x:Name="SPTabView" AddTabButtonClick="TabView_AddTabButtonClick" TabCloseRequested="TabView_TabCloseRequested" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36"/><!--36-->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TabView x:Name="SPTabView" Grid.Row="1" AddTabButtonClick="TabView_AddTabButtonClick" TabCloseRequested="TabView_TabCloseRequested" />
     </Grid>
 </Page>
