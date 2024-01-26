@@ -11,9 +11,33 @@
         <!--<MicaBackdrop Kind="BaseAlt"/>-->
         <DesktopAcrylicBackdrop/>
     </Window.SystemBackdrop>
-    <Grid>
+    <Grid x:Name="AppTitleBar">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="LeftPaddingColumn" Width="0"/>
+            <ColumnDefinition Width="36"/>
+            <ColumnDefinition/>
+            <ColumnDefinition x:Name="RightPaddingColumn" Width="0"/>
+        </Grid.ColumnDefinitions>
 
-        <NavigationView x:Name="FSnv" IsTitleBarAutoPaddingEnabled="False" SelectionChanged="NavigationView_SelectionChanged" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36"/>
+            <RowDefinition/>
+
+        </Grid.RowDefinitions>
+        
+        <Image x:Name="TitleBarIcon" Source="ms-appx:///Assets/StoreLogo.png"
+           Grid.Column="2" Grid.Row="0" Canvas.ZIndex="10"
+           HorizontalAlignment="Left"
+           Width="16" Height="16"
+           Margin="58,14,0,0"/>
+        <TextBlock x:Name="TitleBarTextBlock" 
+               Text="App title" 
+               Style="{StaticResource CaptionTextBlockStyle}"
+               Grid.Column="2" Grid.Row="0" Canvas.ZIndex="10"
+               VerticalAlignment="Center"
+               Margin="78,14,0,0"/>
+
+        <NavigationView x:Name="FSnv" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2" IsTitleBarAutoPaddingEnabled="False" SelectionChanged="NavigationView_SelectionChanged" >
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="Sort" Content="Serial Port" Tag="MainPage1" />
                 <NavigationViewItem Icon="SaveLocal" Content="Download FLASH" Tag="Page2" />

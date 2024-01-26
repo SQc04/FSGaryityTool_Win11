@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System.IO.Ports;
+//using System.Management;
 using System.Text;
 using Windows.Networking.Sockets;
 using System.Collections.ObjectModel;
@@ -31,6 +32,7 @@ using WinRT.Interop;
 using Windows.UI;          // Needed for XAML/HWND interop.
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
+using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -49,7 +51,6 @@ namespace FSGaryityTool_Win11
         private bool _isLoaded;
         public static string str;
         private DateTime current_time = new DateTime();
-
 
         public static class CommonRes
         {
@@ -95,7 +96,7 @@ namespace FSGaryityTool_Win11
                 DATAComboBox.Items.Add(j);
             }
             DATAComboBox.SelectedItem = 8;
-            
+
         }
 
         private void Page1_Loaded(object sender, RoutedEventArgs e)
@@ -129,6 +130,7 @@ namespace FSGaryityTool_Win11
 
             }
         }
+
         private void CONTButton_Click(object sender, RoutedEventArgs e)
         {
             if (Con == 0)

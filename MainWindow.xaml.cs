@@ -32,6 +32,7 @@ using WinRT.Interop;
 using Windows.UI;          // Needed for XAML/HWND interop.
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
+using Windows.ApplicationModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -62,12 +63,17 @@ namespace FSGaryityTool_Win11
         {
             this.InitializeComponent();
 
+            // 将窗口的标题栏设置为自定义标题栏
+            this.ExtendsContentIntoTitleBar = true;
+            /*
             m_AppWindow = GetAppWindowForCurrentWindow();
             m_AppWindow.Title = "FSGravityTool";//Set AppWindow
             m_AppWindow.SetIcon("FSsoft.ico");
+            */
 
             FSnv.SelectedItem = FSnv.MenuItems[0];
 
+            /*
             if (AppWindowTitleBar.IsCustomizationSupported())
             {
                 AppWindowTitleBar m_TitleBar = m_AppWindow.TitleBar;
@@ -92,13 +98,15 @@ namespace FSGaryityTool_Win11
                 m_TitleBar.ButtonInactiveForegroundColor = Colors.Gainsboro;
                 m_TitleBar.ButtonInactiveBackgroundColor = Color.FromArgb(255, 22, 22, 22);
 
+                
+            }*/
 
-            }
-
-
+            TitleBarTextBlock.Text = "FSGravityTool";
             //SystemBackdrop = new MicaBackdrop()
             //{ Kind = MicaKind.BaseAlt };
             SystemBackdrop = new DesktopAcrylicBackdrop();
+
+
         }
 
         // Call your extend acrylic code in the OnLaunched event, after
