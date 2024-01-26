@@ -51,11 +51,18 @@ namespace FSGaryityTool_Win11
             var selectedItem = (NavigationViewItem)args.SelectedItem;
             if ((string)selectedItem.Tag == "MainPage1") FSnvf.Navigate(typeof(MainPage1));
             else if ((string)selectedItem.Tag == "Page2") FSnvf.Navigate(typeof(Page2));
+            else if ((string)selectedItem.Tag == "Page3") FSnvf.Navigate(typeof(Page3));
 
+            if (args.IsSettingsSelected)
+            {
+                FSnvf.Navigate(typeof(SettingsPage));
+            }
         }
 
 
         private AppWindow m_AppWindow;
+
+
 
         public NavigationFailedEventHandler OnNavigationFailed { get; private set; }
 
@@ -65,11 +72,11 @@ namespace FSGaryityTool_Win11
 
             // 将窗口的标题栏设置为自定义标题栏
             this.ExtendsContentIntoTitleBar = true;
-            /*
+            
             m_AppWindow = GetAppWindowForCurrentWindow();
             m_AppWindow.Title = "FSGravityTool";//Set AppWindow
             m_AppWindow.SetIcon("FSsoft.ico");
-            */
+            
 
             FSnv.SelectedItem = FSnv.MenuItems[0];
 

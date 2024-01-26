@@ -41,6 +41,7 @@
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="Sort" Content="Serial Port" Tag="MainPage1" />
                 <NavigationViewItem Icon="SaveLocal" Content="Download FLASH" Tag="Page2" />
+                <NavigationViewItem Icon="Keyboard" Content="Keyboard" Tag="Page3" />
             </NavigationView.MenuItems>
             <Frame x:Name="FSnvf" />
         </NavigationView>
