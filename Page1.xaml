@@ -31,20 +31,32 @@
                 <ComboBox x:Name="COMComboBox" SelectionChanged="COMComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
+                <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">BAUDRATE</TextBlock>
                 <ComboBox x:Name="BANDComboBox" SelectionChanged="BANDComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
+                <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">Parity</TextBlock>
                 <ComboBox x:Name="PARComboBox" SelectionChanged="PARComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
+                <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">STOP Bits</TextBlock>
                 <ComboBox x:Name="STOPComboBox" SelectionChanged="STOPComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
+                <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">DATA Bits</TextBlock>
                 <ComboBox x:Name="DATAComboBox" SelectionChanged="DATAComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
             </StackPanel>
+            
+            <StackPanel Orientation="Horizontal" Height="36"></StackPanel>
+
             <StackPanel Orientation="Horizontal">
-                <CheckBox x:Name="RXHEXCheckBox" Checked="RXHEXCheckBox_Checked" Width="100" Margin="6">RX HEX</CheckBox>
-                <CheckBox x:Name="TXHEXCheckBox" Checked="TXHEXCheckBox_Checked" Width="100" Margin="6">TX HEX</CheckBox>
+                <Button x:Name="RXHEXButton" Click="RXHEXButton_Click" Width="120" Margin="6">RX HEX</Button>
+                <Button x:Name="TXHEXButton" Click="TXHEXButton_Click" Width="108" Margin="6">TX HEX</Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="RSTButton" Click="RSTButton_Click" Width="120" Margin="6">RST</Button>
+                <Button x:Name="DTRButton" Click="DTRButton_Click" Width="48" Margin="6">DTR</Button>
+                <Button x:Name="RTSButton" Click="RTSButton_Click" Width="48" Margin="6">RTS</Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <CheckBox x:Name="DTRCheckBox" Checked="DTRCheckBox_Checked" Width="100" Margin="6">DTR</CheckBox>

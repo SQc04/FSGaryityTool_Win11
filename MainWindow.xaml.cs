@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.InteropServices;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -28,6 +29,7 @@ using System.Threading.Tasks;
 using System.IO.Ports;
 using Microsoft.UI;           // Needed for WindowId.
 using Microsoft.UI.Windowing; // Needed for AppWindow.
+using WinRT;
 using WinRT.Interop;
 using Windows.UI;          // Needed for XAML/HWND interop.
 using Windows.ApplicationModel.Core;

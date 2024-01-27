@@ -46,8 +46,11 @@ namespace FSGaryityTool_Win11
     {
         public static int Con = 0;
         public static int txf = 0;
-        public static int tx = 0;
+        public static int tx = 0; //TXHEX
         public static int rx = 0;
+        public static int dtr = 1;
+        public static int rts = 0;
+
         private bool _isLoaded;
         public static string str;
         private DateTime current_time = new DateTime();
@@ -97,6 +100,27 @@ namespace FSGaryityTool_Win11
             }
             DATAComboBox.SelectedItem = 8;
 
+            var foregroundColor = COMButton.Foreground as SolidColorBrush;
+            var backgroundColor = COMButton.Background as SolidColorBrush;
+            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
+            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
+            var theme = Application.Current.RequestedTheme;
+
+            if (theme == ApplicationTheme.Dark)
+            {
+                // 当前处于深色模式
+                DTRButton.Background = new SolidColorBrush(darkaccentColor);
+                DTRButton.Foreground = new SolidColorBrush(Colors.Black);
+            }
+            else if (theme == ApplicationTheme.Light)
+            {
+                // 当前处于浅色模式
+                DTRButton.Background = new SolidColorBrush(ligtaccentColor);
+                DTRButton.Foreground = new SolidColorBrush(Colors.White);
+            }
+            CommonRes._serialPort.DtrEnable = true;
+            dtr = 1;
+
         }
 
         private void Page1_Loaded(object sender, RoutedEventArgs e)
@@ -131,8 +155,27 @@ namespace FSGaryityTool_Win11
             }
         }
 
+        private void Settings_ColorValuesChanged(Windows.UI.ViewManagement.UISettings sender, object args)
+        {
+            var color = sender.GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
+            CONTButton.Background = new SolidColorBrush(color);
+        }
+
         private void CONTButton_Click(object sender, RoutedEventArgs e)
         {
+            var settings = new Windows.UI.ViewManagement.UISettings();
+            var color = settings.GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
+
+
+            var foregroundColor = COMButton.Foreground as SolidColorBrush;
+            var backgroundColor = COMButton.Background as SolidColorBrush;
+            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
+            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
+            var theme = Application.Current.RequestedTheme;
+
+
+            settings.ColorValuesChanged += Settings_ColorValuesChanged;
+
             if (Con == 0)
             {
                 try
@@ -157,17 +200,37 @@ namespace FSGaryityTool_Win11
                     CommonRes._serialPort.Encoding = Encoding.UTF8;
                     CommonRes._serialPort.ReceivedBytesThreshold = 1;                     //DataReceived触发前内部输入缓冲器的字节数
 
+                    
                     RXTextBox.Text = RXTextBox.Text + "SerialPort " + COMComboBox.SelectedItem + " IS OPEN" + "\r\n";
 
                     CommonRes._serialPort.Open();                                         //打开串口
                     CONTButton.Content = "DISCONNECT";
                     Con = 1;
+
+                    //CONTButton.Background = new SolidColorBrush(color);
+                    if (theme == ApplicationTheme.Dark)
+                    {
+                        // 当前处于深色模式
+                        CONTButton.Background = new SolidColorBrush(darkaccentColor);
+                        CONTButton.Foreground = new SolidColorBrush(Colors.Black);
+                    }
+                    else if (theme == ApplicationTheme.Light)
+                    {
+                        // 当前处于浅色模式
+                        CONTButton.Background = new SolidColorBrush(ligtaccentColor);
+                        CONTButton.Foreground = new SolidColorBrush(Colors.White);
+                    }
+
+
                 }
                 catch                                                           //如果打开串口失败 需要做如下警示
                 {
                     RXTextBox.Text = RXTextBox.Text + "打开串口失败，请检查相关设置" + "\r\n";
                     //MessageBox.Show("打开串口失败，请检查相关设置", "错误");
                     Con = 0;
+                    CONTButton.Content = "CONNECT";
+                    CONTButton.Background = backgroundColor;
+                    CONTButton.Foreground = foregroundColor;
                 }
 
             }
@@ -186,6 +249,8 @@ namespace FSGaryityTool_Win11
                 }
                 CONTButton.Content = "CONNECT";
                 Con = 0;
+                CONTButton.Background = backgroundColor;
+                CONTButton.Foreground = foregroundColor;
             }
         }
 
@@ -321,21 +386,144 @@ namespace FSGaryityTool_Win11
         {
 
         }
-        private void RXHEXCheckBox_Checked(object sender, RoutedEventArgs e)
+        
+
+        private void RXHEXButton_Click(object sender, RoutedEventArgs e)
         {
-            if (RXHEXCheckBox.IsChecked == true)
+            var foregroundColor = COMButton.Foreground as SolidColorBrush;
+            var backgroundColor = COMButton.Background as SolidColorBrush;
+            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
+            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
+            var theme = Application.Current.RequestedTheme;
+            if (rx == 0)
             {
+                if (theme == ApplicationTheme.Dark)
+                {
+                    // 当前处于深色模式
+                    RXHEXButton.Background = new SolidColorBrush(darkaccentColor);
+                    RXHEXButton.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    RXHEXButton.Background = new SolidColorBrush(ligtaccentColor);
+                    RXHEXButton.Foreground = new SolidColorBrush(Colors.White);
+                }
                 rx = 1;
             }
             else
             {
+                RXHEXButton.Background = backgroundColor;
+                RXHEXButton.Foreground = foregroundColor;
                 rx = 0;
             }
         }
-        private void TXHEXCheckBox_Checked(object sender, RoutedEventArgs e)
+
+        private void TXHEXButton_Click(object sender, RoutedEventArgs e)
+        {
+            var foregroundColor = COMButton.Foreground as SolidColorBrush;
+            var backgroundColor = COMButton.Background as SolidColorBrush;
+            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
+            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
+            var theme = Application.Current.RequestedTheme;
+            if (tx == 0)
+            {
+                if (theme == ApplicationTheme.Dark)
+                {
+                    // 当前处于深色模式
+                    TXHEXButton.Background = new SolidColorBrush(darkaccentColor);
+                    TXHEXButton.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    TXHEXButton.Background = new SolidColorBrush(ligtaccentColor);
+                    TXHEXButton.Foreground = new SolidColorBrush(Colors.White);
+                }
+                tx = 1;
+            }
+            else
+            {
+                TXHEXButton.Background = backgroundColor;
+                TXHEXButton.Foreground = foregroundColor;
+                tx = 0;
+            }
+        }
+
+
+        private void RSTButton_Click(object sender, RoutedEventArgs e)
         {
 
         }
+
+        private void DTRButton_Click(object sender, RoutedEventArgs e)
+        {
+            var foregroundColor = COMButton.Foreground as SolidColorBrush;
+            var backgroundColor = COMButton.Background as SolidColorBrush;
+            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
+            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
+            var theme = Application.Current.RequestedTheme;
+            if (dtr == 0)
+            {
+                if (theme == ApplicationTheme.Dark)
+                {
+                    // 当前处于深色模式
+                    DTRButton.Background = new SolidColorBrush(darkaccentColor);
+                    DTRButton.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    DTRButton.Background = new SolidColorBrush(ligtaccentColor);
+                    DTRButton.Foreground = new SolidColorBrush(Colors.White);
+                }
+                CommonRes._serialPort.DtrEnable = true;
+                dtr = 1;
+            }
+            else
+            {
+                DTRButton.Background = backgroundColor;
+                DTRButton.Foreground = foregroundColor;
+
+                CommonRes._serialPort.DtrEnable = false;
+                dtr = 0;
+            }
+        }
+
+        private void RTSButton_Click(object sender, RoutedEventArgs e)
+        {
+            var foregroundColor = COMButton.Foreground as SolidColorBrush;
+            var backgroundColor = COMButton.Background as SolidColorBrush;
+            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
+            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
+            var theme = Application.Current.RequestedTheme;
+            if (rts == 0)
+            {
+                if (theme == ApplicationTheme.Dark)
+                {
+                    // 当前处于深色模式
+                    RTSButton.Background = new SolidColorBrush(darkaccentColor);
+                    RTSButton.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    RTSButton.Background = new SolidColorBrush(ligtaccentColor);
+                    RTSButton.Foreground = new SolidColorBrush(Colors.White);
+                }
+                CommonRes._serialPort.RtsEnable = true;
+                rts = 1;
+            }
+            else
+            {
+                RTSButton.Background = backgroundColor;
+                RTSButton.Foreground = foregroundColor;
+
+                CommonRes._serialPort.DtrEnable = false;
+                rts = 0;
+            }
+        }
+
         private void DTRCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             if (DTRCheckBox.IsChecked == true)
@@ -422,5 +610,7 @@ namespace FSGaryityTool_Win11
                 }
             }
         }
+
+        
     }
 }
