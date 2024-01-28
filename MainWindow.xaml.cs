@@ -77,7 +77,7 @@ namespace FSGaryityTool_Win11
             
             m_AppWindow = GetAppWindowForCurrentWindow();
             m_AppWindow.Title = "FSGravityTool";//Set AppWindow
-            m_AppWindow.SetIcon("FSsoft.ico");
+            m_AppWindow.SetIcon("FSsoftH.ico");
             
 
             FSnv.SelectedItem = FSnv.MenuItems[0];

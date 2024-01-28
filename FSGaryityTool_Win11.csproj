@@ -15,7 +15,7 @@
     <DefaultLanguage>zh-cn</DefaultLanguage>
     <PackageCertificateThumbprint>44A69BF79CCE3D4449484E6D059292A4AABE7E63</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <ApplicationIcon>FSSoft.ico</ApplicationIcon>
+    <ApplicationIcon>FSSoftH.ico</ApplicationIcon>
     <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
     <LangVersion>11.0</LangVersion>
   </PropertyGroup>
@@ -39,7 +39,7 @@
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Content Include="FSSoft.ico" />
+    <Content Include="FSSoftH.ico" />
   </ItemGroup>
 
   <ItemGroup>

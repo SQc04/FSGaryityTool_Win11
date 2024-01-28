@@ -59,22 +59,20 @@
                 <Button x:Name="RTSButton" Click="RTSButton_Click" Width="48" Margin="6">RTS</Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <CheckBox x:Name="DTRCheckBox" Checked="DTRCheckBox_Checked" Width="100" Margin="6">DTR</CheckBox>
-                <CheckBox x:Name="RTSCheckBox" Checked="RTSCheckBox_Checked" Width="100" Margin="6">RTS</CheckBox>
+                <Button x:Name="ShowTimeButton" Click="ShowTimeButton_Click" Width="120" Margin="6">ShowTime</Button>
+                <Button x:Name="AUTOScrollButton" Click="AUTOScrollButton_Click" Width="108" Margin="6">AUTOScroll</Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <CheckBox x:Name="ShowTimeCheckBox" Checked="ShowTimeCheckBox_Checked" Width="100" Margin="6">ShowTime</CheckBox>
-                <CheckBox x:Name="AUTOScrollCheckBox" Checked="AUTOScrollCheckBox_Checked" Width="100" Margin="6">AUTOScroll</CheckBox>
+                
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <CheckBox x:Name="RXTCheckBox" Checked="RXTCheckBox_Checked" Width="100" Margin="6">TEST</CheckBox>
+                
             </StackPanel>
             <StackPanel Orientation="Horizontal" Height="800" />
-
         </StackPanel>
 
-        <Button x:Name="CONTButton" Grid.Column="1" Grid.Row="1" Click="CONTButton_Click" Width="240" Margin="12,6,12,12">CONNECT</Button>
-        
+        <Button x:Name="CONTButton" Grid.Column="1" Grid.Row="1" Click="CONTButton_Click" Width="240" Margin="12,6,6,12">CONNECT</Button>
+
         <TextBox x:Name="RXTextBox" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="3" TextChanged="RXTextBox_TextChanged" IsReadOnly="True"  AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,12,12,6" />
 
         <TextBox x:Name="TXTextBox" Grid.Column="2" Grid.Row="1" TextChanged="TXTextBox_TextChanged" Margin="0,6,6,12" PlaceholderText="Type your notes here"/>
