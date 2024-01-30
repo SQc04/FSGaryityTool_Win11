@@ -28,12 +28,14 @@ using Windows.Storage.Streams;
 using System.Threading.Tasks;
 using Microsoft.UI;           // Needed for WindowId.
 using Microsoft.UI.Windowing; // Needed for AppWindow.
+using Microsoft.UI.Dispatching;
 using WinRT.Interop;
 using Windows.UI;          // Needed for XAML/HWND interop.
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Core;
 using System.Xml.Linq;
+using System.Diagnostics.Metrics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -53,9 +55,11 @@ namespace FSGaryityTool_Win11
         public static int rts = 0;
         public static int shtime = 0;//ShowTime
         public static int autotr = 1;//AUTOScroll
+        public static int rxs = 0;
+        public static string rxpstr;
+        public static byte[] datapwate = new byte[2048];
 
-        
-
+        public Timer timer;
         private bool _isLoaded;
         public static string str;
         private DateTime current_time = new DateTime();
@@ -138,8 +142,10 @@ namespace FSGaryityTool_Win11
                 AUTOScrollButton.Background = new SolidColorBrush(ligtaccentColor);
                 AUTOScrollButton.Foreground = new SolidColorBrush(Colors.White);
             }
+
             
-            
+
+
         }
 
         private void Page1_Loaded(object sender, RoutedEventArgs e)
@@ -149,7 +155,30 @@ namespace FSGaryityTool_Win11
                 COMButton_Click(this, new RoutedEventArgs());
                 _isLoaded = true;
             }
-                
+
+            /*
+            // 创建一个DispatcherQueueTimer对象
+            DispatcherQueueTimer timer = DispatcherQueue.GetForCurrentThread().CreateTimer();
+
+            // 在你的代码中初始化这个DispatcherQueueTimer
+            timer.Interval = TimeSpan.FromMilliseconds(500); // 注意这里的间隔时间是250毫秒，也就是每秒触发四次
+            timer.Tick += (sender, args) =>
+            {
+                // 在这里调用你的按钮点击事件
+                AUTOScrollButton_ClickAsync(null, null);
+            };
+            timer.Start();
+            */
+
+        }
+
+        public void TimerTick(Object stateInfo)
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                AUTOScrollButton_ClickAsync(null, null);
+            });
+            
         }
 
         //public event SerialDataReceivedEventHandler DataReceived;
@@ -162,18 +191,21 @@ namespace FSGaryityTool_Win11
             void SearchAndAddSerialToComboBox(SerialPort MyPort, ComboBox MyBox)
             {
                 RXTextBox.Text = RXTextBox.Text + "Start search SerialPort\r\n";
-                string[] ArryPort;                                          // 定义字符串数组，数组名为 Buffer
-                ArryPort = SerialPort.GetPortNames();                       // SerialPort.GetPortNames()函数功能为获取计算机所有可用串口，以字符串数组形式输出
+                string commme = (string)COMComboBox.SelectedItem;           //记忆串口名
+                string[] ArryPort;                                          //定义字符串数组，数组名为 ArryPort
+                ArryPort = SerialPort.GetPortNames();                       //SerialPort.GetPortNames()函数功能为获取计算机所有可用串口，以字符串数组形式输出
                 string scom = String.Join("\r\n", ArryPort);
                 RXTextBox.Text = RXTextBox.Text + scom + "\r\n";
-                MyBox.Items.Clear();                                        // 清除当前组合框下拉菜单内容                  
+                MyBox.Items.Clear();                                        //清除当前组合框下拉菜单内容                  
                 for (int i = 0; i < ArryPort.Length; i++)
                 {
-                    MyBox.Items.Add(ArryPort[i]);                           // 将所有的可用串口号添加到端口对应的组合框中
+                    MyBox.Items.Add(ArryPort[i]);                           //将所有的可用串口号添加到端口对应的组合框中
                 }
+                //MyBox.Items.Add("COM0");
                 RXTextBox.Text = RXTextBox.Text + "Search SerialPort succeed!\r\n";
-
+                COMComboBox.SelectedItem = commme;
             }
+            //COMComboBox.SelectedItem = "COM0";
         }
 
         private void Settings_ColorValuesChanged(Windows.UI.ViewManagement.UISettings sender, object args)
@@ -239,6 +271,9 @@ namespace FSGaryityTool_Win11
                     RXTextBox.Text = RXTextBox.Text + "SerialPort " + COMComboBox.SelectedItem + " IS OPEN" + "\r\n";
 
                     CommonRes._serialPort.Open();                                                                               //打开串口
+                    
+                    timer = new Timer(TimerTick, null, 0, 125); // 每秒触发4次
+
                     CONTButton.Content = "DISCONNECT";
                     Con = 1;
 
@@ -266,6 +301,8 @@ namespace FSGaryityTool_Win11
                     CONTButton.Content = "CONNECT";
                     CONTButton.Background = backgroundColor;
                     CONTButton.Foreground = foregroundColor;
+
+                    
                 }
 
             }
@@ -286,105 +323,20 @@ namespace FSGaryityTool_Win11
                 Con = 0;
                 CONTButton.Background = backgroundColor;
                 CONTButton.Foreground = foregroundColor;
+
+                timer.Dispose();
             }
         }
 
 
         /*
-        private async Task InitializeSerialPort()
-        {
-            var devices = await DeviceInformation.FindAllAsync(SerialDevice.GetDeviceSelector());
-
-            // 如果没有找到任何设备，提示用户
-            if (devices.Count == 0)
-            {
-                RXTextBox.Text = "没有找到任何串口设备，请检查连接";
-                return;
-            }
-
-            var device = devices[0];
-
-            // 从设备信息中创建一个 SerialDevice 对象
-            var serialDevice = await SerialDevice.FromIdAsync(device.Id);
-
-            // 设置串口的参数，例如波特率，数据位，停止位等
-            serialDevice.BaudRate = 9600;
-            serialDevice.DataBits = 8;
-            serialDevice.StopBits = SerialStopBitCount.One;
-            serialDevice.Parity = SerialParity.None;
-
-            // 将 SerialDevice 对象赋值给 SerialPort 对象的 Device 属性
-            _SerialPort.Device = serialDevice;
-
-            // 创建一个 DataReader 对象，用于从串口读取数据
-            _SerialPort.DataReader = new DataReader(_SerialPort.Device.InputStream);
-
-            // 创建一个 DataWriter 对象，用于向串口写入数据
-            _SerialPort.DataWriter = new DataWriter(_SerialPort.Device.OutputStream);
-
-            // 注册 DataReceived 事件的处理程序
-            _SerialPort.Device.DataReceived += SerialPort_DataReceived;
-        }
-
-
-        private async void SerialPort_DataReceived(SerialDevice sender, object args)
-        {
-            // 获取当前时间
-            var current_time = System.DateTime.Now;
-
-            // 读取串口接收缓冲区的字节数
-            var length = await _SerialPort.DataReader.LoadAsync(1024);
-
-            // 判断是否以字符串形式读取
-            if (rx == 0)
-            {
-                // 读取串口接收缓冲区字符串
-                var str = _SerialPort.DataReader.ReadString(length);
-
-                // 使用 DispatcherQueue.TryEnqueue 方法来更新 UI
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    // 判断是否显示时间
-                    if (ShowTimeCheckBox.IsChecked == true)
-                    {
-                        // 在接收文本框中显示时间
-                        RXTextBox.Text += current_time.ToString("HH:mm:ss") + "  ";
-                    }
-
-                    // 在接收文本框中显示字符串
-                    RXTextBox.Text += str + "\r\n";
-                });
-            }
-            else // 以数值形式读取
-            {
-                // 定义一个字节数组，用于存储接收到的数据
-                byte[] data = new byte[length];
-
-                // 从 DataReader 中读取数据到字节数组中
-                _SerialPort.DataReader.ReadBytes(data);
-
-                // 使用 DispatcherQueue.TryEnqueue 方法来更新 UI
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    // 遍历字节数组
-                    for (int i = 0; i < length; i++)
-                    {
-                        // 将数据转换为字符串格式
-                        string str = Convert.ToString(data[i], 16).ToUpper();
-
-                        // 在接收文本框中显示数据
-                        RXTextBox.Text += "0x" + (str.Length == 1 ? "0" + str + " " : str + " ");
-                    }
-
-                    // 在接收文本框中换行
-                    RXTextBox.Text += "\r\n";
-                });
-            }
-        }
+        
         */
+        
 
         private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
+            /*
             if (txf == 1)
             {
                 DispatcherQueue.TryEnqueue(() =>
@@ -394,25 +346,49 @@ namespace FSGaryityTool_Win11
                 
                 txf = 0;
             }
+            */
 
-            if (rx == 0)                                         // 如果以字符串形式读取
+
+            /*
+            if (shtime == 1)
             {
-                string str = CommonRes._serialPort.ReadExisting();                    // 读取串口接收缓冲区字符串
-                if (shtime == 1)
-                {
-                    //显示时间
-                    current_time = System.DateTime.Now;     //获取当前时间
-
-                    DispatcherQueue.TryEnqueue(() =>
-                    {
-                        RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";
-                    });
-
-                }
+                //显示时间
+                current_time = System.DateTime.Now;     //获取当前时间
 
                 DispatcherQueue.TryEnqueue(() =>
                 {
-                    RXTextBox.Text = RXTextBox.Text + str + "\r\n";                          // 在接收文本框中进行显示
+                    //RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";
+                });
+
+            }
+            */
+            string rxstr;
+            string Timesr = current_time.ToString("HH:mm:ss   ");
+            byte[] datawate = new byte[2048];
+
+            
+
+            if (rx == 0)                                         // 如果以字符串形式读取
+            {
+                
+                rxstr = CommonRes._serialPort.ReadExisting();                    // 读取串口接收缓冲区字符串
+                if (shtime == 1)
+                {
+                    rxstr = string.Concat(Timesr, rxstr);
+                    //显示时间
+                    //current_time = System.DateTime.Now;     //获取当前时间
+                    /*
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";                          // 在接收文本框中进行显示
+                    });
+                    */
+                }
+                datawate = System.Text.Encoding.UTF8.GetBytes(rxstr);
+
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    datapwate = System.Text.Encoding.UTF8.GetBytes(rxstr);                          // 在接收文本框中进行显示
                 });
 
                 if (autotr == 1)
@@ -420,16 +396,13 @@ namespace FSGaryityTool_Win11
                     //RXTextBox.ScrollToEnd();
                 }
 
-                else
-                {
-
-                }
+                
                 
 
             }
             else                                                            // 以数值形式读取
             {
-                int length = CommonRes._serialPort.ReadByte();                       // 读取串口接收缓冲区字节数
+                int length = CommonRes._serialPort.BytesToRead;                       // 读取串口接收缓冲区字节数
 
                 byte[] data = new byte[length];                             // 定义相同字节的数组
 
@@ -437,7 +410,7 @@ namespace FSGaryityTool_Win11
 
                 for (int i = 0; i < length; i++)
                 {
-                    string str = Convert.ToString(data[i], 16).ToUpper();                                   // 将数据转换为字符串格式
+                    rxstr = Convert.ToString(data[i], 16).ToUpper();                                   // 将数据转换为字符串格式
 
                     DispatcherQueue.TryEnqueue(() =>
                     {
@@ -445,17 +418,31 @@ namespace FSGaryityTool_Win11
                     });
 
 
-                    if (autotr == 1)
-                    {
-                        //RXTextBox.ScrollToEnd();
-                    }
-
-                    else
-                    {
-
-                    }
+                    
                 }
+                if (autotr == 1)
+                {
+                    //RXTextBox.ScrollToEnd();
+                }
+
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    RXTextBox.Text += "\r\n";
+                });
             }
+
+            /*
+            ++rxs;
+            if (rxs == 200)
+            {
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    RXTextBox.Text = "";
+                });
+                rxs = 0;
+            }
+            */
+            
         }
 
 
@@ -830,6 +817,59 @@ namespace FSGaryityTool_Win11
 
                 autotr = 0;
             }
+        }
+
+        private void RXDataButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        /*
+        private async void RXDataButton_Click(object sender, RoutedEventArgs e)
+        {
+            await AUTOScrollButton_ClickAsync(sender, e);
+        }
+        */
+
+        private Task AUTOScrollButton_ClickAsync(object sender, RoutedEventArgs e)
+        {
+            // 在这里添加你的异步代码
+            // 例如：await SomeAsyncMethod();
+            current_time = System.DateTime.Now;     //获取当前时间
+            //RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";
+            //Timesr = current_time.ToString("HH:mm:ss");
+
+            var foregroundColor = COMButton.Foreground as SolidColorBrush;
+            var backgroundColor = COMButton.Background as SolidColorBrush;
+            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
+            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
+            var theme = Application.Current.RequestedTheme;
+            if (autotr == 0)
+            {
+                if (theme == ApplicationTheme.Dark)
+                {
+                    // 当前处于深色模式
+                    AUTOScrollButton.Background = new SolidColorBrush(darkaccentColor);
+                    AUTOScrollButton.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    AUTOScrollButton.Background = new SolidColorBrush(ligtaccentColor);
+                    AUTOScrollButton.Foreground = new SolidColorBrush(Colors.White);
+                }
+                autotr = 1;
+            }
+            else
+            {
+                AUTOScrollButton.Background = backgroundColor;
+                AUTOScrollButton.Foreground = foregroundColor;
+
+                autotr = 0;
+            }
+
+            rxpstr = System.Text.Encoding.UTF8.GetString(datapwate);
+            RXTextBox.Text = RXTextBox.Text + rxpstr + "";
+            return Task.CompletedTask;
         }
 
     }

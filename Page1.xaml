@@ -66,9 +66,10 @@
                 
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                
+                <Button x:Name="RXDataButton" Click="RXDataButton_Click" Width="0" Margin="6">RX</Button>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Height="800" />
+            <StackPanel Orientation="Horizontal" Height="2000" />
+            
         </StackPanel>
 
         <Button x:Name="CONTButton" Grid.Column="1" Grid.Row="1" Click="CONTButton_Click" Width="240" Margin="12,6,6,12">CONNECT</Button>
