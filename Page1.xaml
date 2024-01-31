@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    NavigationCacheMode="Disabled" 
+    NavigationCacheMode="Enabled"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
@@ -23,55 +23,54 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="52" />
         </Grid.RowDefinitions>
-        
-        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Stretch" Margin="6,6,0,6">
-            
-            <StackPanel Orientation="Horizontal">
-                <Button x:Name="COMButton" Click="COMButton_Click" Width="120" Margin="6">Search COM</Button>
-                <ComboBox x:Name="COMComboBox" SelectionChanged="COMComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">BAUDRATE</TextBlock>
-                <ComboBox x:Name="BANDComboBox" SelectionChanged="BANDComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">Parity</TextBlock>
-                <ComboBox x:Name="PARComboBox" SelectionChanged="PARComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">STOP Bits</TextBlock>
-                <ComboBox x:Name="STOPComboBox" SelectionChanged="STOPComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">DATA Bits</TextBlock>
-                <ComboBox x:Name="DATAComboBox" SelectionChanged="DATAComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
-            </StackPanel>
-            
-            <StackPanel Orientation="Horizontal" Height="36"></StackPanel>
+        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Height="2000" />
+        <ScrollViewer Grid.Column="1" Grid.Row="0" >
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="6,6,0,6">
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="COMButton" Click="COMButton_Click" Width="120" Margin="6">Search COM</Button>
+                    <ComboBox x:Name="COMComboBox" SelectionChanged="COMComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">BAUDRATE</TextBlock>
+                    <ComboBox x:Name="BANDComboBox" SelectionChanged="BANDComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">Parity</TextBlock>
+                    <ComboBox x:Name="PARComboBox" SelectionChanged="PARComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">STOP Bits</TextBlock>
+                    <ComboBox x:Name="STOPComboBox" SelectionChanged="STOPComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">DATA Bits</TextBlock>
+                    <ComboBox x:Name="DATAComboBox" SelectionChanged="DATAComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                </StackPanel>
 
-            <StackPanel Orientation="Horizontal">
-                <Button x:Name="RXHEXButton" Click="RXHEXButton_Click" Width="120" Margin="6">RX HEX</Button>
-                <Button x:Name="TXHEXButton" Click="TXHEXButton_Click" Width="108" Margin="6">TX HEX</Button>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Button x:Name="RSTButton" Click="RSTButton_Click" Width="120" Margin="6">RST</Button>
-                <Button x:Name="DTRButton" Click="DTRButton_Click" Width="48" Margin="6">DTR</Button>
-                <Button x:Name="RTSButton" Click="RTSButton_Click" Width="48" Margin="6">RTS</Button>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Button x:Name="ShowTimeButton" Click="ShowTimeButton_Click" Width="120" Margin="6">ShowTime</Button>
-                <Button x:Name="AUTOScrollButton" Click="AUTOScrollButton_Click" Width="108" Margin="6">AUTOScroll</Button>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Height="36"></StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="RXHEXButton" Click="RXHEXButton_Click" Width="120" Margin="6">RX HEX</Button>
+                    <Button x:Name="TXHEXButton" Click="TXHEXButton_Click" Width="108" Margin="6">TX HEX</Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="RSTButton" Click="RSTButton_Click" Width="120" Margin="6">RST</Button>
+                    <Button x:Name="DTRButton" Click="DTRButton_Click" Width="48" Margin="6">DTR</Button>
+                    <Button x:Name="RTSButton" Click="RTSButton_Click" Width="48" Margin="6">RTS</Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="ShowTimeButton" Click="ShowTimeButton_Click" Width="120" Margin="6">ShowTime</Button>
+                    <Button x:Name="AUTOScrollButton" Click="AUTOScrollButton_Click" Width="108" Margin="6">AUTOScroll</Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="RXDataButton" Click="RXDataButton_Click" Width="0" Margin="6">RX</Button>
+                </StackPanel>
                 
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Button x:Name="RXDataButton" Click="RXDataButton_Click" Width="0" Margin="6">RX</Button>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Height="2000" />
-            
-        </StackPanel>
-
+        </ScrollViewer>
         <Button x:Name="CONTButton" Grid.Column="1" Grid.Row="1" Click="CONTButton_Click" Width="240" Margin="12,6,6,12">CONNECT</Button>
 
         <TextBox x:Name="RXTextBox" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="3" TextChanged="RXTextBox_TextChanged" IsReadOnly="True"  AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,12,12,6" />

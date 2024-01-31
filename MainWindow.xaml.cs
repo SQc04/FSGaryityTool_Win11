@@ -54,6 +54,7 @@ namespace FSGaryityTool_Win11
             if ((string)selectedItem.Tag == "MainPage1") FSnvf.Navigate(typeof(MainPage1));
             else if ((string)selectedItem.Tag == "Page2") FSnvf.Navigate(typeof(Page2));
             else if ((string)selectedItem.Tag == "Page3") FSnvf.Navigate(typeof(Page3));
+            else if ((string)selectedItem.Tag == "AboutPage") FSnvf.Navigate(typeof(AboutPage));
 
             if (args.IsSettingsSelected)
             {

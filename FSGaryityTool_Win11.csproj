@@ -20,6 +20,7 @@
     <LangVersion>11.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="AboutPage.xaml" />
     <None Remove="Assets\BadgeLogo.scale-100.png" />
     <None Remove="Assets\BadgeLogo.scale-125.png" />
     <None Remove="Assets\BadgeLogo.scale-150.png" />
@@ -59,6 +60,11 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="AboutPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="MainSettingsPage.xaml">

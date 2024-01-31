@@ -43,6 +43,14 @@
                 <NavigationViewItem Icon="SaveLocal" Content="Download FLASH" Tag="Page2" />
                 <NavigationViewItem Icon="Keyboard" Content="Keyboard" Tag="Page3" />
             </NavigationView.MenuItems>
+            <!--<NavigationView.FooterMenuItems>
+                <NavigationViewItem Tag="AboutPage" >
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <FontIcon Glyph="&#xE946;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="17" Margin="1,0,8,0"/>
+                        <TextBlock VerticalAlignment="Center" Text="About" Margin="6"/>
+                    </StackPanel>
+                </NavigationViewItem>
+            </NavigationView.FooterMenuItems>-->
             <Frame x:Name="FSnvf" />
         </NavigationView>
 

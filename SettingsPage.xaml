@@ -7,10 +7,116 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    NavigationCacheMode="Disabled"
+    Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
     <!-- Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" -->
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <!--36-->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="60"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="1" FontSize="40" Height="60" Margin="0,0,0,0">Settings</TextBlock>
 
+        
+        
+        <ScrollViewer Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" >
+            <StackPanel Margin="0,0,60,0">
+                <StackPanel.Resources>
+                    <Style TargetType="Expander">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </StackPanel.Resources>
+                <TextBlock Text="" Margin="0,12,0,0"/>
+                <TextBlock Text="Serial Port Settings" Margin="0"/>
+
+                <Button x:Name="SPSettings" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="70" Margin="0,3,2,0">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                            <FontIcon Glyph="&#xE8CB;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="12,0,12,0"/>
+                            <TextBlock VerticalAlignment="Center" Text="Serial Port Settings" Margin="12,0,12,0"/>
+
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            
+                            <FontIcon Glyph="&#xE974;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Margin="12,0,9,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Button>
+                
+                <Expander Margin="0,3,0,0">
+                    <Expander.Header>
+                        <Grid>
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE8CB;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Margin="12,24,12,24"/>
+                                <TextBlock VerticalAlignment="Center" Text="Serial Port " Margin="12"/>
+                            </StackPanel>
+                        </Grid>
+                    </Expander.Header>
+                </Expander>
+                <TextBlock Text="" Margin="0,12,0,0"/>
+                <TextBlock Text="Download Flash Settings" Margin="0"/>
+                <Expander Margin="0,3,0,0">
+                    <Expander.Header>
+                        <Grid>
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE8CB;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Margin="12,24,12,24"/>
+                                <TextBlock VerticalAlignment="Center" Text="Choose your crust" Margin="12"/>
+                            </StackPanel>
+
+                        </Grid>
+                    </Expander.Header>
+                </Expander>
+
+                <Expander Margin="0,3,0,0">
+                    <Expander.Header>
+                        <Grid>
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE8CB;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Margin="12,24,12,24"/>
+                                <TextBlock VerticalAlignment="Center" Text="Choose your crust" Margin="12"/>
+                            </StackPanel>
+
+                        </Grid>
+                    </Expander.Header>
+                </Expander>
+                <TextBlock Text="" Margin="0,12,0,0"/>
+                <TextBlock Text="About" Margin="0"/>
+                <Button x:Name="Aboutp" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="70" Margin="0,3,2,0">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                            <FontIcon Glyph="&#xE946;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="12,0,12,0"/>
+                            <TextBlock VerticalAlignment="Center" Text="About" Margin="12,0,12,0"/>
+
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                            <FontIcon Glyph="&#xE971;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Margin="12,0,9,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Button>
+                <Expander Margin="0,3,0,0">
+                    <Expander.Header>
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch">
+                                <Image Source="Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png" Width="22" Height="22" Margin="12,24,12,24"/>
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12">
+                                    <TextBlock VerticalAlignment="Top" Text="FSGravity For Windows 11" />
+                                    <TextBlock VerticalAlignment="Center" Text="© 2019 - 2024 FairingStudio" FontSize="12"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <TextBlock VerticalAlignment="Center" HorizontalTextAlignment="Right" Text="Version 0.1" Margin="0"/>
+                        </Grid>
+                    </Expander.Header>
+                </Expander>
+                
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>
