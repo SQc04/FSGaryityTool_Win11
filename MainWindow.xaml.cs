@@ -57,7 +57,7 @@ namespace FSGaryityTool_Win11
 
             if (args.IsSettingsSelected)
             {
-                FSnvf.Navigate(typeof(SettingsPage));
+                FSnvf.Navigate(typeof(MainSettingsPage));
             }
         }
 

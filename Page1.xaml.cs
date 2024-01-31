@@ -57,7 +57,7 @@ namespace FSGaryityTool_Win11
         public static int autotr = 1;//AUTOScroll
         public static int rxs = 0;
         public static string rxpstr;
-        public static byte[] datapwate = new byte[2048];
+        public static StringBuilder datapwate = new StringBuilder(2048);
 
         public Timer timer;
         private bool _isLoaded;
@@ -272,7 +272,7 @@ namespace FSGaryityTool_Win11
 
                     CommonRes._serialPort.Open();                                                                               //打开串口
                     
-                    timer = new Timer(TimerTick, null, 0, 125); // 每秒触发4次
+                    timer = new Timer(TimerTick, null, 0, 125); // 每秒触发8次
 
                     CONTButton.Content = "DISCONNECT";
                     Con = 1;
@@ -313,7 +313,7 @@ namespace FSGaryityTool_Win11
                 try
                 {
                     CommonRes._serialPort.Close();                                                                              //关闭串口
-                    RXTextBox.Text = RXTextBox.Text + "SerialPort IS CLOSE" + "\r\n";
+                    RXTextBox.Text = RXTextBox.Text + "\n" + "SerialPort IS CLOSE" + "\r\n";
                 }
                 catch (Exception err)                                                                       //一般情况下关闭串口不会出错，所以不需要加处理程序
                 {
@@ -349,24 +349,11 @@ namespace FSGaryityTool_Win11
             */
 
 
-            /*
-            if (shtime == 1)
-            {
-                //显示时间
-                current_time = System.DateTime.Now;     //获取当前时间
-
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    //RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";
-                });
-
-            }
-            */
             string rxstr;
-            string Timesr = current_time.ToString("HH:mm:ss   ");
-            byte[] datawate = new byte[2048];
+            string Timesr = current_time.ToString("HH:mm:ss   ");//显示时间
+            //StringBuilder datawate = new StringBuilder(1024);
 
-            
+
 
             if (rx == 0)                                         // 如果以字符串形式读取
             {
@@ -375,27 +362,20 @@ namespace FSGaryityTool_Win11
                 if (shtime == 1)
                 {
                     rxstr = string.Concat(Timesr, rxstr);
-                    //显示时间
-                    //current_time = System.DateTime.Now;     //获取当前时间
-                    /*
-                    DispatcherQueue.TryEnqueue(() =>
-                    {
-                        RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";                          // 在接收文本框中进行显示
-                    });
-                    */
                 }
-                datawate = System.Text.Encoding.UTF8.GetBytes(rxstr);
+                //datawate.Append(rxstr);
 
+                
                 DispatcherQueue.TryEnqueue(() =>
                 {
-                    datapwate = System.Text.Encoding.UTF8.GetBytes(rxstr);                          // 在接收文本框中进行显示
+                    datapwate.Append(rxstr);                          // 在接收文本框中进行显示
                 });
 
                 if (autotr == 1)
                 {
                     //RXTextBox.ScrollToEnd();
                 }
-
+                
                 
                 
 
@@ -432,7 +412,7 @@ namespace FSGaryityTool_Win11
             }
 
             /*
-            ++rxs;
+            ++rxs;                                          //接收自动清空
             if (rxs == 200)
             {
                 DispatcherQueue.TryEnqueue(() =>
@@ -777,6 +757,15 @@ namespace FSGaryityTool_Win11
                     ShowTimeButton.Foreground = new SolidColorBrush(Colors.White);
                 }
                 shtime = 1;
+
+                //显示时间
+                //current_time = System.DateTime.Now;     //获取当前时间
+                /*
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";                          // 在接收文本框中进行显示
+                });
+                */
             }
             else
             {
@@ -838,7 +827,7 @@ namespace FSGaryityTool_Win11
             //RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";
             //Timesr = current_time.ToString("HH:mm:ss");
 
-            var foregroundColor = COMButton.Foreground as SolidColorBrush;
+            var foregroundColor = COMButton.Foreground as SolidColorBrush;//定时器检查
             var backgroundColor = COMButton.Background as SolidColorBrush;
             var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
             var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
@@ -867,8 +856,11 @@ namespace FSGaryityTool_Win11
                 autotr = 0;
             }
 
-            rxpstr = System.Text.Encoding.UTF8.GetString(datapwate);
-            RXTextBox.Text = RXTextBox.Text + rxpstr + "";
+
+            //rxpstr = System.Text.Encoding.UTF8.GetString(datapwate);
+            rxpstr = datapwate.ToString();                          //将缓冲区赋值到输出
+            RXTextBox.Text = RXTextBox.Text + rxpstr + "";          //输出接收的数据
+            datapwate.Clear();                                      //清空缓冲区
             return Task.CompletedTask;
         }
 
