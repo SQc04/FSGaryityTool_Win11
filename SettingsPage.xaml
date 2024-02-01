@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    NavigationCacheMode="Disabled"
+    NavigationCacheMode="Enabled"
     Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
     <!-- Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" -->
 
@@ -22,10 +22,41 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="60"/>
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="1" FontSize="40" Height="60" Margin="0,0,0,0">Settings</TextBlock>
+        <!--<TextBlock Grid.Row="0" Grid.Column="1" FontSize="40" Height="60" Margin="0,0,0,0">Settings</TextBlock>-->
+        <BreadcrumbBar x:Name="Settingsbar" Grid.Row="0" Grid.Column="1" Margin="0,0,0,0">
+            <BreadcrumbBar.ItemTemplate>
+                <DataTemplate>
+                    <BreadcrumbBarItem Content="{Binding}" AutomationProperties.Name="{Binding Name}">
+                        <BreadcrumbBarItem.ContentTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" FontSize="40" Height="60"/>
+                            </DataTemplate>
+                        </BreadcrumbBarItem.ContentTemplate>
+                    </BreadcrumbBarItem>
+                </DataTemplate>
+            </BreadcrumbBar.ItemTemplate>
+        </BreadcrumbBar>
 
-        
-        
+        <Frame x:Name="AboutFrame" Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="3" Canvas.ZIndex="1" Opacity="0">
+            <Frame.Resources>
+                <Storyboard x:Name="AboutINOUT">
+                    <DoubleAnimation Storyboard.TargetName="AboutFrame"
+                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                       From="1000" To="0" Duration="0:0:0.25">
+                        <DoubleAnimation.EasingFunction>
+                            <ExponentialEase Exponent="7" EasingMode="EaseInOut" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </Frame.Resources>
+            <Frame.RenderTransform>
+                <TranslateTransform />
+            </Frame.RenderTransform>
+            
+            
+
+        </Frame>
+
         <ScrollViewer Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" >
             <StackPanel Margin="0,0,60,0">
                 <StackPanel.Resources>
@@ -88,7 +119,7 @@
                 </Expander>
                 <TextBlock Text="" Margin="0,12,0,0"/>
                 <TextBlock Text="About" Margin="0"/>
-                <Button x:Name="Aboutp" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="70" Margin="0,3,2,0">
+                <Button x:Name="Aboutp" Click="Aboutp_Click" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="70" Margin="0,3,2,0">
                     <Grid>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                             <FontIcon Glyph="&#xE946;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="12,0,12,0"/>
@@ -101,22 +132,8 @@
                         </StackPanel>
                     </Grid>
                 </Button>
-                <Expander Margin="0,3,0,0">
-                    <Expander.Header>
-                        <Grid>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch">
-                                <Image Source="Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png" Width="22" Height="22" Margin="12,24,12,24"/>
-                                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12">
-                                    <TextBlock VerticalAlignment="Top" Text="FSGravity For Windows 11" />
-                                    <TextBlock VerticalAlignment="Center" Text="© 2019 - 2024 FairingStudio" FontSize="12"/>
-                                </StackPanel>
-                            </StackPanel>
-                            <TextBlock VerticalAlignment="Center" HorizontalTextAlignment="Right" Text="Version 0.1" Margin="0"/>
-                        </Grid>
-                    </Expander.Header>
-                </Expander>
-                
             </StackPanel>
         </ScrollViewer>
     </Grid>
+    
 </Page>

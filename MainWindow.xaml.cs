@@ -54,7 +54,7 @@ namespace FSGaryityTool_Win11
             if ((string)selectedItem.Tag == "MainPage1") FSnvf.Navigate(typeof(MainPage1));
             else if ((string)selectedItem.Tag == "Page2") FSnvf.Navigate(typeof(Page2));
             else if ((string)selectedItem.Tag == "Page3") FSnvf.Navigate(typeof(Page3));
-            else if ((string)selectedItem.Tag == "AboutPage") FSnvf.Navigate(typeof(AboutPage));
+            else if ((string)selectedItem.Tag == "FSPage") FSnvf.Navigate(typeof(FSPage));
 
             if (args.IsSettingsSelected)
             {
@@ -79,8 +79,8 @@ namespace FSGaryityTool_Win11
             m_AppWindow = GetAppWindowForCurrentWindow();
             m_AppWindow.Title = "FSGravityTool";//Set AppWindow
             m_AppWindow.SetIcon("FSsoftH.ico");
-            
 
+            
             FSnv.SelectedItem = FSnv.MenuItems[0];
 
             /*
@@ -130,6 +130,18 @@ namespace FSGaryityTool_Win11
             WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
             return AppWindow.GetFromWindowId(wndId);
         }
+
+        private void NavigationView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+        {
+            // 获取当前的 Frame
+            var frame = Window.Current.Content as Frame;
+            // 如果可以向后导航，就执行向后导航
+            if (frame.CanGoBack)
+            {
+                frame.GoBack();
+            }
+        }
+
 
         /*
         

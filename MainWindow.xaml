@@ -2,7 +2,6 @@
     x:Class="FSGaryityTool_Win11.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:FSGaryityTool_Win11"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -37,20 +36,26 @@
                VerticalAlignment="Center"
                Margin="78,14,0,0"/>
 
-        <NavigationView x:Name="FSnv" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2" IsTitleBarAutoPaddingEnabled="False" SelectionChanged="NavigationView_SelectionChanged" >
+        <NavigationView x:Name="FSnv" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2" IsTitleBarAutoPaddingEnabled="False" IsBackEnabled="True" SelectionChanged="NavigationView_SelectionChanged" >
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="Sort" Content="Serial Port" Tag="MainPage1" />
                 <NavigationViewItem Icon="SaveLocal" Content="Download FLASH" Tag="Page2" />
                 <NavigationViewItem Icon="Keyboard" Content="Keyboard" Tag="Page3" />
             </NavigationView.MenuItems>
-            <!--<NavigationView.FooterMenuItems>
-                <NavigationViewItem Tag="AboutPage" >
+            <NavigationView.FooterMenuItems>
+                <!--<NavigationViewItem Tag="AboutPage" >
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                         <FontIcon Glyph="&#xE946;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="17" Margin="1,0,8,0"/>
                         <TextBlock VerticalAlignment="Center" Text="About" Margin="6"/>
                     </StackPanel>
+                </NavigationViewItem>-->
+                <NavigationViewItem Tag="FSPage">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <Image Source="Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png" HorizontalAlignment="Stretch" Width="20" Height="20" Margin="1,0,0,0"/>
+                        <TextBlock VerticalAlignment="Center" Text="FairingStudio" Margin="14,0,0,0"/>
+                    </StackPanel>
                 </NavigationViewItem>
-            </NavigationView.FooterMenuItems>-->
+            </NavigationView.FooterMenuItems>
             <Frame x:Name="FSnvf" />
         </NavigationView>
 
