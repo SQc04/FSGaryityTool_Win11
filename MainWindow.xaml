@@ -23,8 +23,8 @@
             <RowDefinition/>
 
         </Grid.RowDefinitions>
-        
-        <Image x:Name="TitleBarIcon" Source="ms-appx:///Assets/StoreLogo.png"
+
+        <Image x:Name="TitleBarIcon" Stretch="Fill" Source="/Assets/StoreLogo.png"
            Grid.Column="2" Grid.Row="0" Canvas.ZIndex="10"
            HorizontalAlignment="Left"
            Width="16" Height="16"
@@ -51,7 +51,7 @@
                 </NavigationViewItem>-->
                 <NavigationViewItem Tag="FSPage">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <Image Source="Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png" HorizontalAlignment="Stretch" Width="20" Height="20" Margin="1,0,0,0"/>
+                        <Image Stretch="Fill" Source="/Assets/StoreLogo.png" HorizontalAlignment="Stretch" Width="20" Height="20" Margin="1,0,0,0"/>
                         <TextBlock VerticalAlignment="Center" Text="FairingStudio" Margin="14,0,0,0"/>
                     </StackPanel>
                 </NavigationViewItem>

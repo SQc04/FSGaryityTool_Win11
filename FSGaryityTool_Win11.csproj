@@ -1,24 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <RootNamespace>FSGaryityTool_Win11</RootNamespace>
-	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-	<WindowsPackageType>None</WindowsPackageType>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x86;x64;arm64</Platforms>
-    <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
-    <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
-    <UseWinUI>true</UseWinUI>
-    <EnableMsixTooling>true</EnableMsixTooling>
-    <DefaultLanguage>zh-cn</DefaultLanguage>
-    <PackageCertificateThumbprint>44A69BF79CCE3D4449484E6D059292A4AABE7E63</PackageCertificateThumbprint>
-    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <ApplicationIcon>FSSoftH.ico</ApplicationIcon>
-    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
-    <LangVersion>11.0</LangVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+		<RootNamespace>FSGaryityTool_Win11</RootNamespace>
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+		<!--<WindowsPackageType>None</WindowsPackageType>-->
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<Platforms>x86;x64;arm64</Platforms>
+		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
+		<UseWinUI>true</UseWinUI>
+		<EnableMsixTooling>true</EnableMsixTooling>
+		<DefaultLanguage>zh-cn</DefaultLanguage>
+		<PackageCertificateThumbprint>44A69BF79CCE3D4449484E6D059292A4AABE7E63</PackageCertificateThumbprint>
+		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+		<ApplicationIcon>FSSoftH.ico</ApplicationIcon>
+		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+		<LangVersion>11.0</LangVersion>
+		<PackageIcon>SmallTile.scale-400.png</PackageIcon>
+		<Copyright>Copyright ©  2020-2024 FairingStudio</Copyright>
+		<Company>FairingStudio</Company>
+		<Authors>FairingStudio</Authors>
+		<Title>FSGaryityTool For Win11</Title>
+		<PackageId>FSGaryityTool_Win11</PackageId>
+		<Product>FSGaryityTool For Win11</Product>
+		<Description>FSGaryityTool For Win11</Description>
+		<AssemblyVersion>0.1.0215</AssemblyVersion>
+		<FileVersion>0.1.0215.2</FileVersion>
+		<PackageOutputPath>\bin\win10-x64\publish\x64-Pkg</PackageOutputPath>
+		<requireLicenseAcceptance>flase</requireLicenseAcceptance>
+		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+		<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+		<AppxPackageDir>D:\I\FAIRING STUDIO\FSSoftware\FSGarvityTool\FSGaryityTool_Win11\bin\win10-x64\publish\x64-Pkg\</AppxPackageDir>
+		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+		<GenerateTestArtifacts>True</GenerateTestArtifacts>
+		<AppxBundle>Never</AppxBundle>
+		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+		<Version />
+	</PropertyGroup>
+  <ItemGroup>
+    <Content Remove="Assets\StoreLogo.png" />
+  </ItemGroup>
   <ItemGroup>
     <None Remove="AboutPage.xaml" />
     <None Remove="Assets\BadgeLogo.scale-100.png" />
@@ -26,6 +50,7 @@
     <None Remove="Assets\BadgeLogo.scale-150.png" />
     <None Remove="Assets\BadgeLogo.scale-200.png" />
     <None Remove="Assets\BadgeLogo.scale-400.png" />
+    <None Remove="Assets\StoreLogo.png" />
     <None Remove="FSPage.xaml" />
     <None Remove="MainPage1.xaml" />
     <None Remove="MainSettingsPage.xaml" />
@@ -36,6 +61,7 @@
   </ItemGroup>
 
   <ItemGroup>
+	<Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
@@ -61,6 +87,19 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Page Update="FSPage.xaml">
@@ -101,6 +140,19 @@
     <Page Update="Page1.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Assets\SmallTile.scale-400.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="FSGaryityTool_Win11_TemporaryKey.pfx">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <!-- 
