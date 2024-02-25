@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
     <Window.SystemBackdrop>
         <!--<MicaBackdrop Kind="BaseAlt"/>-->
         <DesktopAcrylicBackdrop/>
@@ -23,6 +22,7 @@
             <RowDefinition/>
 
         </Grid.RowDefinitions>
+        
 
         <Image x:Name="TitleBarIcon" Stretch="Fill" Source="/Assets/StoreLogo.png"
            Grid.Column="2" Grid.Row="0" Canvas.ZIndex="10"
@@ -36,24 +36,23 @@
                VerticalAlignment="Center"
                Margin="78,14,0,0"/>
 
-        <NavigationView x:Name="FSnv" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2" IsTitleBarAutoPaddingEnabled="False" IsBackEnabled="True" SelectionChanged="NavigationView_SelectionChanged" >
+        <NavigationView x:Name="FSnv" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2" IsTitleBarAutoPaddingEnabled="False" 
+                        IsBackEnabled="True" BackRequested="NavigationView_BackRequested" SelectionChanged="NavigationView_SelectionChanged" >
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="Sort" Content="Serial Port" Tag="MainPage1" />
                 <NavigationViewItem Icon="SaveLocal" Content="Download FLASH" Tag="Page2" />
                 <NavigationViewItem Icon="Keyboard" Content="Keyboard" Tag="Page3" />
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
-                <!--<NavigationViewItem Tag="AboutPage" >
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <FontIcon Glyph="&#xE946;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" FontSize="17" Margin="1,0,8,0"/>
-                        <TextBlock VerticalAlignment="Center" Text="About" Margin="6"/>
-                    </StackPanel>
+                <!--<NavigationViewItem Content="About" Tag="AboutPage" >
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE946;" FontFamily="Segoe MDL2 Assets" />
+                    </NavigationViewItem.Icon>
                 </NavigationViewItem>-->
-                <NavigationViewItem Tag="FSPage">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <Image Stretch="Fill" Source="/Assets/StoreLogo.png" HorizontalAlignment="Stretch" Width="20" Height="20" Margin="1,0,0,0"/>
-                        <TextBlock VerticalAlignment="Center" Text="FairingStudio" Margin="14,0,0,0"/>
-                    </StackPanel>
+                <NavigationViewItem Tag="FSPage" Content="FairingStudio">
+                    <NavigationViewItem.Icon>
+                        <BitmapIcon UriSource="/Assets/StoreLogo.png" ShowAsMonochrome="False"/>
+                    </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
             <Frame x:Name="FSnvf" />

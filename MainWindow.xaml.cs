@@ -35,6 +35,15 @@ using Windows.UI;          // Needed for XAML/HWND interop.
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
 using Windows.ApplicationModel;
+using Windows.Graphics;
+
+using System.Diagnostics;
+using System.IO;
+
+using Tommy;
+using Newtonsoft.Json;
+using System.Reflection.PortableExecutable;
+using Windows.ApplicationModel.Activation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -44,9 +53,13 @@ namespace FSGaryityTool_Win11
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
+
+    
+
     public sealed partial class MainWindow : Window
     {
 
+        private static string FSSoftVersion = "0.2.8";
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
@@ -60,14 +73,13 @@ namespace FSGaryityTool_Win11
             {
                 FSnvf.Navigate(typeof(MainSettingsPage));
             }
-        }
 
+        }
 
         private AppWindow m_AppWindow;
 
-
-
         public NavigationFailedEventHandler OnNavigationFailed { get; private set; }
+
 
         public MainWindow()
         {
@@ -75,13 +87,162 @@ namespace FSGaryityTool_Win11
 
             // 将窗口的标题栏设置为自定义标题栏
             this.ExtendsContentIntoTitleBar = true;
-            
+
             m_AppWindow = GetAppWindowForCurrentWindow();
             m_AppWindow.Title = "FSGravityTool";//Set AppWindow
             m_AppWindow.SetIcon("FSsoftH.ico");
 
+
+            string SYSAPLOCAL = Environment.GetFolderPath(folder: Environment.SpecialFolder.LocalApplicationData);
+            string FSFolder = Path.Combine(SYSAPLOCAL, "FAIRINGSTUDIO");
+            string FSGravif = Path.Combine(FSFolder, "FSGravityTool");
+            string FSSetJson = Path.Combine(FSGravif, "Settings.json");
+            string FSSetToml = Path.Combine(FSGravif, "Settings.toml");
+
+            //Debug.WriteLine("开始搜索文件夹");
+            Debug.WriteLine("开始搜索文件夹  " + FSFolder);            //新建FS文件夹
+
+
+            if (Directory.Exists(FSFolder))
+            {
+                Debug.WriteLine("找到文件夹,跳过新建文件夹");
+            }
+            else
+            {
+                Debug.WriteLine("没有找到文件夹");
+                Directory.CreateDirectory(FSFolder);
+                Debug.WriteLine("新建文件夹");
+            }
+
+
+            if (Directory.Exists(FSGravif))
+            {
+                Debug.WriteLine("找到文件夹,跳过新建文件夹");
+            }
+            else
+            {
+                Debug.WriteLine("没有找到文件夹");
+                Directory.CreateDirectory(FSGravif);
+                Debug.WriteLine("新建文件夹");
+            }
+
+
+            /*
+            if (File.Exists(FSSetJson))
+            {
+                Debug.WriteLine("找到JSON文件,跳过新建文件");
+            }
+            else
+            {
+                Debug.WriteLine("没有找到JSON文件");
+                var SettJson = new              //创建对象
+                {
+                    FSGravity = "Tool",
+                    SerialSettings = "1",
+                    DefaultBAUD = "115200",
+                    DefaultParity = "None",
+                    DefaultSTOP = "One",
+                    DefaultDATA = "8",
+                    DefaultRXHEX = "0",
+                    DefaultTXHEX = "0",
+                    DefaultDTR = "1",
+                    DefaultRTS = "0",
+                    DefaultSTime = "0",
+                    DefaultAUTOSco = "1",
+                };
+                var jsonstring1 = JsonConvert.SerializeObject(SettJson);        //序列化Json
+                using (StreamWriter file = File.CreateText(FSSetJson))          //创建json
+                {
+                    file.WriteLine(jsonstring1);
+                }
+                Debug.WriteLine("新建JSON");
+            }
+            */
+
+            if (File.Exists(FSSetToml))             //生成TOML
+            {
+                Debug.WriteLine("找到TOML文件,跳过新建文件");
+            }
+            else
+            {
+                Debug.WriteLine("没有找到TOML文件");
+
+                TomlTable settingstoml = new TomlTable
+                {
+                    ["Version"] = FSSoftVersion,
+
+                    ["FSGravitySettings"] =
+                    {
+                        Comment =
+                        "FSGaryityTool Settings:",
+                        ["DefaultNvPage"] = "0",
+                    },
+
+                    ["SerialPortSettings"] =
+                    {
+                        Comment = 
+                        "FSGaryityTool SerialPort Settings:\r\n" +
+                        "Parity:None,Odd,Even,Mark,Space\r\n" +
+                        "STOPbits:None,One,OnePointFive,Two\r\n" +
+                        "DATAbits:5~9",
+
+                        ["DefaultBAUD"] = "115200",
+                        ["DefaultParity"] = "None",
+                        ["DefaultSTOP"] = "One",
+                        ["DefaultDATA"] = "8",
+                        ["DefaultRXHEX"] = "0",
+                        ["DefaultTXHEX"] = "0",
+                        ["DefaultDTR"] = "1",
+                        ["DefaultRTS"] = "0",
+                        ["DefaultSTime"] = "0",
+                        ["DefaultAUTOSco"] = "1",
+                    },
+
+                };
+
+                using (StreamWriter writer = File.CreateText(FSSetToml))
+                {
+                    settingstoml.WriteTo(writer);
+                    Debug.WriteLine("写入Toml");
+                    // Remember to flush the data if needed!
+                    writer.Flush();
+                }
+                Debug.WriteLine("新建TOML");
+            }
+
+
+
+            string TomlfsVersion;       //版本号比较
+
+            using (StreamReader reader = File.OpenText(FSSetToml))
+            {
+                TomlTable settingstomlr = TOML.Parse(reader);
+                TomlfsVersion = settingstomlr["Version"];
+            }
+
+            Version TomlVersion = new Version(TomlfsVersion);
+            Version FSGrVersion = new Version(FSSoftVersion);
+
+            if (FSGrVersion > TomlVersion)
+            {
+                Debug.WriteLine(">");
+            }
+            else
+            {
+                Debug.WriteLine("<=");
+            }
+
+                                                     //设置默认页面
+
+            using (StreamReader reader = File.OpenText(FSSetToml))
+            {
+                TomlTable settingstomlr = TOML.Parse(reader);
+                Debug.WriteLine("Print:" + settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
+                int NvPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
+                FSnv.SelectedItem = FSnv.MenuItems[NvPage];             //设置默认页面
+            }
+
             
-            FSnv.SelectedItem = FSnv.MenuItems[0];
 
             /*
             if (AppWindowTitleBar.IsCustomizationSupported())
@@ -116,7 +277,7 @@ namespace FSGaryityTool_Win11
             //{ Kind = MicaKind.BaseAlt };
             SystemBackdrop = new DesktopAcrylicBackdrop();
 
-
+            
         }
 
         // Call your extend acrylic code in the OnLaunched event, after
@@ -133,13 +294,7 @@ namespace FSGaryityTool_Win11
 
         private void NavigationView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
         {
-            // 获取当前的 Frame
-            var frame = Window.Current.Content as Frame;
-            // 如果可以向后导航，就执行向后导航
-            if (frame.CanGoBack)
-            {
-                frame.GoBack();
-            }
+            
         }
 
 

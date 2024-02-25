@@ -23,7 +23,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="52" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Height="2000" />
+        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Height="10000" />
         <ScrollViewer Grid.Column="1" Grid.Row="0" >
             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="6,6,0,6">
                 <StackPanel Orientation="Horizontal">
@@ -62,13 +62,15 @@
                     <Button x:Name="ShowTimeButton" Click="ShowTimeButton_Click" Width="120" Margin="6">ShowTime</Button>
                     <Button x:Name="AUTOScrollButton" Click="AUTOScrollButton_Click" Width="108" Margin="6">AUTOScroll</Button>
                 </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Height="36"></StackPanel>
+
                 <StackPanel Orientation="Horizontal">
 
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="RXDataButton" Click="RXDataButton_Click" Width="0" Margin="6">RX</Button>
                 </StackPanel>
-                
             </StackPanel>
         </ScrollViewer>
         <Button x:Name="CONTButton" Grid.Column="1" Grid.Row="1" Click="CONTButton_Click" Width="240" Margin="12,6,6,12">CONNECT</Button>

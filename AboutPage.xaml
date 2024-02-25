@@ -7,8 +7,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    NavigationCacheMode="Enabled"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    NavigationCacheMode="Enabled">
+    <!-- Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" -->
 
     <Grid>
         <Grid.RowDefinitions>
@@ -40,7 +40,7 @@
                                     <TextBlock VerticalAlignment="Center" Text="© 2019 - 2024 FairingStudio" FontSize="12"/>
                                 </StackPanel>
                             </StackPanel>
-                            <TextBlock VerticalAlignment="Center" HorizontalTextAlignment="Right" Text="Version 0.1.0215.2" Margin="0"/>
+                            <TextBlock VerticalAlignment="Center" HorizontalTextAlignment="Right" Text="Version 0.1.0216.1" Margin="0"/>
                         </Grid>
                     </Expander.Header>
                 </Expander>

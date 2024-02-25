@@ -7,13 +7,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    NavigationCacheMode="Enabled"
-    Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
+    xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+    NavigationCacheMode="Enabled">
     <!-- Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" -->
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="0"/>
             <!--36-->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -23,22 +23,10 @@
             <ColumnDefinition Width="60"/>
         </Grid.ColumnDefinitions>
         <!--<TextBlock Grid.Row="0" Grid.Column="1" FontSize="40" Height="60" Margin="0,0,0,0">Settings</TextBlock>-->
-        <BreadcrumbBar x:Name="Settingsbar" Grid.Row="0" Grid.Column="1" Margin="0,0,0,0">
-            <BreadcrumbBar.ItemTemplate>
-                <DataTemplate>
-                    <BreadcrumbBarItem Content="{Binding}" AutomationProperties.Name="{Binding Name}">
-                        <BreadcrumbBarItem.ContentTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" FontSize="40" Height="60"/>
-                            </DataTemplate>
-                        </BreadcrumbBarItem.ContentTemplate>
-                    </BreadcrumbBarItem>
-                </DataTemplate>
-            </BreadcrumbBar.ItemTemplate>
-        </BreadcrumbBar>
 
-        <Frame x:Name="AboutFrame" Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="3" Canvas.ZIndex="1" Opacity="0">
-            <Frame.Resources>
+
+        <Frame x:Name="AboutFrame" x:FieldModifier="Public" Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="3" Canvas.ZIndex="1" Opacity="0">
+            <!--"<Frame.Resources>
                 <Storyboard x:Name="AboutINOUT">
                     <DoubleAnimation Storyboard.TargetName="AboutFrame"
                        Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
@@ -51,9 +39,13 @@
             </Frame.Resources>
             <Frame.RenderTransform>
                 <TranslateTransform />
-            </Frame.RenderTransform>
-            
-            
+            </Frame.RenderTransform>-->
+
+            <Frame.ContentTransitions>
+                <TransitionCollection>
+                    <NavigationThemeTransition  />
+                </TransitionCollection>
+            </Frame.ContentTransitions>
 
         </Frame>
 
@@ -65,74 +57,145 @@
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     </Style>
                 </StackPanel.Resources>
-                <TextBlock Text="" Margin="0,12,0,0"/>
-                <TextBlock Text="Serial Port Settings" Margin="0"/>
 
-                <Button x:Name="SPSettings" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="70" Margin="0,3,2,0">
-                    <Grid>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                            <FontIcon Glyph="&#xE8CB;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="12,0,12,0"/>
-                            <TextBlock VerticalAlignment="Center" Text="Serial Port Settings" Margin="12,0,12,0"/>
+                <StackPanel>
+                    <TextBlock Text="" Margin="0,12,0,0"/>
+                    <TextBlock Text="General" Margin="0"/>
 
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            
-                            <FontIcon Glyph="&#xE974;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Margin="12,0,9,0"/>
-                        </StackPanel>
-                    </Grid>
-                </Button>
+                    <toolkit:SettingsCard x:Name="StartPage" Header="Default start page" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon Glyph="&#xe8a1;"/>
+                        </toolkit:SettingsCard.HeaderIcon>
+
+
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <ComboBox x:Name="StartPageCombobox" SelectionChanged="StartPageCombobox_SelectionChanged" Width="150" Margin="0,0,27,0"></ComboBox>
+                            </StackPanel>
+                        </Grid>
+                    </toolkit:SettingsCard>
+
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="" Margin="0,12,0,0"/>
+                    <TextBlock Text="Serial Port Settings" Margin="0"/>
+
+                    <Button x:Name="SPSettings" Click="SPSettings_Click" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="66" Margin="1,3,1,3">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                <FontIcon Glyph="&#xE8CB;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="6,0,12,0"/>
+                                <TextBlock VerticalAlignment="Center" Text="Serial Port Settings" Margin="12,0,12,0"/>
+
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                                <FontIcon Glyph="&#xE974;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="10" Margin="12,0,6,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+
+                    <!--
+                    <Button x:Name="Aboutq" Click="Aboutq_Click" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="70" Margin="1,3,1,3">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                <FontIcon Glyph="&#xF210;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="6,0,12,0"/>
+                                <TextBlock VerticalAlignment="Center" Text="About" Margin="12,0,12,0"/>
+
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="12,0,9,0">
+                                <FontIcon x:Name="Fro1" Glyph="&#xE971;" FontFamily="Segoe MDL2 Assets" FontSize="12"  >
+                                    <FontIcon.RotationTransition>
+                                        <ScalarTransition/>
+                                    </FontIcon.RotationTransition>
+                                    <FontIcon.TranslationTransition>
+                                        <Vector3Transition />
+                                    </FontIcon.TranslationTransition>
+                                </FontIcon>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                    -->
+
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="" Margin="0,12,0,0"/>
+                    <TextBlock Text="Download Flash Settings" Margin="0"/>
+
+                    <toolkit:SettingsExpander Header="ABOUT " Margin="0,2,0,3">
+                        <toolkit:SettingsExpander.HeaderIcon>
+                            <FontIcon Glyph="&#xF210;" FontFamily="Segoe MDL2 Assets" FontSize="12" />
+                        </toolkit:SettingsExpander.HeaderIcon>
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard >
+                                <Grid>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
+                                    </StackPanel>
+                                </Grid>
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard >
+                                <Grid>
+                                    <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
+
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="" Margin="0,12,0,0"/>
+                    <TextBlock Text="About" Margin="0"/>
+                    <Button x:Name="Aboutp" Click="Aboutp_Click" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="66" Margin="1,3,1,3">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                <FontIcon Glyph="&#xE946;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="6,0,12,0"/>
+                                <TextBlock VerticalAlignment="Center" Text="About" Margin="12,0,12,0"/>
+
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                                <FontIcon Glyph="&#xE974;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="10" Margin="12,0,6,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
+                </StackPanel>
+
                 
-                <Expander Margin="0,3,0,0">
-                    <Expander.Header>
-                        <Grid>
-                            <StackPanel Orientation="Horizontal">
-                                <FontIcon Glyph="&#xE8CB;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Margin="12,24,12,24"/>
-                                <TextBlock VerticalAlignment="Center" Text="Serial Port " Margin="12"/>
-                            </StackPanel>
-                        </Grid>
-                    </Expander.Header>
-                </Expander>
                 <TextBlock Text="" Margin="0,12,0,0"/>
-                <TextBlock Text="Download Flash Settings" Margin="0"/>
-                <Expander Margin="0,3,0,0">
-                    <Expander.Header>
-                        <Grid>
-                            <StackPanel Orientation="Horizontal">
-                                <FontIcon Glyph="&#xE8CB;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Margin="12,24,12,24"/>
-                                <TextBlock VerticalAlignment="Center" Text="Choose your crust" Margin="12"/>
-                            </StackPanel>
 
-                        </Grid>
-                    </Expander.Header>
-                </Expander>
-
-                <Expander Margin="0,3,0,0">
-                    <Expander.Header>
-                        <Grid>
-                            <StackPanel Orientation="Horizontal">
-                                <FontIcon Glyph="&#xE8CB;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Margin="12,24,12,24"/>
-                                <TextBlock VerticalAlignment="Center" Text="Choose your crust" Margin="12"/>
-                            </StackPanel>
-
-                        </Grid>
-                    </Expander.Header>
-                </Expander>
-                <TextBlock Text="" Margin="0,12,0,0"/>
-                <TextBlock Text="About" Margin="0"/>
-                <Button x:Name="Aboutp" Click="Aboutp_Click" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="70" Margin="0,3,2,0">
-                    <Grid>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                            <FontIcon Glyph="&#xE946;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="12,0,12,0"/>
-                            <TextBlock VerticalAlignment="Center" Text="About" Margin="12,0,12,0"/>
-
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-
-                            <FontIcon Glyph="&#xE971;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Margin="12,0,9,0"/>
-                        </StackPanel>
-                    </Grid>
-                </Button>
             </StackPanel>
+
         </ScrollViewer>
     </Grid>
     

@@ -27,5 +27,7 @@ namespace FSGaryityTool_Win11
         {
             this.InitializeComponent();
         }
+
+        //MainWindow FSSoftVersion;
     }
 }

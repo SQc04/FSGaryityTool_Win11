@@ -7,14 +7,42 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    NavigationCacheMode="Enabled">
+    NavigationCacheMode="Disabled">
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="45"/>
+            <RowDefinition Height="60"/>
             <!--36-->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Frame x:Name="SettingsFrame" Grid.Row="1"/>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="60"/>
+        </Grid.ColumnDefinitions>
+
+        <BreadcrumbBar x:Name="Settingsbar" x:FieldModifier="Public" Grid.Row="1" Grid.Column="1" Margin="0,0,0,0">
+            <BreadcrumbBar.ItemTemplate>
+                <DataTemplate>
+                    <BreadcrumbBarItem Content="{Binding}" AutomationProperties.Name="{Binding Name}">
+                        <BreadcrumbBarItem.ContentTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" FontSize="40" Height="60"/>
+                            </DataTemplate>
+                        </BreadcrumbBarItem.ContentTemplate>
+                    </BreadcrumbBarItem>
+                </DataTemplate>
+            </BreadcrumbBar.ItemTemplate>
+        </BreadcrumbBar>
+
+        <Frame x:Name="SettingsFrame" x:FieldModifier="Public" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+            <Frame.ContentTransitions>
+                <TransitionCollection>
+                    <NavigationThemeTransition  />
+                </TransitionCollection>
+            </Frame.ContentTransitions>
+        </Frame>
     </Grid>
 </Page>

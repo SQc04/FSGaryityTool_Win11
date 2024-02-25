@@ -37,6 +37,9 @@ using Windows.UI.Core;
 using System.Xml.Linq;
 using System.Diagnostics.Metrics;
 
+using Tommy;
+using System.Diagnostics;
+
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -51,13 +54,19 @@ namespace FSGaryityTool_Win11
         public static int txf = 0;
         public static int tx = 0; //TXHEX
         public static int rx = 0; //RXHEX
-        public static int dtr = 1;
-        public static int rts = 0;
+        public static int dtr = 0;//FTR
+        public static int rts = 0;//RTS
         public static int shtime = 0;//ShowTime
-        public static int autotr = 1;//AUTOScroll
+        public static int autotr = 0;//AUTOScroll
         public static int rxs = 0;
         public static string rxpstr;
         public static StringBuilder datapwate = new StringBuilder(2048);
+
+        public static string SYSAPLOCAL = Environment.GetFolderPath(folder: Environment.SpecialFolder.LocalApplicationData);
+        public static string FSFolder = Path.Combine(SYSAPLOCAL, "FAIRINGSTUDIO");
+        public static string FSGravif = Path.Combine(FSFolder, "FSGravityTool");
+        public static string FSSetJson = Path.Combine(FSGravif, "Settings.json");
+        public static string FSSetToml = Path.Combine(FSGravif, "Settings.toml");
 
         public Timer timer;
         private bool _isLoaded;
@@ -72,8 +81,46 @@ namespace FSGaryityTool_Win11
         }
 
 
+
         public Page1()
         {
+            string DefaultBAUD;
+            string DefaultPart;
+            string DefaultSTOP;
+            int DefaultDATA;
+
+            using (StreamReader reader = File.OpenText(FSSetToml))
+            {
+                TomlTable SPsettingstomlr = TOML.Parse(reader);
+                //Debug.WriteLine("Print:" + SPsettingstomlr["FSGravitySettings"]["DefaultNvPage"]);
+                //NvPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
+
+                DefaultBAUD = SPsettingstomlr["SerialPortSettings"]["DefaultBAUD"];
+                DefaultPart = SPsettingstomlr["SerialPortSettings"]["DefaultParity"];
+                DefaultSTOP = SPsettingstomlr["SerialPortSettings"]["DefaultSTOP"];
+                DefaultDATA = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultDATA"]);
+
+                tx = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultTXHEX"]);
+                rx = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultRXHEX"]);
+                dtr = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultDTR"]);
+                rts = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultRTS"]);
+                shtime = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultSTime"]);
+                autotr = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultAUTOSco"]);
+
+                /*
+                ["DefaultBAUD"] = "115200",
+                ["DefaultParity"] = "None",
+                ["DefaultSTOP"] = "One",
+                ["DefaultDATA"] = "8",
+                ["DefaultRXHEX"] = "0",
+                ["DefaultTXHEX"] = "0",
+                ["DefaultDTR"] = "1",
+                ["DefaultRTS"] = "0",
+                ["DefaultSTime"] = "0",
+                ["DefaultAUTOSco"] = "1",
+                */
+            }
+
             this.InitializeComponent();
 
             this.Loaded += Page1_Loaded;
@@ -88,27 +135,27 @@ namespace FSGaryityTool_Win11
             // 将ComboBox的ItemsSource属性绑定到这个数据源
             BANDComboBox.ItemsSource = BaudRates;
             // 设置默认选项
-            BANDComboBox.SelectedItem = "115200"; // 将"9600"设置为默认选项
+            BANDComboBox.SelectedItem = DefaultBAUD; // 将"9600"设置为默认选项
 
             List<string> ParRates = new List<string>()
             {
                 "None", "Odd", "Even", "Mark", "Space"
             };
             PARComboBox.ItemsSource = ParRates;
-            PARComboBox.SelectedItem = "None";
+            PARComboBox.SelectedItem = DefaultPart;
 
             List<string> StopRates = new List<string>()
             {
                 "None", "One", "OnePointFive", "Two"
             };
             STOPComboBox.ItemsSource = StopRates;
-            STOPComboBox.SelectedItem = "One";
+            STOPComboBox.SelectedItem = DefaultSTOP;
             
             for (int j = 5; j < 10; ++j)
             {
                 DATAComboBox.Items.Add(j);
             }
-            DATAComboBox.SelectedItem = 8;
+            DATAComboBox.SelectedItem = DefaultDATA;
 
             var foregroundColor = COMButton.Foreground as SolidColorBrush;
             var backgroundColor = COMButton.Background as SolidColorBrush;
@@ -116,6 +163,7 @@ namespace FSGaryityTool_Win11
             var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
             var theme = Application.Current.RequestedTheme;
 
+            /*
             if (theme == ApplicationTheme.Dark)
             {
                 // 当前处于深色模式
@@ -142,9 +190,141 @@ namespace FSGaryityTool_Win11
                 AUTOScrollButton.Background = new SolidColorBrush(ligtaccentColor);
                 AUTOScrollButton.Foreground = new SolidColorBrush(Colors.White);
             }
+            */
+            if (rx == 1)
+            {
+                if (theme == ApplicationTheme.Dark)
+                {
+                    // 当前处于深色模式
+                    RXHEXButton.Background = new SolidColorBrush(darkaccentColor);
+                    RXHEXButton.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    RXHEXButton.Background = new SolidColorBrush(ligtaccentColor);
+                    RXHEXButton.Foreground = new SolidColorBrush(Colors.White);
+                }
+            }
+            else
+            {
+                RXHEXButton.Background = backgroundColor;
+                RXHEXButton.Foreground = foregroundColor;
+            }
 
-            
+            if (tx == 1)
+            {
+                if (theme == ApplicationTheme.Dark)
+                {
+                    // 当前处于深色模式
+                    TXHEXButton.Background = new SolidColorBrush(darkaccentColor);
+                    TXHEXButton.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    TXHEXButton.Background = new SolidColorBrush(ligtaccentColor);
+                    TXHEXButton.Foreground = new SolidColorBrush(Colors.White);
+                }
+            }
+            else
+            {
+                TXHEXButton.Background = backgroundColor;
+                TXHEXButton.Foreground = foregroundColor;
+            }
 
+            if (dtr == 1)
+            {
+                if (theme == ApplicationTheme.Dark)
+                {
+                    // 当前处于深色模式
+                    DTRButton.Background = new SolidColorBrush(darkaccentColor);
+                    DTRButton.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    DTRButton.Background = new SolidColorBrush(ligtaccentColor);
+                    DTRButton.Foreground = new SolidColorBrush(Colors.White);
+                }
+                CommonRes._serialPort.DtrEnable = true;
+            }
+            else
+            {
+                DTRButton.Background = backgroundColor;
+                DTRButton.Foreground = foregroundColor;
+
+                CommonRes._serialPort.DtrEnable = false;
+            }
+
+            if (rts == 1)
+            {
+                if (theme == ApplicationTheme.Dark)
+                {
+                    // 当前处于深色模式
+                    RTSButton.Background = new SolidColorBrush(darkaccentColor);
+                    RTSButton.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    RTSButton.Background = new SolidColorBrush(ligtaccentColor);
+                    RTSButton.Foreground = new SolidColorBrush(Colors.White);
+                }
+                CommonRes._serialPort.RtsEnable = true;
+            }
+            else
+            {
+                RTSButton.Background = backgroundColor;
+                RTSButton.Foreground = foregroundColor;
+
+                CommonRes._serialPort.RtsEnable = false;
+            }
+
+            if (shtime == 1)
+            {
+                if (theme == ApplicationTheme.Dark)
+                {
+                    // 当前处于深色模式
+                    ShowTimeButton.Background = new SolidColorBrush(darkaccentColor);
+                    ShowTimeButton.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    ShowTimeButton.Background = new SolidColorBrush(ligtaccentColor);
+                    ShowTimeButton.Foreground = new SolidColorBrush(Colors.White);
+                }
+
+            }
+            else
+            {
+                ShowTimeButton.Background = backgroundColor;
+                ShowTimeButton.Foreground = foregroundColor;
+
+            }
+
+            if (autotr == 1)
+            {
+                if (theme == ApplicationTheme.Dark)
+                {
+                    // 当前处于深色模式
+                    AUTOScrollButton.Background = new SolidColorBrush(darkaccentColor);
+                    AUTOScrollButton.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    AUTOScrollButton.Background = new SolidColorBrush(ligtaccentColor);
+                    AUTOScrollButton.Foreground = new SolidColorBrush(Colors.White);
+                }
+            }
+            else
+            {
+                AUTOScrollButton.Background = backgroundColor;
+                AUTOScrollButton.Foreground = foregroundColor;
+
+            }
 
         }
 
@@ -156,6 +336,7 @@ namespace FSGaryityTool_Win11
                 _isLoaded = true;
             }
 
+            
             /*
             // 创建一个DispatcherQueueTimer对象
             DispatcherQueueTimer timer = DispatcherQueue.GetForCurrentThread().CreateTimer();
