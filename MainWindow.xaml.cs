@@ -59,7 +59,7 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        private static string FSSoftVersion = "0.2.8";
+        public static string FSSoftVersion = "0.2.8";
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {

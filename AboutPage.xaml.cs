@@ -26,6 +26,8 @@ namespace FSGaryityTool_Win11
         public AboutPage()
         {
             this.InitializeComponent();
+
+            VersionAbout.Text = "Version : " + MainWindow.FSSoftVersion;
         }
 
         //MainWindow FSSoftVersion;

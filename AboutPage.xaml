@@ -40,7 +40,7 @@
                                     <TextBlock VerticalAlignment="Center" Text="© 2019 - 2024 FairingStudio" FontSize="12"/>
                                 </StackPanel>
                             </StackPanel>
-                            <TextBlock VerticalAlignment="Center" HorizontalTextAlignment="Right" Text="Version 0.1.0216.1" Margin="0"/>
+                            <TextBlock x:Name="VersionAbout" VerticalAlignment="Center" HorizontalTextAlignment="Right" Margin="0"/>
                         </Grid>
                     </Expander.Header>
                 </Expander>
