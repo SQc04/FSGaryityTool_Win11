@@ -11,6 +11,6 @@
     NavigationCacheMode="Enabled">
 
     <Grid>
-        <controls:WebView2 x:Name="MyWebView2" Source="https://fairingstudio.com/" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" MinHeight="200" MinWidth="200" Margin="12,42,12,12"/>
+        <controls:WebView2 x:Name="MyWebView2" Source="https://fairingstudio.com/" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" MinHeight="200" MinWidth="200" Margin="12,0,12,12"/>
     </Grid>
 </Page>

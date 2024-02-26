@@ -15,35 +15,47 @@
             <ColumnDefinition Width="0"/>
             <ColumnDefinition Width="264" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="112"/>
-            <ColumnDefinition Width="58"/>
+            <ColumnDefinition Width="72"/>
+            <ColumnDefinition Width="63"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="52" />
         </Grid.RowDefinitions>
+
+        <ProgressBar x:Name="RunProgressBar" Grid.Column="1" Grid.ColumnSpan="4" VerticalAlignment="Bottom" Grid.Row="1" IsIndeterminate="False" ShowPaused="False" ShowError="False" Margin="0,0,0,0" />
+
         <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Height="10000" />
-        <ScrollViewer Grid.Column="1" Grid.Row="0" >
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="6,6,0,6">
+        <ScrollViewer Grid.Column="1" Grid.Row="0" Margin="0,12,0,6">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="6,0,0,0">
                 <StackPanel Orientation="Horizontal">
-                    <Button x:Name="COMButton" Click="COMButton_Click" Width="120" Margin="6">Search COM</Button>
-                    <ComboBox x:Name="COMComboBox" SelectionChanged="COMComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                    <Button x:Name="COMButton" Click="COMButton_Click" Width="120" Margin="6,0,6,6">Search COM</Button>
+                    <ComboBox x:Name="COMComboBox" SelectionChanged="COMComboBox_SelectionChanged" Width="108" Margin="6,0,6,6"></ComboBox>
                 </StackPanel>
+                <StackPanel Orientation="Horizontal" Height="12"></StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">BAUDRATE</TextBlock>
+                    <Border x:Name="BorderBack1" CornerRadius="4" Margin="6">
+                        <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">BAUDRATE</TextBlock>
+                    </Border>
                     <ComboBox x:Name="BANDComboBox" SelectionChanged="BANDComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">Parity</TextBlock>
+                    <Border x:Name="BorderBack2" CornerRadius="4" Margin="6">
+                        <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">Parity</TextBlock>
+                    </Border>
                     <ComboBox x:Name="PARComboBox" SelectionChanged="PARComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">STOP Bits</TextBlock>
+                    <Border x:Name="BorderBack3" CornerRadius="4" Margin="6">
+                        <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">STOP Bits</TextBlock>
+                    </Border>
                     <ComboBox x:Name="STOPComboBox" SelectionChanged="STOPComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="6">DATA Bits</TextBlock>
+                    <Border x:Name="BorderBack4" CornerRadius="4" Margin="6">
+                        <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">DATA Bits</TextBlock>
+                    </Border>
                     <ComboBox x:Name="DATAComboBox" SelectionChanged="DATAComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
                 </StackPanel>
 
@@ -62,13 +74,21 @@
                     <Button x:Name="ShowTimeButton" Click="ShowTimeButton_Click" Width="120" Margin="6">ShowTime</Button>
                     <Button x:Name="AUTOScrollButton" Click="AUTOScrollButton_Click" Width="108" Margin="6">AUTOScroll</Button>
                 </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <ProgressBar x:Name="RunTProgressBar" Width="240" Value="0" Margin="6"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <ToggleButton IsThreeState="False" IsChecked="True" Width="120" Margin="6">Save</ToggleButton>
+                    <ToggleButton IsThreeState="False" IsChecked="True" Width="108" Margin="6">Save</ToggleButton>
+                </StackPanel>
+
 
                 <StackPanel Orientation="Horizontal" Height="36"></StackPanel>
-
+                
                 <StackPanel Orientation="Horizontal">
 
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                     <Button x:Name="RXDataButton" Click="RXDataButton_Click" Width="0" Margin="6">RX</Button>
                 </StackPanel>
             </StackPanel>
@@ -77,9 +97,16 @@
 
         <TextBox x:Name="RXTextBox" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="3" TextChanged="RXTextBox_TextChanged" IsReadOnly="True"  AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,12,12,6" />
 
-        <TextBox x:Name="TXTextBox" Grid.Column="2" Grid.Row="1" TextChanged="TXTextBox_TextChanged" Margin="0,6,6,12" PlaceholderText="Type your notes here"/>
-        <Button x:Name="TXButton" Grid.Column="3" Grid.Row="1" Click="TXButton_Click" Width="100" Margin="6,6,6,12">SEND DATA</Button>
-        <Button x:Name="CLEARButton" Grid.Column="4" Grid.Row="1" Click="CLEARButton_Click" Width="40" Margin="6,6,12,12">⨉</Button>
-        
+        <TextBox x:Name="TXTextBox" Grid.Column="2" Grid.Row="1" KeyUp="TXTextBox_KeyUp" TextChanged="TXTextBox_TextChanged" Margin="0,6,6,12" PlaceholderText="Type your notes here">
+            
+        </TextBox>
+        <StackPanel Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal">
+            <Button x:Name="TXButton" Grid.Column="3" Grid.Row="1" Click="TXButton_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Margin="6,6,6,12">
+                <FontIcon Glyph="&#xE724;" FontFamily="Segoe MDL2 Assets" ></FontIcon>
+            </Button>
+            <Button x:Name="CLEARButton" Grid.Column="4" Grid.Row="1" Click="CLEARButton_Click" Width="45" Margin="6,6,12,12">
+                <FontIcon Glyph="&#xE711;" FontFamily="Segoe MDL2 Assets" ></FontIcon>
+            </Button>
+        </StackPanel>
     </Grid>
 </Page>

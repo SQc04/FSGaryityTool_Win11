@@ -59,7 +59,7 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.8";
+        public static string FSSoftVersion = "0.2.9";
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
@@ -86,7 +86,9 @@ namespace FSGaryityTool_Win11
             this.InitializeComponent();
 
             // 将窗口的标题栏设置为自定义标题栏
-            this.ExtendsContentIntoTitleBar = true;
+            
+            this.ExtendsContentIntoTitleBar = true;  // enable custom titlebar
+            SetTitleBar(AppTitleBara);
 
             m_AppWindow = GetAppWindowForCurrentWindow();
             m_AppWindow.Title = "FSGravityTool";//Set AppWindow

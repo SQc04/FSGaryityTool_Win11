@@ -60,23 +60,19 @@ namespace FSGaryityTool_Win11
             
             
 
-            using (StreamReader reader = File.OpenText(Page1.FSSetToml))
+            using (StreamReader reader = File.OpenText(Page1.FSSetToml))        //打开TOML文件
             {
                 TomlTable settingstomlr = TOML.Parse(reader);
                 DefaultTomlSTARTPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
             }
 
-            
-
-
-
-            List<string> STARTPage = new List<string>()
+            List<string> STARTPage = new List<string>()         //新建字符串
             {
                 "Serial Port", "Download Flash", "Keyboard"
             };
-            StartPageCombobox.ItemsSource = STARTPage;
+            StartPageCombobox.ItemsSource = STARTPage;          //将字符串添加到选择框
 
-            if (DefaultTomlSTARTPage == 0)
+            if (DefaultTomlSTARTPage == 0)                      //读取TOML设置
             {
                 DefaultSTARTPage = "Serial Port";
             }
@@ -99,7 +95,7 @@ namespace FSGaryityTool_Win11
                 }
             }
 
-            StartPageCombobox.SelectedItem = DefaultSTARTPage;
+            StartPageCombobox.SelectedItem = DefaultSTARTPage;  //将TOML设置添加到选择框
 
         }
 
@@ -160,7 +156,7 @@ namespace FSGaryityTool_Win11
 
         private void StartPageCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            using (StreamReader reader = File.OpenText(Page1.FSSetToml))
+            using (StreamReader reader = File.OpenText(Page1.FSSetToml))                    //打开TOML文件
             {
                 settingstomlr = TOML.Parse(reader);
 
@@ -189,7 +185,7 @@ namespace FSGaryityTool_Win11
 
             }
 
-            using (StreamWriter writer = File.CreateText(Page1.FSSetToml))
+            using (StreamWriter writer = File.CreateText(Page1.FSSetToml))                  //将设置写入TOML文件
             {
                 settingstomlr.WriteTo(writer);
                 Debug.WriteLine("写入Toml" + settingstomlr["FSGravitySettings"]["DefaultNvPage"]);

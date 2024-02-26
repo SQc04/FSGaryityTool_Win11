@@ -39,6 +39,9 @@ using System.Diagnostics.Metrics;
 
 using Tommy;
 using System.Diagnostics;
+using static System.Runtime.CompilerServices.RuntimeHelpers;
+
+using System.Windows.Input;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -62,11 +65,16 @@ namespace FSGaryityTool_Win11
         public static string rxpstr;
         public static StringBuilder datapwate = new StringBuilder(2048);
 
+        public static int RunPBT = 0;
+        public static int RunT = 0;
+
         public static string SYSAPLOCAL = Environment.GetFolderPath(folder: Environment.SpecialFolder.LocalApplicationData);
         public static string FSFolder = Path.Combine(SYSAPLOCAL, "FAIRINGSTUDIO");
         public static string FSGravif = Path.Combine(FSFolder, "FSGravityTool");
         public static string FSSetJson = Path.Combine(FSGravif, "Settings.json");
         public static string FSSetToml = Path.Combine(FSGravif, "Settings.toml");
+
+        
 
         public Timer timer;
         private bool _isLoaded;
@@ -91,7 +99,7 @@ namespace FSGaryityTool_Win11
 
             using (StreamReader reader = File.OpenText(FSSetToml))
             {
-                TomlTable SPsettingstomlr = TOML.Parse(reader);
+                TomlTable SPsettingstomlr = TOML.Parse(reader);             //读取TOML
                 //Debug.WriteLine("Print:" + SPsettingstomlr["FSGravitySettings"]["DefaultNvPage"]);
                 //NvPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
 
@@ -326,6 +334,12 @@ namespace FSGaryityTool_Win11
 
             }
 
+            RunProgressBar.Visibility = Visibility.Collapsed;
+
+            BorderBack1.Background = backgroundColor;
+            BorderBack2.Background = backgroundColor;
+            BorderBack3.Background = backgroundColor;
+            BorderBack4.Background = backgroundColor;
         }
 
         private void Page1_Loaded(object sender, RoutedEventArgs e)
@@ -357,7 +371,22 @@ namespace FSGaryityTool_Win11
         {
             DispatcherQueue.TryEnqueue(() =>
             {
-                AUTOScrollButton_ClickAsync(null, null);
+                RXDATA_ClickAsync(null, null);
+
+                if (RunT == 0) RunPBT += 2;
+                    
+                else RunPBT -= 2;
+
+                RunTProgressBar.Value = RunPBT;
+                if (RunPBT == 100)
+                {
+                    RunT = 1;
+                }
+                else if (RunPBT == 0)
+                {
+                    RunT = 0;
+                }
+
             });
             
         }
@@ -457,7 +486,9 @@ namespace FSGaryityTool_Win11
 
                     CONTButton.Content = "DISCONNECT";
                     Con = 1;
-
+                    RunProgressBar.ShowError = false;
+                    RunProgressBar.IsIndeterminate = true;
+                    RunProgressBar.Visibility = Visibility.Visible;
                     //CONTButton.Background = new SolidColorBrush(color);
                     if (theme == ApplicationTheme.Dark)                                                                         //设置连接按钮背景颜色
                     {
@@ -482,8 +513,9 @@ namespace FSGaryityTool_Win11
                     CONTButton.Content = "CONNECT";
                     CONTButton.Background = backgroundColor;
                     CONTButton.Foreground = foregroundColor;
-
-                    
+                    RunProgressBar.IsIndeterminate = true;
+                    RunProgressBar.ShowError=true;
+                    RunProgressBar.Visibility = Visibility.Visible;
                 }
 
             }
@@ -504,7 +536,9 @@ namespace FSGaryityTool_Win11
                 Con = 0;
                 CONTButton.Background = backgroundColor;
                 CONTButton.Foreground = foregroundColor;
-
+                RunProgressBar.IsIndeterminate = false;
+                RunProgressBar.ShowError = false;
+                RunProgressBar.Visibility = Visibility.Collapsed;
                 timer.Dispose();
             }
         }
@@ -734,7 +768,9 @@ namespace FSGaryityTool_Win11
                 TXTextBox.Text = "";
             }
         }
-    
+
+
+
         private void CLEARButton_Click(object sender, RoutedEventArgs e)
         {
             RXTextBox.Text = "";    //清除文本框内容
@@ -1000,7 +1036,7 @@ namespace FSGaryityTool_Win11
         }
         */
 
-        private Task AUTOScrollButton_ClickAsync(object sender, RoutedEventArgs e)
+        private Task RXDATA_ClickAsync(object sender, RoutedEventArgs e)
         {
             // 在这里添加你的异步代码
             // 例如：await SomeAsyncMethod();
@@ -1008,34 +1044,6 @@ namespace FSGaryityTool_Win11
             //RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";
             //Timesr = current_time.ToString("HH:mm:ss");
 
-            var foregroundColor = COMButton.Foreground as SolidColorBrush;//定时器检查
-            var backgroundColor = COMButton.Background as SolidColorBrush;
-            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
-            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
-            var theme = Application.Current.RequestedTheme;
-            if (autotr == 0)
-            {
-                if (theme == ApplicationTheme.Dark)
-                {
-                    // 当前处于深色模式
-                    AUTOScrollButton.Background = new SolidColorBrush(darkaccentColor);
-                    AUTOScrollButton.Foreground = new SolidColorBrush(Colors.Black);
-                }
-                else if (theme == ApplicationTheme.Light)
-                {
-                    // 当前处于浅色模式
-                    AUTOScrollButton.Background = new SolidColorBrush(ligtaccentColor);
-                    AUTOScrollButton.Foreground = new SolidColorBrush(Colors.White);
-                }
-                autotr = 1;
-            }
-            else
-            {
-                AUTOScrollButton.Background = backgroundColor;
-                AUTOScrollButton.Foreground = foregroundColor;
-
-                autotr = 0;
-            }
 
 
             //rxpstr = System.Text.Encoding.UTF8.GetString(datapwate);
@@ -1045,5 +1053,12 @@ namespace FSGaryityTool_Win11
             return Task.CompletedTask;
         }
 
+        private void TXTextBox_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                TXButton_Click(this, new RoutedEventArgs());
+            }
+        }
     }
 }
