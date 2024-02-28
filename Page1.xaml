@@ -15,7 +15,7 @@
             <ColumnDefinition Width="0"/>
             <ColumnDefinition Width="264" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="72"/>
+            <ColumnDefinition Width="155"/>
             <ColumnDefinition Width="63"/>
         </Grid.ColumnDefinitions>
 
@@ -24,6 +24,7 @@
             <RowDefinition Height="52" />
         </Grid.RowDefinitions>
 
+        
         <ProgressBar x:Name="RunProgressBar" Grid.Column="1" Grid.ColumnSpan="4" VerticalAlignment="Bottom" Grid.Row="1" IsIndeterminate="False" ShowPaused="False" ShowError="False" Margin="0,0,0,0" />
 
         <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Height="10000" />
@@ -62,8 +63,8 @@
                 <StackPanel Orientation="Horizontal" Height="36"></StackPanel>
 
                 <StackPanel Orientation="Horizontal">
-                    <Button x:Name="RXHEXButton" Click="RXHEXButton_Click" Width="120" Margin="6">RX HEX</Button>
-                    <Button x:Name="TXHEXButton" Click="TXHEXButton_Click" Width="108" Margin="6">TX HEX</Button>
+                    <ToggleButton x:Name="RXHEXButton" Click="RXHEXButton_Click" Width="120" Margin="6">RX HEX</ToggleButton>
+                    <ToggleButton x:Name="TXHEXButton" Click="TXHEXButton_Click" Width="108" Margin="6">TX HEX</ToggleButton>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="RSTButton" Click="RSTButton_Click" Width="120" Margin="6">RST</Button>
@@ -78,7 +79,7 @@
                     <ProgressBar x:Name="RunTProgressBar" Width="240" Value="0" Margin="6"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <ToggleButton IsThreeState="False" IsChecked="True" Width="120" Margin="6">Save</ToggleButton>
+                    <ToggleButton x:Name="SaveSetButton" Checked="SaveSetButton_Checked" IsThreeState="False" IsChecked="True" Width="120" Margin="6">Save</ToggleButton>
                     <ToggleButton IsThreeState="False" IsChecked="True" Width="108" Margin="6">Save</ToggleButton>
                 </StackPanel>
 
@@ -94,17 +95,43 @@
             </StackPanel>
         </ScrollViewer>
         <Button x:Name="CONTButton" Grid.Column="1" Grid.Row="1" Click="CONTButton_Click" Width="240" Margin="12,6,6,12">CONNECT</Button>
+        
+        <Border x:Name="BorderBackRX" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="3" CornerRadius="4" Margin="0,12,224,6">
+            <ListView x:Name="RXListView" 
+                  BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" 
+                  BorderThickness="0" 
+                  Margin="3">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:DataItem">
+                        <Grid Margin="0,3,0,6">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-        <TextBox x:Name="RXTextBox" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="3" TextChanged="RXTextBox_TextChanged" IsReadOnly="True"  AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,12,12,6" />
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Timesr}" Height="18" Margin="0,0,10,0"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind Rxstr}" Height="18" Margin="0,0,10,0"/>
+
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+
+        <TextBox x:Name="RXTextBox" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="3" TextChanged="RXTextBox_TextChanged" IsReadOnly="True"  
+                 AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" Width="200" HorizontalAlignment="Right" Margin="0,12,12,6" />
 
         <TextBox x:Name="TXTextBox" Grid.Column="2" Grid.Row="1" KeyUp="TXTextBox_KeyUp" TextChanged="TXTextBox_TextChanged" Margin="0,6,6,12" PlaceholderText="Type your notes here">
             
         </TextBox>
         <StackPanel Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal">
-            <Button x:Name="TXButton" Grid.Column="3" Grid.Row="1" Click="TXButton_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Margin="6,6,6,12">
+            <Button x:Name="TXButton" Grid.Column="3" Grid.Row="1" Click="TXButton_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="130" Margin="6,6,6,12">
                 <FontIcon Glyph="&#xE724;" FontFamily="Segoe MDL2 Assets" ></FontIcon>
             </Button>
-            <Button x:Name="CLEARButton" Grid.Column="4" Grid.Row="1" Click="CLEARButton_Click" Width="45" Margin="6,6,12,12">
+            <Button x:Name="CLEARButton" Grid.Column="4" Grid.Row="1" Click="CLEARButton_Click" Width="58" Margin="6,6,12,12">
                 <FontIcon Glyph="&#xE711;" FontFamily="Segoe MDL2 Assets" ></FontIcon>
             </Button>
         </StackPanel>

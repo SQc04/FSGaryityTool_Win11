@@ -42,6 +42,10 @@ using System.Diagnostics;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 using System.Windows.Input;
+using Windows.ApplicationModel.Contacts;
+using System.Reflection.Metadata.Ecma335;
+using static FSGaryityTool_Win11.Page1;
+using Windows.Devices.Sensors;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -51,6 +55,13 @@ namespace FSGaryityTool_Win11
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
+    /// 
+    public class DataItem
+    {
+        public string Timesr { get; set; }
+        public string Rxstr { get; set; }
+    }
+
     public sealed partial class Page1 : Page
     {
         public static int Con = 0;
@@ -79,7 +90,7 @@ namespace FSGaryityTool_Win11
         public Timer timer;
         private bool _isLoaded;
         public static string str;
-        private DateTime current_time = new DateTime();
+        public DateTime current_time = new DateTime();
 
         public static class CommonRes
         {
@@ -132,6 +143,8 @@ namespace FSGaryityTool_Win11
             this.InitializeComponent();
 
             this.Loaded += Page1_Loaded;
+
+            RXListView.ItemsSource = new ObservableCollection<DataItem>();
 
             CommonRes._serialPort.DataReceived += _serialPort_DataReceived;
 
@@ -201,44 +214,20 @@ namespace FSGaryityTool_Win11
             */
             if (rx == 1)
             {
-                if (theme == ApplicationTheme.Dark)
-                {
-                    // 当前处于深色模式
-                    RXHEXButton.Background = new SolidColorBrush(darkaccentColor);
-                    RXHEXButton.Foreground = new SolidColorBrush(Colors.Black);
-                }
-                else if (theme == ApplicationTheme.Light)
-                {
-                    // 当前处于浅色模式
-                    RXHEXButton.Background = new SolidColorBrush(ligtaccentColor);
-                    RXHEXButton.Foreground = new SolidColorBrush(Colors.White);
-                }
+                RXHEXButton.IsChecked = true;
             }
             else
             {
-                RXHEXButton.Background = backgroundColor;
-                RXHEXButton.Foreground = foregroundColor;
+                RXHEXButton.IsChecked = false;
             }
 
             if (tx == 1)
             {
-                if (theme == ApplicationTheme.Dark)
-                {
-                    // 当前处于深色模式
-                    TXHEXButton.Background = new SolidColorBrush(darkaccentColor);
-                    TXHEXButton.Foreground = new SolidColorBrush(Colors.Black);
-                }
-                else if (theme == ApplicationTheme.Light)
-                {
-                    // 当前处于浅色模式
-                    TXHEXButton.Background = new SolidColorBrush(ligtaccentColor);
-                    TXHEXButton.Foreground = new SolidColorBrush(Colors.White);
-                }
+                TXHEXButton.IsChecked = true;
             }
             else
             {
-                TXHEXButton.Background = backgroundColor;
-                TXHEXButton.Foreground = foregroundColor;
+                TXHEXButton.IsChecked = false;
             }
 
             if (dtr == 1)
@@ -340,6 +329,8 @@ namespace FSGaryityTool_Win11
             BorderBack2.Background = backgroundColor;
             BorderBack3.Background = backgroundColor;
             BorderBack4.Background = backgroundColor;
+
+            BorderBackRX.Background = backgroundColor;
         }
 
         private void Page1_Loaded(object sender, RoutedEventArgs e)
@@ -565,6 +556,7 @@ namespace FSGaryityTool_Win11
 
 
             string rxstr;
+            string rxntstr;
             string Timesr = current_time.ToString("HH:mm:ss   ");//显示时间
             //StringBuilder datawate = new StringBuilder(1024);
 
@@ -574,6 +566,7 @@ namespace FSGaryityTool_Win11
             {
                 
                 rxstr = CommonRes._serialPort.ReadExisting();                    // 读取串口接收缓冲区字符串
+                rxntstr = rxstr;
                 if (shtime == 1)
                 {
                     rxstr = string.Concat(Timesr, rxstr);
@@ -584,6 +577,7 @@ namespace FSGaryityTool_Win11
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     datapwate.Append(rxstr);                          // 在接收文本框中进行显示
+                    UpdateItemsRepeater(Timesr, rxntstr);               // 在接收listview中进行显示
                 });
 
                 if (autotr == 1)
@@ -609,21 +603,20 @@ namespace FSGaryityTool_Win11
 
                     DispatcherQueue.TryEnqueue(() =>
                     {
-                        RXTextBox.Text = RXTextBox.Text + "0x" + (str.Length == 1 ? "0" + str + " " : str + " ");        // 添加到串口接收文本框中
+                        //datapwate.Append("0x" + (rxhstr.Length == 1 ? "0" + rxhstr + " " : rxhstr + " "));        // 添加到串口接收文本框中
                     });
-
-
-                    
                 }
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    datapwate.Append("\r\n");
+                });
+
                 if (autotr == 1)
                 {
                     //RXTextBox.ScrollToEnd();
                 }
 
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    RXTextBox.Text += "\r\n";
-                });
+                
             }
 
             /*
@@ -640,11 +633,24 @@ namespace FSGaryityTool_Win11
             
         }
 
+        private void UpdateItemsRepeater(string Timesr, string Rxstr)
+        {
+            // 假设你的ItemsRepeater的名字是RXListView
+            DataItem item = new DataItem { Timesr = Timesr, Rxstr = Rxstr };
+            (RXListView.ItemsSource as ObservableCollection<DataItem>).Add(item);
+
+            if (autotr == 1)
+            {
+                RXListView.ScrollIntoView(item);
+            }
+        }
 
         private void COMComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }
+
+
 
         private void TXTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -773,7 +779,9 @@ namespace FSGaryityTool_Win11
 
         private void CLEARButton_Click(object sender, RoutedEventArgs e)
         {
+            RXListView.ItemsSource = null;
             RXTextBox.Text = "";    //清除文本框内容
+            RXListView.ItemsSource = new ObservableCollection<DataItem>();
         }
 
         private void RXTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -800,62 +808,25 @@ namespace FSGaryityTool_Win11
 
         private void RXHEXButton_Click(object sender, RoutedEventArgs e)    //接收以十六进制数显示
         {
-            var foregroundColor = COMButton.Foreground as SolidColorBrush;
-            var backgroundColor = COMButton.Background as SolidColorBrush;
-            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
-            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
-            var theme = Application.Current.RequestedTheme;
             if (rx == 0)
             {
-                if (theme == ApplicationTheme.Dark)
-                {
-                    // 当前处于深色模式
-                    RXHEXButton.Background = new SolidColorBrush(darkaccentColor);
-                    RXHEXButton.Foreground = new SolidColorBrush(Colors.Black);
-                }
-                else if (theme == ApplicationTheme.Light)
-                {
-                    // 当前处于浅色模式
-                    RXHEXButton.Background = new SolidColorBrush(ligtaccentColor);
-                    RXHEXButton.Foreground = new SolidColorBrush(Colors.White);
-                }
                 rx = 1;
             }
             else
             {
-                RXHEXButton.Background = backgroundColor;
-                RXHEXButton.Foreground = foregroundColor;
                 rx = 0;
             }
         }
 
         private void TXHEXButton_Click(object sender, RoutedEventArgs e)    //发送以十六进制数显示
         {
-            var foregroundColor = COMButton.Foreground as SolidColorBrush;
-            var backgroundColor = COMButton.Background as SolidColorBrush;
-            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
-            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
-            var theme = Application.Current.RequestedTheme;
+
             if (tx == 0)
             {
-                if (theme == ApplicationTheme.Dark)
-                {
-                    // 当前处于深色模式
-                    TXHEXButton.Background = new SolidColorBrush(darkaccentColor);
-                    TXHEXButton.Foreground = new SolidColorBrush(Colors.Black);
-                }
-                else if (theme == ApplicationTheme.Light)
-                {
-                    // 当前处于浅色模式
-                    TXHEXButton.Background = new SolidColorBrush(ligtaccentColor);
-                    TXHEXButton.Foreground = new SolidColorBrush(Colors.White);
-                }
                 tx = 1;
             }
             else
             {
-                TXHEXButton.Background = backgroundColor;
-                TXHEXButton.Foreground = foregroundColor;
                 tx = 0;
             }
         }
@@ -863,6 +834,9 @@ namespace FSGaryityTool_Win11
 
         private void RSTButton_Click(object sender, RoutedEventArgs e)      //自动重启
         {
+            
+            CommonRes._serialPort.BaudRate = 74880;// BANDComboBox.SelectedItem = "74880";//ESP12F
+
             CommonRes._serialPort.RtsEnable = true;
             Thread.Sleep(10);
             CommonRes._serialPort.DtrEnable = true;
@@ -870,18 +844,22 @@ namespace FSGaryityTool_Win11
             CommonRes._serialPort.DtrEnable = false;
             Thread.Sleep(10);
             CommonRes._serialPort.RtsEnable = false;
-            if(dtr == 1)
+
+            Thread.Sleep(100);
+            if (dtr == 1)
             {
                 DTRButton_Click(sender, e);
-                Thread.Sleep(50);
+                Thread.Sleep(1);
                 DTRButton_Click(sender, e);
             }
             else
             {
-                Thread.Sleep(50);
+                Thread.Sleep(1);
                 DTRButton_Click(sender, e);
             }
+            
             //CommonRes._serialPort.DtrEnable = true;
+            CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);
         }
 
         private void DTRButton_Click(object sender, RoutedEventArgs e)      //DTR信号使能
@@ -1050,6 +1028,7 @@ namespace FSGaryityTool_Win11
             rxpstr = datapwate.ToString();                          //将缓冲区赋值到输出
             RXTextBox.Text = RXTextBox.Text + rxpstr + "";          //输出接收的数据
             datapwate.Clear();                                      //清空缓冲区
+
             return Task.CompletedTask;
         }
 
@@ -1060,5 +1039,13 @@ namespace FSGaryityTool_Win11
                 TXButton_Click(this, new RoutedEventArgs());
             }
         }
+
+        private void SaveSetButton_Checked(object sender, RoutedEventArgs e)
+        {
+            SaveSetButton.IsChecked = true;
+        }
+
+        
+        
     }
 }
