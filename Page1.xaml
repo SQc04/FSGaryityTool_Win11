@@ -7,15 +7,17 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
     NavigationCacheMode="Enabled"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    >
+    <!--Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"-->
 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0"/>
             <ColumnDefinition Width="264" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="155"/>
+            <ColumnDefinition MinWidth="160" Width="*" />
+            <ColumnDefinition MinWidth="120" MaxWidth="400" Width="Auto"/>
             <ColumnDefinition Width="63"/>
         </Grid.ColumnDefinitions>
 
@@ -27,65 +29,144 @@
         
         <ProgressBar x:Name="RunProgressBar" Grid.Column="1" Grid.ColumnSpan="4" VerticalAlignment="Bottom" Grid.Row="1" IsIndeterminate="False" ShowPaused="False" ShowError="False" Margin="0,0,0,0" />
 
-        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Height="10000" />
+        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" Height="10000"/>
+        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" VerticalAlignment="Stretch">
+            
+        </StackPanel>
         <ScrollViewer Grid.Column="1" Grid.Row="0" Margin="0,12,0,6">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="6,0,0,0">
                 <StackPanel Orientation="Horizontal">
-                    <Button x:Name="COMButton" Click="COMButton_Click" Width="120" Margin="6,0,6,6">Search COM</Button>
+                    <Button x:Name="COMButton" Click="COMButton_Click" Width="120" Margin="6,0,6,6">
+                        <FontIcon Glyph="&#xE72C;" />
+                    </Button>
                     <ComboBox x:Name="COMComboBox" SelectionChanged="COMComboBox_SelectionChanged" Width="108" Margin="6,0,6,6"></ComboBox>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Height="12"></StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Border x:Name="BorderBack1" CornerRadius="4" Margin="6">
+                    <Border CornerRadius="4" Width="240" Height="Auto" Margin="6,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}">
+                        <!--MaxHeight="140"-->
+                        <ListView x:Name="COMListview"
+                                  SelectionChanged="COMListview_SelectionChanged"
+                                  SelectionMode="Single"
+                                  BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+                                  BorderThickness="0" 
+                                  Margin="0">
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition />
+                                </TransitionCollection>
+                            </ListView.ItemContainerTransitions>
+                        </ListView>
+                    </Border>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal">
+                    <Border x:Name="BorderBack1" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
                         <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">BAUDRATE</TextBlock>
                     </Border>
                     <ComboBox x:Name="BANDComboBox" SelectionChanged="BANDComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
                 </StackPanel>
+                
                 <StackPanel Orientation="Horizontal">
-                    <Border x:Name="BorderBack2" CornerRadius="4" Margin="6">
+                    <Border x:Name="BorderBack2" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
                         <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">Parity</TextBlock>
                     </Border>
                     <ComboBox x:Name="PARComboBox" SelectionChanged="PARComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
                 </StackPanel>
+                
                 <StackPanel Orientation="Horizontal">
-                    <Border x:Name="BorderBack3" CornerRadius="4" Margin="6">
+                    <Border x:Name="BorderBack3" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
                         <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">STOP Bits</TextBlock>
                     </Border>
                     <ComboBox x:Name="STOPComboBox" SelectionChanged="STOPComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
                 </StackPanel>
+                
                 <StackPanel Orientation="Horizontal">
-                    <Border x:Name="BorderBack4" CornerRadius="4" Margin="6">
+                    <Border x:Name="BorderBack4" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
                         <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">DATA Bits</TextBlock>
                     </Border>
                     <ComboBox x:Name="DATAComboBox" SelectionChanged="DATAComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Height="36"></StackPanel>
-
+                <StackPanel Orientation="Horizontal">
+                    <ProgressBar x:Name="RunTProgressBar" Width="240" Value="0" Margin="6"/>
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
+                </StackPanel>
+                
                 <StackPanel Orientation="Horizontal">
                     <ToggleButton x:Name="RXHEXButton" Click="RXHEXButton_Click" Width="120" Margin="6">RX HEX</ToggleButton>
                     <ToggleButton x:Name="TXHEXButton" Click="TXHEXButton_Click" Width="108" Margin="6">TX HEX</ToggleButton>
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Button x:Name="RSTButton" Click="RSTButton_Click" Width="120" Margin="6">RST</Button>
+                    <ToggleButton x:Name="SaveSetButton" Checked="SaveSetButton_Checked" IsThreeState="False" IsChecked="False" Width="120" Margin="6">AutoSaveSet</ToggleButton>
                     <Button x:Name="DTRButton" Click="DTRButton_Click" Width="48" Margin="6">DTR</Button>
                     <Button x:Name="RTSButton" Click="RTSButton_Click" Width="48" Margin="6">RTS</Button>
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="ShowTimeButton" Click="ShowTimeButton_Click" Width="120" Margin="6">ShowTime</Button>
                     <Button x:Name="AUTOScrollButton" Click="AUTOScrollButton_Click" Width="108" Margin="6">AUTOScroll</Button>
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <ProgressBar x:Name="RunTProgressBar" Width="240" Value="0" Margin="6"/>
+                    <ToggleButton x:Name="AutoComButton" Checked="AutoComButton_Checked" IsThreeState="False" IsChecked="False" Width="120" Margin="6">AutoSerichCom</ToggleButton>
+                    <ToggleButton x:Name="AutoConnectButton" Checked="AutoComButton_Checked" IsThreeState="False" IsChecked="False" Width="108" Margin="6">Auto Connect</ToggleButton>
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <ToggleButton x:Name="SaveSetButton" Checked="SaveSetButton_Checked" IsThreeState="False" IsChecked="True" Width="120" Margin="6">Save</ToggleButton>
-                    <ToggleButton IsThreeState="False" IsChecked="True" Width="108" Margin="6">Save</ToggleButton>
-                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal" Height="36"></StackPanel>
 
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="RSTButton" Click="RSTButton_Click" Width="120" Margin="6">RST</Button>
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
+                </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Height="36"></StackPanel>
-                
+                <StackPanel Orientation="Horizontal" Height="12"></StackPanel>
                 <StackPanel Orientation="Horizontal">
 
                 </StackPanel>
@@ -94,11 +175,16 @@
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
+        <StackPanel Grid.Column="1" Grid.Row="0" VerticalAlignment="Bottom" Orientation="Vertical" Margin="6,6,6,6">
+            <Border CornerRadius="4" Width="240" Height="200" >
+                
+            </Border>
+        </StackPanel>
         <Button x:Name="CONTButton" Grid.Column="1" Grid.Row="1" Click="CONTButton_Click" Width="240" Margin="12,6,6,12">CONNECT</Button>
-        
-        <Border x:Name="BorderBackRX" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="3" CornerRadius="4" Margin="0,12,224,6">
+
+        <Border x:Name="BorderBackRX" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="1" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4" MinWidth="300" Margin="0,12,0,6">
             <ListView x:Name="RXListView" 
-                  BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" 
+                  BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
                   BorderThickness="0" 
                   Margin="3">
                 <ListView.ItemTemplate>
@@ -113,27 +199,39 @@
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Timesr}" Height="18" Margin="0,0,10,0"/>
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind Rxstr}" Height="18" Margin="0,0,10,0"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind Rxstr}" HorizontalAlignment="Stretch" Height="18" Margin="0,0,10,0"/>
 
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                <ListView.ItemContainerTransitions>
+                    <TransitionCollection>
+                        <AddDeleteThemeTransition />
+                    </TransitionCollection>
+                </ListView.ItemContainerTransitions>
             </ListView>
         </Border>
 
-        <TextBox x:Name="RXTextBox" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="3" TextChanged="RXTextBox_TextChanged" IsReadOnly="True"  
-                 AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" Width="200" HorizontalAlignment="Right" Margin="0,12,12,6" />
 
-        <TextBox x:Name="TXTextBox" Grid.Column="2" Grid.Row="1" KeyUp="TXTextBox_KeyUp" TextChanged="TXTextBox_TextChanged" Margin="0,6,6,12" PlaceholderText="Type your notes here">
+        <TextBox x:Name="RXTextBox" Grid.Column="3" Grid.Row="0" Grid.ColumnSpan="2" TextChanged="RXTextBox_TextChanged" IsReadOnly="True"  
+                 AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" Margin="12,12,12,6" />
+
+
+
+        <Toolkit:GridSplitter Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Left" />
+
+        <TextBox x:Name="TXTextBox" Grid.Column="2" Grid.Row="1" KeyUp="TXTextBox_KeyUp" TextChanged="TXTextBox_TextChanged" Margin="0,6,0,12" PlaceholderText="Type your data here...">
             
         </TextBox>
-        <StackPanel Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal">
-            <Button x:Name="TXButton" Grid.Column="3" Grid.Row="1" Click="TXButton_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="130" Margin="6,6,6,12">
-                <FontIcon Glyph="&#xE724;" FontFamily="Segoe MDL2 Assets" ></FontIcon>
-            </Button>
-            <Button x:Name="CLEARButton" Grid.Column="4" Grid.Row="1" Click="CLEARButton_Click" Width="58" Margin="6,6,12,12">
-                <FontIcon Glyph="&#xE711;" FontFamily="Segoe MDL2 Assets" ></FontIcon>
-            </Button>
-        </StackPanel>
+
+        <Button x:Name="TXButton" Grid.Column="3" Grid.Row="1" Click="TXButton_Click" 
+                HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" 
+                MinWidth="100" Margin="12,6,6,12">
+            <FontIcon Glyph="&#xE724;" FontFamily="Segoe MDL2 Assets" ></FontIcon>
+        </Button>
+        <Button x:Name="CLEARButton" Grid.Column="4" Grid.Row="1" Click="CLEARButton_Click" HorizontalAlignment="Right" Width="45" Margin="6,6,12,12">
+            <FontIcon Glyph="&#xE711;" FontFamily="Segoe MDL2 Assets" ></FontIcon>
+        </Button>
     </Grid>
 </Page>

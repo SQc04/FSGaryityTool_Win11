@@ -7,7 +7,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    NavigationCacheMode="Enabled">
+    NavigationCacheMode="Enabled"
+    Background="Transparent">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -15,11 +16,12 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="1" Height="40" VerticalAlignment="Top" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-            <!--Background="{ThemeResource SystemAccentColorLight2}"-->
+        <Border Grid.Row="1" Height="40" VerticalAlignment="Top" >
+            <!--Background="{ThemeResource SystemAccentColorLight2}"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"-->
             <TextBlock VerticalAlignment="Top" Margin="0,8,0,0" Canvas.ZIndex="1"/>
         </Border>
-        
-        <TabView x:Name="SPTabView" Grid.Row="1" AddTabButtonClick="TabView_AddTabButtonClick" TabCloseRequested="TabView_TabCloseRequested" />
+
+        <TabView x:Name="SPTabView" Grid.Row="1" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" AddTabButtonClick="TabView_AddTabButtonClick" TabCloseRequested="TabView_TabCloseRequested" />
     </Grid>
 </Page>

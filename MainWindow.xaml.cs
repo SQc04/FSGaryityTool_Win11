@@ -59,7 +59,7 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.9";
+        public static string FSSoftVersion = "0.2.11";
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
@@ -67,6 +67,7 @@ namespace FSGaryityTool_Win11
             if ((string)selectedItem.Tag == "MainPage1") FSnvf.Navigate(typeof(MainPage1));
             else if ((string)selectedItem.Tag == "Page2") FSnvf.Navigate(typeof(Page2));
             else if ((string)selectedItem.Tag == "Page3") FSnvf.Navigate(typeof(Page3));
+            else if ((string)selectedItem.Tag == "Page4") FSnvf.Navigate(typeof(Page4));
             else if ((string)selectedItem.Tag == "FSPage") FSnvf.Navigate(typeof(FSPage));
 
             if (args.IsSettingsSelected)
@@ -198,6 +199,8 @@ namespace FSGaryityTool_Win11
                         ["DefaultRTS"] = "0",
                         ["DefaultSTime"] = "0",
                         ["DefaultAUTOSco"] = "1",
+                        ["AutoDaveSet"] = "1",
+                        ["AutoSerichCom"] = "1",
                     },
 
                 };

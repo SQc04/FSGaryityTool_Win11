@@ -68,32 +68,16 @@ namespace FSGaryityTool_Win11
 
             List<string> STARTPage = new List<string>()         //新建字符串
             {
-                "Serial Port", "Download Flash", "Keyboard"
+                "Serial Port", "Download Flash", "Keyboard", "Mouse"//, ""
             };
             StartPageCombobox.ItemsSource = STARTPage;          //将字符串添加到选择框
+                                                                //读取TOML设置
+            if (DefaultTomlSTARTPage == 0) DefaultSTARTPage = "Serial Port";
+            else if (DefaultTomlSTARTPage == 1)  DefaultSTARTPage = "Download Flash";
+            else if (DefaultTomlSTARTPage == 2) DefaultSTARTPage = "Keyboard";
+            else if (DefaultTomlSTARTPage == 3) DefaultSTARTPage = "Mouse";
+            //else if (DefaultTomlSTARTPage == 4) DefaultSTARTPage = "";
 
-            if (DefaultTomlSTARTPage == 0)                      //读取TOML设置
-            {
-                DefaultSTARTPage = "Serial Port";
-            }
-            else
-            {
-                if (DefaultTomlSTARTPage == 1)
-                {
-                    DefaultSTARTPage = "Download Flash";
-                }
-                else
-                {
-                    if (DefaultTomlSTARTPage == 2)
-                    {
-                        DefaultSTARTPage = "Keyboard";
-                    }
-                    else
-                    {
-
-                    }
-                }
-            }
 
             StartPageCombobox.SelectedItem = DefaultSTARTPage;  //将TOML设置添加到选择框
 
@@ -160,28 +144,13 @@ namespace FSGaryityTool_Win11
             {
                 settingstomlr = TOML.Parse(reader);
 
-                if ((string)StartPageCombobox.SelectedItem == "Serial Port")
-                {
-                    settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "0";
-                }
-                else
-                {
-                    if ((string)StartPageCombobox.SelectedItem == "Download Flash")
-                    {
-                        settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "1";
-                    }
-                    else
-                    {
-                        if ((string)StartPageCombobox.SelectedItem == "Keyboard")
-                        {
-                            settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "2";
-                        }
-                        else
-                        {
+                if ((string)StartPageCombobox.SelectedItem == "Serial Port") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "0";
+                else if ((string)StartPageCombobox.SelectedItem == "Download Flash") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "1";
+                else if ((string)StartPageCombobox.SelectedItem == "Keyboard") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "2";
+                else if ((string)StartPageCombobox.SelectedItem == "Mouse") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "3";
+                //else if ((string)StartPageCombobox.SelectedItem == "") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "4";
 
-                        }
-                    }
-                }
+
 
             }
 

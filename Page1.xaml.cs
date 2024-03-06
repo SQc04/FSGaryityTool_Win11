@@ -13,7 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System.IO.Ports;
-//using System.Management;
+using System.Management;
 using System.Text;
 using Windows.Networking.Sockets;
 using System.Collections.ObjectModel;
@@ -61,6 +61,12 @@ namespace FSGaryityTool_Win11
         public string Timesr { get; set; }
         public string Rxstr { get; set; }
     }
+    /*
+    public class ComDataItem
+    {
+        public string ComName { get; set; }
+    }
+    */
 
     public sealed partial class Page1 : Page
     {
@@ -72,7 +78,10 @@ namespace FSGaryityTool_Win11
         public static int rts = 0;//RTS
         public static int shtime = 0;//ShowTime
         public static int autotr = 0;//AUTOScroll
+        public static int autosaveset;
+        public static int autosercom;
         public static int rxs = 0;
+        public static string[] ArryPort; //定义字符串数组，数组名为 ArryPort
         public static string rxpstr;
         public static StringBuilder datapwate = new StringBuilder(2048);
 
@@ -88,6 +97,8 @@ namespace FSGaryityTool_Win11
         
 
         public Timer timer;
+        public Timer timerSerialPort;
+
         private bool _isLoaded;
         public static string str;
         public DateTime current_time = new DateTime();
@@ -125,6 +136,9 @@ namespace FSGaryityTool_Win11
                 rts = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultRTS"]);
                 shtime = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultSTime"]);
                 autotr = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultAUTOSco"]);
+                autosaveset = int.Parse(SPsettingstomlr["SerialPortSettings"]["AutoDaveSet"]);
+                autosercom = int.Parse(SPsettingstomlr["SerialPortSettings"]["AutoSerichCom"]);
+
 
                 /*
                 ["DefaultBAUD"] = "115200",
@@ -145,6 +159,8 @@ namespace FSGaryityTool_Win11
             this.Loaded += Page1_Loaded;
 
             RXListView.ItemsSource = new ObservableCollection<DataItem>();
+
+            //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
 
             CommonRes._serialPort.DataReceived += _serialPort_DataReceived;
 
@@ -180,9 +196,9 @@ namespace FSGaryityTool_Win11
 
             var foregroundColor = COMButton.Foreground as SolidColorBrush;
             var backgroundColor = COMButton.Background as SolidColorBrush;
-            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
-            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
-            var theme = Application.Current.RequestedTheme;
+            //var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
+            //var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
+            //var theme = Application.Current.RequestedTheme;
 
             /*
             if (theme == ApplicationTheme.Dark)
@@ -212,125 +228,82 @@ namespace FSGaryityTool_Win11
                 AUTOScrollButton.Foreground = new SolidColorBrush(Colors.White);
             }
             */
-            if (rx == 1)
-            {
-                RXHEXButton.IsChecked = true;
-            }
-            else
-            {
-                RXHEXButton.IsChecked = false;
-            }
 
-            if (tx == 1)
-            {
-                TXHEXButton.IsChecked = true;
-            }
-            else
-            {
-                TXHEXButton.IsChecked = false;
-            }
+            
 
+            ToggleButtonIsChecked(rx, RXHEXButton);
+            ToggleButtonIsChecked(tx, TXHEXButton);
+
+            FsButtonIsChecked(dtr, DTRButton);
             if (dtr == 1)
             {
-                if (theme == ApplicationTheme.Dark)
-                {
-                    // 当前处于深色模式
-                    DTRButton.Background = new SolidColorBrush(darkaccentColor);
-                    DTRButton.Foreground = new SolidColorBrush(Colors.Black);
-                }
-                else if (theme == ApplicationTheme.Light)
-                {
-                    // 当前处于浅色模式
-                    DTRButton.Background = new SolidColorBrush(ligtaccentColor);
-                    DTRButton.Foreground = new SolidColorBrush(Colors.White);
-                }
                 CommonRes._serialPort.DtrEnable = true;
             }
             else
             {
-                DTRButton.Background = backgroundColor;
-                DTRButton.Foreground = foregroundColor;
-
                 CommonRes._serialPort.DtrEnable = false;
             }
 
+            FsButtonIsChecked(rts, RTSButton);
             if (rts == 1)
             {
-                if (theme == ApplicationTheme.Dark)
-                {
-                    // 当前处于深色模式
-                    RTSButton.Background = new SolidColorBrush(darkaccentColor);
-                    RTSButton.Foreground = new SolidColorBrush(Colors.Black);
-                }
-                else if (theme == ApplicationTheme.Light)
-                {
-                    // 当前处于浅色模式
-                    RTSButton.Background = new SolidColorBrush(ligtaccentColor);
-                    RTSButton.Foreground = new SolidColorBrush(Colors.White);
-                }
                 CommonRes._serialPort.RtsEnable = true;
             }
             else
             {
-                RTSButton.Background = backgroundColor;
-                RTSButton.Foreground = foregroundColor;
-
                 CommonRes._serialPort.RtsEnable = false;
             }
 
-            if (shtime == 1)
-            {
-                if (theme == ApplicationTheme.Dark)
-                {
-                    // 当前处于深色模式
-                    ShowTimeButton.Background = new SolidColorBrush(darkaccentColor);
-                    ShowTimeButton.Foreground = new SolidColorBrush(Colors.Black);
-                }
-                else if (theme == ApplicationTheme.Light)
-                {
-                    // 当前处于浅色模式
-                    ShowTimeButton.Background = new SolidColorBrush(ligtaccentColor);
-                    ShowTimeButton.Foreground = new SolidColorBrush(Colors.White);
-                }
-
-            }
-            else
-            {
-                ShowTimeButton.Background = backgroundColor;
-                ShowTimeButton.Foreground = foregroundColor;
-
-            }
-
-            if (autotr == 1)
-            {
-                if (theme == ApplicationTheme.Dark)
-                {
-                    // 当前处于深色模式
-                    AUTOScrollButton.Background = new SolidColorBrush(darkaccentColor);
-                    AUTOScrollButton.Foreground = new SolidColorBrush(Colors.Black);
-                }
-                else if (theme == ApplicationTheme.Light)
-                {
-                    // 当前处于浅色模式
-                    AUTOScrollButton.Background = new SolidColorBrush(ligtaccentColor);
-                    AUTOScrollButton.Foreground = new SolidColorBrush(Colors.White);
-                }
-            }
-            else
-            {
-                AUTOScrollButton.Background = backgroundColor;
-                AUTOScrollButton.Foreground = foregroundColor;
-
-            }
+            FsButtonIsChecked(shtime, ShowTimeButton);
+            FsButtonIsChecked(autotr, AUTOScrollButton);
 
             RunProgressBar.Visibility = Visibility.Collapsed;
 
-            BorderBack1.Background = backgroundColor;
-            BorderBack2.Background = backgroundColor;
-            BorderBack3.Background = backgroundColor;
-            BorderBack4.Background = backgroundColor;
+            //BorderBackRX.Background = backgroundColor;
 
-            BorderBackRX.Background = backgroundColor;
+            ToggleButtonIsChecked(autosaveset, SaveSetButton);            
+        }
+
+        private void ToggleButtonIsChecked(int isChecked, ToggleButton toggleButton)
+        {
+            if (isChecked == 1)
+            {
+                toggleButton.IsChecked = true;
+            }
+            else
+            {
+                toggleButton.IsChecked = false;
+            }
+        }
+
+        private void FsButtonIsChecked(int isChecked, Button button)
+        {
+            var foregroundColor = COMButton.Foreground as SolidColorBrush;
+            var backgroundColor = COMButton.Background as SolidColorBrush;
+            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
+            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
+            var theme = Application.Current.RequestedTheme;
+
+            if (isChecked == 1)
+            {
+                if (theme == ApplicationTheme.Dark)
+                {
+                    // 当前处于深色模式
+                    button.Background = new SolidColorBrush(darkaccentColor);
+                    button.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    button.Background = new SolidColorBrush(ligtaccentColor);
+                    button.Foreground = new SolidColorBrush(Colors.White);
+                }
+            }
+            else
+            {
+                button.Background = backgroundColor;
+                button.Foreground = foregroundColor;
+            }
         }
 
         private void Page1_Loaded(object sender, RoutedEventArgs e)
@@ -339,9 +312,10 @@ namespace FSGaryityTool_Win11
             {
                 COMButton_Click(this, new RoutedEventArgs());
                 _isLoaded = true;
+
             }
 
-            
+
             /*
             // 创建一个DispatcherQueueTimer对象
             DispatcherQueueTimer timer = DispatcherQueue.GetForCurrentThread().CreateTimer();
@@ -355,6 +329,8 @@ namespace FSGaryityTool_Win11
             };
             timer.Start();
             */
+
+            ToggleButtonIsChecked(autosercom, AutoComButton);
 
         }
 
@@ -381,6 +357,141 @@ namespace FSGaryityTool_Win11
             });
             
         }
+        public void TimerSerialPortTick(Object stateInfo)       //串口热插拔检测
+        {
+            int InOut = 0;
+            int i = 0;
+            int j = 0;
+            string[] LastPort = ArryPort;
+            string[] NowPort = SerialPort.GetPortNames();
+            string InOutCom;
+            string commne = "";
+
+            if (LastPort == null)
+            {
+                LastPort = SerialPort.GetPortNames();
+            }
+            if (Enumerable.SequenceEqual(LastPort, NowPort) == false || ArryPort == null)
+            {
+                /*
+                for (int k = 0; k < LastPort.Length; k++)
+                {
+                    Debug.WriteLine(LastPort[k]);
+                }
+                
+                for (int k = 0; k < NowPort.Length; k++)
+                {
+                    Debug.WriteLine(NowPort[k]);
+                }
+                */
+
+                if (LastPort.Length < NowPort.Length) 
+                {
+                    InOut = 1;
+                    for (j = 0; j < NowPort.Length; j++)         //遍历插入的设备
+                    {
+                        Debug.WriteLine("SER J " + j);
+                        for (i = 0; i < LastPort.Length; i++)
+                        {
+                            if (NowPort[j] == LastPort[i])
+                            {
+                                Debug.WriteLine("SER I " + i);
+                                break;
+                            }
+                        }
+                        Debug.WriteLine("Now" + i);
+                    }
+                    Debug.WriteLine("=" + i);
+                }
+
+                else if (LastPort.Length > NowPort.Length)
+                {
+                    InOut = 0;
+                    for (i = 0; i < LastPort.Length; i++)       //遍历拔出的设备
+                    {
+                        for (j = 0; j < NowPort.Length; j++)
+                        {
+                            if (LastPort[i] == NowPort[j])
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    Debug.WriteLine("Last" + j);
+                }
+                Debug.WriteLine("INOUT" + InOut);
+
+                
+                if (InOut == 1)
+                {
+                    InOutCom = NowPort[i];
+                }
+                else
+                {
+                    InOutCom = LastPort[j];
+                }
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    if (COMComboBox.SelectedItem != null)
+                    {
+                        commne = (string)COMComboBox.SelectedItem;
+                    }
+                    if (InOut != 0)
+                    {
+                        string commme = (string)COMComboBox.SelectedItem;
+                        RXTextBox.Text = RXTextBox.Text + InOutCom + " is plug in\r\n";
+                        COMComboBox.Items.Clear();
+                        COMListview.Items.Clear();
+                        //COMListview.ItemsSource = null;
+                        //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
+                        ArryPort = SerialPort.GetPortNames();
+                        for (int k = 0; k < NowPort.Length; k++)
+                        {
+                            COMComboBox.Items.Add(ArryPort[k]);                           //将所有的可用串口号添加到端口对应的组合框中
+                            COMListview.Items.Add(ArryPort[k]);
+                        }
+                        COMComboBox.SelectedItem = commme;
+                        COMListview.SelectedItem = commne;
+                        if (Con == 0)
+                        {
+                            if (COMComboBox.SelectedItem == null)
+                            {
+                                COMComboBox.SelectedItem = InOutCom;
+                                COMListview.SelectedItem = InOutCom;
+                                if (AutoConnectButton.IsChecked == true)
+                                {
+                                    CONTButton_Click(null, null);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        RXTextBox.Text = RXTextBox.Text + InOutCom + " is pull out\r\n";
+                        if (Con == 1)                                                   //自动断开已拔出的设备串口连接
+                        {
+                            if (InOutCom == (string)COMComboBox.SelectedItem)
+                            {
+                                CONTButton_Click(null, null);
+                            }
+                        }
+
+                        COMComboBox.Items.Clear();
+                        COMListview.Items.Clear();
+                        //COMListview.ItemsSource = null;
+                        //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
+                        ArryPort = SerialPort.GetPortNames();
+                        for (int k = 0; k < NowPort.Length; k++)
+                        {
+                            COMComboBox.Items.Add(ArryPort[k]);                           //将所有的可用串口号添加到端口对应的组合框中
+                            COMListview.Items.Add(ArryPort[k]);
+                        }
+                        COMComboBox.SelectedItem = commne;
+                        COMListview.SelectedItem = commne;
+                    }
+                });
+            }
+        }
 
         //public event SerialDataReceivedEventHandler DataReceived;
 
@@ -393,18 +504,22 @@ namespace FSGaryityTool_Win11
             {
                 RXTextBox.Text = RXTextBox.Text + "Start search SerialPort\r\n";
                 string commme = (string)COMComboBox.SelectedItem;           //记忆串口名
-                string[] ArryPort;                                          //定义字符串数组，数组名为 ArryPort
                 ArryPort = SerialPort.GetPortNames();                       //SerialPort.GetPortNames()函数功能为获取计算机所有可用串口，以字符串数组形式输出
                 string scom = String.Join("\r\n", ArryPort);
                 RXTextBox.Text = RXTextBox.Text + scom + "\r\n";
-                MyBox.Items.Clear();                                        //清除当前组合框下拉菜单内容                  
+                MyBox.Items.Clear();                                        //清除当前组合框下拉菜单内容
+                COMListview.Items.Clear();
+                //COMListview.ItemsSource = null;
+                //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
                 for (int i = 0; i < ArryPort.Length; i++)
                 {
                     MyBox.Items.Add(ArryPort[i]);                           //将所有的可用串口号添加到端口对应的组合框中
+                    COMListview.Items.Add(ArryPort[i]);
                 }
                 //MyBox.Items.Add("COM0");
                 RXTextBox.Text = RXTextBox.Text + "Search SerialPort succeed!\r\n";
                 COMComboBox.SelectedItem = commme;
+                COMListview.SelectedItem = commme;
             }
             //COMComboBox.SelectedItem = "COM0";
         }
@@ -474,10 +589,10 @@ namespace FSGaryityTool_Win11
                     CommonRes._serialPort.Open();                                                                               //打开串口
                     
                     timer = new Timer(TimerTick, null, 0, 125); // 每秒触发8次
-
+                    
                     CONTButton.Content = "DISCONNECT";
                     Con = 1;
-                    RunProgressBar.ShowError = false;
+                    RunProgressBar.ShowPaused = false;
                     RunProgressBar.IsIndeterminate = true;
                     RunProgressBar.Visibility = Visibility.Visible;
                     //CONTButton.Background = new SolidColorBrush(color);
@@ -505,7 +620,7 @@ namespace FSGaryityTool_Win11
                     CONTButton.Background = backgroundColor;
                     CONTButton.Foreground = foregroundColor;
                     RunProgressBar.IsIndeterminate = true;
-                    RunProgressBar.ShowError=true;
+                    RunProgressBar.ShowPaused = true;
                     RunProgressBar.Visibility = Visibility.Visible;
                 }
 
@@ -528,7 +643,7 @@ namespace FSGaryityTool_Win11
                 CONTButton.Background = backgroundColor;
                 CONTButton.Foreground = foregroundColor;
                 RunProgressBar.IsIndeterminate = false;
-                RunProgressBar.ShowError = false;
+                RunProgressBar.ShowPaused = false;
                 RunProgressBar.Visibility = Visibility.Collapsed;
                 timer.Dispose();
             }
@@ -645,9 +760,19 @@ namespace FSGaryityTool_Win11
             }
         }
 
+        /*
+        private void ComItemsRepeater(string Com)
+        {
+            ComDataItem citem = new ComDataItem { ComName = Com };
+            (COMListview.ItemsSource as ObservableCollection<ComDataItem>).Add(citem);
+        }
+        */
+
         private void COMComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            string ComIs;
+            ComIs = (string)COMComboBox.SelectedItem;
+            COMListview.SelectedItem = ComIs;
         }
 
 
@@ -834,7 +959,6 @@ namespace FSGaryityTool_Win11
 
         private void RSTButton_Click(object sender, RoutedEventArgs e)      //自动重启
         {
-            
             CommonRes._serialPort.BaudRate = 74880;// BANDComboBox.SelectedItem = "74880";//ESP12F
 
             CommonRes._serialPort.RtsEnable = true;
@@ -845,6 +969,11 @@ namespace FSGaryityTool_Win11
             Thread.Sleep(10);
             CommonRes._serialPort.RtsEnable = false;
 
+            RSTButton_ClickAsync(null, null);
+        }
+
+        private Task RSTButton_ClickAsync(object sender, RoutedEventArgs e)
+        {
             Thread.Sleep(100);
             if (dtr == 1)
             {
@@ -857,40 +986,52 @@ namespace FSGaryityTool_Win11
                 Thread.Sleep(1);
                 DTRButton_Click(sender, e);
             }
-            
+
             //CommonRes._serialPort.DtrEnable = true;
             CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);
+            return Task.CompletedTask;
         }
 
-        private void DTRButton_Click(object sender, RoutedEventArgs e)      //DTR信号使能
+        private void FsButtonChecked(int isChecked, Button button)
         {
             var foregroundColor = COMButton.Foreground as SolidColorBrush;
             var backgroundColor = COMButton.Background as SolidColorBrush;
             var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
             var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
             var theme = Application.Current.RequestedTheme;
-            if (dtr == 0)
+            if (isChecked == 0)
             {
                 if (theme == ApplicationTheme.Dark)
                 {
                     // 当前处于深色模式
-                    DTRButton.Background = new SolidColorBrush(darkaccentColor);
-                    DTRButton.Foreground = new SolidColorBrush(Colors.Black);
+                    button.Background = new SolidColorBrush(darkaccentColor);
+                    button.Foreground = new SolidColorBrush(Colors.Black);
                 }
                 else if (theme == ApplicationTheme.Light)
                 {
                     // 当前处于浅色模式
-                    DTRButton.Background = new SolidColorBrush(ligtaccentColor);
-                    DTRButton.Foreground = new SolidColorBrush(Colors.White);
+                    button.Background = new SolidColorBrush(ligtaccentColor);
+                    button.Foreground = new SolidColorBrush(Colors.White);
                 }
+            }
+            else
+            {
+                button.Background = backgroundColor;
+                button.Foreground = foregroundColor;
+            }
+        }
+
+        private void DTRButton_Click(object sender, RoutedEventArgs e)      //DTR信号使能
+        {
+            FsButtonChecked(dtr, DTRButton);
+            
+            if (dtr == 0)
+            {
                 CommonRes._serialPort.DtrEnable = true;
                 dtr = 1;
             }
             else
             {
-                DTRButton.Background = backgroundColor;
-                DTRButton.Foreground = foregroundColor;
-
                 CommonRes._serialPort.DtrEnable = false;
                 dtr = 0;
             }
@@ -898,33 +1039,15 @@ namespace FSGaryityTool_Win11
 
         private void RTSButton_Click(object sender, RoutedEventArgs e)      //RTS信号使能
         {
-            var foregroundColor = COMButton.Foreground as SolidColorBrush;
-            var backgroundColor = COMButton.Background as SolidColorBrush;
-            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
-            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
-            var theme = Application.Current.RequestedTheme;
+            FsButtonChecked(rts, RTSButton);
+
             if (rts == 0)
             {
-                if (theme == ApplicationTheme.Dark)
-                {
-                    // 当前处于深色模式
-                    RTSButton.Background = new SolidColorBrush(darkaccentColor);
-                    RTSButton.Foreground = new SolidColorBrush(Colors.Black);
-                }
-                else if (theme == ApplicationTheme.Light)
-                {
-                    // 当前处于浅色模式
-                    RTSButton.Background = new SolidColorBrush(ligtaccentColor);
-                    RTSButton.Foreground = new SolidColorBrush(Colors.White);
-                }
                 CommonRes._serialPort.RtsEnable = true;
                 rts = 1;
             }
             else
             {
-                RTSButton.Background = backgroundColor;
-                RTSButton.Foreground = foregroundColor;
-
                 CommonRes._serialPort.RtsEnable = false;
                 rts = 0;
             }
@@ -932,25 +1055,10 @@ namespace FSGaryityTool_Win11
 
         private void ShowTimeButton_Click(object sender, RoutedEventArgs e)
         {
-            var foregroundColor = COMButton.Foreground as SolidColorBrush;
-            var backgroundColor = COMButton.Background as SolidColorBrush;
-            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
-            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
-            var theme = Application.Current.RequestedTheme;
+            FsButtonChecked(shtime, ShowTimeButton);
+            
             if (shtime == 0)
             {
-                if (theme == ApplicationTheme.Dark)
-                {
-                    // 当前处于深色模式
-                    ShowTimeButton.Background = new SolidColorBrush(darkaccentColor);
-                    ShowTimeButton.Foreground = new SolidColorBrush(Colors.Black);
-                }
-                else if (theme == ApplicationTheme.Light)
-                {
-                    // 当前处于浅色模式
-                    ShowTimeButton.Background = new SolidColorBrush(ligtaccentColor);
-                    ShowTimeButton.Foreground = new SolidColorBrush(Colors.White);
-                }
                 shtime = 1;
 
                 //显示时间
@@ -964,41 +1072,20 @@ namespace FSGaryityTool_Win11
             }
             else
             {
-                ShowTimeButton.Background = backgroundColor;
-                ShowTimeButton.Foreground = foregroundColor;
-
                 shtime = 0;
             }
         }
 
         private void AUTOScrollButton_Click(object sender, RoutedEventArgs e)
         {
-            var foregroundColor = COMButton.Foreground as SolidColorBrush;
-            var backgroundColor = COMButton.Background as SolidColorBrush;
-            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
-            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
-            var theme = Application.Current.RequestedTheme;
+            FsButtonChecked(autotr, AUTOScrollButton);
+            
             if (autotr == 0)
             {
-                if (theme == ApplicationTheme.Dark)
-                {
-                    // 当前处于深色模式
-                    AUTOScrollButton.Background = new SolidColorBrush(darkaccentColor);
-                    AUTOScrollButton.Foreground = new SolidColorBrush(Colors.Black);
-                }
-                else if (theme == ApplicationTheme.Light)
-                {
-                    // 当前处于浅色模式
-                    AUTOScrollButton.Background = new SolidColorBrush(ligtaccentColor);
-                    AUTOScrollButton.Foreground = new SolidColorBrush(Colors.White);
-                }
                 autotr = 1;
             }
             else
             {
-                AUTOScrollButton.Background = backgroundColor;
-                AUTOScrollButton.Foreground = foregroundColor;
-
                 autotr = 0;
             }
         }
@@ -1045,7 +1132,23 @@ namespace FSGaryityTool_Win11
             SaveSetButton.IsChecked = true;
         }
 
-        
-        
+        private void AutoComButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if(AutoComButton.IsChecked == true)
+            {
+                timerSerialPort = new Timer(TimerSerialPortTick, null, 0, 1000);
+            }
+            else
+            {
+                timerSerialPort.Dispose();
+            }
+        }
+
+        private void COMListview_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string ComIs;
+            ComIs = (string)COMListview.SelectedItem;
+            COMComboBox.SelectedItem = ComIs;
+        }
     }
 }

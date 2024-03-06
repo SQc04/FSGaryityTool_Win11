@@ -57,6 +57,7 @@
     <None Remove="Page1.xaml" />
     <None Remove="Page2.xaml" />
     <None Remove="Page3.xaml" />
+    <None Remove="Page4.xaml" />
     <None Remove="SettingsPage.xaml" />
   </ItemGroup>
 
@@ -72,8 +73,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.HeaderedControls" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.LayoutTransformControl" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.RangeSelector" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
-    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.0.240109" />
     <PackageReference Include="MICA" Version="2.4.3" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.240211001" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428" />
@@ -157,6 +165,9 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <Page Update="Page4.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <!-- 
@@ -187,7 +198,7 @@
   </PropertyGroup>
 	
   <PropertyGroup>
-    <VersionPrefix>0.2.9</VersionPrefix>
+    <VersionPrefix>0.2.11</VersionPrefix>
   </PropertyGroup>
 	
 	
