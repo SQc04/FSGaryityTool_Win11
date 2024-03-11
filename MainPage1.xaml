@@ -13,7 +13,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0"/><!--36-->
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Border Grid.Row="1" Height="40" VerticalAlignment="Top" >
@@ -22,6 +23,22 @@
             <TextBlock VerticalAlignment="Top" Margin="0,8,0,0" Canvas.ZIndex="1"/>
         </Border>
 
-        <TabView x:Name="SPTabView" Grid.Row="1" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" AddTabButtonClick="TabView_AddTabButtonClick" TabCloseRequested="TabView_TabCloseRequested" />
+        <!--<TabView x:Name="SPTabView" Grid.Row="1" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" AddTabButtonClick="TabView_AddTabButtonClick" TabCloseRequested="TabView_TabCloseRequested" />-->
+
+        <SelectorBar x:Name="SPSelectorBar" Grid.Row="1" HorizontalAlignment="Stretch" SelectionChanged="SPSelectorBar_SelectionChanged" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}">
+            <SelectorBarItem x:Name="SerialPort" Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}" Text="Serial Port" IsSelected="True" Margin="6,0,6,0">
+                <FontIcon Glyph="&#xE8CB;" FontFamily="Segoe Fluent Icons" Margin="12,6,0,0"/>
+            </SelectorBarItem>
+            <SelectorBarItem x:Name="Test1" Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}" Text="Test1" Margin="6,0,6,0">
+                
+            </SelectorBarItem>
+        </SelectorBar>
+        <Frame x:Name="FSSPagf" Grid.Row="2">
+            <Frame.ContentTransitions>
+                <TransitionCollection>
+                    <NavigationThemeTransition  />
+                </TransitionCollection>
+            </Frame.ContentTransitions>
+        </Frame>
     </Grid>
 </Page>

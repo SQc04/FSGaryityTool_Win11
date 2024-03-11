@@ -59,20 +59,42 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.11";
+        public static string FSSoftVersion = "0.2.14";
+        public static int FsPage = 0;
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             var selectedItem = (NavigationViewItem)args.SelectedItem;
-            if ((string)selectedItem.Tag == "MainPage1") FSnvf.Navigate(typeof(MainPage1));
-            else if ((string)selectedItem.Tag == "Page2") FSnvf.Navigate(typeof(Page2));
-            else if ((string)selectedItem.Tag == "Page3") FSnvf.Navigate(typeof(Page3));
-            else if ((string)selectedItem.Tag == "Page4") FSnvf.Navigate(typeof(Page4));
-            else if ((string)selectedItem.Tag == "FSPage") FSnvf.Navigate(typeof(FSPage));
+            if ((string)selectedItem.Tag == "MainPage1")
+            {
+                FSnvf.Navigate(typeof(MainPage1));
+                FsPage = 0;
+            }
+            else if ((string)selectedItem.Tag == "Page2")
+            {
+                FSnvf.Navigate(typeof(Page2));
+                FsPage = 1;
+            }
+            else if ((string)selectedItem.Tag == "Page3")
+            {
+                FSnvf.Navigate(typeof(Page3));
+                FsPage = 2;
+            }
+            else if ((string)selectedItem.Tag == "Page4")
+            {
+                FSnvf.Navigate(typeof(Page4));
+                FsPage = 3;
+            }
+            else if ((string)selectedItem.Tag == "FSPage")
+            {
+                FSnvf.Navigate(typeof(FSPage));
+                FsPage = 4;
+            }
 
             if (args.IsSettingsSelected)
             {
                 FSnvf.Navigate(typeof(MainSettingsPage));
+                FsPage = 5;
             }
 
         }
@@ -235,6 +257,11 @@ namespace FSGaryityTool_Win11
             else
             {
                 Debug.WriteLine("<=");
+
+                //缓存设置
+
+                //更新Toml
+
             }
 
                                                      //设置默认页面
@@ -245,6 +272,7 @@ namespace FSGaryityTool_Win11
                 Debug.WriteLine("Print:" + settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
                 int NvPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
                 FSnv.SelectedItem = FSnv.MenuItems[NvPage];             //设置默认页面
+                FsPage = NvPage;
             }
 
             
@@ -280,14 +308,74 @@ namespace FSGaryityTool_Win11
             TitleBarTextBlock.Text = "FSGravityTool";
             //SystemBackdrop = new MicaBackdrop()
             //{ Kind = MicaKind.BaseAlt };
-            SystemBackdrop = new DesktopAcrylicBackdrop();
 
-            
+            //SystemBackdrop = new DesktopAcrylicBackdrop();
+
+            if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
+            {
+                // Hooking up the policy object.
+                m_configurationSource = new Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration();
+                this.Activated += Window_Activated;
+                this.Closed += Window_Closed;
+                ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
+
+                // Initial configuration state.
+                m_configurationSource.IsInputActive = true;
+                SetConfigurationSourceTheme();
+
+                m_acrylicController = new Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController();
+
+                m_acrylicController.Kind = Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Thin;
+
+                // Enable the system backdrop.
+                // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
+                m_acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
+                m_acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
+            }
+
         }
 
+        Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController m_acrylicController;
+        Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration m_configurationSource;
+
+        private void Window_Activated(object sender, WindowActivatedEventArgs args)
+        {
+            m_configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+        }
+
+        private void Window_Closed(object sender, WindowEventArgs args)
+        {
+            // Make sure any Mica/Acrylic controller is disposed so it doesn't try to
+            // use this closed window.
+            
+            if (m_acrylicController != null)
+            {
+                m_acrylicController.Dispose();
+                m_acrylicController = null;
+            }
+            this.Activated -= Window_Activated;
+            m_configurationSource = null;
+        }
+
+        private void Window_ThemeChanged(FrameworkElement sender, object args)
+        {
+            if (m_configurationSource != null)
+            {
+                SetConfigurationSourceTheme();
+            }
+        }
+
+        private void SetConfigurationSourceTheme()
+        {
+            switch (((FrameworkElement)this.Content).ActualTheme)
+            {
+                case ElementTheme.Dark: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark; break;
+                case ElementTheme.Light: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light; break;
+                case ElementTheme.Default: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Default; break;
+            }
+        }
         // Call your extend acrylic code in the OnLaunched event, after
         // calling Window.Current.Activate.
-
 
 
         private AppWindow GetAppWindowForCurrentWindow()
@@ -299,7 +387,19 @@ namespace FSGaryityTool_Win11
 
         private void NavigationView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
         {
-            
+
+            if (FsPage == 0) ;                  //SerialPortPage
+            //else if (FsPage == 1) ;           //
+            //else if (FsPage == 2) ;           //
+            //else if (FsPage == 3) ;           //
+            else if (FsPage == 4)               //FSPage
+            {
+                if (FSPage.fSPage.MyWebView2.CanGoBack == true)
+                {
+                    FSPage.fSPage.MyWebView2.GoBack();
+                }
+            }
+            //else if (FsPage == 5) ;           //SettingsPage
         }
 
 

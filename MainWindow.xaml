@@ -5,10 +5,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <!--
     <Window.SystemBackdrop>
-        <!--<MicaBackdrop Kind="BaseAlt"/>-->
-        <DesktopAcrylicBackdrop/>
-    </Window.SystemBackdrop>
+        <MicaBackdrop Kind="BaseAlt"/>
+        <DesktopAcrylicBackdrop />
+    </Window.SystemBackdrop> -->
+    
     <Grid x:Name="AppTitleBar">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="LeftPaddingColumn" Width="0"/>
@@ -72,7 +74,7 @@
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
 
-            <Frame Margin="0,48,0,0" x:Name="FSnvf" />
+            <Frame x:Name="FSnvf" Margin="0,48,0,0" />
         </NavigationView>
 
     </Grid>

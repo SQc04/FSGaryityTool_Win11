@@ -12,6 +12,8 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Media.Animation;
+using System.Security.AccessControl;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,8 +31,35 @@ namespace FSGaryityTool_Win11
         {
             this.InitializeComponent();
 
-            TabView_AddTabButtonClick(SPTabView, null);
+            //TabView_AddTabButtonClick(SPTabView, null);
         }
+
+        private void SPSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+        {
+            SelectorBarItem selectorBarItem = sender.SelectedItem;
+            int currentSelectionIndex = sender.Items.IndexOf(selectorBarItem);
+            int previousSelectedIndex = 0;
+            System.Type pageType = typeof(Page1);
+
+            switch (currentSelectionIndex)
+            {
+                case 0:
+                    pageType = typeof(Page1);
+                    break;
+                case 1:
+                    pageType = typeof(FSPage);
+                    break;
+            }
+            var slideNavigationTransitionEffect = currentSelectionIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
+
+            FSSPagf.Navigate(pageType, null, new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect });
+
+            previousSelectedIndex = currentSelectionIndex;
+
+        }
+
+
+        /*
         // Add a new Tab to the TabView
         private void TabView_AddTabButtonClick(TabView sender, object args)
         {
@@ -54,5 +83,10 @@ namespace FSGaryityTool_Win11
             sender.TabItems.Remove(args.Tab);
             Pge--;
         }
+
+        
+        */
+
+
     }
 }

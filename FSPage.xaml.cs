@@ -23,9 +23,12 @@ namespace FSGaryityTool_Win11
     /// </summary>
     public sealed partial class FSPage : Page
     {
+        public static FSPage fSPage;
+
         public FSPage()
         {
             this.InitializeComponent();
+            fSPage = this;
         }
     }
 }
