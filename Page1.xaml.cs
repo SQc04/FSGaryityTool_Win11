@@ -46,6 +46,8 @@ using Windows.ApplicationModel.Contacts;
 using System.Reflection.Metadata.Ecma335;
 using static FSGaryityTool_Win11.Page1;
 using Windows.Devices.Sensors;
+using Windows.ApplicationModel.DataTransfer;
+using System.Reflection.Metadata;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -78,7 +80,7 @@ namespace FSGaryityTool_Win11
         public static int rts = 0;//RTS
         public static int shtime = 0;//ShowTime
         public static int autotr = 0;//AUTOScroll
-        public static int autosaveset;
+        public static int autosaveset = 0;
         public static int autosercom;
         public static int autoconnect;
 
@@ -98,7 +100,7 @@ namespace FSGaryityTool_Win11
         public static string FSSetJson = Path.Combine(FSGravif, "Settings.json");
         public static string FSSetToml = Path.Combine(FSGravif, "Settings.toml");
 
-        
+
 
         public Timer timer;
         public Timer timerSerialPort;
@@ -118,154 +120,9 @@ namespace FSGaryityTool_Win11
 
         public Page1()
         {
-            string DefaultBAUD;
-            string DefaultPart;
-            string DefaultSTOP;
-            int DefaultDATA;
-
-            using (StreamReader reader = File.OpenText(FSSetToml))
-            {
-                TomlTable SPsettingstomlr = TOML.Parse(reader);             //读取TOML
-                //Debug.WriteLine("Print:" + SPsettingstomlr["FSGravitySettings"]["DefaultNvPage"]);
-                //NvPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
-
-                DefaultBAUD = SPsettingstomlr["SerialPortSettings"]["DefaultBAUD"];
-                DefaultPart = SPsettingstomlr["SerialPortSettings"]["DefaultParity"];
-                DefaultSTOP = SPsettingstomlr["SerialPortSettings"]["DefaultSTOP"];
-                DefaultDATA = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultDATA"]);
-
-                tx = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultTXHEX"]);
-                rx = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultRXHEX"]);
-                dtr = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultDTR"]);
-                rts = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultRTS"]);
-                shtime = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultSTime"]);
-                autotr = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultAUTOSco"]);
-                autosaveset = int.Parse(SPsettingstomlr["SerialPortSettings"]["AutoDaveSet"]);
-                autosercom = int.Parse(SPsettingstomlr["SerialPortSettings"]["AutoSerichCom"]);
-
-
-                /*
-                ["DefaultBAUD"] = "115200",
-                ["DefaultParity"] = "None",
-                ["DefaultSTOP"] = "One",
-                ["DefaultDATA"] = "8",
-                ["DefaultRXHEX"] = "0",
-                ["DefaultTXHEX"] = "0",
-                ["DefaultDTR"] = "1",
-                ["DefaultRTS"] = "0",
-                ["DefaultSTime"] = "0",
-                ["DefaultAUTOSco"] = "1",
-                */
-            }
-
             this.InitializeComponent();
 
             this.Loaded += Page1_Loaded;
-
-            RXListView.ItemsSource = new ObservableCollection<DataItem>();
-
-            //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
-
-            CommonRes._serialPort.DataReceived += _serialPort_DataReceived;
-
-            // 在你的代码后台，定义一个List<string>作为数据源
-            List<string> BaudRates = new List<string>()
-            {
-                "75", "110", "134", "150", "300", "600", "1200", "1800", "2400", "4800", "7200", "9600", "14400", "19200", "38400", "57600", "74880","115200", "128000", "230400", "250000", "500000", "1000000", "2000000"
-            };
-            // 将ComboBox的ItemsSource属性绑定到这个数据源
-            BANDComboBox.ItemsSource = BaudRates;
-            // 设置默认选项
-            BANDComboBox.SelectedItem = DefaultBAUD; // 将"9600"设置为默认选项
-
-            List<string> ParRates = new List<string>()
-            {
-                "None", "Odd", "Even", "Mark", "Space"
-            };
-            PARComboBox.ItemsSource = ParRates;
-            PARComboBox.SelectedItem = DefaultPart;
-
-            List<string> StopRates = new List<string>()
-            {
-                "None", "One", "OnePointFive", "Two"
-            };
-            STOPComboBox.ItemsSource = StopRates;
-            STOPComboBox.SelectedItem = DefaultSTOP;
-            
-            for (int j = 5; j < 10; ++j)
-            {
-                DATAComboBox.Items.Add(j);
-            }
-            DATAComboBox.SelectedItem = DefaultDATA;
-
-            var foregroundColor = COMButton.Foreground as SolidColorBrush;
-            var backgroundColor = COMButton.Background as SolidColorBrush;
-            //var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
-            //var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
-            //var theme = Application.Current.RequestedTheme;
-
-            /*
-            if (theme == ApplicationTheme.Dark)
-            {
-                // 当前处于深色模式
-                DTRButton.Background = new SolidColorBrush(darkaccentColor);
-                DTRButton.Foreground = new SolidColorBrush(Colors.Black);
-            }
-            else if (theme == ApplicationTheme.Light)
-            {
-                // 当前处于浅色模式
-                DTRButton.Background = new SolidColorBrush(ligtaccentColor);
-                DTRButton.Foreground = new SolidColorBrush(Colors.White);
-            }
-            CommonRes._serialPort.DtrEnable = true;
-
-            if (theme == ApplicationTheme.Dark)
-            {
-                // 当前处于深色模式
-                AUTOScrollButton.Background = new SolidColorBrush(darkaccentColor);
-                AUTOScrollButton.Foreground = new SolidColorBrush(Colors.Black);
-            }
-            else if (theme == ApplicationTheme.Light)
-            {
-                // 当前处于浅色模式
-                AUTOScrollButton.Background = new SolidColorBrush(ligtaccentColor);
-                AUTOScrollButton.Foreground = new SolidColorBrush(Colors.White);
-            }
-            */
-
-            
-
-            ToggleButtonIsChecked(rx, RXHEXButton);
-            ToggleButtonIsChecked(tx, TXHEXButton);
-
-            FsButtonIsChecked(dtr, DTRButton);
-            if (dtr == 1)
-            {
-                CommonRes._serialPort.DtrEnable = true;
-            }
-            else
-            {
-                CommonRes._serialPort.DtrEnable = false;
-            }
-
-            FsButtonIsChecked(rts, RTSButton);
-            if (rts == 1)
-            {
-                CommonRes._serialPort.RtsEnable = true;
-            }
-            else
-            {
-                CommonRes._serialPort.RtsEnable = false;
-            }
-
-            FsButtonIsChecked(shtime, ShowTimeButton);
-            FsButtonIsChecked(autotr, AUTOScrollButton);
-
-            RunProgressBar.Visibility = Visibility.Collapsed;
-
-            //BorderBackRX.Background = backgroundColor;
-
-            ToggleButtonIsChecked(autosaveset, SaveSetButton);
 
         }
 
@@ -314,7 +171,7 @@ namespace FSGaryityTool_Win11
         private void FsBorderIsChecked(int isChecked, Border border, TextBlock textBlock)
         {
             var foregroundColor = COMButton.Foreground as SolidColorBrush;
-            var backgroundColor = (Windows.UI.Color)Application.Current.Resources["LayerOnAcrylicFillColorDefaultBrush"];
+            var backgroundColor = (SolidColorBrush)Application.Current.Resources["LayerOnAcrylicFillColorDefaultBrush"];
             var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
             var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
             var theme = Application.Current.RequestedTheme;
@@ -336,7 +193,7 @@ namespace FSGaryityTool_Win11
             }
             else
             {
-                border.Background = new SolidColorBrush(backgroundColor);
+                border.Background = backgroundColor;
                 textBlock.Foreground = foregroundColor;
             }
         }
@@ -347,6 +204,167 @@ namespace FSGaryityTool_Win11
             {
                 COMButton_Click(this, new RoutedEventArgs());
                 _isLoaded = true;
+
+                string DefaultBAUD;
+                string DefaultPart;
+                string DefaultSTOP;
+                int DefaultDATA;
+
+                using (StreamReader reader = File.OpenText(FSSetToml))
+                {
+                    TomlTable SPsettingstomlr = TOML.Parse(reader);             //读取TOML
+                                                                                //Debug.WriteLine("Print:" + SPsettingstomlr["FSGravitySettings"]["DefaultNvPage"]);
+                                                                                //NvPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
+
+                    if (SPsettingstomlr["SerialPortSettings"]["DefaultBAUD"] != "Tommy.TomlLazy") DefaultBAUD = SPsettingstomlr["SerialPortSettings"]["DefaultBAUD"];
+                    else DefaultBAUD = "115200";
+                    if (SPsettingstomlr["SerialPortSettings"]["DefaultParity"] != "Tommy.TomlLazy") DefaultPart = SPsettingstomlr["SerialPortSettings"]["DefaultParity"];
+                    else DefaultPart = "None";
+                    if (SPsettingstomlr["SerialPortSettings"]["DefaultSTOP"] != "Tommy.TomlLazy") DefaultSTOP = SPsettingstomlr["SerialPortSettings"]["DefaultSTOP"];
+                    else DefaultSTOP = "One";
+                    if (SPsettingstomlr["SerialPortSettings"]["DefaultDATA"] != "Tommy.TomlLazy") DefaultDATA = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultDATA"]);
+                    else DefaultDATA = 8;
+
+                    if (SPsettingstomlr["SerialPortSettings"]["DefaultTXHEX"] != "Tommy.TomlLazy") tx = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultTXHEX"]);
+                    else tx = 0;
+                    if (SPsettingstomlr["SerialPortSettings"]["DefaultRXHEX"] != "Tommy.TomlLazy") rx = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultRXHEX"]);
+                    else rx = 0;
+                    if (SPsettingstomlr["SerialPortSettings"]["DefaultDTR"] != "Tommy.TomlLazy") dtr = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultDTR"]);
+                    else dtr = 1;
+                    if (SPsettingstomlr["SerialPortSettings"]["DefaultRTS"] != "Tommy.TomlLazy") rts = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultRTS"]);
+                    else rts = 0;
+                    if (SPsettingstomlr["SerialPortSettings"]["DefaultSTime"] != "Tommy.TomlLazy") shtime = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultSTime"]);
+                    else shtime = 0;
+                    if (SPsettingstomlr["SerialPortSettings"]["DefaultAUTOSco"] != "Tommy.TomlLazy") autotr = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultAUTOSco"]);
+                    else autotr = 1;
+                    if (SPsettingstomlr["SerialPortSettings"]["AutoDaveSet"] != "Tommy.TomlLazy") autosaveset = int.Parse(SPsettingstomlr["SerialPortSettings"]["AutoDaveSet"]);
+                    else autosaveset = 1;
+                    if (SPsettingstomlr["SerialPortSettings"]["AutoSerichCom"] != "Tommy.TomlLazy") autosercom = int.Parse(SPsettingstomlr["SerialPortSettings"]["AutoSerichCom"]);
+                    else autoconnect = 1;
+                    if (SPsettingstomlr["SerialPortSettings"]["AutoConnect"] != "Tommy.TomlLazy") autoconnect = int.Parse(SPsettingstomlr["SerialPortSettings"]["AutoConnect"]);
+                    else autoconnect = 1;
+
+
+
+                    /*
+                    ["DefaultBAUD"] = "115200",
+                    ["DefaultParity"] = "None",
+                    ["DefaultSTOP"] = "One",
+                    ["DefaultDATA"] = "8",
+                    ["DefaultRXHEX"] = "0",
+                    ["DefaultTXHEX"] = "0",
+                    ["DefaultDTR"] = "1",
+                    ["DefaultRTS"] = "0",
+                    ["DefaultSTime"] = "0",
+                    ["DefaultAUTOSco"] = "1",
+                    */
+                }
+
+                RXListView.ItemsSource = new ObservableCollection<DataItem>();
+
+                //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
+
+                CommonRes._serialPort.DataReceived += _serialPort_DataReceived;
+
+                // 在你的代码后台，定义一个List<string>作为数据源
+                List<string> BaudRates = new List<string>()
+            {
+                "75", "110", "134", "150", "300", "600", "1200", "1800", "2400", "4800", "7200", "9600", "14400", "19200", "38400", "57600", "74880","115200", "128000", "230400", "250000", "500000", "1000000", "2000000"
+            };
+                // 将ComboBox的ItemsSource属性绑定到这个数据源
+                BANDComboBox.ItemsSource = BaudRates;
+                // 设置默认选项
+                BANDComboBox.SelectedItem = DefaultBAUD; // 将"9600"设置为默认选项
+
+                List<string> ParRates = new List<string>()
+            {
+                "None", "Odd", "Even", "Mark", "Space"
+            };
+                PARComboBox.ItemsSource = ParRates;
+                PARComboBox.SelectedItem = DefaultPart;
+
+                List<string> StopRates = new List<string>()
+            {
+                "None", "One", "OnePointFive", "Two"
+            };
+                STOPComboBox.ItemsSource = StopRates;
+                STOPComboBox.SelectedItem = DefaultSTOP;
+
+                for (int j = 5; j < 10; ++j)
+                {
+                    DATAComboBox.Items.Add(j);
+                }
+                DATAComboBox.SelectedItem = DefaultDATA;
+
+                var foregroundColor = COMButton.Foreground as SolidColorBrush;
+                var backgroundColor = COMButton.Background as SolidColorBrush;
+                //var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
+                //var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
+                //var theme = Application.Current.RequestedTheme;
+
+                /*
+                if (theme == ApplicationTheme.Dark)
+                {
+                    // 当前处于深色模式
+                    DTRButton.Background = new SolidColorBrush(darkaccentColor);
+                    DTRButton.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    DTRButton.Background = new SolidColorBrush(ligtaccentColor);
+                    DTRButton.Foreground = new SolidColorBrush(Colors.White);
+                }
+                CommonRes._serialPort.DtrEnable = true;
+
+                if (theme == ApplicationTheme.Dark)
+                {
+                    // 当前处于深色模式
+                    AUTOScrollButton.Background = new SolidColorBrush(darkaccentColor);
+                    AUTOScrollButton.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    AUTOScrollButton.Background = new SolidColorBrush(ligtaccentColor);
+                    AUTOScrollButton.Foreground = new SolidColorBrush(Colors.White);
+                }
+                */
+
+
+
+                ToggleButtonIsChecked(rx, RXHEXButton);
+                ToggleButtonIsChecked(tx, TXHEXButton);
+
+                ToggleButtonIsChecked(dtr, DTRButton);
+                if (dtr == 1)
+                {
+                    CommonRes._serialPort.DtrEnable = true;
+                }
+                else
+                {
+                    CommonRes._serialPort.DtrEnable = false;
+                }
+
+                ToggleButtonIsChecked(rts, RTSButton);
+                if (rts == 1)
+                {
+                    CommonRes._serialPort.RtsEnable = true;
+                }
+                else
+                {
+                    CommonRes._serialPort.RtsEnable = false;
+                }
+
+                ToggleButtonIsChecked(shtime, ShowTimeButton);
+                ToggleButtonIsChecked(autotr, AUTOScrollButton);
+
+                RunProgressBar.Visibility = Visibility.Collapsed;
+
+                //BorderBackRX.Background = backgroundColor;
+
+                ToggleButtonIsChecked(autosaveset, SaveSetButton);
+                ToggleButtonIsChecked(autoconnect, AutoConnectButton);
 
             }
 
@@ -366,8 +384,8 @@ namespace FSGaryityTool_Win11
             */
 
             ToggleButtonIsChecked(autosercom, AutoComButton);
-            if (autosercom == 1) 
-            { 
+            if (autosercom == 1)
+            {
                 timerSerialPort = new Timer(TimerSerialPortTick, null, 0, 1500);
                 AutoSerchComProgressRing.IsActive = true;
             }
@@ -385,7 +403,7 @@ namespace FSGaryityTool_Win11
                 RXDATA_ClickAsync(null, null);
 
                 if (RunT == 0) RunPBT += 2;
-                    
+
                 else RunPBT -= 2;
 
                 RunTProgressBar.Value = RunPBT;
@@ -398,22 +416,58 @@ namespace FSGaryityTool_Win11
                     RunT = 0;
                 }
 
-                if(CommonRes._serialPort.DsrHolding == true)
+
+                if (CommonRes._serialPort.IsOpen == true)
                 {
-                    FsBorderIsChecked(1, DSRBorder, DSRTextBlock);
-                }
-                if (CommonRes._serialPort.CtsHolding == true)
-                {
-                    FsBorderIsChecked(1, CTSBorder, CTSTextBlock);
-                }
-                if (CommonRes._serialPort.CDHolding == true)
-                {
-                    FsBorderIsChecked(1, CDHBorder, CDHTextBlock);
+                    if (CommonRes._serialPort.DsrHolding == true)
+                    {
+                        FsBorderIsChecked(1, DSRBorder, DSRTextBlock);
+                    }
+                    else
+                    {
+                        FsBorderIsChecked(0, DSRBorder, DSRTextBlock);
+                    }
+                    if (CommonRes._serialPort.CtsHolding == true)
+                    {
+                        FsBorderIsChecked(1, CTSBorder, CTSTextBlock);
+                    }
+                    else
+                    {
+                        FsBorderIsChecked(0, CTSBorder, CTSTextBlock);
+                    }
+                    if (CommonRes._serialPort.CDHolding == true)
+                    {
+                        FsBorderIsChecked(1, CDHBorder, CDHTextBlock);
+                    }
+                    else
+                    {
+                        FsBorderIsChecked(0, CDHBorder, CDHTextBlock);
+                    }
                 }
 
             });
-            
+
         }
+        private void PinChanged(object sender, SerialPinChangedEventArgs e)
+        {
+            if (e.EventType == System.IO.Ports.SerialPinChange.Ring)
+            {
+                int RI = 0;
+                if(RI == 0)
+                {
+                    // RI 信号使能
+                    FsBorderIsChecked(1, RIBorder, RITextBlock);
+                    RI = 1;
+                }
+                else
+                {
+                    // RI 信号未使能
+                    FsBorderIsChecked(0, RIBorder, RITextBlock);
+                    RI = 0;
+                }
+            }
+        }
+
         public void TimerSerialPortTick(Object stateInfo)       //串口热插拔检测
         {
             int InOut = 0;
@@ -442,7 +496,7 @@ namespace FSGaryityTool_Win11
                 }
                 */
 
-                if (LastPort.Length < NowPort.Length) 
+                if (LastPort.Length < NowPort.Length)
                 {
                     InOut = 1;
                     for (j = 0; j < NowPort.Length; j++)         //遍历插入的设备
@@ -478,7 +532,7 @@ namespace FSGaryityTool_Win11
                 }
                 Debug.WriteLine("INOUT" + InOut);
 
-                
+
                 if (InOut == 1)
                 {
                     InOutCom = NowPort[i];
@@ -590,7 +644,7 @@ namespace FSGaryityTool_Win11
             }
             COMButtonIcon.Rotation = Rollta;
             */
-            Thread COMButtonIconRotation  = new Thread(COMButtonIcon_Rotation);
+            Thread COMButtonIconRotation = new Thread(COMButtonIcon_Rotation);
             COMButtonIconRotation.Start();
         }
 
@@ -685,9 +739,9 @@ namespace FSGaryityTool_Win11
                     RXTextBox.Text = RXTextBox.Text + "SerialPort " + COMComboBox.SelectedItem + " IS OPEN" + "\r\n";
 
                     CommonRes._serialPort.Open();                                                                               //打开串口
-                    
-                    timer = new Timer(TimerTick, null, 0, 125); // 每秒触发8次
-                    
+
+                    timer = new Timer(TimerTick, null, 0, 250); // 每秒触发8次
+
                     CONTButton.Content = "DISCONNECT";
                     Con = 1;
                     RunProgressBar.ShowPaused = false;
@@ -751,7 +805,7 @@ namespace FSGaryityTool_Win11
         /*
         
         */
-        
+
 
         private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
@@ -769,67 +823,81 @@ namespace FSGaryityTool_Win11
 
 
             string rxstr;
-            string rxntstr;
             string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
+            string output;
             //StringBuilder datawate = new StringBuilder(1024);
-
 
 
             if (rx == 0)                                                        // 如果以字符串形式读取
             {
-                
+
                 rxstr = CommonRes._serialPort.ReadExisting();                   // 读取串口接收缓冲区字符串
-                rxntstr = rxstr;
+                string content = rxstr.Replace("\n", "").Replace("\r", ""); // 将StringBuilder的内容转换为字符串，并去除换行符
+                if (!string.IsNullOrWhiteSpace(content)) // 如果content不为空
+                {
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        UpdateItemsRepeater(Timesr, content);                       // 在接收listview中进行显示
+                        output = rxstr.Replace("\n", "\\n").Replace("\r", "\\r"); // 将换行符替换为其转义序列
+                        Debug.WriteLine(output); // 在Debug.WriteLine中显示处理后的字符串
+                        Debug.WriteLine("content" + content);
+                    });
+                }
+
                 if (shtime == 1)
                 {
                     //rxstr = string.Concat(Timesr, rxstr);                     //显示时间
                 }
                 //datawate.Append(rxstr);
 
-                
                 DispatcherQueue.TryEnqueue(() =>
                 {
-                    datapwate.Append(rxstr);                                    // 在接收文本框中进行显示
-                    UpdateItemsRepeater(Timesr, rxntstr);                       // 在接收listview中进行显示
+                    //datapwate.Append(rxstr);                                    // 在接收文本框中进行显示
                 });
+
 
                 if (autotr == 1)
                 {
                     //RXTextBox.ScrollToEnd();
                 }
-                
-                
-                
+
+
+
 
             }
             else                                                            // 以数值形式读取
             {
-                int length = CommonRes._serialPort.BytesToRead;                       // 读取串口接收缓冲区字节数
+                int length = CommonRes._serialPort.BytesToRead; // 读取串口接收缓冲区字节数
 
-                byte[] data = new byte[length];                             // 定义相同字节的数组
+                byte[] Data = new byte[length]; // 定义相同字节的数组
 
-                CommonRes._serialPort.Read(data, 0, length);                          // 串口读取缓冲区数据到数组中
-
-                for (int i = 0; i < length; i++)
+                CommonRes._serialPort.Read(Data, 0, length); // 串口读取缓冲区数据到数组中
+                DispatcherQueue.TryEnqueue(() =>
                 {
-                    rxstr = Convert.ToString(data[i], 16).ToUpper();                                   // 将数据转换为字符串格式
+                    UpdateItemsRepeater(Timesr, str);
+                });
+                for (int i = 0; i < length; i += 16)
+                {
+                    string str = "";
+                    for (int j = i; j < i + 16 && j < length; j++)
+                    {
+                        str += Data[j].ToString("X2") + " ";
+                    }
 
                     DispatcherQueue.TryEnqueue(() =>
                     {
-                        //datapwate.Append("0x" + (rxhstr.Length == 1 ? "0" + rxhstr + " " : rxhstr + " "));        // 添加到串口接收文本框中
+                        UpdateItemsRepeater("|                                     |", str);
                     });
                 }
+
+
                 DispatcherQueue.TryEnqueue(() =>
                 {
-                    datapwate.Append("\r\n");
+                    //datapwate.Append("\r\n");
                 });
 
-                if (autotr == 1)
-                {
-                    //RXTextBox.ScrollToEnd();
-                }
 
-                
+
             }
 
             /*
@@ -843,7 +911,7 @@ namespace FSGaryityTool_Win11
                 rxs = 0;
             }
             */
-            
+
         }
 
         private void UpdateItemsRepeater(string Timesr, string Rxstr)
@@ -890,13 +958,6 @@ namespace FSGaryityTool_Win11
 
                     try
                     {
-                        if (shtime == 1)
-                        {
-                            //显示时间
-                            current_time = System.DateTime.Now;     //获取当前时间
-                            RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";
-
-                        }
                         for (int i = 0; i < TXTextBox.Text.Length; i++)
                         {
                             str[0] = Convert.ToChar(TXTextBox.Text.Substring(i, 1));  // 取待发送文本框中的第i个字符
@@ -904,22 +965,13 @@ namespace FSGaryityTool_Win11
                         }
                         RXTextBox.Text = RXTextBox.Text + "TX: " + TXTextBox.Text + "\r\n";
 
-                        if (autotr == 1)
-                        {
-                            //RXTextBox.ScrollToEnd();
-                        }
-
-                        else
-                        {
-
-                        }
-                        txf = 1;
+                        //txf = 1;
                     }
                     catch
                     {
                         //MessageBox.Show("串口字符写入错误!", "错误");   // 弹出发送错误对话框
                         RXTextBox.Text = RXTextBox.Text + "串口字符写入错误!" + "\r\n";
-                        
+
                         CONTButton_Click(sender, e);
                     }
                 }
@@ -927,15 +979,10 @@ namespace FSGaryityTool_Win11
                 {
                     byte[] Data = new byte[1];                        // 定义一个byte类型数据，相当于C语言的unsigned char类型
                     int flag = 0;                                     // 定义一个标志，标志这是第几位
+                    string str = "";
                     try
                     {
-                        if (shtime == 1)
-                        {
-                            //显示时间
-                            current_time = System.DateTime.Now;     //获取当前时间
-                            RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";
-
-                        }
+                        RXTextBox.Text += "TX: " + "0x ";
                         for (int i = 0; i < TXTextBox.Text.Length; i++)
                         {
                             if (TXTextBox.Text.Substring(i, 1) == " " && flag == 0)                // 如果是第一位，并且为空字符
@@ -950,7 +997,11 @@ namespace FSGaryityTool_Win11
                                 {
                                     Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i, 1), 16);  // 转化为byte类型数据，以16进制显示
                                     CommonRes._serialPort.Write(Data, 0, 1);                                // 通过串口发送
-                                    RXTextBox.Text = RXTextBox.Text + Data + " ";
+                                    foreach (byte data in Data)
+                                    {
+                                        str = data.ToString("X2");
+                                    }
+                                    RXTextBox.Text = RXTextBox.Text + str + " ";
                                     flag = 0;                                                     // 标志回到第一位数据去
                                 }
                                 continue;
@@ -959,7 +1010,11 @@ namespace FSGaryityTool_Win11
                             {
                                 Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i - 1, 1), 16);  // 只将第一位字符转化为byte类型数据，以十六进制显示
                                 CommonRes._serialPort.Write(Data, 0, 1);                                    // 通过串口发送
-                                RXTextBox.Text = RXTextBox.Text + Data + " ";
+                                foreach (byte data in Data)
+                                {
+                                    str = data.ToString("X2");
+                                }
+                                RXTextBox.Text = RXTextBox.Text + str + " ";
                                 flag = 0;                                                         // 标志回到第一位数据去
                                 continue;
                             }
@@ -967,7 +1022,11 @@ namespace FSGaryityTool_Win11
                             {
                                 Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i - 1, 2), 16);  // 将第一，二位字符转化为byte类型数据，以十六进制显示
                                 CommonRes._serialPort.Write(Data, 0, 1);                                    // 通过串口发送
-                                RXTextBox.Text = RXTextBox.Text + Data + " ";
+                                foreach (byte data in Data)
+                                {
+                                    str = data.ToString("X2");
+                                }
+                                RXTextBox.Text = RXTextBox.Text + str + " ";
                                 flag = 0;                                                         // 标志回到第一位数据去
                                 continue;
                             }
@@ -975,16 +1034,6 @@ namespace FSGaryityTool_Win11
                         }
                         RXTextBox.Text += "\r\n";
 
-                        if (autotr == 1)
-                        {
-                            //RXTextBox.ScrollToEnd();
-                        }
-
-                        else
-                        {
-
-                        }
-                        txf = 1;
                     }
                     catch
                     {
@@ -1027,7 +1076,7 @@ namespace FSGaryityTool_Win11
         {
 
         }
-        
+
 
         private void RXHEXButton_Click(object sender, RoutedEventArgs e)    //接收以十六进制数显示
         {
@@ -1072,7 +1121,7 @@ namespace FSGaryityTool_Win11
 
         private Task RSTButton_ClickAsync(object sender, RoutedEventArgs e)
         {
-            Thread.Sleep(200);
+            Thread.Sleep(100);
             if (dtr == 1)
             {
                 DTRButton_Click(sender, e);
@@ -1086,6 +1135,7 @@ namespace FSGaryityTool_Win11
             }
 
             //CommonRes._serialPort.DtrEnable = true;
+            Thread.Sleep(200);
             CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);
             return Task.CompletedTask;
         }
@@ -1121,8 +1171,8 @@ namespace FSGaryityTool_Win11
 
         private void DTRButton_Click(object sender, RoutedEventArgs e)      //DTR信号使能
         {
-            FsButtonChecked(dtr, DTRButton);
-            
+            //FsButtonChecked(dtr, DTRButton);
+
             if (dtr == 0)
             {
                 CommonRes._serialPort.DtrEnable = true;
@@ -1137,7 +1187,7 @@ namespace FSGaryityTool_Win11
 
         private void RTSButton_Click(object sender, RoutedEventArgs e)      //RTS信号使能
         {
-            FsButtonChecked(rts, RTSButton);
+            //FsButtonChecked(rts, RTSButton);
 
             if (rts == 0)
             {
@@ -1153,8 +1203,8 @@ namespace FSGaryityTool_Win11
 
         private void ShowTimeButton_Click(object sender, RoutedEventArgs e)
         {
-            FsButtonChecked(shtime, ShowTimeButton);
-            
+            //FsButtonChecked(shtime, ShowTimeButton);
+
             if (shtime == 0)
             {
                 shtime = 1;
@@ -1176,8 +1226,8 @@ namespace FSGaryityTool_Win11
 
         private void AUTOScrollButton_Click(object sender, RoutedEventArgs e)
         {
-            FsButtonChecked(autotr, AUTOScrollButton);
-            
+            //FsButtonChecked(autotr, AUTOScrollButton);
+
             if (autotr == 0)
             {
                 autotr = 1;
@@ -1258,5 +1308,101 @@ namespace FSGaryityTool_Win11
                 autosercom = 0;
             }
         }
+
+        private void RXListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            // 获取鼠标右键点击的位置
+            Point point = e.GetPosition(null);
+
+            // 根据位置找到对应的ListViewItem
+            ListViewItem listViewItem = VisualTreeHelper.FindElementsInHostCoordinates(point, RXListView).FirstOrDefault(x => x is ListViewItem) as ListViewItem;
+
+            // 如果找到了ListViewItem，将其设置为选中状态
+            if (listViewItem != null)
+            {
+                listViewItem.IsSelected = true;
+            }
+
+            MenuFlyoutItem copyItem = new MenuFlyoutItem { Text = "Copy all" };
+            copyItem.Click += CopyItem_Click;
+
+            MenuFlyoutItem copyTimestampItem = new MenuFlyoutItem { Text = "Copy timestamp" };
+            copyTimestampItem.Click += CopyTimestampItem_Click;
+
+            MenuFlyoutItem copyDataItem = new MenuFlyoutItem { Text = "Copy data" };
+            copyDataItem.Click += CopyDataItem_Click;
+
+            // 创建一个新的菜单飞出（MenuFlyout）并添加菜单项
+            MenuFlyout menuFlyout = new MenuFlyout();
+
+            menuFlyout.Items.Add(copyItem);
+            menuFlyout.Items.Add(copyTimestampItem);
+            menuFlyout.Items.Add(copyDataItem);
+
+            // 显示菜单
+            menuFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
+        }
+
+        private void CopyItem_Click(object sender, RoutedEventArgs e)
+        {
+            // 获取当前选中的项
+            var selectedItem = RXListView.SelectedItem as DataItem;
+
+            // 确保选中的项不为空
+            if (selectedItem != null)
+            {
+                // 获取选中项的内容
+                var content1 = selectedItem.Timesr;
+                var content2 = selectedItem.Rxstr;
+
+                // 将两个内容合并，你可以根据需要添加适当的分隔符
+                var combinedContent = content1 + " " + content2;
+
+                // 将内容复制到剪贴板
+                DataPackage dataPackage = new DataPackage();
+                dataPackage.SetText(combinedContent);
+                Clipboard.SetContent(dataPackage);
+            }
+        }
+        private void CopyTimestampItem_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedItem = RXListView.SelectedItem as DataItem;
+
+            // 确保选中的项不为空
+            if (selectedItem != null)
+            {
+                // 获取选中项的内容
+                var content1 = selectedItem.Timesr;
+
+                // 将两个内容合并，你可以根据需要添加适当的分隔符
+                var combinedContent = content1;
+
+                // 将内容复制到剪贴板
+                DataPackage dataPackage = new DataPackage();
+                dataPackage.SetText(combinedContent);
+                Clipboard.SetContent(dataPackage);
+            }
+        }
+        private void CopyDataItem_Click(object sender, RoutedEventArgs e)
+        {
+            // 获取当前选中的项
+            var selectedItem = RXListView.SelectedItem as DataItem;
+
+            // 确保选中的项不为空
+            if (selectedItem != null)
+            {
+                // 获取选中项的内容
+                var content2 = selectedItem.Rxstr;
+
+                // 将两个内容合并，你可以根据需要添加适当的分隔符
+                var combinedContent = content2;
+
+                // 将内容复制到剪贴板
+                DataPackage dataPackage = new DataPackage();
+                dataPackage.SetText(combinedContent);
+                Clipboard.SetContent(dataPackage);
+            }
+        }
+
     }
 }

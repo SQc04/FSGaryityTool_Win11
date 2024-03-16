@@ -46,7 +46,9 @@
                             </FontIcon.RotationTransition>
                         </FontIcon>
                     </Button>
-                    <ComboBox x:Name="COMComboBox" SelectionChanged="COMComboBox_SelectionChanged" Width="108" Margin="6,0,6,6"></ComboBox>
+                    <ComboBox x:Name="COMComboBox" SelectionChanged="COMComboBox_SelectionChanged" Width="108" Margin="6,0,6,6">
+                        <ComboBoxItem Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"/>
+                    </ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Border CornerRadius="4" Width="240" Height="Auto" Margin="6,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}">
@@ -116,7 +118,10 @@
 
                 <StackPanel Orientation="Horizontal">
                     <Border x:Name="CDHBorder" CornerRadius="4" Height="32" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                        <TextBlock x:Name="CDHTextBlock" Text="DCD" TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0"/>
+                        <TextBlock x:Name="CDHTextBlock" Text="DCD" TextAlignment="Center" VerticalAlignment="Center" Width="54" Margin="0"/>
+                    </Border>
+                    <Border x:Name="RIBorder" CornerRadius="4" Height="32" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                        <TextBlock x:Name="RITextBlock" Text="RI" TextAlignment="Center" VerticalAlignment="Center" Width="53.5" Margin="0"/>
                     </Border>
                     <Border x:Name="DSRBorder" CornerRadius="4" Height="32" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
                         <TextBlock x:Name="DSRTextBlock" Text="DSR" TextAlignment="Center" VerticalAlignment="Center" Width="48" Margin="0"/>
@@ -151,8 +156,8 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <ToggleButton x:Name="SaveSetButton" Checked="SaveSetButton_Checked" IsThreeState="False" IsChecked="False" Width="120" Margin="6">AutoSaveSet</ToggleButton>
-                    <Button x:Name="DTRButton" Click="DTRButton_Click" Width="48" Margin="6">DTR</Button>
-                    <Button x:Name="RTSButton" Click="RTSButton_Click" Width="48" Margin="6">RTS</Button>
+                    <ToggleButton x:Name="DTRButton" Click="DTRButton_Click" Width="48" Margin="6">DTR</ToggleButton>
+                    <ToggleButton x:Name="RTSButton" Click="RTSButton_Click" Width="48" Margin="6">RTS</ToggleButton>
                     <StackPanel.Transitions>
                         <TransitionCollection>
                             <RepositionThemeTransition />
@@ -160,8 +165,8 @@
                     </StackPanel.Transitions>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Button x:Name="ShowTimeButton" Click="ShowTimeButton_Click" Width="120" Margin="6">ShowTime</Button>
-                    <Button x:Name="AUTOScrollButton" Click="AUTOScrollButton_Click" Width="108" Margin="6">AUTOScroll</Button>
+                    <ToggleButton x:Name="ShowTimeButton" Click="ShowTimeButton_Click" Width="120" Margin="6">Showtimestamp</ToggleButton>
+                    <ToggleButton x:Name="AUTOScrollButton" Click="AUTOScrollButton_Click" Width="108" Margin="6">AUTOScroll</ToggleButton>
                     <StackPanel.Transitions>
                         <TransitionCollection>
                             <RepositionThemeTransition />
@@ -208,8 +213,8 @@
 
         <Border x:Name="BorderBackRX" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="1" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4" MinWidth="300" Margin="0,12,0,6">
             <ListView x:Name="RXListView" 
-                  BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
                   BorderThickness="0" 
+                  RightTapped="RXListView_RightTapped"
                   Margin="3">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:DataItem">
@@ -222,17 +227,16 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Timesr}" Height="18" Margin="0,0,10,0"/>
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind Rxstr}" HorizontalAlignment="Stretch" Height="18" Margin="0,0,10,0"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Timesr}" Height="18" Margin="0,0,10,0">
+
+                            </TextBlock>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind Rxstr}" HorizontalAlignment="Stretch" Height="18" Margin="0,0,10,0">
+
+                            </TextBlock>
 
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
-                <ListView.ItemContainerTransitions>
-                    <TransitionCollection>
-                        <AddDeleteThemeTransition />
-                    </TransitionCollection>
-                </ListView.ItemContainerTransitions>
             </ListView>
         </Border>
 

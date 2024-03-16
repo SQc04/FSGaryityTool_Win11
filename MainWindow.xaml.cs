@@ -59,8 +59,9 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.14";
+        public static string FSSoftVersion = "0.2.15";
         public static int FsPage = 0;
+        public static TomlTable settingstomlSp;
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
@@ -88,7 +89,7 @@ namespace FSGaryityTool_Win11
             else if ((string)selectedItem.Tag == "FSPage")
             {
                 FSnvf.Navigate(typeof(FSPage));
-                FsPage = 4;
+                FsPage = 4;                             //Footer
             }
 
             if (args.IsSettingsSelected)
@@ -223,6 +224,7 @@ namespace FSGaryityTool_Win11
                         ["DefaultAUTOSco"] = "1",
                         ["AutoDaveSet"] = "1",
                         ["AutoSerichCom"] = "1",
+                        ["AutoConnect"] = "1",
                     },
 
                 };
@@ -250,17 +252,96 @@ namespace FSGaryityTool_Win11
             Version TomlVersion = new Version(TomlfsVersion);
             Version FSGrVersion = new Version(FSSoftVersion);
 
-            if (FSGrVersion > TomlVersion)
+            if (FSGrVersion > TomlVersion)              //Settings.Toml版本管理
             {
                 Debug.WriteLine(">");
+
+                //缓存设置
+                string defpage, baud, party, stop, data, rxhex, txhex, dtr, rts, shtime, autosco, autosavrset, autosercom, autoconnect;
+                using (StreamReader reader = File.OpenText(Page1.FSSetToml))                    //打开TOML文件
+                {
+                    settingstomlSp = TOML.Parse(reader);
+
+                    if ((string)settingstomlSp["FSGravitySettings"]["DefaultNvPage"] != "Tommy.TomlLazy") defpage = settingstomlSp["FSGravitySettings"]["DefaultNvPage"];
+                    else defpage = "0";
+
+                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultBAUD"] != "Tommy.TomlLazy") baud = settingstomlSp["SerialPortSettings"]["DefaultBAUD"];
+                    else baud = "115200";
+                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultParity"] != "Tommy.TomlLazy") party = settingstomlSp["SerialPortSettings"]["DefaultParity"];
+                    else party = "None";
+                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultSTOP"] != "Tommy.TomlLazy") stop = settingstomlSp["SerialPortSettings"]["DefaultSTOP"];
+                    else stop = "One";
+                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultDATA"] != "Tommy.TomlLazy") data = settingstomlSp["SerialPortSettings"]["DefaultDATA"];
+                    else data = "8";
+                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultRXHEX"] != "Tommy.TomlLazy") rxhex = settingstomlSp["SerialPortSettings"]["DefaultRXHEX"];
+                    else rxhex = "0";
+                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultTXHEX"] != "Tommy.TomlLazy") txhex = settingstomlSp["SerialPortSettings"]["DefaultTXHEX"];
+                    else txhex = "0";
+                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultDTR"] != "Tommy.TomlLazy") dtr = settingstomlSp["SerialPortSettings"]["DefaultDTR"];
+                    else dtr = "1";
+                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultRTS"] != "Tommy.TomlLazy") rts = settingstomlSp["SerialPortSettings"]["DefaultRTS"];
+                    else rts = "0";
+                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultSTime"] != "Tommy.TomlLazy") shtime = settingstomlSp["SerialPortSettings"]["DefaultSTime"];
+                    else shtime = "0";
+                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultAUTOSco"] != "Tommy.TomlLazy") autosco = settingstomlSp["SerialPortSettings"]["DefaultAUTOSco"];
+                    else autosco = "1";
+                    if ((string)settingstomlSp["SerialPortSettings"]["AutoDaveSet"] != "Tommy.TomlLazy") autosavrset = settingstomlSp["SerialPortSettings"]["AutoDaveSet"];
+                    else autosavrset = "1";
+                    if ((string)settingstomlSp["SerialPortSettings"]["AutoSerichCom"] != "Tommy.TomlLazy") autosercom = settingstomlSp["SerialPortSettings"]["AutoSerichCom"];
+                    else autosercom = "1";
+                    if ((string)settingstomlSp["SerialPortSettings"]["AutoConnect"] != "Tommy.TomlLazy") autoconnect = settingstomlSp["SerialPortSettings"]["AutoConnect"];
+                    else autoconnect = "1";
+                    //if (settingstomlSp["SerialPortSettings"] != null)  = ;
+
+                    settingstomlSp = new TomlTable
+                    {
+                        ["Version"] = FSSoftVersion,
+
+                        ["FSGravitySettings"] =
+                        {
+                            Comment =
+                            "FSGaryityTool Settings:",
+                            ["DefaultNvPage"] = defpage,
+                        },
+
+                        ["SerialPortSettings"] =
+                        {
+                            Comment =
+                            "FSGaryityTool SerialPort Settings:\r\n" +
+                            "Parity:None,Odd,Even,Mark,Space\r\n" +
+                            "STOPbits:None,One,OnePointFive,Two\r\n" +
+                            "DATAbits:5~9",
+
+                            ["DefaultBAUD"] = baud,
+                            ["DefaultParity"] = party,
+                            ["DefaultSTOP"] = stop,
+                            ["DefaultDATA"] = data,
+                            ["DefaultRXHEX"] = rxhex,
+                            ["DefaultTXHEX"] = txhex,
+                            ["DefaultDTR"] = dtr,
+                            ["DefaultRTS"] = rts,
+                            ["DefaultSTime"] = shtime,
+                            ["DefaultAUTOSco"] = autosco,
+                            ["AutoDaveSet"] = autosavrset,
+                            ["AutoSerichCom"] = autosercom,
+                            ["AutoConnect"] = autoconnect,
+                        },
+
+                    };
+
+                }
+                //更新Toml
+                using (StreamWriter writer = File.CreateText(Page1.FSSetToml))                  //将设置写入TOML文件
+                {
+                    settingstomlSp.WriteTo(writer);
+                    //Debug.WriteLine("写入Toml" + settingstomlSp["FSGravitySettings"]["DefaultNvPage"]);
+                    // Remember to flush the data if needed!
+                    writer.Flush();
+                }
             }
             else
             {
                 Debug.WriteLine("<=");
-
-                //缓存设置
-
-                //更新Toml
 
             }
 
