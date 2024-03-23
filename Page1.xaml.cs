@@ -80,9 +80,10 @@ namespace FSGaryityTool_Win11
         public static int rts = 0;//RTS
         public static int shtime = 0;//ShowTime
         public static int autotr = 0;//AUTOScroll
-        public static int autosaveset = 0;
+        public static int autosaveset;
         public static int autosercom;
         public static int autoconnect;
+        public static int txnewline = 0;
 
         public static int rxs = 0;
         public static string[] ArryPort; //定义字符串数组，数组名为 ArryPort
@@ -100,7 +101,7 @@ namespace FSGaryityTool_Win11
         public static string FSSetJson = Path.Combine(FSGravif, "Settings.json");
         public static string FSSetToml = Path.Combine(FSGravif, "Settings.toml");
 
-
+        public static TomlTable settingstomlr;
 
         public Timer timer;
         public Timer timerSerialPort;
@@ -243,7 +244,8 @@ namespace FSGaryityTool_Win11
                     else autoconnect = 1;
                     if (SPsettingstomlr["SerialPortSettings"]["AutoConnect"] != "Tommy.TomlLazy") autoconnect = int.Parse(SPsettingstomlr["SerialPortSettings"]["AutoConnect"]);
                     else autoconnect = 1;
-
+                    if (SPsettingstomlr["SerialPortSettings"]["DefaultTXNewLine"] != "Tommy.TomlLazy") txnewline = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultTXNewLine"]);
+                    else txnewline = 1;
 
 
                     /*
@@ -365,7 +367,7 @@ namespace FSGaryityTool_Win11
 
                 ToggleButtonIsChecked(autosaveset, SaveSetButton);
                 ToggleButtonIsChecked(autoconnect, AutoConnectButton);
-
+                ToggleButtonIsChecked(txnewline, TXNewLineButton);
             }
 
 
@@ -954,17 +956,17 @@ namespace FSGaryityTool_Win11
             {
                 if (tx == 0)        // 如果是以字符的形式发送数据
                 {
-                    char[] str = new char[1];  // 定义一个字符数组，只有一位
-
+                    string str = "";
                     try
                     {
-                        for (int i = 0; i < TXTextBox.Text.Length; i++)
+                        str = TXTextBox.Text;
+                        CommonRes._serialPort.Write(str);
+                        if (txnewline == 1)
                         {
-                            str[0] = Convert.ToChar(TXTextBox.Text.Substring(i, 1));  // 取待发送文本框中的第i个字符
-                            CommonRes._serialPort.Write(str, 0, 1);                            // 写入串口设备进行发送
+                            CommonRes._serialPort.Write("\r\n");
                         }
                         RXTextBox.Text = RXTextBox.Text + "TX: " + TXTextBox.Text + "\r\n";
-
+                        
                         //txf = 1;
                     }
                     catch
@@ -979,9 +981,11 @@ namespace FSGaryityTool_Win11
                 {
                     byte[] Data = new byte[1];                        // 定义一个byte类型数据，相当于C语言的unsigned char类型
                     int flag = 0;                                     // 定义一个标志，标志这是第几位
+                    int databits = 0;
                     string str = "";
                     try
                     {
+                        byte[] bytes = new byte[TXTextBox.Text.Length];
                         RXTextBox.Text += "TX: " + "0x ";
                         for (int i = 0; i < TXTextBox.Text.Length; i++)
                         {
@@ -992,57 +996,65 @@ namespace FSGaryityTool_Win11
 
                             if (TXTextBox.Text.Substring(i, 1) != " " && flag == 0)                // 如果是第一位，但不为空字符
                             {
-                                flag = 1;                                                         // 标志转到第二位数据去
+                                flag = 1;                                                          // 标志转到第二位数据去
                                 if (i == TXTextBox.Text.Length - 1)                                // 如果这是文本框字符串的最后一个字符
                                 {
                                     Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i, 1), 16);  // 转化为byte类型数据，以16进制显示
-                                    CommonRes._serialPort.Write(Data, 0, 1);                                // 通过串口发送
+                                    bytes[databits] = Data[0];
                                     foreach (byte data in Data)
                                     {
                                         str = data.ToString("X2");
                                     }
                                     RXTextBox.Text = RXTextBox.Text + str + " ";
                                     flag = 0;                                                     // 标志回到第一位数据去
+                                    databits++;
                                 }
                                 continue;
                             }
                             else if (TXTextBox.Text.Substring(i, 1) == " " && flag == 1)           // 如果是第二位，且第二位字符为空
                             {
                                 Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i - 1, 1), 16);  // 只将第一位字符转化为byte类型数据，以十六进制显示
-                                CommonRes._serialPort.Write(Data, 0, 1);                                    // 通过串口发送
+                                bytes[databits] = Data[0];
                                 foreach (byte data in Data)
                                 {
                                     str = data.ToString("X2");
                                 }
                                 RXTextBox.Text = RXTextBox.Text + str + " ";
                                 flag = 0;                                                         // 标志回到第一位数据去
+                                databits++;
                                 continue;
                             }
                             else if (TXTextBox.Text.Substring(i, 1) != " " && flag == 1)           // 如果是第二位字符，且第一位字符不为空
                             {
                                 Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i - 1, 2), 16);  // 将第一，二位字符转化为byte类型数据，以十六进制显示
-                                CommonRes._serialPort.Write(Data, 0, 1);                                    // 通过串口发送
+                                bytes[databits] = Data[0];
                                 foreach (byte data in Data)
                                 {
                                     str = data.ToString("X2");
                                 }
                                 RXTextBox.Text = RXTextBox.Text + str + " ";
                                 flag = 0;                                                         // 标志回到第一位数据去
+                                databits++;
                                 continue;
                             }
 
                         }
+                        CommonRes._serialPort.Write(bytes, 0, databits);                                     // 通过串口发送
+                        if (txnewline == 1)
+                        {
+                            CommonRes._serialPort.Write("\r\n");
+                        }
                         RXTextBox.Text += "\r\n";
-
                     }
                     catch
                     {
                         //MessageBox.Show("串口数值写入错误!", "错误");
-                        RXTextBox.Text = RXTextBox.Text + "串口字符写入错误!" + "\r\n";
+                        RXTextBox.Text = RXTextBox.Text + "错误，输入内容不是十六进制数!" + "\r\n";
 
-                        CONTButton_Click(sender, e);
+                        //CONTButton_Click(sender, e);
                     }
                 }
+                
                 TXTextBox.Text = "";
             }
         }
@@ -1062,19 +1074,75 @@ namespace FSGaryityTool_Win11
         }
         private void BANDComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (autosaveset == 1)
+            {
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
+                {
+                    settingstomlr = TOML.Parse(reader);
 
+                    settingstomlr["SerialPortSettings"]["DefaultBAUD"] = (string)BANDComboBox.SelectedItem;
+                }
+
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
+                {
+                    settingstomlr.WriteTo(writer);
+                    writer.Flush();
+                }
+            }
         }
         private void PARComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (autosaveset == 1)
+            {
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
+                {
+                    settingstomlr = TOML.Parse(reader);
 
+                    settingstomlr["SerialPortSettings"]["DefaultParity"] = (string)PARComboBox.SelectedItem;
+                }
+
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
+                {
+                    settingstomlr.WriteTo(writer);
+                    writer.Flush();
+                }
+            }
         }
         private void STOPComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (autosaveset == 1)
+            {
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
+                {
+                    settingstomlr = TOML.Parse(reader);
 
+                    settingstomlr["SerialPortSettings"]["DefaultSTOP"] = (string)STOPComboBox.SelectedItem;
+                }
+
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
+                {
+                    settingstomlr.WriteTo(writer);
+                    writer.Flush();
+                }
+            }
         }
         private void DATAComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (autosaveset == 1)
+            {
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
+                {
+                    settingstomlr = TOML.Parse(reader);
 
+                    settingstomlr["SerialPortSettings"]["DefaultDATA"] = Convert.ToString(DATAComboBox.SelectedItem);
+                }
+
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
+                {
+                    settingstomlr.WriteTo(writer);
+                    writer.Flush();
+                }
+            }
         }
 
 
@@ -1275,9 +1343,16 @@ namespace FSGaryityTool_Win11
             }
         }
 
-        private void SaveSetButton_Checked(object sender, RoutedEventArgs e)
+        private void SaveSetButton_Click(object sender, RoutedEventArgs e)
         {
-            SaveSetButton.IsChecked = true;
+            if (autosaveset == 0)
+            {
+                autosaveset = 1;
+            }
+            else 
+            {
+                autosaveset = 0; 
+            }
         }
 
 
@@ -1404,5 +1479,16 @@ namespace FSGaryityTool_Win11
             }
         }
 
+        private void TXNewLineButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (txnewline == 0)
+            {
+                txnewline = 1;
+            }
+            else
+            {
+                txnewline = 0;
+            }
+        }
     }
 }

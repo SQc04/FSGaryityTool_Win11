@@ -59,7 +59,7 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.15";
+        public static string FSSoftVersion = "0.2.18";
         public static int FsPage = 0;
         public static TomlTable settingstomlSp;
 
@@ -116,7 +116,7 @@ namespace FSGaryityTool_Win11
 
             m_AppWindow = GetAppWindowForCurrentWindow();
             m_AppWindow.Title = "FSGravityTool";//Set AppWindow
-            m_AppWindow.SetIcon("FSsoftH.ico");
+            m_AppWindow.SetIcon("FSFSoftH.ico");
 
 
             string SYSAPLOCAL = Environment.GetFolderPath(folder: Environment.SpecialFolder.LocalApplicationData);
@@ -225,6 +225,7 @@ namespace FSGaryityTool_Win11
                         ["AutoDaveSet"] = "1",
                         ["AutoSerichCom"] = "1",
                         ["AutoConnect"] = "1",
+                        ["DefaultTXNewLine"] = "1"
                     },
 
                 };
@@ -257,7 +258,7 @@ namespace FSGaryityTool_Win11
                 Debug.WriteLine(">");
 
                 //缓存设置
-                string defpage, baud, party, stop, data, rxhex, txhex, dtr, rts, shtime, autosco, autosavrset, autosercom, autoconnect;
+                string defpage, baud, party, stop, data, rxhex, txhex, dtr, rts, shtime, autosco, autosavrset, autosercom, autoconnect, txnewline;
                 using (StreamReader reader = File.OpenText(Page1.FSSetToml))                    //打开TOML文件
                 {
                     settingstomlSp = TOML.Parse(reader);
@@ -291,6 +292,8 @@ namespace FSGaryityTool_Win11
                     else autosercom = "1";
                     if ((string)settingstomlSp["SerialPortSettings"]["AutoConnect"] != "Tommy.TomlLazy") autoconnect = settingstomlSp["SerialPortSettings"]["AutoConnect"];
                     else autoconnect = "1";
+                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultTXNewLine"] != "Tommy.TomlLazy") txnewline = settingstomlSp["SerialPortSettings"]["DefaultTXNewLine"];
+                    else txnewline = "1";
                     //if (settingstomlSp["SerialPortSettings"] != null)  = ;
 
                     settingstomlSp = new TomlTable
@@ -325,6 +328,7 @@ namespace FSGaryityTool_Win11
                             ["AutoDaveSet"] = autosavrset,
                             ["AutoSerichCom"] = autosercom,
                             ["AutoConnect"] = autoconnect,
+                            ["DefaultTXNewLine"] = txnewline,
                         },
 
                     };
@@ -466,7 +470,7 @@ namespace FSGaryityTool_Win11
             return AppWindow.GetFromWindowId(wndId);
         }
 
-        private void NavigationView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+        private void NavigationView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)     //返回按钮
         {
 
             if (FsPage == 0) ;                  //SerialPortPage
@@ -483,6 +487,17 @@ namespace FSGaryityTool_Win11
             //else if (FsPage == 5) ;           //SettingsPage
         }
 
+        private void NavigationView_DisplayModeChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewDisplayModeChangedEventArgs args)
+        {
+            if (args.DisplayMode == Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode.Minimal)
+            {
+                AppTitleBara.Margin = new Thickness(48, 0, 0, 0);
+            }
+            else
+            {
+                AppTitleBara.Margin = new Thickness(0, 0, 0, 0);
+            }
+        }
 
         /*
         

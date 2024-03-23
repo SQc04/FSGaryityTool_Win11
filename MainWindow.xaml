@@ -26,27 +26,33 @@
         </Grid.RowDefinitions>
 
 
-        <StackPanel Grid.Column="2" Grid.Row="0" Orientation="Horizontal" Canvas.ZIndex="10">
-            <Image x:Name="TitleBarIcon" Stretch="Fill" Source="/Assets/StoreLogo.png"
-            HorizontalAlignment="Left"
-            Width="20" Height="20"
-            Margin="0,2,0,0"/>
-
-            <TextBlock x:Name="TitleBarTextBlock" 
-            Text="App title" 
-            Style="{StaticResource CaptionTextBlockStyle}"
-            VerticalAlignment="Center"
-            Margin="8,2,0,0"/>
-        </StackPanel>
-
         
-        <Border x:Name="AppTitleBara" Grid.Column="2" Grid.Row="0" Height="48" VerticalAlignment="Top" Canvas.ZIndex="9" >
+
+
+        <Border x:Name="AppTitleBara" Grid.Column="2" Grid.Row="0" Height="48" VerticalAlignment="Top" Canvas.ZIndex="9" Margin="0,0,0,0">
             <!--Background="{ThemeResource SystemAccentColorLight2}"-->
-            <TextBlock x:Name="AppTitle" VerticalAlignment="Top" Margin="0,8,0,0" />
+            <!--<TextBlock x:Name="AppTitle" VerticalAlignment="Top" Margin="0,8,0,0" />-->
+            <Grid>
+                <StackPanel Grid.Column="2" Grid.Row="0" Orientation="Horizontal" Canvas.ZIndex="10">
+                    <Image x:Name="TitleBarIcon" Stretch="Fill" Source="/Assets/FSFSoftLogo.png"
+                            HorizontalAlignment="Left"
+                            Width="20" Height="20"
+                            Margin="0,2,0,0"/>
+
+                    <TextBlock x:Name="TitleBarTextBlock" 
+                                Text="App title" 
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                VerticalAlignment="Center"
+                                Margin="8,2,0,0"/>
+                </StackPanel>
+            </Grid>
         </Border>
 
         <NavigationView x:Name="FSnv" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2" IsTitleBarAutoPaddingEnabled="False" PaneDisplayMode="Auto" IsTabStop="False" 
-                        IsBackEnabled="True" BackRequested="NavigationView_BackRequested" SelectionChanged="NavigationView_SelectionChanged" Margin="0,0,0,0">
+                        IsBackEnabled="True" BackRequested="NavigationView_BackRequested" 
+                        SelectionChanged="NavigationView_SelectionChanged" 
+                        DisplayModeChanged="NavigationView_DisplayModeChanged"
+                        Margin="0,0,0,0">
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="Sort" Content="Serial Port" Tag="MainPage1" />
                 <NavigationViewItem Content="Download FLASH" Tag="Page2">
@@ -69,7 +75,7 @@
                 </NavigationViewItem>-->
                 <NavigationViewItem Tag="FSPage" Content="FairingStudio">
                     <NavigationViewItem.Icon>
-                        <BitmapIcon UriSource="/Assets/StoreLogo.png" ShowAsMonochrome="False"/>
+                        <BitmapIcon UriSource="/Assets/FSFSoftLogo.png" ShowAsMonochrome="False"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>

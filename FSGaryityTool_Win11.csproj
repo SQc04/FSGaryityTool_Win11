@@ -16,7 +16,7 @@
 		<DefaultLanguage>zh-cn</DefaultLanguage>
 		<PackageCertificateThumbprint>44A69BF79CCE3D4449484E6D059292A4AABE7E63</PackageCertificateThumbprint>
 		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-		<ApplicationIcon>FSSoftH.ico</ApplicationIcon>
+		<ApplicationIcon>FSFSoftH.ico</ApplicationIcon>
 		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
 		<LangVersion>11.0</LangVersion>
 		<PackageIcon>SmallTile.scale-400.png</PackageIcon>
@@ -33,7 +33,7 @@
 		<requireLicenseAcceptance>flase</requireLicenseAcceptance>
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-		<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
 		<AppxPackageDir>D:\I\FAIRING STUDIO\FSSoftware\FSGarvityTool\FSGaryityTool_Win11\bin\win10-x64\publish\x64-Pkg\</AppxPackageDir>
 		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
@@ -42,6 +42,12 @@
 		<Version />
 	</PropertyGroup>
   <ItemGroup>
+    <Content Remove="Assets\FSFSoft.png" />
+    <Content Remove="Assets\FSFSoftLogo.scale-100.png" />
+    <Content Remove="Assets\FSFSoftLogo.scale-125.png" />
+    <Content Remove="Assets\FSFSoftLogo.scale-150.png" />
+    <Content Remove="Assets\FSFSoftLogo.scale-200.png" />
+    <Content Remove="Assets\FSFSoftLogo.scale-400.png" />
     <Content Remove="Assets\StoreLogo.png" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +76,7 @@
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="FSFSoftH.ico" />
     <Content Include="FSSoftH.ico" />
   </ItemGroup>
 
@@ -199,7 +206,7 @@
   </PropertyGroup>
 	
   <PropertyGroup>
-    <VersionPrefix>0.2.15</VersionPrefix>
+    <VersionPrefix>0.2.18</VersionPrefix>
   </PropertyGroup>
 	
 	

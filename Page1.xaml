@@ -155,7 +155,7 @@
                     </StackPanel.Transitions>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <ToggleButton x:Name="SaveSetButton" Checked="SaveSetButton_Checked" IsThreeState="False" IsChecked="False" Width="120" Margin="6">AutoSaveSet</ToggleButton>
+                    <ToggleButton x:Name="TXNewLineButton" Click="TXNewLineButton_Click" Width="120" Margin="6">TXNewLine</ToggleButton>
                     <ToggleButton x:Name="DTRButton" Click="DTRButton_Click" Width="48" Margin="6">DTR</ToggleButton>
                     <ToggleButton x:Name="RTSButton" Click="RTSButton_Click" Width="48" Margin="6">RTS</ToggleButton>
                     <StackPanel.Transitions>
@@ -165,7 +165,7 @@
                     </StackPanel.Transitions>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <ToggleButton x:Name="ShowTimeButton" Click="ShowTimeButton_Click" Width="120" Margin="6">Showtimestamp</ToggleButton>
+                    <ToggleButton x:Name="SaveSetButton" Click="SaveSetButton_Click" IsThreeState="False" IsChecked="False" Width="120" Margin="6">AutoSaveSet</ToggleButton>
                     <ToggleButton x:Name="AUTOScrollButton" Click="AUTOScrollButton_Click" Width="108" Margin="6">AUTOScroll</ToggleButton>
                     <StackPanel.Transitions>
                         <TransitionCollection>
@@ -187,6 +187,7 @@
 
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="RSTButton" Click="RSTButton_Click" Width="120" Margin="6">RST</Button>
+                    <ToggleButton x:Name="ShowTimeButton" Click="ShowTimeButton_Click" Width="108" Margin="6">Showtimestamp</ToggleButton>
                     <StackPanel.Transitions>
                         <TransitionCollection>
                             <RepositionThemeTransition />
