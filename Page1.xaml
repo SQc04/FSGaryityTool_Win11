@@ -70,9 +70,9 @@
                 
                 <StackPanel Orientation="Horizontal">
                     <Border x:Name="BorderBack1" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                        <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">BAUDRATE</TextBlock>
+                        <TextBlock x:Name="BaudTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">BAUDRATE</TextBlock>
                     </Border>
-                    <ComboBox x:Name="BANDComboBox" SelectionChanged="BANDComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                    <ComboBox x:Name="BANDComboBox" IsEditable="True" SelectionChanged="BANDComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
                     <StackPanel.Transitions>
                         <TransitionCollection>
                             <RepositionThemeTransition />
@@ -82,7 +82,7 @@
                 
                 <StackPanel Orientation="Horizontal">
                     <Border x:Name="BorderBack2" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                        <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">Parity</TextBlock>
+                        <TextBlock x:Name="PartTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">Parity</TextBlock>
                     </Border>
                     <ComboBox x:Name="PARComboBox" SelectionChanged="PARComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
                     <StackPanel.Transitions>
@@ -94,7 +94,7 @@
                 
                 <StackPanel Orientation="Horizontal">
                     <Border x:Name="BorderBack3" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                        <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">STOP Bits</TextBlock>
+                        <TextBlock x:Name="StopTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">STOP Bits</TextBlock>
                     </Border>
                     <ComboBox x:Name="STOPComboBox" SelectionChanged="STOPComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
                     <StackPanel.Transitions>
@@ -106,7 +106,7 @@
                 
                 <StackPanel Orientation="Horizontal">
                     <Border x:Name="BorderBack4" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                        <TextBlock TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">DATA Bits</TextBlock>
+                        <TextBlock x:Name="DataTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">DATA Bits</TextBlock>
                     </Border>
                     <ComboBox x:Name="DATAComboBox" SelectionChanged="DATAComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
                     <StackPanel.Transitions>
@@ -175,7 +175,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <ToggleButton x:Name="AutoComButton" Click="AutoComButton_Click" IsThreeState="False" IsChecked="False" Width="120" Margin="6">AutoSerichCom</ToggleButton>
-                    <ToggleButton x:Name="AutoConnectButton" Checked="AutoConnectButton_Checked" IsThreeState="False" IsChecked="False" Width="108" Margin="6">Auto Connect</ToggleButton>
+                    <ToggleButton x:Name="AutoConnectButton" Click="AutoConnectButton_Click" IsThreeState="False" IsChecked="False" Width="108" Margin="6">Auto Connect</ToggleButton>
                     <StackPanel.Transitions>
                         <TransitionCollection>
                             <RepositionThemeTransition />
@@ -187,7 +187,7 @@
 
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="RSTButton" Click="RSTButton_Click" Width="120" Margin="6">RST</Button>
-                    <ToggleButton x:Name="ShowTimeButton" Click="ShowTimeButton_Click" Width="108" Margin="6">Showtimestamp</ToggleButton>
+                    
                     <StackPanel.Transitions>
                         <TransitionCollection>
                             <RepositionThemeTransition />
@@ -200,8 +200,9 @@
                 <StackPanel Orientation="Horizontal">
 
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                    <Button x:Name="RXDataButton" Click="RXDataButton_Click" Width="0" Margin="6">RX</Button>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="0">
+                    <Button x:Name="RXDataButton" Click="RXDataButton_Click" Width="120" Margin="6">RX</Button>
+                    <ToggleButton x:Name="ShowTimeButton" Click="ShowTimeButton_Click" Width="108" Margin="6">Showtimestamp</ToggleButton>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

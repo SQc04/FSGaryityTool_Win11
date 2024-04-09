@@ -33,7 +33,7 @@
 		<requireLicenseAcceptance>flase</requireLicenseAcceptance>
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+		<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
 		<AppxPackageDir>D:\I\FAIRING STUDIO\FSSoftware\FSGarvityTool\FSGaryityTool_Win11\bin\win10-x64\publish\x64-Pkg\</AppxPackageDir>
 		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
@@ -48,6 +48,8 @@
     <Content Remove="Assets\FSFSoftLogo.scale-150.png" />
     <Content Remove="Assets\FSFSoftLogo.scale-200.png" />
     <Content Remove="Assets\FSFSoftLogo.scale-400.png" />
+    <Content Remove="Resources\en_US\Resource.resx" />
+    <Content Remove="Resources\zh_CN\Resource.resx" />
     <Content Remove="Assets\StoreLogo.png" />
   </ItemGroup>
   <ItemGroup>
@@ -114,8 +116,26 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\en_US\Resource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\zh_CN\Resource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Update="Resources\en_US\Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\zh_CN\Resource.resx">
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -162,9 +182,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Update="Assets\SmallTile.scale-400.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
@@ -206,7 +223,7 @@
   </PropertyGroup>
 	
   <PropertyGroup>
-    <VersionPrefix>0.2.18</VersionPrefix>
+    <VersionPrefix>0.2.20</VersionPrefix>
   </PropertyGroup>
 	
 	

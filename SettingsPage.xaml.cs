@@ -21,6 +21,7 @@ using System.Numerics;
 using Tommy;
 using System.Diagnostics;
 using System.Reflection.PortableExecutable;
+using static System.Net.Mime.MediaTypeNames;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -81,6 +82,17 @@ namespace FSGaryityTool_Win11
 
             StartPageCombobox.SelectedItem = DefaultSTARTPage;  //将TOML设置添加到选择框
 
+
+            // = Page1.LaunageText("");
+            StartPage.Header = Page1.LaunageText("defStartPage");
+            Generiall.Text = Page1.LaunageText("general");
+
+            SpSwttingsl.Text = Page1.LaunageText("spSettings");
+            SPTSettingsl.Text = Page1.LaunageText("spSettings");
+            DowFlashl.Text = Page1.LaunageText("downloadFlashSettings");
+
+            Aboutl.Text = Page1.LaunageText("about");
+            AbputTl.Text = Page1.LaunageText("about");
         }
 
         private void Aboutp_Click(object sender, RoutedEventArgs e)
@@ -91,8 +103,8 @@ namespace FSGaryityTool_Win11
 
             MainSettingsPage.settingmPage.Settingsbar.ItemsSource = new ObservableCollection<Folder>
             {
-                new Folder { Name = "Settings"},
-                new Folder { Name = "About" },
+                new Folder { Name = Page1.LaunageText("settings")},
+                new Folder { Name = Page1.LaunageText("about")},
             };
             //AboutFrame.Opacity = 1;
             //AboutINOUT.Begin();

@@ -10,6 +10,10 @@
     NavigationCacheMode="Disabled">
 
     <Grid>
+        <Grid.Resources>
+            <x:Double x:Key="BreadcrumbBarChevronFontSize">20</x:Double>
+        </Grid.Resources>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="0"/>
             <RowDefinition Height="48"/>
@@ -29,7 +33,7 @@
                     <BreadcrumbBarItem Content="{Binding}" AutomationProperties.Name="{Binding Name}">
                         <BreadcrumbBarItem.ContentTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}" FontSize="40" Height="60"/>
+                                <TextBlock Text="{Binding Name}" FontSize="40" Height="60" Margin="10,0"/>
                             </DataTemplate>
                         </BreadcrumbBarItem.ContentTemplate>
                     </BreadcrumbBarItem>

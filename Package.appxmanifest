@@ -9,7 +9,7 @@
   <Identity
     Name="8153eea4-0701-4df3-b478-ccfc268ddd1b"
     Publisher="CN=FAIRING STUDIO"
-    Version="0.2.18.0" />
+    Version="0.2.20.0" />
 
   <Properties>
     <DisplayName>FSGaryityTool</DisplayName>
@@ -25,7 +25,8 @@
   </Dependencies>
 
   <Resources>
-    <Resource Language="x-generate"/>
+    <Resource Language="en-US" />
+    <Resource Language="zh-CN" />
   </Resources>
 
   <Applications>
@@ -43,13 +44,13 @@
             <uap:ShowOn Tile="square150x150Logo"/>
           </uap:ShowNameOnTiles>
         </uap:DefaultTile >
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
         <uap:LockScreen BadgeLogo="Assets\BadgeLogo.png" Notification="badgeAndTileText"/>
         <uap:InitialRotationPreference>
           <uap:Rotation Preference="landscape"/>
           <uap:Rotation Preference="portrait"/>
           <uap:Rotation Preference="landscapeFlipped"/>
           <uap:Rotation Preference="portraitFlipped"/></uap:InitialRotationPreference>
+        <uap:SplashScreen Image="Assets/SplashScreen.png"/>
       </uap:VisualElements>
     </Application>
   </Applications>

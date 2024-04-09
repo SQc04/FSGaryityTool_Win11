@@ -60,7 +60,7 @@
 
                 <StackPanel>
                     <TextBlock Text="" Margin="0,12,0,0"/>
-                    <TextBlock Text="General" Margin="0"/>
+                    <TextBlock x:Name="Generiall" Text="General" Margin="0"/>
 
                     <toolkit:SettingsCard x:Name="StartPage" Header="Default start page" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
                         <toolkit:SettingsCard.HeaderIcon>
@@ -84,13 +84,13 @@
 
                 <StackPanel>
                     <TextBlock Text="" Margin="0,12,0,0"/>
-                    <TextBlock Text="Serial Port Settings" Margin="0"/>
+                    <TextBlock x:Name="SpSwttingsl" Text="Serial Port Settings" Margin="0"/>
 
                     <Button x:Name="SPSettings" Click="SPSettings_Click" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="66" Margin="1,3,1,3">
                         <Grid>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                                 <FontIcon Glyph="&#xE8CB;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="6,0,12,0"/>
-                                <TextBlock VerticalAlignment="Center" Text="Serial Port Settings" Margin="12,0,12,0"/>
+                                <TextBlock x:Name="SPTSettingsl" VerticalAlignment="Center" Text="Serial Port Settings" Margin="12,0,12,0"/>
 
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -131,7 +131,7 @@
 
                 <StackPanel>
                     <TextBlock Text="" Margin="0,12,0,0"/>
-                    <TextBlock Text="Download Flash Settings" Margin="0"/>
+                    <TextBlock x:Name="DowFlashl" Text="Download Flash Settings" Margin="0"/>
 
                     <toolkit:SettingsExpander Header="ABOUT " Margin="0,2,0,3">
                         <toolkit:SettingsExpander.HeaderIcon>
@@ -169,12 +169,12 @@
 
                 <StackPanel>
                     <TextBlock Text="" Margin="0,12,0,0"/>
-                    <TextBlock Text="About" Margin="0"/>
+                    <TextBlock x:Name="Aboutl" Text="About" Margin="0"/>
                     <Button x:Name="Aboutp" Click="Aboutp_Click" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="66" Margin="1,3,1,3">
                         <Grid>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                                 <FontIcon Glyph="&#xE946;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="6,0,12,0"/>
-                                <TextBlock VerticalAlignment="Center" Text="About" Margin="12,0,12,0"/>
+                                <TextBlock x:Name="AbputTl" VerticalAlignment="Center" Text="About" Margin="12,0,12,0"/>
 
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
