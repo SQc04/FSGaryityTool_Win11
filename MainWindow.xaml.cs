@@ -59,7 +59,7 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.20";
+        public static string FSSoftVersion = "0.2.21";
         public static int FsPage = 0;
         public static TomlTable settingstomlSp;
 
@@ -128,30 +128,30 @@ namespace FSGaryityTool_Win11
             //Debug.WriteLine("开始搜索文件夹");
             Debug.WriteLine("开始搜索文件夹  " + FSFolder);            //新建FS文件夹
 
-
+            
             if (Directory.Exists(FSFolder))
             {
-                Debug.WriteLine("找到文件夹,跳过新建文件夹");
+                //Debug.WriteLine("找到文件夹,跳过新建文件夹");
             }
             else
             {
-                Debug.WriteLine("没有找到文件夹");
+                //Debug.WriteLine("没有找到文件夹");
                 Directory.CreateDirectory(FSFolder);
-                Debug.WriteLine("新建文件夹");
+                //Debug.WriteLine("新建文件夹");
             }
 
 
             if (Directory.Exists(FSGravif))
             {
-                Debug.WriteLine("找到文件夹,跳过新建文件夹");
+                //Debug.WriteLine("找到文件夹,跳过新建文件夹");
             }
             else
             {
-                Debug.WriteLine("没有找到文件夹");
+                //Debug.WriteLine("没有找到文件夹");
                 Directory.CreateDirectory(FSGravif);
-                Debug.WriteLine("新建文件夹");
+                //Debug.WriteLine("新建文件夹");
             }
-
+            
 
             /*
             if (File.Exists(FSSetJson))
@@ -202,6 +202,8 @@ namespace FSGaryityTool_Win11
                         Comment =
                         "FSGaryityTool Settings:",
                         ["DefaultNvPage"] = "0",
+                        ["SoftBackground"] = "0",
+                        ["SoftDefLaunage"] = "0",
                     },
 
                     ["SerialPortSettings"] =
@@ -226,6 +228,32 @@ namespace FSGaryityTool_Win11
                         ["AutoSerichCom"] = "1",
                         ["AutoConnect"] = "1",
                         ["DefaultTXNewLine"] = "1"
+                    },
+
+                    ["SerialPortCOMData"] =
+                    {
+                        Comment =
+                        "This is a cache of information for all serial devices.\r\n" + 
+                        "",
+                        ["CheckTime"] = "2024-04-12 19:48:55",
+                        ["CheckCounter"] = "0",                                 //串口设备信息更新次数
+
+                        ["COMData"] =
+                        {
+                            ["COM0"] =
+                            {
+                                ["Icon"] = "\uE88E",
+                                ["Description"] = "xxxx",
+                                ["Name"] = "xxxx",
+                                ["Manufacturer"] = "FairingStudio",
+                                ["RSTBaudRate"] = "115200",
+                                ["RSTTime"] = "300",
+                                ["RSTMode"] = "0",
+                            },
+
+                        },
+
+
                     },
 
                 };
@@ -329,6 +357,32 @@ namespace FSGaryityTool_Win11
                             ["AutoSerichCom"] = autosercom,
                             ["AutoConnect"] = autoconnect,
                             ["DefaultTXNewLine"] = txnewline,
+                        },
+
+                        ["SerialPortCOMData"] =
+                        {
+                            Comment =
+                            "This is a cache of information for all serial devices.\r\n" +
+                            "",
+                            ["CheckTime"] = "2024-04-12 19:48:55",
+                            ["CheckCounter"] = "0",
+
+                            ["COMData"] =
+                            {
+                                ["COM0"] =
+                                {
+                                    ["Icon"] = "\uE88E",
+                                    ["Description"] = "xxxx",
+                                    ["Name"] = "xxxx",
+                                    ["Manufacturer"] = "FairingStudio",
+                                    ["RSTBaudRate"] = "115200",
+                                    ["RSTTime"] = "300",
+                                    ["RSTMode"] = "0",
+                                },
+
+                            },
+
+
                         },
 
                     };

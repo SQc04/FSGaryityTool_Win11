@@ -17,7 +17,7 @@
             <ColumnDefinition Width="0"/>
             <ColumnDefinition Width="264" />
             <ColumnDefinition MinWidth="160" Width="*" />
-            <ColumnDefinition MinWidth="120" MaxWidth="400" Width="Auto"/>
+            <ColumnDefinition MinWidth="120" MaxWidth="400" Width="250"/>
             <ColumnDefinition Width="63"/>
         </Grid.ColumnDefinitions>
 
@@ -213,6 +213,10 @@
         </StackPanel>
         <Button x:Name="CONTButton" Grid.Column="1" Grid.Row="1" Click="CONTButton_Click" Width="240" Margin="12,6,6,12">CONNECT</Button>
 
+        <InfoBar x:Name="COMRstInfoBar" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="1" Margin="12,24,12,12"
+            IsOpen="False" Severity="Warning" IsIconVisible="True" IsClosable="True" Canvas.ZIndex="2"
+            Title="Warning" Message="To change the connected device, you need to reconnect the serial port." />
+        
         <Border x:Name="BorderBackRX" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="1" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4" MinWidth="300" Margin="0,12,0,6">
             <ListView x:Name="RXListView" 
                   BorderThickness="0" 
@@ -255,6 +259,7 @@
         </TextBox>
 
         <Button x:Name="TXButton" Grid.Column="3" Grid.Row="1" Click="TXButton_Click" 
+                Style="{StaticResource AccentButtonStyle}"
                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center" 
                 MinWidth="100" Margin="12,6,6,12">

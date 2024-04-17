@@ -88,7 +88,7 @@ namespace FSGaryityTool_Win11
             Generiall.Text = Page1.LaunageText("general");
 
             SpSwttingsl.Text = Page1.LaunageText("spSettings");
-            SPTSettingsl.Text = Page1.LaunageText("spSettings");
+            SPTSettingsl.Header = Page1.LaunageText("spSettings");
             DowFlashl.Text = Page1.LaunageText("downloadFlashSettings");
 
             Aboutl.Text = Page1.LaunageText("about");

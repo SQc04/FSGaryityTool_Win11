@@ -79,6 +79,7 @@ namespace FSGaryityTool_Win11
     public sealed partial class Page1 : Page
     {
         public static int Con = 0;
+        public static string ConCom = "";
         public static int txf = 0;
         public static int tx = 0; //TXHEX
         public static int rx = 0; //RXHEX
@@ -92,7 +93,7 @@ namespace FSGaryityTool_Win11
         public static int txnewline = 0;
 
         public static int rxs = 0;
-        public static string[] ArryPort; //¶¨Òå×Ö·û´®Êı×é£¬Êı×éÃûÎª ArryPort
+        public static string[] ArryPort; //å®šä¹‰å­—ç¬¦ä¸²æ•°ç»„ï¼Œæ•°ç»„åä¸º ArryPort
         public static string rxpstr;
         public static StringBuilder datapwate = new StringBuilder(2048);
 
@@ -185,13 +186,13 @@ namespace FSGaryityTool_Win11
             {
                 if (theme == ApplicationTheme.Dark)
                 {
-                    // µ±Ç°´¦ÓÚÉîÉ«Ä£Ê½
+                    // å½“å‰å¤„äºæ·±è‰²æ¨¡å¼
                     button.Background = new SolidColorBrush(darkaccentColor);
                     button.Foreground = new SolidColorBrush(Colors.Black);
                 }
                 else if (theme == ApplicationTheme.Light)
                 {
-                    // µ±Ç°´¦ÓÚÇ³É«Ä£Ê½
+                    // å½“å‰å¤„äºæµ…è‰²æ¨¡å¼
                     button.Background = new SolidColorBrush(ligtaccentColor);
                     button.Foreground = new SolidColorBrush(Colors.White);
                 }
@@ -215,13 +216,13 @@ namespace FSGaryityTool_Win11
             {
                 if (theme == ApplicationTheme.Dark)
                 {
-                    // µ±Ç°´¦ÓÚÉîÉ«Ä£Ê½
+                    // å½“å‰å¤„äºæ·±è‰²æ¨¡å¼
                     border.Background = new SolidColorBrush(darkaccentColor);
                     textBlock.Foreground = new SolidColorBrush(Colors.Black);
                 }
                 else if (theme == ApplicationTheme.Light)
                 {
-                    // µ±Ç°´¦ÓÚÇ³É«Ä£Ê½
+                    // å½“å‰å¤„äºæµ…è‰²æ¨¡å¼
                     border.Background = new SolidColorBrush(ligtaccentColor);
                     textBlock.Foreground = new SolidColorBrush(Colors.White);
                 }
@@ -231,6 +232,19 @@ namespace FSGaryityTool_Win11
                 border.Background = backgroundColor;
                 textBlock.Foreground = foregroundColor;
             }
+        }
+
+        private int TomlCheckNull(string Menu, string Name)
+        {
+            int data = 0;
+            using (StreamReader reader = File.OpenText(FSSetToml))
+            {
+                TomlTable SPsettingstomlr = TOML.Parse(reader);             //è¯»å–TOML
+
+                if (SPsettingstomlr[Menu][Name] != "Tommy.TomlLazy") data = int.Parse(SPsettingstomlr[Menu][Name]);
+                else data = 0;
+            }
+            return data;
         }
 
         private void Page1_Loaded(object sender, RoutedEventArgs e)
@@ -246,40 +260,30 @@ namespace FSGaryityTool_Win11
 
                 using (StreamReader reader = File.OpenText(FSSetToml))
                 {
-                    TomlTable SPsettingstomlr = TOML.Parse(reader);             //¶ÁÈ¡TOML
+                    TomlTable SPsettingstomlr = TOML.Parse(reader);             //è¯»å–TOML
                                                                                 //Debug.WriteLine("Print:" + SPsettingstomlr["FSGravitySettings"]["DefaultNvPage"]);
                                                                                 //NvPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
-
-                    if (SPsettingstomlr["SerialPortSettings"]["DefaultBAUD"] != "Tommy.TomlLazy") DefaultBAUD = SPsettingstomlr["SerialPortSettings"]["DefaultBAUD"];
+                    string spSettings = "SerialPortSettings";
+                                                                                //æ£€æŸ¥è®¾ç½®æ˜¯å¦ä¸ºNULL
+                    if (SPsettingstomlr[spSettings]["DefaultBAUD"] != "Tommy.TomlLazy") DefaultBAUD = SPsettingstomlr[spSettings]["DefaultBAUD"];
                     else DefaultBAUD = "115200";
-                    if (SPsettingstomlr["SerialPortSettings"]["DefaultParity"] != "Tommy.TomlLazy") DefaultPart = SPsettingstomlr["SerialPortSettings"]["DefaultParity"];
+                    if (SPsettingstomlr[spSettings]["DefaultParity"] != "Tommy.TomlLazy") DefaultPart = SPsettingstomlr[spSettings]["DefaultParity"];
                     else DefaultPart = "None";
-                    if (SPsettingstomlr["SerialPortSettings"]["DefaultSTOP"] != "Tommy.TomlLazy") DefaultSTOP = SPsettingstomlr["SerialPortSettings"]["DefaultSTOP"];
+                    if (SPsettingstomlr[spSettings]["DefaultSTOP"] != "Tommy.TomlLazy") DefaultSTOP = SPsettingstomlr[spSettings]["DefaultSTOP"];
                     else DefaultSTOP = "One";
-                    if (SPsettingstomlr["SerialPortSettings"]["DefaultDATA"] != "Tommy.TomlLazy") DefaultDATA = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultDATA"]);
+                    if (SPsettingstomlr[spSettings]["DefaultDATA"] != "Tommy.TomlLazy") DefaultDATA = int.Parse(SPsettingstomlr[spSettings]["DefaultDATA"]);
                     else DefaultDATA = 8;
 
-                    if (SPsettingstomlr["SerialPortSettings"]["DefaultTXHEX"] != "Tommy.TomlLazy") tx = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultTXHEX"]);
-                    else tx = 0;
-                    if (SPsettingstomlr["SerialPortSettings"]["DefaultRXHEX"] != "Tommy.TomlLazy") rx = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultRXHEX"]);
-                    else rx = 0;
-                    if (SPsettingstomlr["SerialPortSettings"]["DefaultDTR"] != "Tommy.TomlLazy") dtr = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultDTR"]);
-                    else dtr = 1;
-                    if (SPsettingstomlr["SerialPortSettings"]["DefaultRTS"] != "Tommy.TomlLazy") rts = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultRTS"]);
-                    else rts = 0;
-                    if (SPsettingstomlr["SerialPortSettings"]["DefaultSTime"] != "Tommy.TomlLazy") shtime = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultSTime"]);
-                    else shtime = 0;
-                    if (SPsettingstomlr["SerialPortSettings"]["DefaultAUTOSco"] != "Tommy.TomlLazy") autotr = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultAUTOSco"]);
-                    else autotr = 1;
-                    if (SPsettingstomlr["SerialPortSettings"]["AutoDaveSet"] != "Tommy.TomlLazy") autosaveset = int.Parse(SPsettingstomlr["SerialPortSettings"]["AutoDaveSet"]);
-                    else autosaveset = 1;
-                    if (SPsettingstomlr["SerialPortSettings"]["AutoSerichCom"] != "Tommy.TomlLazy") autosercom = int.Parse(SPsettingstomlr["SerialPortSettings"]["AutoSerichCom"]);
-                    else autoconnect = 1;
-                    if (SPsettingstomlr["SerialPortSettings"]["AutoConnect"] != "Tommy.TomlLazy") autoconnect = int.Parse(SPsettingstomlr["SerialPortSettings"]["AutoConnect"]);
-                    else autoconnect = 1;
-                    if (SPsettingstomlr["SerialPortSettings"]["DefaultTXNewLine"] != "Tommy.TomlLazy") txnewline = int.Parse(SPsettingstomlr["SerialPortSettings"]["DefaultTXNewLine"]);
-                    else txnewline = 1;
-
+                    tx = TomlCheckNull(spSettings, "DefaultTXHEX");
+                    rx = TomlCheckNull(spSettings, "DefaultRXHEX");
+                    dtr = TomlCheckNull(spSettings, "DefaultDTR");
+                    rts = TomlCheckNull(spSettings, "DefaultRTS");
+                    shtime = TomlCheckNull(spSettings, "DefaultSTime");
+                    autotr = TomlCheckNull(spSettings, "DefaultAUTOSco");
+                    autosaveset = TomlCheckNull(spSettings, "AutoDaveSet");
+                    autosercom = TomlCheckNull(spSettings, "AutoSerichCom");
+                    autoconnect = TomlCheckNull(spSettings, "AutoConnect");
+                    txnewline = TomlCheckNull(spSettings, "DefaultTXNewLine");
 
                     /*
                     ["DefaultBAUD"] = "115200",
@@ -313,15 +317,15 @@ namespace FSGaryityTool_Win11
                 CONTButton.Content = LaunageText("connectl");
 
                 CommonRes._serialPort.DataReceived += _serialPort_DataReceived;
-                // ÔÚÄãµÄ´úÂëºóÌ¨£¬¶¨ÒåÒ»¸öList<string>×÷ÎªÊı¾İÔ´
+                // åœ¨ä½ çš„ä»£ç åå°ï¼Œå®šä¹‰ä¸€ä¸ªList<string>ä½œä¸ºæ•°æ®æº
                 List<string> BaudRates = new List<string>()
                 {
                     "75", "110", "134", "150", "300", "600", "1200", "1800", "2400", "4800", "7200", "9600", "14400", "19200", "38400", "57600", "74880","115200", "128000", "230400", "250000", "500000", "1000000", "2000000"
                 };
-                // ½«ComboBoxµÄItemsSourceÊôĞÔ°ó¶¨µ½Õâ¸öÊı¾İÔ´
+                // å°†ComboBoxçš„ItemsSourceå±æ€§ç»‘å®šåˆ°è¿™ä¸ªæ•°æ®æº
                 BANDComboBox.ItemsSource = BaudRates;
-                // ÉèÖÃÄ¬ÈÏÑ¡Ïî
-                BANDComboBox.SelectedItem = DefaultBAUD; // ½«"9600"ÉèÖÃÎªÄ¬ÈÏÑ¡Ïî
+                // è®¾ç½®é»˜è®¤é€‰é¡¹
+                BANDComboBox.SelectedItem = DefaultBAUD; // å°†"9600"è®¾ç½®ä¸ºé»˜è®¤é€‰é¡¹
 
                 List<string> ParRates = new List<string>()
                 {
@@ -352,13 +356,13 @@ namespace FSGaryityTool_Win11
                 /*
                 if (theme == ApplicationTheme.Dark)
                 {
-                    // µ±Ç°´¦ÓÚÉîÉ«Ä£Ê½
+                    // å½“å‰å¤„äºæ·±è‰²æ¨¡å¼
                     DTRButton.Background = new SolidColorBrush(darkaccentColor);
                     DTRButton.Foreground = new SolidColorBrush(Colors.Black);
                 }
                 else if (theme == ApplicationTheme.Light)
                 {
-                    // µ±Ç°´¦ÓÚÇ³É«Ä£Ê½
+                    // å½“å‰å¤„äºæµ…è‰²æ¨¡å¼
                     DTRButton.Background = new SolidColorBrush(ligtaccentColor);
                     DTRButton.Foreground = new SolidColorBrush(Colors.White);
                 }
@@ -366,13 +370,13 @@ namespace FSGaryityTool_Win11
 
                 if (theme == ApplicationTheme.Dark)
                 {
-                    // µ±Ç°´¦ÓÚÉîÉ«Ä£Ê½
+                    // å½“å‰å¤„äºæ·±è‰²æ¨¡å¼
                     AUTOScrollButton.Background = new SolidColorBrush(darkaccentColor);
                     AUTOScrollButton.Foreground = new SolidColorBrush(Colors.Black);
                 }
                 else if (theme == ApplicationTheme.Light)
                 {
-                    // µ±Ç°´¦ÓÚÇ³É«Ä£Ê½
+                    // å½“å‰å¤„äºæµ…è‰²æ¨¡å¼
                     AUTOScrollButton.Background = new SolidColorBrush(ligtaccentColor);
                     AUTOScrollButton.Foreground = new SolidColorBrush(Colors.White);
                 }
@@ -417,14 +421,14 @@ namespace FSGaryityTool_Win11
 
 
             /*
-            // ´´½¨Ò»¸öDispatcherQueueTimer¶ÔÏó
+            // åˆ›å»ºä¸€ä¸ªDispatcherQueueTimerå¯¹è±¡
             DispatcherQueueTimer timer = DispatcherQueue.GetForCurrentThread().CreateTimer();
 
-            // ÔÚÄãµÄ´úÂëÖĞ³õÊ¼»¯Õâ¸öDispatcherQueueTimer
-            timer.Interval = TimeSpan.FromMilliseconds(500); // ×¢ÒâÕâÀïµÄ¼ä¸ôÊ±¼äÊÇ250ºÁÃë£¬Ò²¾ÍÊÇÃ¿Ãë´¥·¢ËÄ´Î
+            // åœ¨ä½ çš„ä»£ç ä¸­åˆå§‹åŒ–è¿™ä¸ªDispatcherQueueTimer
+            timer.Interval = TimeSpan.FromMilliseconds(500); // æ³¨æ„è¿™é‡Œçš„é—´éš”æ—¶é—´æ˜¯250æ¯«ç§’ï¼Œä¹Ÿå°±æ˜¯æ¯ç§’è§¦å‘å››æ¬¡
             timer.Tick += (sender, args) =>
             {
-                // ÔÚÕâÀïµ÷ÓÃÄãµÄ°´Å¥µã»÷ÊÂ¼ş
+                // åœ¨è¿™é‡Œè°ƒç”¨ä½ çš„æŒ‰é’®ç‚¹å‡»äº‹ä»¶
                 AUTOScrollButton_ClickAsync(null, null);
             };
             timer.Start();
@@ -503,13 +507,13 @@ namespace FSGaryityTool_Win11
                 int RI = 0;
                 if(RI == 0)
                 {
-                    // RI ĞÅºÅÊ¹ÄÜ
+                    // RI ä¿¡å·ä½¿èƒ½
                     FsBorderIsChecked(1, RIBorder, RITextBlock);
                     RI = 1;
                 }
                 else
                 {
-                    // RI ĞÅºÅÎ´Ê¹ÄÜ
+                    // RI ä¿¡å·æœªä½¿èƒ½
                     FsBorderIsChecked(0, RIBorder, RITextBlock);
                     RI = 0;
                 }
@@ -526,7 +530,7 @@ namespace FSGaryityTool_Win11
 
             static SerialPortInfo()
             {
-                // ÔÚÓ¦ÓÃ³ÌĞòÆô¶¯Ê±»ñÈ¡ËùÓĞ´®¿ÚµÄÉè±¸ÃèÊö
+                // åœ¨åº”ç”¨ç¨‹åºå¯åŠ¨æ—¶è·å–æ‰€æœ‰ä¸²å£çš„è®¾å¤‡æè¿°
                 RefreshPortInfo();
             }
 
@@ -562,7 +566,7 @@ namespace FSGaryityTool_Win11
             {
                 if (!portInfoDictionary.ContainsKey(portName))
                 {
-                    // Èç¹û×ÖµäÖĞÃ»ÓĞÖ¸¶¨µÄ´®¿ÚÃû³Æ£¬Ë¢ĞÂ´®¿ÚĞÅÏ¢
+                    // å¦‚æœå­—å…¸ä¸­æ²¡æœ‰æŒ‡å®šçš„ä¸²å£åç§°ï¼Œåˆ·æ–°ä¸²å£ä¿¡æ¯
                     RefreshPortInfo(portName);
                 }
 
@@ -571,7 +575,7 @@ namespace FSGaryityTool_Win11
                     return portInfoDictionary[portName];
                 }
 
-                return null;  // Èç¹ûÃ»ÓĞÕÒµ½Æ¥ÅäµÄ´®¿Ú£¬·µ»Ønull
+                return null;  // å¦‚æœæ²¡æœ‰æ‰¾åˆ°åŒ¹é…çš„ä¸²å£ï¼Œè¿”å›null
             }
         }
 
@@ -605,7 +609,7 @@ namespace FSGaryityTool_Win11
         }
         */
 
-        public void TimerSerialPortTick(Object stateInfo)       //´®¿ÚÈÈ²å°Î¼ì²â
+        public void TimerSerialPortTick(Object stateInfo)       //ä¸²å£çƒ­æ’æ‹”æ£€æµ‹
         {
             int InOut = 0;
             int i = 0;
@@ -624,7 +628,7 @@ namespace FSGaryityTool_Win11
                 if (LastPort.Length < NowPort.Length)
                 {
                     InOut = 1;
-                    for (j = 0; j < NowPort.Length; j++)         //±éÀú²åÈëµÄÉè±¸
+                    for (j = 0; j < NowPort.Length; j++)         //éå†æ’å…¥çš„è®¾å¤‡
                     {
                         Debug.WriteLine("SER J " + j);
                         for (i = 0; i < LastPort.Length; i++)
@@ -642,7 +646,7 @@ namespace FSGaryityTool_Win11
                 else if (LastPort.Length > NowPort.Length)
                 {
                     InOut = 0;
-                    for (i = 0; i < LastPort.Length; i++)       //±éÀú°Î³öµÄÉè±¸
+                    for (i = 0; i < LastPort.Length; i++)       //éå†æ‹”å‡ºçš„è®¾å¤‡
                     {
                         for (j = 0; j < NowPort.Length; j++)
                         {
@@ -684,9 +688,9 @@ namespace FSGaryityTool_Win11
                         
                         for (int k = 0; k < NowPort.Length; k++)
                         {
-                            //string portDescription = ports.Find(p => p.Name == ArryPort[k])?.Description;  // ²éÕÒ¶ÔÓ¦´®¿ÚµÄÉè±¸ÃèÊö
+                            //string portDescription = ports.Find(p => p.Name == ArryPort[k])?.Description;  // æŸ¥æ‰¾å¯¹åº”ä¸²å£çš„è®¾å¤‡æè¿°
                             
-                            COMComboBox.Items.Add(ArryPort[k]);                           //½«ËùÓĞµÄ¿ÉÓÃ´®¿ÚºÅÌí¼Óµ½¶Ë¿Ú¶ÔÓ¦µÄ×éºÏ¿òÖĞ
+                            COMComboBox.Items.Add(ArryPort[k]);                           //å°†æ‰€æœ‰çš„å¯ç”¨ä¸²å£å·æ·»åŠ åˆ°ç«¯å£å¯¹åº”çš„ç»„åˆæ¡†ä¸­
                             COMListview.Items.Add(ArryPort[k]);
                         }
                         COMComboBox.SelectedItem = commme;
@@ -707,7 +711,7 @@ namespace FSGaryityTool_Win11
                     else
                     {
                         RXTextBox.Text = RXTextBox.Text + InOutCom + LaunageText("spPullout") + "\r\n";
-                        if (Con == 1)                                                   //×Ô¶¯¶Ï¿ªÒÑ°Î³öµÄÉè±¸´®¿ÚÁ¬½Ó
+                        if (Con == 1)                                                   //è‡ªåŠ¨æ–­å¼€å·²æ‹”å‡ºçš„è®¾å¤‡ä¸²å£è¿æ¥
                         {
                             if (InOutCom == (string)COMComboBox.SelectedItem)
                             {
@@ -722,7 +726,7 @@ namespace FSGaryityTool_Win11
                         ArryPort = SerialPort.GetPortNames();
                         for (int k = 0; k < NowPort.Length; k++)
                         {
-                            COMComboBox.Items.Add(ArryPort[k]);                           //½«ËùÓĞµÄ¿ÉÓÃ´®¿ÚºÅÌí¼Óµ½¶Ë¿Ú¶ÔÓ¦µÄ×éºÏ¿òÖĞ
+                            COMComboBox.Items.Add(ArryPort[k]);                           //å°†æ‰€æœ‰çš„å¯ç”¨ä¸²å£å·æ·»åŠ åˆ°ç«¯å£å¯¹åº”çš„ç»„åˆæ¡†ä¸­
                             COMListview.Items.Add(ArryPort[k]);
                         }
                         COMComboBox.SelectedItem = commne;
@@ -737,23 +741,23 @@ namespace FSGaryityTool_Win11
         private void COMButton_Click(object sender, RoutedEventArgs e)
         {
             //COMButton.Content = "Clicked";
-            SearchAndAddSerialToComboBox(CommonRes._serialPort, COMComboBox);           //É¨Ãè²¢½«´®¿ÚÌí¼ÓÖÁÏÂÀ­ÁĞ±í
+            SearchAndAddSerialToComboBox(CommonRes._serialPort, COMComboBox);           //æ‰«æå¹¶å°†ä¸²å£æ·»åŠ è‡³ä¸‹æ‹‰åˆ—è¡¨
 
             void SearchAndAddSerialToComboBox(SerialPort MyPort, ComboBox MyBox)
             {
                 RXTextBox.Text = RXTextBox.Text + LaunageText("startSerichSP") + "\r\n";
-                string commme = (string)COMComboBox.SelectedItem;           //¼ÇÒä´®¿ÚÃû
-                ArryPort = SerialPort.GetPortNames();                       //SerialPort.GetPortNames()º¯Êı¹¦ÄÜÎª»ñÈ¡¼ÆËã»úËùÓĞ¿ÉÓÃ´®¿Ú£¬ÒÔ×Ö·û´®Êı×éĞÎÊ½Êä³ö
+                string commme = (string)COMComboBox.SelectedItem;           //è®°å¿†ä¸²å£å
+                ArryPort = SerialPort.GetPortNames();                       //SerialPort.GetPortNames()å‡½æ•°åŠŸèƒ½ä¸ºè·å–è®¡ç®—æœºæ‰€æœ‰å¯ç”¨ä¸²å£ï¼Œä»¥å­—ç¬¦ä¸²æ•°ç»„å½¢å¼è¾“å‡º
                 string scom = String.Join("\r\n", ArryPort);
                 //RXTextBox.Text = RXTextBox.Text + scom + "\r\n";
-                MyBox.Items.Clear();                                        //Çå³ıµ±Ç°×éºÏ¿òÏÂÀ­²Ëµ¥ÄÚÈİ
+                MyBox.Items.Clear();                                        //æ¸…é™¤å½“å‰ç»„åˆæ¡†ä¸‹æ‹‰èœå•å†…å®¹
                 COMListview.Items.Clear();
                 //COMListview.ItemsSource = null;
                 //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
 
                 for (int i = 0; i < ArryPort.Length; i++)
                 {
-                    MyBox.Items.Add(ArryPort[i]);                           //½«ËùÓĞµÄ¿ÉÓÃ´®¿ÚºÅÌí¼Óµ½¶Ë¿Ú¶ÔÓ¦µÄ×éºÏ¿òÖĞ
+                    MyBox.Items.Add(ArryPort[i]);                           //å°†æ‰€æœ‰çš„å¯ç”¨ä¸²å£å·æ·»åŠ åˆ°ç«¯å£å¯¹åº”çš„ç»„åˆæ¡†ä¸­
                     COMListview.Items.Add(ArryPort[i]/* + (portDescription != null ? " | " + portDescription : "")*/);
                     SerialPortInfo info = SerialPortInfo.GetPort(ArryPort[i]);
                     RXTextBox.Text += ArryPort[i] + ": " + info.Description + "\r\n";
@@ -833,46 +837,47 @@ namespace FSGaryityTool_Win11
             {
                 try
                 {
-                    CommonRes._serialPort.PortName = (string)COMComboBox.SelectedItem;                  //¿ªÆôµÄ´®¿ÚÃû³ÆÎªÑ¡Ôñ´®¿ÚµÄComboBox×é¼şÖĞµÄÄÚÈİ
-                    CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);        //½«Ñ¡Ôñ²¨ÌØÂÊComboBox×é¼şÖĞµÄÊı¾İ×ªÎªIntĞÍ£¬²¢ÇÒ½øĞĞ²¨ÌØÂÊµÄÉèÖÃ
+                    CommonRes._serialPort.PortName = (string)COMComboBox.SelectedItem;                  //å¼€å¯çš„ä¸²å£åç§°ä¸ºé€‰æ‹©ä¸²å£çš„ComboBoxç»„ä»¶ä¸­çš„å†…å®¹
+                    ConCom = (string)COMComboBox.SelectedItem;
+                    CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);        //å°†é€‰æ‹©æ³¢ç‰¹ç‡ComboBoxç»„ä»¶ä¸­çš„æ•°æ®è½¬ä¸ºIntå‹ï¼Œå¹¶ä¸”è¿›è¡Œæ³¢ç‰¹ç‡çš„è®¾ç½®
 
                     //RXTextBox.Foreground = foregroundColor;
                     /*
                     if (theme == ApplicationTheme.Dark)
                     {
-                        // µ±Ç°´¦ÓÚÉîÉ«Ä£Ê½
+                        // å½“å‰å¤„äºæ·±è‰²æ¨¡å¼
                         RXTextBox.Foreground = new SolidColorBrush(darkaccentColor);
                     }
                     else if (theme == ApplicationTheme.Light)
                     {
-                        // µ±Ç°´¦ÓÚÇ³É«Ä£Ê½
+                        // å½“å‰å¤„äºæµ…è‰²æ¨¡å¼
                         RXTextBox.Foreground = new SolidColorBrush(ligtaccentColor);
                     }*/
 
                     RXTextBox.Text = RXTextBox.Text + "BaudRate = " + Convert.ToInt32(BANDComboBox.SelectedItem) + "\r\n";
 
-                    CommonRes._serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), (string)PARComboBox.SelectedItem);        //Ğ£ÑéÎ»
-                    CommonRes._serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), (string)STOPComboBox.SelectedItem); //Í£Ö¹Î»
+                    CommonRes._serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), (string)PARComboBox.SelectedItem);        //æ ¡éªŒä½
+                    CommonRes._serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), (string)STOPComboBox.SelectedItem); //åœæ­¢ä½
 
                     RXTextBox.Text = RXTextBox.Text + "Parity = " + (Parity)Enum.Parse(typeof(Parity), (string)PARComboBox.SelectedItem) + "\r\n";
                     RXTextBox.Text = RXTextBox.Text + "StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), (string)STOPComboBox.SelectedItem) + "\r\n";
 
-                    CommonRes._serialPort.DataBits = Convert.ToInt32(DATAComboBox.SelectedItem);                                //Êı¾İÎ»
+                    CommonRes._serialPort.DataBits = Convert.ToInt32(DATAComboBox.SelectedItem);                                //æ•°æ®ä½
 
                     RXTextBox.Text = RXTextBox.Text + "DataBits = " + Convert.ToInt32(DATAComboBox.SelectedItem) + "\r\n";
 
                     CommonRes._serialPort.ReadTimeout = 1500;
-                    //_SerialPort.DtrEnable = true;                                                                             //ÆôÓÃÊı¾İÖÕ¶Ë¾ÍĞ÷ĞÅÏ¢
+                    //_SerialPort.DtrEnable = true;                                                                             //å¯ç”¨æ•°æ®ç»ˆç«¯å°±ç»ªä¿¡æ¯
                     CommonRes._serialPort.Encoding = Encoding.UTF8;
-                    CommonRes._serialPort.ReceivedBytesThreshold = 1;                                               //DataReceived´¥·¢Ç°ÄÚ²¿ÊäÈë»º³åÆ÷µÄ×Ö½ÚÊı
+                    CommonRes._serialPort.ReceivedBytesThreshold = 1;                                               //DataReceivedè§¦å‘å‰å†…éƒ¨è¾“å…¥ç¼“å†²å™¨çš„å­—èŠ‚æ•°
 
                     //RXTextBox.Foreground = foregroundColor;
 
                     RXTextBox.Text = RXTextBox.Text + LaunageText("serialPortl") + " " + COMComboBox.SelectedItem + LaunageText("spConnect") + "\r\n";
 
-                    CommonRes._serialPort.Open();                                                                               //´ò¿ª´®¿Ú
+                    CommonRes._serialPort.Open();                                                                               //æ‰“å¼€ä¸²å£
 
-                    timer = new Timer(TimerTick, null, 0, 250); // Ã¿Ãë´¥·¢8´Î
+                    timer = new Timer(TimerTick, null, 0, 250); // æ¯ç§’è§¦å‘8æ¬¡
 
                     //CONTButton.Content = "DISCONNECT";
                     CONTButton.Content = LaunageText("disconnectl");
@@ -881,25 +886,25 @@ namespace FSGaryityTool_Win11
                     RunProgressBar.IsIndeterminate = true;
                     RunProgressBar.Visibility = Visibility.Visible;
                     //CONTButton.Background = new SolidColorBrush(color);
-                    if (theme == ApplicationTheme.Dark)                                                                         //ÉèÖÃÁ¬½Ó°´Å¥±³¾°ÑÕÉ«
+                    if (theme == ApplicationTheme.Dark)                                                                         //è®¾ç½®è¿æ¥æŒ‰é’®èƒŒæ™¯é¢œè‰²
                     {
-                        // µ±Ç°´¦ÓÚÉîÉ«Ä£Ê½
+                        // å½“å‰å¤„äºæ·±è‰²æ¨¡å¼
                         CONTButton.Background = new SolidColorBrush(darkaccentColor);
                         CONTButton.Foreground = new SolidColorBrush(Colors.Black);
                     }
                     else if (theme == ApplicationTheme.Light)
                     {
-                        // µ±Ç°´¦ÓÚÇ³É«Ä£Ê½
+                        // å½“å‰å¤„äºæµ…è‰²æ¨¡å¼
                         CONTButton.Background = new SolidColorBrush(ligtaccentColor);
                         CONTButton.Foreground = new SolidColorBrush(Colors.White);
                     }
 
 
                 }
-                catch                                                                                                     //Èç¹û´ò¿ª´®¿ÚÊ§°Ü ĞèÒª×öÈçÏÂ¾¯Ê¾
+                catch                                                                                                     //å¦‚æœæ‰“å¼€ä¸²å£å¤±è´¥ éœ€è¦åšå¦‚ä¸‹è­¦ç¤º
                 {
                     RXTextBox.Text = RXTextBox.Text + LaunageText("openSPErr") + "\r\n";
-                    //MessageBox.Show("´ò¿ª´®¿ÚÊ§°Ü£¬Çë¼ì²éÏà¹ØÉèÖÃ", "´íÎó");
+                    //MessageBox.Show("æ‰“å¼€ä¸²å£å¤±è´¥ï¼Œè¯·æ£€æŸ¥ç›¸å…³è®¾ç½®", "é”™è¯¯");
                     Con = 0;
                     //CONTButton.Content = "CONNECT";
                     CONTButton.Content = LaunageText("connectl");
@@ -917,10 +922,10 @@ namespace FSGaryityTool_Win11
 
                 try
                 {
-                    CommonRes._serialPort.Close();                                                                              //¹Ø±Õ´®¿Ú
+                    CommonRes._serialPort.Close();                                                                              //å…³é—­ä¸²å£
                     RXTextBox.Text = RXTextBox.Text + "\n" + LaunageText("serialPortl") + " " + COMComboBox.SelectedItem + LaunageText("spClose") + "\r\n";
                 }
-                catch (Exception err)                                                                       //Ò»°ãÇé¿öÏÂ¹Ø±Õ´®¿Ú²»»á³ö´í£¬ËùÒÔ²»ĞèÒª¼Ó´¦Àí³ÌĞò
+                catch (Exception err)                                                                       //ä¸€èˆ¬æƒ…å†µä¸‹å…³é—­ä¸²å£ä¸ä¼šå‡ºé”™ï¼Œæ‰€ä»¥ä¸éœ€è¦åŠ å¤„ç†ç¨‹åº
                 {
                     RXTextBox.Text = RXTextBox.Text + err + "\r\n";
                 }
@@ -958,36 +963,36 @@ namespace FSGaryityTool_Win11
 
 
             string rxstr;
-            string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //ÏÔÊ¾Ê±¼ä
+            string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //æ˜¾ç¤ºæ—¶é—´
             string output;
             //StringBuilder datawate = new StringBuilder(1024);
 
 
-            if (rx == 0)                                                        // Èç¹ûÒÔ×Ö·û´®ĞÎÊ½¶ÁÈ¡
+            if (rx == 0)                                                        // å¦‚æœä»¥å­—ç¬¦ä¸²å½¢å¼è¯»å–
             {
 
-                rxstr = CommonRes._serialPort.ReadExisting();                   // ¶ÁÈ¡´®¿Ú½ÓÊÕ»º³åÇø×Ö·û´®
-                string content = rxstr.Replace("\n", "").Replace("\r", ""); // ½«StringBuilderµÄÄÚÈİ×ª»»Îª×Ö·û´®£¬²¢È¥³ı»»ĞĞ·û
-                if (!string.IsNullOrWhiteSpace(content)) // Èç¹ûcontent²»Îª¿Õ
+                rxstr = CommonRes._serialPort.ReadExisting();                   // è¯»å–ä¸²å£æ¥æ”¶ç¼“å†²åŒºå­—ç¬¦ä¸²
+                string content = rxstr.Replace("\n", "").Replace("\r", ""); // å°†StringBuilderçš„å†…å®¹è½¬æ¢ä¸ºå­—ç¬¦ä¸²ï¼Œå¹¶å»é™¤æ¢è¡Œç¬¦
+                if (!string.IsNullOrWhiteSpace(content)) // å¦‚æœcontentä¸ä¸ºç©º
                 {
                     DispatcherQueue.TryEnqueue(() =>
                     {
-                        UpdateItemsRepeater(Timesr, content);                       // ÔÚ½ÓÊÕlistviewÖĞ½øĞĞÏÔÊ¾
-                        output = rxstr.Replace("\n", "\\n").Replace("\r", "\\r"); // ½«»»ĞĞ·ûÌæ»»ÎªÆä×ªÒåĞòÁĞ
-                        Debug.WriteLine(output); // ÔÚDebug.WriteLineÖĞÏÔÊ¾´¦ÀíºóµÄ×Ö·û´®
+                        UpdateItemsRepeater(Timesr, content);                       // åœ¨æ¥æ”¶listviewä¸­è¿›è¡Œæ˜¾ç¤º
+                        output = rxstr.Replace("\n", "\\n").Replace("\r", "\\r"); // å°†æ¢è¡Œç¬¦æ›¿æ¢ä¸ºå…¶è½¬ä¹‰åºåˆ—
+                        Debug.WriteLine(output); // åœ¨Debug.WriteLineä¸­æ˜¾ç¤ºå¤„ç†åçš„å­—ç¬¦ä¸²
                         Debug.WriteLine("content" + content);
                     });
                 }
 
                 if (shtime == 1)
                 {
-                    //rxstr = string.Concat(Timesr, rxstr);                     //ÏÔÊ¾Ê±¼ä
+                    //rxstr = string.Concat(Timesr, rxstr);                     //æ˜¾ç¤ºæ—¶é—´
                 }
                 //datawate.Append(rxstr);
 
                 DispatcherQueue.TryEnqueue(() =>
                 {
-                    //datapwate.Append(rxstr);                                    // ÔÚ½ÓÊÕÎÄ±¾¿òÖĞ½øĞĞÏÔÊ¾
+                    //datapwate.Append(rxstr);                                    // åœ¨æ¥æ”¶æ–‡æœ¬æ¡†ä¸­è¿›è¡Œæ˜¾ç¤º
                 });
 
 
@@ -1000,13 +1005,13 @@ namespace FSGaryityTool_Win11
 
 
             }
-            else                                                            // ÒÔÊıÖµĞÎÊ½¶ÁÈ¡
+            else                                                            // ä»¥æ•°å€¼å½¢å¼è¯»å–
             {
-                int length = CommonRes._serialPort.BytesToRead; // ¶ÁÈ¡´®¿Ú½ÓÊÕ»º³åÇø×Ö½ÚÊı
+                int length = CommonRes._serialPort.BytesToRead; // è¯»å–ä¸²å£æ¥æ”¶ç¼“å†²åŒºå­—èŠ‚æ•°
 
-                byte[] Data = new byte[length]; // ¶¨ÒåÏàÍ¬×Ö½ÚµÄÊı×é
+                byte[] Data = new byte[length]; // å®šä¹‰ç›¸åŒå­—èŠ‚çš„æ•°ç»„
 
-                CommonRes._serialPort.Read(Data, 0, length); // ´®¿Ú¶ÁÈ¡»º³åÇøÊı¾İµ½Êı×éÖĞ
+                CommonRes._serialPort.Read(Data, 0, length); // ä¸²å£è¯»å–ç¼“å†²åŒºæ•°æ®åˆ°æ•°ç»„ä¸­
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     UpdateItemsRepeater(Timesr, str);
@@ -1036,7 +1041,7 @@ namespace FSGaryityTool_Win11
             }
 
             /*
-            ++rxs;                                          //½ÓÊÕ×Ô¶¯Çå¿Õ(ÒÑÆúÓÃ)
+            ++rxs;                                          //æ¥æ”¶è‡ªåŠ¨æ¸…ç©º(å·²å¼ƒç”¨)
             if (rxs == 200)
             {
                 DispatcherQueue.TryEnqueue(() =>
@@ -1051,7 +1056,7 @@ namespace FSGaryityTool_Win11
 
         private void UpdateItemsRepeater(string Timesr, string Rxstr)
         {
-            // ¼ÙÉèÄãµÄItemsRepeaterµÄÃû×ÖÊÇRXListView
+            // å‡è®¾ä½ çš„ItemsRepeaterçš„åå­—æ˜¯RXListView
             DataItem item = new DataItem { Timesr = Timesr, Rxstr = Rxstr };
             (RXListView.ItemsSource as ObservableCollection<DataItem>).Add(item);
 
@@ -1074,6 +1079,11 @@ namespace FSGaryityTool_Win11
             string ComIs;
             ComIs = (string)COMComboBox.SelectedItem;
             COMListview.SelectedItem = ComIs;
+            if(Con == 1)
+            {
+                if(ConCom != ComIs)
+                COMRstInfoBar.IsOpen = true;
+            }
         }
 
 
@@ -1083,11 +1093,11 @@ namespace FSGaryityTool_Win11
 
         }
 
-        private void TXButton_Click(object sender, RoutedEventArgs e)//·¢ËÍÊı¾İ
+        private void TXButton_Click(object sender, RoutedEventArgs e)//å‘é€æ•°æ®
         {
-            if (CommonRes._serialPort.IsOpen)            // Èç¹û´®¿ÚÉè±¸ÒÑ¾­´ò¿ªÁË
+            if (CommonRes._serialPort.IsOpen)            // å¦‚æœä¸²å£è®¾å¤‡å·²ç»æ‰“å¼€äº†
             {
-                if (tx == 0)        // Èç¹ûÊÇÒÔ×Ö·ûµÄĞÎÊ½·¢ËÍÊı¾İ
+                if (tx == 0)        // å¦‚æœæ˜¯ä»¥å­—ç¬¦çš„å½¢å¼å‘é€æ•°æ®
                 {
                     string str = "";
                     try
@@ -1104,16 +1114,16 @@ namespace FSGaryityTool_Win11
                     }
                     catch
                     {
-                        //MessageBox.Show("´®¿Ú×Ö·ûĞ´Èë´íÎó!", "´íÎó");   // µ¯³ö·¢ËÍ´íÎó¶Ô»°¿ò
+                        //MessageBox.Show("ä¸²å£å­—ç¬¦å†™å…¥é”™è¯¯!", "é”™è¯¯");   // å¼¹å‡ºå‘é€é”™è¯¯å¯¹è¯æ¡†
                         RXTextBox.Text = RXTextBox.Text + LaunageText("txStringErr") + "\r\n";
 
                         CONTButton_Click(sender, e);
                     }
                 }
-                else                                                  // Èç¹ûÒÔÊıÖµµÄĞÎÊ½·¢ËÍ
+                else                                                  // å¦‚æœä»¥æ•°å€¼çš„å½¢å¼å‘é€
                 {
-                    byte[] Data = new byte[1];                        // ¶¨ÒåÒ»¸öbyteÀàĞÍÊı¾İ£¬Ïàµ±ÓÚCÓïÑÔµÄunsigned charÀàĞÍ
-                    int flag = 0;                                     // ¶¨ÒåÒ»¸ö±êÖ¾£¬±êÖ¾ÕâÊÇµÚ¼¸Î»
+                    byte[] Data = new byte[1];                        // å®šä¹‰ä¸€ä¸ªbyteç±»å‹æ•°æ®ï¼Œç›¸å½“äºCè¯­è¨€çš„unsigned charç±»å‹
+                    int flag = 0;                                     // å®šä¹‰ä¸€ä¸ªæ ‡å¿—ï¼Œæ ‡å¿—è¿™æ˜¯ç¬¬å‡ ä½
                     int databits = 0;
                     string str = "";
                     try
@@ -1122,57 +1132,57 @@ namespace FSGaryityTool_Win11
                         RXTextBox.Text += "TX: " + "0x ";
                         for (int i = 0; i < TXTextBox.Text.Length; i++)
                         {
-                            if (TXTextBox.Text.Substring(i, 1) == " " && flag == 0)                // Èç¹ûÊÇµÚÒ»Î»£¬²¢ÇÒÎª¿Õ×Ö·û
+                            if (TXTextBox.Text.Substring(i, 1) == " " && flag == 0)                // å¦‚æœæ˜¯ç¬¬ä¸€ä½ï¼Œå¹¶ä¸”ä¸ºç©ºå­—ç¬¦
                             {
                                 continue;
                             }
 
-                            if (TXTextBox.Text.Substring(i, 1) != " " && flag == 0)                // Èç¹ûÊÇµÚÒ»Î»£¬µ«²»Îª¿Õ×Ö·û
+                            if (TXTextBox.Text.Substring(i, 1) != " " && flag == 0)                // å¦‚æœæ˜¯ç¬¬ä¸€ä½ï¼Œä½†ä¸ä¸ºç©ºå­—ç¬¦
                             {
-                                flag = 1;                                                          // ±êÖ¾×ªµ½µÚ¶şÎ»Êı¾İÈ¥
-                                if (i == TXTextBox.Text.Length - 1)                                // Èç¹ûÕâÊÇÎÄ±¾¿ò×Ö·û´®µÄ×îºóÒ»¸ö×Ö·û
+                                flag = 1;                                                          // æ ‡å¿—è½¬åˆ°ç¬¬äºŒä½æ•°æ®å»
+                                if (i == TXTextBox.Text.Length - 1)                                // å¦‚æœè¿™æ˜¯æ–‡æœ¬æ¡†å­—ç¬¦ä¸²çš„æœ€åä¸€ä¸ªå­—ç¬¦
                                 {
-                                    Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i, 1), 16);  // ×ª»¯ÎªbyteÀàĞÍÊı¾İ£¬ÒÔ16½øÖÆÏÔÊ¾
+                                    Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i, 1), 16);  // è½¬åŒ–ä¸ºbyteç±»å‹æ•°æ®ï¼Œä»¥16è¿›åˆ¶æ˜¾ç¤º
                                     bytes[databits] = Data[0];
                                     foreach (byte data in Data)
                                     {
                                         str = data.ToString("X2");
                                     }
                                     RXTextBox.Text = RXTextBox.Text + str + " ";
-                                    flag = 0;                                                     // ±êÖ¾»Øµ½µÚÒ»Î»Êı¾İÈ¥
+                                    flag = 0;                                                     // æ ‡å¿—å›åˆ°ç¬¬ä¸€ä½æ•°æ®å»
                                     databits++;
                                 }
                                 continue;
                             }
-                            else if (TXTextBox.Text.Substring(i, 1) == " " && flag == 1)           // Èç¹ûÊÇµÚ¶şÎ»£¬ÇÒµÚ¶şÎ»×Ö·ûÎª¿Õ
+                            else if (TXTextBox.Text.Substring(i, 1) == " " && flag == 1)           // å¦‚æœæ˜¯ç¬¬äºŒä½ï¼Œä¸”ç¬¬äºŒä½å­—ç¬¦ä¸ºç©º
                             {
-                                Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i - 1, 1), 16);  // Ö»½«µÚÒ»Î»×Ö·û×ª»¯ÎªbyteÀàĞÍÊı¾İ£¬ÒÔÊ®Áù½øÖÆÏÔÊ¾
+                                Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i - 1, 1), 16);  // åªå°†ç¬¬ä¸€ä½å­—ç¬¦è½¬åŒ–ä¸ºbyteç±»å‹æ•°æ®ï¼Œä»¥åå…­è¿›åˆ¶æ˜¾ç¤º
                                 bytes[databits] = Data[0];
                                 foreach (byte data in Data)
                                 {
                                     str = data.ToString("X2");
                                 }
                                 RXTextBox.Text = RXTextBox.Text + str + " ";
-                                flag = 0;                                                         // ±êÖ¾»Øµ½µÚÒ»Î»Êı¾İÈ¥
+                                flag = 0;                                                         // æ ‡å¿—å›åˆ°ç¬¬ä¸€ä½æ•°æ®å»
                                 databits++;
                                 continue;
                             }
-                            else if (TXTextBox.Text.Substring(i, 1) != " " && flag == 1)           // Èç¹ûÊÇµÚ¶şÎ»×Ö·û£¬ÇÒµÚÒ»Î»×Ö·û²»Îª¿Õ
+                            else if (TXTextBox.Text.Substring(i, 1) != " " && flag == 1)           // å¦‚æœæ˜¯ç¬¬äºŒä½å­—ç¬¦ï¼Œä¸”ç¬¬ä¸€ä½å­—ç¬¦ä¸ä¸ºç©º
                             {
-                                Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i - 1, 2), 16);  // ½«µÚÒ»£¬¶şÎ»×Ö·û×ª»¯ÎªbyteÀàĞÍÊı¾İ£¬ÒÔÊ®Áù½øÖÆÏÔÊ¾
+                                Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i - 1, 2), 16);  // å°†ç¬¬ä¸€ï¼ŒäºŒä½å­—ç¬¦è½¬åŒ–ä¸ºbyteç±»å‹æ•°æ®ï¼Œä»¥åå…­è¿›åˆ¶æ˜¾ç¤º
                                 bytes[databits] = Data[0];
                                 foreach (byte data in Data)
                                 {
                                     str = data.ToString("X2");
                                 }
                                 RXTextBox.Text = RXTextBox.Text + str + " ";
-                                flag = 0;                                                         // ±êÖ¾»Øµ½µÚÒ»Î»Êı¾İÈ¥
+                                flag = 0;                                                         // æ ‡å¿—å›åˆ°ç¬¬ä¸€ä½æ•°æ®å»
                                 databits++;
                                 continue;
                             }
 
                         }
-                        CommonRes._serialPort.Write(bytes, 0, databits);                                     // Í¨¹ı´®¿Ú·¢ËÍ
+                        CommonRes._serialPort.Write(bytes, 0, databits);                                     // é€šè¿‡ä¸²å£å‘é€
                         if (txnewline == 1)
                         {
                             CommonRes._serialPort.Write("\r\n");
@@ -1181,7 +1191,7 @@ namespace FSGaryityTool_Win11
                     }
                     catch
                     {
-                        //MessageBox.Show("´®¿ÚÊıÖµĞ´Èë´íÎó!", "´íÎó");
+                        //MessageBox.Show("ä¸²å£æ•°å€¼å†™å…¥é”™è¯¯!", "é”™è¯¯");
                         RXTextBox.Text = RXTextBox.Text + LaunageText("txHexErr") + "\r\n";
 
                         //CONTButton_Click(sender, e);
@@ -1197,7 +1207,7 @@ namespace FSGaryityTool_Win11
         private void CLEARButton_Click(object sender, RoutedEventArgs e)
         {
             RXListView.ItemsSource = null;
-            RXTextBox.Text = "";    //Çå³ıÎÄ±¾¿òÄÚÈİ
+            RXTextBox.Text = "";    //æ¸…é™¤æ–‡æœ¬æ¡†å†…å®¹
             RXListView.ItemsSource = new ObservableCollection<DataItem>();
         }
 
@@ -1209,14 +1219,14 @@ namespace FSGaryityTool_Win11
         {
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //´ò¿ªTOMLÎÄ¼ş
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //æ‰“å¼€TOMLæ–‡ä»¶
                 {
                     settingstomlr = TOML.Parse(reader);
 
                     settingstomlr["SerialPortSettings"]["DefaultBAUD"] = (string)BANDComboBox.SelectedItem;
                 }
 
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //½«ÉèÖÃĞ´ÈëTOMLÎÄ¼ş
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //å°†è®¾ç½®å†™å…¥TOMLæ–‡ä»¶
                 {
                     settingstomlr.WriteTo(writer);
                     writer.Flush();
@@ -1227,14 +1237,14 @@ namespace FSGaryityTool_Win11
         {
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //´ò¿ªTOMLÎÄ¼ş
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //æ‰“å¼€TOMLæ–‡ä»¶
                 {
                     settingstomlr = TOML.Parse(reader);
 
                     settingstomlr["SerialPortSettings"]["DefaultParity"] = (string)PARComboBox.SelectedItem;
                 }
 
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //½«ÉèÖÃĞ´ÈëTOMLÎÄ¼ş
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //å°†è®¾ç½®å†™å…¥TOMLæ–‡ä»¶
                 {
                     settingstomlr.WriteTo(writer);
                     writer.Flush();
@@ -1245,14 +1255,14 @@ namespace FSGaryityTool_Win11
         {
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //´ò¿ªTOMLÎÄ¼ş
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //æ‰“å¼€TOMLæ–‡ä»¶
                 {
                     settingstomlr = TOML.Parse(reader);
 
                     settingstomlr["SerialPortSettings"]["DefaultSTOP"] = (string)STOPComboBox.SelectedItem;
                 }
 
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //½«ÉèÖÃĞ´ÈëTOMLÎÄ¼ş
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //å°†è®¾ç½®å†™å…¥TOMLæ–‡ä»¶
                 {
                     settingstomlr.WriteTo(writer);
                     writer.Flush();
@@ -1263,14 +1273,14 @@ namespace FSGaryityTool_Win11
         {
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //´ò¿ªTOMLÎÄ¼ş
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //æ‰“å¼€TOMLæ–‡ä»¶
                 {
                     settingstomlr = TOML.Parse(reader);
 
                     settingstomlr["SerialPortSettings"]["DefaultDATA"] = Convert.ToString(DATAComboBox.SelectedItem);
                 }
 
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //½«ÉèÖÃĞ´ÈëTOMLÎÄ¼ş
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //å°†è®¾ç½®å†™å…¥TOMLæ–‡ä»¶
                 {
                     settingstomlr.WriteTo(writer);
                     writer.Flush();
@@ -1279,7 +1289,7 @@ namespace FSGaryityTool_Win11
         }
 
 
-        private void RXHEXButton_Click(object sender, RoutedEventArgs e)    //½ÓÊÕÒÔÊ®Áù½øÖÆÊıÏÔÊ¾
+        private void RXHEXButton_Click(object sender, RoutedEventArgs e)    //æ¥æ”¶ä»¥åå…­è¿›åˆ¶æ•°æ˜¾ç¤º
         {
             if (rx == 0)
             {
@@ -1291,14 +1301,14 @@ namespace FSGaryityTool_Win11
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //´ò¿ªTOMLÎÄ¼ş
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //æ‰“å¼€TOMLæ–‡ä»¶
                 {
                     settingstomlr = TOML.Parse(reader);
 
                     settingstomlr["SerialPortSettings"]["DefaultRXHEX"] = Convert.ToString(rx);
                 }
 
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //½«ÉèÖÃĞ´ÈëTOMLÎÄ¼ş
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //å°†è®¾ç½®å†™å…¥TOMLæ–‡ä»¶
                 {
                     settingstomlr.WriteTo(writer);
                     writer.Flush();
@@ -1306,7 +1316,7 @@ namespace FSGaryityTool_Win11
             }
         }
 
-        private void TXHEXButton_Click(object sender, RoutedEventArgs e)    //·¢ËÍÒÔÊ®Áù½øÖÆÊıÏÔÊ¾
+        private void TXHEXButton_Click(object sender, RoutedEventArgs e)    //å‘é€ä»¥åå…­è¿›åˆ¶æ•°æ˜¾ç¤º
         {
 
             if (tx == 0)
@@ -1319,14 +1329,14 @@ namespace FSGaryityTool_Win11
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //´ò¿ªTOMLÎÄ¼ş
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //æ‰“å¼€TOMLæ–‡ä»¶
                 {
                     settingstomlr = TOML.Parse(reader);
 
                     settingstomlr["SerialPortSettings"]["DefaultTXHEX"] = Convert.ToString(tx);
                 }
 
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //½«ÉèÖÃĞ´ÈëTOMLÎÄ¼ş
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //å°†è®¾ç½®å†™å…¥TOMLæ–‡ä»¶
                 {
                     settingstomlr.WriteTo(writer);
                     writer.Flush();
@@ -1335,7 +1345,7 @@ namespace FSGaryityTool_Win11
         }
 
 
-        private void RSTButton_Click(object sender, RoutedEventArgs e)      //×Ô¶¯ÖØÆô
+        private void RSTButton_Click(object sender, RoutedEventArgs e)      //è‡ªåŠ¨é‡å¯
         {
             CommonRes._serialPort.BaudRate = 74880;// BANDComboBox.SelectedItem = "74880";//ESP12F
 
@@ -1382,13 +1392,13 @@ namespace FSGaryityTool_Win11
             {
                 if (theme == ApplicationTheme.Dark)
                 {
-                    // µ±Ç°´¦ÓÚÉîÉ«Ä£Ê½
+                    // å½“å‰å¤„äºæ·±è‰²æ¨¡å¼
                     button.Background = new SolidColorBrush(darkaccentColor);
                     button.Foreground = new SolidColorBrush(Colors.Black);
                 }
                 else if (theme == ApplicationTheme.Light)
                 {
-                    // µ±Ç°´¦ÓÚÇ³É«Ä£Ê½
+                    // å½“å‰å¤„äºæµ…è‰²æ¨¡å¼
                     button.Background = new SolidColorBrush(ligtaccentColor);
                     button.Foreground = new SolidColorBrush(Colors.White);
                 }
@@ -1400,7 +1410,7 @@ namespace FSGaryityTool_Win11
             }
         }
 
-        private void DTRButton_Click(object sender, RoutedEventArgs e)      //DTRĞÅºÅÊ¹ÄÜ
+        private void DTRButton_Click(object sender, RoutedEventArgs e)      //DTRä¿¡å·ä½¿èƒ½
         {
             //FsButtonChecked(dtr, DTRButton);
 
@@ -1416,14 +1426,14 @@ namespace FSGaryityTool_Win11
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //´ò¿ªTOMLÎÄ¼ş
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //æ‰“å¼€TOMLæ–‡ä»¶
                 {
                     settingstomlr = TOML.Parse(reader);
 
                     settingstomlr["SerialPortSettings"]["DefaultDTR"] = Convert.ToString(dtr);
                 }
 
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //½«ÉèÖÃĞ´ÈëTOMLÎÄ¼ş
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //å°†è®¾ç½®å†™å…¥TOMLæ–‡ä»¶
                 {
                     settingstomlr.WriteTo(writer);
                     writer.Flush();
@@ -1431,7 +1441,7 @@ namespace FSGaryityTool_Win11
             }
         }
 
-        private void RTSButton_Click(object sender, RoutedEventArgs e)      //RTSĞÅºÅÊ¹ÄÜ
+        private void RTSButton_Click(object sender, RoutedEventArgs e)      //RTSä¿¡å·ä½¿èƒ½
         {
             //FsButtonChecked(rts, RTSButton);
 
@@ -1447,14 +1457,14 @@ namespace FSGaryityTool_Win11
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //´ò¿ªTOMLÎÄ¼ş
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //æ‰“å¼€TOMLæ–‡ä»¶
                 {
                     settingstomlr = TOML.Parse(reader);
 
                     settingstomlr["SerialPortSettings"]["DefaultRTS"] = Convert.ToString(rts);
                 }
 
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //½«ÉèÖÃĞ´ÈëTOMLÎÄ¼ş
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //å°†è®¾ç½®å†™å…¥TOMLæ–‡ä»¶
                 {
                     settingstomlr.WriteTo(writer);
                     writer.Flush();
@@ -1470,12 +1480,12 @@ namespace FSGaryityTool_Win11
             {
                 shtime = 1;
 
-                //ÏÔÊ¾Ê±¼ä
-                //current_time = System.DateTime.Now;     //»ñÈ¡µ±Ç°Ê±¼ä
+                //æ˜¾ç¤ºæ—¶é—´
+                //current_time = System.DateTime.Now;     //è·å–å½“å‰æ—¶é—´
                 /*
                 DispatcherQueue.TryEnqueue(() =>
                 {
-                    RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";                          // ÔÚ½ÓÊÕÎÄ±¾¿òÖĞ½øĞĞÏÔÊ¾
+                    RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";                          // åœ¨æ¥æ”¶æ–‡æœ¬æ¡†ä¸­è¿›è¡Œæ˜¾ç¤º
                 });
                 */
             }
@@ -1499,14 +1509,14 @@ namespace FSGaryityTool_Win11
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //´ò¿ªTOMLÎÄ¼ş
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //æ‰“å¼€TOMLæ–‡ä»¶
                 {
                     settingstomlr = TOML.Parse(reader);
 
                     settingstomlr["SerialPortSettings"]["DefaultAUTOSco"] = Convert.ToString(autotr);
                 }
 
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //½«ÉèÖÃĞ´ÈëTOMLÎÄ¼ş
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //å°†è®¾ç½®å†™å…¥TOMLæ–‡ä»¶
                 {
                     settingstomlr.WriteTo(writer);
                     writer.Flush();
@@ -1527,18 +1537,18 @@ namespace FSGaryityTool_Win11
 
         private Task RXDATA_ClickAsync(object sender, RoutedEventArgs e)
         {
-            // ÔÚÕâÀïÌí¼ÓÄãµÄÒì²½´úÂë
-            // ÀıÈç£ºawait SomeAsyncMethod();
-            current_time = System.DateTime.Now;     //»ñÈ¡µ±Ç°Ê±¼ä
+            // åœ¨è¿™é‡Œæ·»åŠ ä½ çš„å¼‚æ­¥ä»£ç 
+            // ä¾‹å¦‚ï¼šawait SomeAsyncMethod();
+            current_time = System.DateTime.Now;     //è·å–å½“å‰æ—¶é—´
             //RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";
             //Timesr = current_time.ToString("HH:mm:ss");
 
 
 
             //rxpstr = System.Text.Encoding.UTF8.GetString(datapwate);
-            rxpstr = datapwate.ToString();                          //½«»º³åÇø¸³Öµµ½Êä³ö
-            RXTextBox.Text = RXTextBox.Text + rxpstr + "";          //Êä³ö½ÓÊÕµÄÊı¾İ
-            datapwate.Clear();                                      //Çå¿Õ»º³åÇø
+            rxpstr = datapwate.ToString();                          //å°†ç¼“å†²åŒºèµ‹å€¼åˆ°è¾“å‡º
+            RXTextBox.Text = RXTextBox.Text + rxpstr + "";          //è¾“å‡ºæ¥æ”¶çš„æ•°æ®
+            datapwate.Clear();                                      //æ¸…ç©ºç¼“å†²åŒº
 
             return Task.CompletedTask;
         }
@@ -1561,14 +1571,14 @@ namespace FSGaryityTool_Win11
             {
                 autosaveset = 0; 
             }
-            using (StreamReader reader = File.OpenText(FSSetToml))                    //´ò¿ªTOMLÎÄ¼ş
+            using (StreamReader reader = File.OpenText(FSSetToml))                    //æ‰“å¼€TOMLæ–‡ä»¶
             {
                 settingstomlr = TOML.Parse(reader);
 
                 settingstomlr["SerialPortSettings"]["AutoDaveSet"] = Convert.ToString(autosaveset);
             }
 
-            using (StreamWriter writer = File.CreateText(FSSetToml))                  //½«ÉèÖÃĞ´ÈëTOMLÎÄ¼ş
+            using (StreamWriter writer = File.CreateText(FSSetToml))                  //å°†è®¾ç½®å†™å…¥TOMLæ–‡ä»¶
             {
                 settingstomlr.WriteTo(writer);
                 writer.Flush();
@@ -1602,14 +1612,14 @@ namespace FSGaryityTool_Win11
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //´ò¿ªTOMLÎÄ¼ş
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //æ‰“å¼€TOMLæ–‡ä»¶
                 {
                     settingstomlr = TOML.Parse(reader);
 
                     settingstomlr["SerialPortSettings"]["AutoSerichCom"] = Convert.ToString(autosercom);
                 }
 
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //½«ÉèÖÃĞ´ÈëTOMLÎÄ¼ş
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //å°†è®¾ç½®å†™å…¥TOMLæ–‡ä»¶
                 {
                     settingstomlr.WriteTo(writer);
                     writer.Flush();
@@ -1619,54 +1629,76 @@ namespace FSGaryityTool_Win11
 
         private void RXListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            // »ñÈ¡Êó±êÓÒ¼üµã»÷µÄÎ»ÖÃ
+            // è·å–é¼ æ ‡å³é”®ç‚¹å‡»çš„ä½ç½®
             Point point = e.GetPosition(null);
 
-            // ¸ù¾İÎ»ÖÃÕÒµ½¶ÔÓ¦µÄListViewItem
+            // æ ¹æ®ä½ç½®æ‰¾åˆ°å¯¹åº”çš„ListViewItem
             ListViewItem listViewItem = VisualTreeHelper.FindElementsInHostCoordinates(point, RXListView).FirstOrDefault(x => x is ListViewItem) as ListViewItem;
 
-            // Èç¹ûÕÒµ½ÁËListViewItem£¬½«ÆäÉèÖÃÎªÑ¡ÖĞ×´Ì¬
+            // å¦‚æœæ‰¾åˆ°äº†ListViewItemï¼Œå°†å…¶è®¾ç½®ä¸ºé€‰ä¸­çŠ¶æ€
             if (listViewItem != null)
             {
                 listViewItem.IsSelected = true;
             }
 
-            MenuFlyoutItem copyItem = new MenuFlyoutItem { Text = LaunageText("copyAlll") };
+            MenuFlyoutItem copyItem = new MenuFlyoutItem 
+            { 
+                Text = LaunageText("copyAlll"),
+                Icon = new FontIcon
+                {
+                    Glyph = "\uE8C8"
+                }
+            };
             copyItem.Click += CopyItem_Click;
 
-            MenuFlyoutItem copyTimestampItem = new MenuFlyoutItem { Text = LaunageText("copyTimel") };
+
+            MenuFlyoutItem copyTimestampItem = new MenuFlyoutItem 
+            { 
+                Text = LaunageText("copyTimel"),
+                Icon = new FontIcon
+                {
+                    Glyph = "\uE823"
+                }
+            };
             copyTimestampItem.Click += CopyTimestampItem_Click;
 
-            MenuFlyoutItem copyDataItem = new MenuFlyoutItem { Text = LaunageText("copyDatal") };
+            MenuFlyoutItem copyDataItem = new MenuFlyoutItem 
+            { 
+                Text = LaunageText("copyDatal"),
+                Icon = new FontIcon
+                {
+                    Glyph = "\uE8A4"
+                }
+            };
             copyDataItem.Click += CopyDataItem_Click;
 
-            // ´´½¨Ò»¸öĞÂµÄ²Ëµ¥·É³ö£¨MenuFlyout£©²¢Ìí¼Ó²Ëµ¥Ïî
+            // åˆ›å»ºä¸€ä¸ªæ–°çš„èœå•é£å‡ºï¼ˆMenuFlyoutï¼‰å¹¶æ·»åŠ èœå•é¡¹
             MenuFlyout menuFlyout = new MenuFlyout();
 
             menuFlyout.Items.Add(copyItem);
             menuFlyout.Items.Add(copyTimestampItem);
             menuFlyout.Items.Add(copyDataItem);
 
-            // ÏÔÊ¾²Ëµ¥
+            // æ˜¾ç¤ºèœå•
             menuFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
         }
 
         private void CopyItem_Click(object sender, RoutedEventArgs e)
         {
-            // »ñÈ¡µ±Ç°Ñ¡ÖĞµÄÏî
+            // è·å–å½“å‰é€‰ä¸­çš„é¡¹
             var selectedItem = RXListView.SelectedItem as DataItem;
 
-            // È·±£Ñ¡ÖĞµÄÏî²»Îª¿Õ
+            // ç¡®ä¿é€‰ä¸­çš„é¡¹ä¸ä¸ºç©º
             if (selectedItem != null)
             {
-                // »ñÈ¡Ñ¡ÖĞÏîµÄÄÚÈİ
+                // è·å–é€‰ä¸­é¡¹çš„å†…å®¹
                 var content1 = selectedItem.Timesr;
                 var content2 = selectedItem.Rxstr;
 
-                // ½«Á½¸öÄÚÈİºÏ²¢£¬Äã¿ÉÒÔ¸ù¾İĞèÒªÌí¼ÓÊÊµ±µÄ·Ö¸ô·û
+                // å°†ä¸¤ä¸ªå†…å®¹åˆå¹¶ï¼Œä½ å¯ä»¥æ ¹æ®éœ€è¦æ·»åŠ é€‚å½“çš„åˆ†éš”ç¬¦
                 var combinedContent = content1 + " " + content2;
 
-                // ½«ÄÚÈİ¸´ÖÆµ½¼ôÌù°å
+                // å°†å†…å®¹å¤åˆ¶åˆ°å‰ªè´´æ¿
                 DataPackage dataPackage = new DataPackage();
                 dataPackage.SetText(combinedContent);
                 Clipboard.SetContent(dataPackage);
@@ -1676,16 +1708,16 @@ namespace FSGaryityTool_Win11
         {
             var selectedItem = RXListView.SelectedItem as DataItem;
 
-            // È·±£Ñ¡ÖĞµÄÏî²»Îª¿Õ
+            // ç¡®ä¿é€‰ä¸­çš„é¡¹ä¸ä¸ºç©º
             if (selectedItem != null)
             {
-                // »ñÈ¡Ñ¡ÖĞÏîµÄÄÚÈİ
+                // è·å–é€‰ä¸­é¡¹çš„å†…å®¹
                 var content1 = selectedItem.Timesr;
 
-                // ½«Á½¸öÄÚÈİºÏ²¢£¬Äã¿ÉÒÔ¸ù¾İĞèÒªÌí¼ÓÊÊµ±µÄ·Ö¸ô·û
+                // å°†ä¸¤ä¸ªå†…å®¹åˆå¹¶ï¼Œä½ å¯ä»¥æ ¹æ®éœ€è¦æ·»åŠ é€‚å½“çš„åˆ†éš”ç¬¦
                 var combinedContent = content1;
 
-                // ½«ÄÚÈİ¸´ÖÆµ½¼ôÌù°å
+                // å°†å†…å®¹å¤åˆ¶åˆ°å‰ªè´´æ¿
                 DataPackage dataPackage = new DataPackage();
                 dataPackage.SetText(combinedContent);
                 Clipboard.SetContent(dataPackage);
@@ -1693,19 +1725,19 @@ namespace FSGaryityTool_Win11
         }
         private void CopyDataItem_Click(object sender, RoutedEventArgs e)
         {
-            // »ñÈ¡µ±Ç°Ñ¡ÖĞµÄÏî
+            // è·å–å½“å‰é€‰ä¸­çš„é¡¹
             var selectedItem = RXListView.SelectedItem as DataItem;
 
-            // È·±£Ñ¡ÖĞµÄÏî²»Îª¿Õ
+            // ç¡®ä¿é€‰ä¸­çš„é¡¹ä¸ä¸ºç©º
             if (selectedItem != null)
             {
-                // »ñÈ¡Ñ¡ÖĞÏîµÄÄÚÈİ
+                // è·å–é€‰ä¸­é¡¹çš„å†…å®¹
                 var content2 = selectedItem.Rxstr;
 
-                // ½«Á½¸öÄÚÈİºÏ²¢£¬Äã¿ÉÒÔ¸ù¾İĞèÒªÌí¼ÓÊÊµ±µÄ·Ö¸ô·û
+                // å°†ä¸¤ä¸ªå†…å®¹åˆå¹¶ï¼Œä½ å¯ä»¥æ ¹æ®éœ€è¦æ·»åŠ é€‚å½“çš„åˆ†éš”ç¬¦
                 var combinedContent = content2;
 
-                // ½«ÄÚÈİ¸´ÖÆµ½¼ôÌù°å
+                // å°†å†…å®¹å¤åˆ¶åˆ°å‰ªè´´æ¿
                 DataPackage dataPackage = new DataPackage();
                 dataPackage.SetText(combinedContent);
                 Clipboard.SetContent(dataPackage);
@@ -1724,14 +1756,14 @@ namespace FSGaryityTool_Win11
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //´ò¿ªTOMLÎÄ¼ş
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //æ‰“å¼€TOMLæ–‡ä»¶
                 {
                     settingstomlr = TOML.Parse(reader);
 
                     settingstomlr["SerialPortSettings"]["DefaultTXNewLine"] = Convert.ToString(txnewline);
                 }
 
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //½«ÉèÖÃĞ´ÈëTOMLÎÄ¼ş
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //å°†è®¾ç½®å†™å…¥TOMLæ–‡ä»¶
                 {
                     settingstomlr.WriteTo(writer);
                     writer.Flush();
@@ -1751,14 +1783,14 @@ namespace FSGaryityTool_Win11
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //´ò¿ªTOMLÎÄ¼ş
+                using (StreamReader reader = File.OpenText(FSSetToml))                    //æ‰“å¼€TOMLæ–‡ä»¶
                 {
                     settingstomlr = TOML.Parse(reader);
 
                     settingstomlr["SerialPortSettings"]["AutoConnect"] = Convert.ToString(autoconnect);
                 }
 
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //½«ÉèÖÃĞ´ÈëTOMLÎÄ¼ş
+                using (StreamWriter writer = File.CreateText(FSSetToml))                  //å°†è®¾ç½®å†™å…¥TOMLæ–‡ä»¶
                 {
                     settingstomlr.WriteTo(writer);
                     writer.Flush();
