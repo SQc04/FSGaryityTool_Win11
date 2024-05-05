@@ -136,7 +136,7 @@ namespace FSGaryityTool_Win11
             
         }
 
-        public static string LaunageText(string laugtext)
+        public static string LanguageText(string laugtext)
         {
             var culture = System.Globalization.CultureInfo.CurrentUICulture;
             string lang = culture.Name;
@@ -303,18 +303,18 @@ namespace FSGaryityTool_Win11
 
                 //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
 
-                BaudTextBlock.Text = LaunageText("baudRatel");
-                PartTextBlock.Text = LaunageText("parityl");
-                StopTextBlock.Text = LaunageText("stopBits");
-                DataTextBlock.Text = LaunageText("dataBits");
-                RXHEXButton.Content = LaunageText("rxHexl");
-                TXHEXButton.Content = LaunageText("txHexl");
-                TXNewLineButton.Content = LaunageText("txNewLinel");
-                SaveSetButton.Content = LaunageText("autoSaveSetl");
-                AUTOScrollButton.Content = LaunageText("autoScrolll");
-                AutoComButton.Content = LaunageText("autoSerichComl");
-                AutoConnectButton.Content = LaunageText("autoConnectl");
-                CONTButton.Content = LaunageText("connectl");
+                BaudTextBlock.Text = LanguageText("baudRatel");
+                PartTextBlock.Text = LanguageText("parityl");
+                StopTextBlock.Text = LanguageText("stopBits");
+                DataTextBlock.Text = LanguageText("dataBits");
+                RXHEXButton.Content = LanguageText("rxHexl");
+                TXHEXButton.Content = LanguageText("txHexl");
+                TXNewLineButton.Content = LanguageText("txNewLinel");
+                SaveSetButton.Content = LanguageText("autoSaveSetl");
+                AUTOScrollButton.Content = LanguageText("autoScrolll");
+                AutoComButton.Content = LanguageText("autoSerichComl");
+                AutoConnectButton.Content = LanguageText("autoConnectl");
+                CONTButton.Content = LanguageText("connectl");
 
                 CommonRes._serialPort.DataReceived += _serialPort_DataReceived;
                 // 在你的代码后台，定义一个List<string>作为数据源
@@ -679,7 +679,7 @@ namespace FSGaryityTool_Win11
                     {
                         string commme = (string)COMComboBox.SelectedItem;
                         SerialPortInfo info = SerialPortInfo.GetPort(InOutCom);
-                        RXTextBox.Text = RXTextBox.Text + InOutCom + ": " + info.Description + " " + LaunageText("spPlogin") + "\r\n";
+                        RXTextBox.Text = RXTextBox.Text + InOutCom + ": " + info.Description + " " + LanguageText("spPlogin") + "\r\n";
                         COMComboBox.Items.Clear();
                         COMListview.Items.Clear();
                         //COMListview.ItemsSource = null;
@@ -710,7 +710,7 @@ namespace FSGaryityTool_Win11
                     }
                     else
                     {
-                        RXTextBox.Text = RXTextBox.Text + InOutCom + LaunageText("spPullout") + "\r\n";
+                        RXTextBox.Text = RXTextBox.Text + InOutCom + LanguageText("spPullout") + "\r\n";
                         if (Con == 1)                                                   //自动断开已拔出的设备串口连接
                         {
                             if (InOutCom == (string)COMComboBox.SelectedItem)
@@ -745,7 +745,7 @@ namespace FSGaryityTool_Win11
 
             void SearchAndAddSerialToComboBox(SerialPort MyPort, ComboBox MyBox)
             {
-                RXTextBox.Text = RXTextBox.Text + LaunageText("startSerichSP") + "\r\n";
+                RXTextBox.Text = RXTextBox.Text + LanguageText("startSerichSP") + "\r\n";
                 string commme = (string)COMComboBox.SelectedItem;           //记忆串口名
                 ArryPort = SerialPort.GetPortNames();                       //SerialPort.GetPortNames()函数功能为获取计算机所有可用串口，以字符串数组形式输出
                 string scom = String.Join("\r\n", ArryPort);
@@ -764,7 +764,7 @@ namespace FSGaryityTool_Win11
                     //RXTextBox.Text += ArryPort[i] + "\r\n" + GetPortDescription(ArryPort[i]) + "\r\n";
                 }
                 //MyBox.Items.Add("COM0");
-                RXTextBox.Text = RXTextBox.Text + LaunageText("overSerichSP") + "\r\n";
+                RXTextBox.Text = RXTextBox.Text + LanguageText("overSerichSP") + "\r\n";
                 COMComboBox.SelectedItem = commme;
                 COMListview.SelectedItem = commme;
             }
@@ -873,14 +873,14 @@ namespace FSGaryityTool_Win11
 
                     //RXTextBox.Foreground = foregroundColor;
 
-                    RXTextBox.Text = RXTextBox.Text + LaunageText("serialPortl") + " " + COMComboBox.SelectedItem + LaunageText("spConnect") + "\r\n";
+                    RXTextBox.Text = RXTextBox.Text + LanguageText("serialPortl") + " " + COMComboBox.SelectedItem + LanguageText("spConnect") + "\r\n";
 
                     CommonRes._serialPort.Open();                                                                               //打开串口
 
                     timer = new Timer(TimerTick, null, 0, 250); // 每秒触发8次
 
                     //CONTButton.Content = "DISCONNECT";
-                    CONTButton.Content = LaunageText("disconnectl");
+                    CONTButton.Content = LanguageText("disconnectl");
                     Con = 1;
                     RunProgressBar.ShowPaused = false;
                     RunProgressBar.IsIndeterminate = true;
@@ -903,11 +903,11 @@ namespace FSGaryityTool_Win11
                 }
                 catch                                                                                                     //如果打开串口失败 需要做如下警示
                 {
-                    RXTextBox.Text = RXTextBox.Text + LaunageText("openSPErr") + "\r\n";
+                    RXTextBox.Text = RXTextBox.Text + LanguageText("openSPErr") + "\r\n";
                     //MessageBox.Show("打开串口失败，请检查相关设置", "错误");
                     Con = 0;
                     //CONTButton.Content = "CONNECT";
-                    CONTButton.Content = LaunageText("connectl");
+                    CONTButton.Content = LanguageText("connectl");
                     CONTButton.Background = backgroundColor;
                     CONTButton.Foreground = foregroundColor;
                     RunProgressBar.IsIndeterminate = true;
@@ -923,14 +923,14 @@ namespace FSGaryityTool_Win11
                 try
                 {
                     CommonRes._serialPort.Close();                                                                              //关闭串口
-                    RXTextBox.Text = RXTextBox.Text + "\n" + LaunageText("serialPortl") + " " + COMComboBox.SelectedItem + LaunageText("spClose") + "\r\n";
+                    RXTextBox.Text = RXTextBox.Text + "\n" + LanguageText("serialPortl") + " " + COMComboBox.SelectedItem + LanguageText("spClose") + "\r\n";
                 }
                 catch (Exception err)                                                                       //一般情况下关闭串口不会出错，所以不需要加处理程序
                 {
                     RXTextBox.Text = RXTextBox.Text + err + "\r\n";
                 }
                 //CONTButton.Content = "CONNECT";
-                CONTButton.Content = LaunageText("connectl");
+                CONTButton.Content = LanguageText("connectl");
                 Con = 0;
                 CONTButton.Background = backgroundColor;
                 CONTButton.Foreground = foregroundColor;
@@ -949,6 +949,7 @@ namespace FSGaryityTool_Win11
 
         private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
+            Thread.Sleep(500);
             /*
             if (txf == 1)
             {
@@ -972,7 +973,7 @@ namespace FSGaryityTool_Win11
             {
 
                 rxstr = CommonRes._serialPort.ReadExisting();                   // 读取串口接收缓冲区字符串
-                string content = rxstr.Replace("\n", "").Replace("\r", ""); // 将StringBuilder的内容转换为字符串，并去除换行符
+                string content = rxstr;//.Replace("\n", "").Replace("\r", ""); // 将StringBuilder的内容转换为字符串，并去除换行符
                 if (!string.IsNullOrWhiteSpace(content)) // 如果content不为空
                 {
                     DispatcherQueue.TryEnqueue(() =>
@@ -1115,7 +1116,7 @@ namespace FSGaryityTool_Win11
                     catch
                     {
                         //MessageBox.Show("串口字符写入错误!", "错误");   // 弹出发送错误对话框
-                        RXTextBox.Text = RXTextBox.Text + LaunageText("txStringErr") + "\r\n";
+                        RXTextBox.Text = RXTextBox.Text + LanguageText("txStringErr") + "\r\n";
 
                         CONTButton_Click(sender, e);
                     }
@@ -1192,7 +1193,7 @@ namespace FSGaryityTool_Win11
                     catch
                     {
                         //MessageBox.Show("串口数值写入错误!", "错误");
-                        RXTextBox.Text = RXTextBox.Text + LaunageText("txHexErr") + "\r\n";
+                        RXTextBox.Text = RXTextBox.Text + LanguageText("txHexErr") + "\r\n";
 
                         //CONTButton_Click(sender, e);
                     }
@@ -1362,7 +1363,7 @@ namespace FSGaryityTool_Win11
 
         private Task RSTButton_ClickAsync(object sender, RoutedEventArgs e)
         {
-            Thread.Sleep(100);
+            Thread.Sleep(10);
             if (dtr == 1)
             {
                 DTRButton_Click(sender, e);
@@ -1376,7 +1377,7 @@ namespace FSGaryityTool_Win11
             }
 
             //CommonRes._serialPort.DtrEnable = true;
-            Thread.Sleep(200);
+            Thread.Sleep(1);
             CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);
             return Task.CompletedTask;
         }
@@ -1626,7 +1627,16 @@ namespace FSGaryityTool_Win11
                 }
             }
         }
-
+        //=======================================================================
+        /*
+        private void RXListView_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                RXListView_RightTapped(this, new RightTappedRoutedEventArgs());
+            }
+        }
+        */
         private void RXListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             // 获取鼠标右键点击的位置
@@ -1643,7 +1653,7 @@ namespace FSGaryityTool_Win11
 
             MenuFlyoutItem copyItem = new MenuFlyoutItem 
             { 
-                Text = LaunageText("copyAlll"),
+                Text = LanguageText("copyAlll"),
                 Icon = new FontIcon
                 {
                     Glyph = "\uE8C8"
@@ -1654,7 +1664,7 @@ namespace FSGaryityTool_Win11
 
             MenuFlyoutItem copyTimestampItem = new MenuFlyoutItem 
             { 
-                Text = LaunageText("copyTimel"),
+                Text = LanguageText("copyTimel"),
                 Icon = new FontIcon
                 {
                     Glyph = "\uE823"
@@ -1664,7 +1674,7 @@ namespace FSGaryityTool_Win11
 
             MenuFlyoutItem copyDataItem = new MenuFlyoutItem 
             { 
-                Text = LaunageText("copyDatal"),
+                Text = LanguageText("copyDatal"),
                 Icon = new FontIcon
                 {
                     Glyph = "\uE8A4"
@@ -1796,6 +1806,12 @@ namespace FSGaryityTool_Win11
                     writer.Flush();
                 }
             }
+        }
+
+        private void ClearCOMCombobox_Click(object sender, RoutedEventArgs e)
+        {
+            COMComboBox.SelectedItem = null;
+            COMListview.SelectedItem = null;
         }
     }
 }

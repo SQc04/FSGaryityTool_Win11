@@ -36,19 +36,26 @@
         <ScrollViewer Grid.Column="1" Grid.Row="0" Margin="0,12,0,6">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="6,0,0,0">
                 <StackPanel Orientation="Horizontal">
-                    <Border CornerRadius="4" Width="36" Margin="6,0,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}">
-                        <ProgressRing x:Name="AutoSerchComProgressRing" IsActive="False" Width="24" Height="24"/>
-                    </Border>
-                    <Button x:Name="COMButton" Click="COMButton_Click" Width="72" Margin="6,0,6,6">
+                    <ComboBox x:Name="COMComboBox" SelectionChanged="COMComboBox_SelectionChanged" Width="120" Margin="6,0,6,6">
+                        <ComboBoxItem Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"/>
+                    </ComboBox>
+                    <Button x:Name="ClearCOMCombobox" Click="ClearCOMCombobox_Click" Width="42" Height="32" Style="{StaticResource AccentButtonStyle}" Margin="-49,0,0,6">
+                        <FontIcon Glyph="&#xE74D;" FontSize="16" VerticalAlignment="Center">
+
+                        </FontIcon>
+                    </Button>
+
+                    <Button x:Name="COMButton" Click="COMButton_Click" Width="60" Margin="6,0,6,6">
                         <FontIcon x:Name="COMButtonIcon" CenterPoint="10,10,0" Glyph="&#xE72C;" VerticalAlignment="Center">
                             <FontIcon.RotationTransition>
                                 <ScalarTransition x:Name="COMButtonIconScalar" />
                             </FontIcon.RotationTransition>
                         </FontIcon>
                     </Button>
-                    <ComboBox x:Name="COMComboBox" SelectionChanged="COMComboBox_SelectionChanged" Width="108" Margin="6,0,6,6">
-                        <ComboBoxItem Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"/>
-                    </ComboBox>
+                    <Border CornerRadius="4" Width="36" Margin="6,0,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}">
+                        <ProgressRing x:Name="AutoSerchComProgressRing" IsActive="False" Width="24" Height="24"/>
+                    </Border>
+                    
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Border CornerRadius="4" Width="240" Height="Auto" Margin="6,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}">
@@ -58,6 +65,7 @@
                                   SelectionMode="Single"
                                   BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
                                   BorderThickness="0" 
+                                  MaxHeight="260"
                                   Margin="0">
                             <ListView.ItemContainerTransitions>
                                 <TransitionCollection>
@@ -233,10 +241,10 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Timesr}" Height="18" Margin="0,0,10,0">
+                            <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Top" Text="{x:Bind Timesr}" Height="18" Margin="0,0,10,0">
 
                             </TextBlock>
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind Rxstr}" HorizontalAlignment="Stretch" Height="18" Margin="0,0,10,0">
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind Rxstr}" HorizontalAlignment="Stretch" Height="auto" Margin="0,0,10,0">
 
                             </TextBlock>
 

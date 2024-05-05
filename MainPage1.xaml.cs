@@ -32,6 +32,8 @@ namespace FSGaryityTool_Win11
             this.InitializeComponent();
 
             //TabView_AddTabButtonClick(SPTabView, null);
+
+            SerialPort.Text = Page1.LanguageText("serialPort");
         }
 
         private void SPSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)

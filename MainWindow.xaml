@@ -34,7 +34,7 @@
             <!--<TextBlock x:Name="AppTitle" VerticalAlignment="Top" Margin="0,8,0,0" />-->
             <Grid>
                 <StackPanel Grid.Column="2" Grid.Row="0" Orientation="Horizontal" Canvas.ZIndex="10">
-                    <Image x:Name="TitleBarIcon" Stretch="Fill" Source="/Assets/FSFSoftLogo.png"
+                    <Image x:Name="TitleBarIcon" Stretch="Fill" Source="Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png"
                             HorizontalAlignment="Left"
                             Width="20" Height="20"
                             Margin="0,2,0,0"/>
@@ -63,14 +63,14 @@
                         DisplayModeChanged="NavigationView_DisplayModeChanged"
                         Margin="0,0,0,0">
             <NavigationView.MenuItems>
-                <NavigationViewItem Icon="Sort" Content="Serial Port" Tag="MainPage1" />
-                <NavigationViewItem Content="Download FLASH" Tag="Page2">
+                <NavigationViewItem x:Name="SerialPortI" Icon="Sort" Content="Serial Port" Tag="MainPage1" />
+                <NavigationViewItem x:Name="DownFlashI" Content="Download FLASH" Tag="Page2">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xec59;" FontFamily="Segoe Fluent Icons"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Icon="Keyboard" Content="Keyboard" Tag="Page3" />
-                <NavigationViewItem Content="Mouse" Tag="Page4">
+                <NavigationViewItem x:Name="KeyboardI" Icon="Keyboard" Content="Keyboard" Tag="Page3" />
+                <NavigationViewItem x:Name="MouseI" Content="Mouse" Tag="Page4">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE962;" />
                     </NavigationViewItem.Icon>
@@ -84,7 +84,7 @@
                 </NavigationViewItem>-->
                 <NavigationViewItem Tag="FSPage" Content="FairingStudio">
                     <NavigationViewItem.Icon>
-                        <BitmapIcon UriSource="/Assets/FSFSoftLogo.png" ShowAsMonochrome="False"/>
+                        <BitmapIcon UriSource="Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png" ShowAsMonochrome="False"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>

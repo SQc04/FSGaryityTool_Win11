@@ -36,7 +36,7 @@ namespace FSGaryityTool_Win11
 
             Settingsbar.ItemsSource = new ObservableCollection<Folder>
             {
-                new Folder { Name = Page1.LaunageText("settings")},
+                new Folder { Name = Page1.LanguageText("settings")},
             };
             Settingsbar.ItemClicked += Settingsbar_ItemClicked;
         }

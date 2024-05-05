@@ -137,6 +137,10 @@
     <value>Hot plug</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="BackgroundDescription" xml:space="preserve">
+    <value>Set the background of FSGravityTool.</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="baudRatel" xml:space="preserve">
     <value>Baudrate</value>
     <comment>Serial Port Page text</comment>
@@ -161,6 +165,18 @@
     <value>Data bits</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="DefLanguage" xml:space="preserve">
+    <value>Language 语言</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="DefLanguageDescription" xml:space="preserve">
+    <value>Select the language in which FSGravityTool is displayed.</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="defPageDescription" xml:space="preserve">
+    <value>Specifies the page that is displayed when FSGravityTool is launched.</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="defStartPage" xml:space="preserve">
     <value>Default Starting Page</value>
     <comment>Settings Page text</comment>
@@ -168,6 +184,10 @@
   <data name="disconnectl" xml:space="preserve">
     <value>DISCONNECT</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="download Flash" xml:space="preserve">
+    <value>Download Flash</value>
+    <comment>Main Page Text</comment>
   </data>
   <data name="downloadFlashSettings" xml:space="preserve">
     <value>Flash Burn Settings</value>
@@ -177,9 +197,17 @@
     <value>General</value>
     <comment>Settings Page text</comment>
   </data>
+  <data name="keyboard" xml:space="preserve">
+    <value>Keyboard</value>
+    <comment>Main Page Text</comment>
+  </data>
   <data name="keyboardSettings" xml:space="preserve">
     <value>Keyboard Settings</value>
     <comment>Settings Page text</comment>
+  </data>
+  <data name="mouse" xml:space="preserve">
+    <value>Mouse</value>
+    <comment>Main Page Text</comment>
   </data>
   <data name="mouseSettings" xml:space="preserve">
     <value>Mouse Settings</value>
@@ -188,6 +216,14 @@
   <data name="openSPErr" xml:space="preserve">
     <value>Error connecting to the serial port, please check the parameters!</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="openToml" xml:space="preserve">
+    <value>Open TOML file</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="openTomlDescription" xml:space="preserve">
+    <value>Open the settings file.</value>
+    <comment>Settings Page text</comment>
   </data>
   <data name="overSerichSP" xml:space="preserve">
     <value>Search SerialPort succeed!</value>
@@ -201,12 +237,20 @@
     <value>Hex reception</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="serialPort" xml:space="preserve">
+    <value>Serial Port</value>
+    <comment>Main Page Text</comment>
+  </data>
   <data name="serialPortl" xml:space="preserve">
     <value>Serial Port</value>
     <comment>Serial Port Page text</comment>
   </data>
   <data name="settings" xml:space="preserve">
     <value>ettings</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="softToolBackground" xml:space="preserve">
+    <value>Personalize the background.</value>
     <comment>Settings Page text</comment>
   </data>
   <data name="spClose" xml:space="preserve">

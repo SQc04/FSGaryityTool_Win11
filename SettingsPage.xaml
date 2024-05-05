@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+    xmlns:ui="using:CommunityToolkit.WinUI"
     NavigationCacheMode="Enabled">
     <!-- Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" -->
 
@@ -62,15 +63,43 @@
                     <TextBlock Text="" Margin="0,12,0,0"/>
                     <TextBlock x:Name="Generiall" Text="General" Margin="0"/>
 
-                    <toolkit:SettingsCard x:Name="StartPage" Header="Default start page" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
-                        <toolkit:SettingsCard.HeaderIcon>
-                            <FontIcon Glyph="&#xe8a1;"/>
-                        </toolkit:SettingsCard.HeaderIcon>
-
-
+                    <toolkit:SettingsCard x:Name="StartPage" HeaderIcon="{ui:FontIcon Glyph=&#xE8A1;}" Header="Default start page" Description="Specifies the page that is displayed when FSGravityTool is launched."
+                                          HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
+                        
                         <Grid>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <ComboBox x:Name="StartPageCombobox" SelectionChanged="StartPageCombobox_SelectionChanged" Width="150" Margin="0,0,27,0"></ComboBox>
+                            </StackPanel>
+                        </Grid>
+                    </toolkit:SettingsCard>
+
+                    <toolkit:SettingsCard x:Name="SoftToolBackground" HeaderIcon="{ui:FontIcon Glyph=&#xEF1F;}" Header="Personalize the background" Description="Set the background of FSGravityTool."
+                                          HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
+
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <ComboBox x:Name="SoftBackgroundCombobox" SelectionChanged="SoftBackgroundCombobox_SelectionChanged" Width="150" Margin="0,0,27,0"></ComboBox>
+                            </StackPanel>
+                        </Grid>
+                    </toolkit:SettingsCard>
+
+                    <toolkit:SettingsCard x:Name="SoftLanguage" HeaderIcon="{ui:FontIcon Glyph=&#xF2B7;}" Header="Language" Description="Set the background of FSGravityTool."
+                                          HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
+
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <ComboBox x:Name="SoftLanguageCombobox" SelectionChanged="SoftLanguageCombobox_SelectionChanged" Width="150" Margin="0,0,27,0"></ComboBox>
+                            </StackPanel>
+                        </Grid>
+                    </toolkit:SettingsCard>
+
+                    <toolkit:SettingsCard x:Name="OpenToml" HeaderIcon="{ui:FontIcon Glyph=&#xE835;}" Header="Open TOML file" Description="Open the settings file."
+                                          Click="OpenToml_click" IsClickEnabled="True" ActionIcon="{ui:FontIcon Glyph=&#xE8A7;}"
+                                          HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
+
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                
                             </StackPanel>
                         </Grid>
                     </toolkit:SettingsCard>
@@ -161,7 +190,7 @@
                     <TextBlock Text="" Margin="0,12,0,0"/>
                     <TextBlock x:Name="DowFlashl" Text="Download Flash Settings" Margin="0"/>
 
-                    <toolkit:SettingsExpander Header="ABOUT " Margin="0,2,0,3">
+                    <toolkit:SettingsExpander Header="ABOUT " Margin="0,2,0,3" IsExpanded="True" >
                         <toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon Glyph="&#xF210;" FontFamily="Segoe MDL2 Assets" FontSize="12" />
                         </toolkit:SettingsExpander.HeaderIcon>
@@ -193,6 +222,42 @@
                             <RepositionThemeTransition />
                         </TransitionCollection>
                     </StackPanel.Transitions>
+                </StackPanel>
+
+                <StackPanel>
+                    <toolkit:SettingsCard Header="Open TOML file" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" >
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon Glyph="&#xE8E5;"/>
+                        </toolkit:SettingsCard.HeaderIcon>
+                        
+                        
+
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="Open Settings TOML" Width="150" Margin="0,0,27,0"></Button>
+                            </StackPanel>
+                        </Grid>
+                    </toolkit:SettingsCard>
+                    
+                    <toolkit:SettingsCard Header="Open TOML file" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" >
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon Glyph="&#xE8E5;"/>
+                        </toolkit:SettingsCard.HeaderIcon>
+
+
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="Open Settings TOML" Width="150" Margin="0,0,27,0"></Button>
+                            </StackPanel>
+                        </Grid>
+                    </toolkit:SettingsCard>
+
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
+                    
                 </StackPanel>
 
                 <StackPanel>

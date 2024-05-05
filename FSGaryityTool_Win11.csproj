@@ -43,6 +43,7 @@
 	</PropertyGroup>
   <ItemGroup>
     <Content Remove="Assets\FSFSoft.png" />
+    <Content Remove="Assets\FSFSoftLogo.png" />
     <Content Remove="Assets\FSFSoftLogo.scale-100.png" />
     <Content Remove="Assets\FSFSoftLogo.scale-125.png" />
     <Content Remove="Assets\FSFSoftLogo.scale-150.png" />
@@ -93,8 +94,8 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.0.240109" />
     <PackageReference Include="MICA" Version="2.4.3" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240227000" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26031-preview" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240404000" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.IO.Ports" Version="8.0.0" />
     <PackageReference Include="System.Management" Version="8.0.0" />

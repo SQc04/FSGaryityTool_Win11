@@ -61,38 +61,49 @@ namespace FSGaryityTool_Win11
             
             
 
-            using (StreamReader reader = File.OpenText(Page1.FSSetToml))        //¥Úø™TOMLŒƒº˛
+            using (StreamReader reader = File.OpenText(Page1.FSSetToml))        //ÊâìÂºÄTOMLÊñá‰ª∂
             {
                 TomlTable settingstomlr = TOML.Parse(reader);
                 DefaultTomlSTARTPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
             }
 
-            List<string> STARTPage = new List<string>()         //–¬Ω®◊÷∑˚¥Æ
+            List<string> STARTPage = new List<string>()         //Êñ∞Âª∫Â≠óÁ¨¶‰∏≤
             {
-                "Serial Port", "Download Flash", "Keyboard", "Mouse"//, ""
+                Page1.LanguageText("serialPort"), Page1.LanguageText("download Flash"), Page1.LanguageText("keyboard"), Page1.LanguageText("mouse")//, ""
             };
-            StartPageCombobox.ItemsSource = STARTPage;          //Ω´◊÷∑˚¥ÆÃÌº”µΩ—°‘ÒøÚ
-                                                                //∂¡»°TOML…Ë÷√
-            if (DefaultTomlSTARTPage == 0) DefaultSTARTPage = "Serial Port";
-            else if (DefaultTomlSTARTPage == 1)  DefaultSTARTPage = "Download Flash";
-            else if (DefaultTomlSTARTPage == 2) DefaultSTARTPage = "Keyboard";
-            else if (DefaultTomlSTARTPage == 3) DefaultSTARTPage = "Mouse";
+            StartPageCombobox.ItemsSource = STARTPage;          //Â∞ÜÂ≠óÁ¨¶‰∏≤Ê∑ªÂä†Âà∞ÈÄâÊã©Ê°Ü
+                                                                //ËØªÂèñTOMLËÆæÁΩÆ
+            if (DefaultTomlSTARTPage == 0) DefaultSTARTPage = Page1.LanguageText("serialPort");
+            else if (DefaultTomlSTARTPage == 1)  DefaultSTARTPage = Page1.LanguageText("download Flash");
+            else if (DefaultTomlSTARTPage == 2) DefaultSTARTPage = Page1.LanguageText("keyboard");
+            else if (DefaultTomlSTARTPage == 3) DefaultSTARTPage = Page1.LanguageText("mouse");
             //else if (DefaultTomlSTARTPage == 4) DefaultSTARTPage = "";
 
 
-            StartPageCombobox.SelectedItem = DefaultSTARTPage;  //Ω´TOML…Ë÷√ÃÌº”µΩ—°‘ÒøÚ
+            StartPageCombobox.SelectedItem = DefaultSTARTPage;  //Â∞ÜTOMLËÆæÁΩÆÊ∑ªÂä†Âà∞ÈÄâÊã©Ê°Ü
 
 
-            // = Page1.LaunageText("");
-            StartPage.Header = Page1.LaunageText("defStartPage");
-            Generiall.Text = Page1.LaunageText("general");
+            // = Page1.LanguageText("");
+            StartPage.Header = Page1.LanguageText("defStartPage");
+            StartPage.Description = Page1.LanguageText("defPageDescription");
 
-            SpSwttingsl.Text = Page1.LaunageText("spSettings");
-            SPTSettingsl.Header = Page1.LaunageText("spSettings");
-            DowFlashl.Text = Page1.LaunageText("downloadFlashSettings");
+            Generiall.Text = Page1.LanguageText("general");
 
-            Aboutl.Text = Page1.LaunageText("about");
-            AbputTl.Text = Page1.LaunageText("about");
+            SpSwttingsl.Text = Page1.LanguageText("spSettings");
+            SPTSettingsl.Header = Page1.LanguageText("spSettings");
+            DowFlashl.Text = Page1.LanguageText("downloadFlashSettings");
+
+            Aboutl.Text = Page1.LanguageText("about");
+            AbputTl.Text = Page1.LanguageText("about");
+
+            OpenToml.Header = Page1.LanguageText("openToml");
+            OpenToml.Description = Page1.LanguageText("openTomlDescription");
+
+            SoftToolBackground.Header = Page1.LanguageText("softToolBackground");
+            SoftToolBackground.Description = Page1.LanguageText("BackgroundDescription");
+
+            SoftLanguage.Header = Page1.LanguageText("DefLanguage");
+            SoftLanguage.Description = Page1.LanguageText("DefLanguageDescription");
         }
 
         private void Aboutp_Click(object sender, RoutedEventArgs e)
@@ -103,8 +114,8 @@ namespace FSGaryityTool_Win11
 
             MainSettingsPage.settingmPage.Settingsbar.ItemsSource = new ObservableCollection<Folder>
             {
-                new Folder { Name = Page1.LaunageText("settings")},
-                new Folder { Name = Page1.LaunageText("about")},
+                new Folder { Name = Page1.LanguageText("settings")},
+                new Folder { Name = Page1.LanguageText("about")},
             };
             //AboutFrame.Opacity = 1;
             //AboutINOUT.Begin();
@@ -152,27 +163,43 @@ namespace FSGaryityTool_Win11
 
         private void StartPageCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            using (StreamReader reader = File.OpenText(Page1.FSSetToml))                    //¥Úø™TOMLŒƒº˛
+            using (StreamReader reader = File.OpenText(Page1.FSSetToml))                    //ÊâìÂºÄTOMLÊñá‰ª∂
             {
                 settingstomlr = TOML.Parse(reader);
 
-                if ((string)StartPageCombobox.SelectedItem == "Serial Port") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "0";
-                else if ((string)StartPageCombobox.SelectedItem == "Download Flash") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "1";
-                else if ((string)StartPageCombobox.SelectedItem == "Keyboard") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "2";
-                else if ((string)StartPageCombobox.SelectedItem == "Mouse") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "3";
+                if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("serialPort")) settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "0";
+                else if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("download Flash")) settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "1";
+                else if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("keyboard")) settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "2";
+                else if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("mouse")) settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "3";
                 //else if ((string)StartPageCombobox.SelectedItem == "") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "4";
 
 
 
             }
 
-            using (StreamWriter writer = File.CreateText(Page1.FSSetToml))                  //Ω´…Ë÷√–¥»ÎTOMLŒƒº˛
+            using (StreamWriter writer = File.CreateText(Page1.FSSetToml))                  //Â∞ÜËÆæÁΩÆÂÜôÂÖ•TOMLÊñá‰ª∂
             {
                 settingstomlr.WriteTo(writer);
-                Debug.WriteLine("–¥»ÎToml" + settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
+                Debug.WriteLine("ÂÜôÂÖ•Toml" + settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
                 // Remember to flush the data if needed!
                 writer.Flush();
             }
+        }
+
+        private void OpenToml_click(object sender, RoutedEventArgs e)
+        {
+
+            System.Diagnostics.Process.Start("explorer.exe", Page1.FSSetToml);
+        }
+
+        private void SoftBackgroundCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void SoftLanguageCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

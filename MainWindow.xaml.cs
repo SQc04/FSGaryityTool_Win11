@@ -44,6 +44,7 @@ using Tommy;
 using Newtonsoft.Json;
 using System.Reflection.PortableExecutable;
 using Windows.ApplicationModel.Activation;
+using System.Xml.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -192,7 +193,7 @@ namespace FSGaryityTool_Win11
             else
             {
                 Debug.WriteLine("没有找到TOML文件");
-
+                string[] cOMSaveDeviceinf = { "0" };
                 TomlTable settingstoml = new TomlTable
                 {
                     ["Version"] = FSSoftVersion,
@@ -203,7 +204,7 @@ namespace FSGaryityTool_Win11
                         "FSGaryityTool Settings:",
                         ["DefaultNvPage"] = "0",
                         ["SoftBackground"] = "0",
-                        ["SoftDefLaunage"] = "0",
+                        ["SoftDefLanguage"] = "zh-CN",
                     },
 
                     ["SerialPortSettings"] =
@@ -235,24 +236,25 @@ namespace FSGaryityTool_Win11
                         Comment =
                         "This is a cache of information for all serial devices.\r\n" + 
                         "",
-                        ["CheckTime"] = "2024-04-12 19:48:55",
+                        ["CheckTime"] = "2024-04-12 19:48:55",                  //串口设备信息更新的时间
                         ["CheckCounter"] = "0",                                 //串口设备信息更新次数
+                        ["COMSaveDeviceinf"] = String.Join(",", cOMSaveDeviceinf),//已保存串口设备的映射表
+                    },
 
-                        ["COMData"] =
+                    ["COMData"] =
+                    {
+                        Comment =
+                        "This is an example of cached serial device information.\r\n",
+                        ["COM0"] =
                         {
-                            ["COM0"] =
-                            {
-                                ["Icon"] = "\uE88E",
-                                ["Description"] = "xxxx",
-                                ["Name"] = "xxxx",
-                                ["Manufacturer"] = "FairingStudio",
-                                ["RSTBaudRate"] = "115200",
-                                ["RSTTime"] = "300",
-                                ["RSTMode"] = "0",
-                            },
-
+                            ["Icon"] = "\uE88E",                            //串口设备自定义的图标
+                            ["Description"] = "An example of a serial device format",                       //串口设备描述
+                            ["Name"] = "example",                              //串口设备名字
+                            ["Manufacturer"] = "FairingStudio",             //串口设备制造商
+                            ["RSTBaudRate"] = "115200",                     //自动重启上电打印波特率
+                            ["RSTTime"] = "300",                            //自动重启上电打印延时
+                            ["RSTMode"] = "0",                              //重启模式
                         },
-
 
                     },
 
@@ -286,7 +288,31 @@ namespace FSGaryityTool_Win11
                 Debug.WriteLine(">");
 
                 //缓存设置
-                string defpage, baud, party, stop, data, rxhex, txhex, dtr, rts, shtime, autosco, autosavrset, autosercom, autoconnect, txnewline;
+                string defpage;
+                string baud, party, stop, data, rxhex, txhex, dtr, rts, shtime, autosco, autosavrset, autosercom, autoconnect, txnewline;
+                string checkTime, checkCounter;
+
+                string[] cOMSaveDeviceinf = {"0","1"};
+                string cOMDeviceinf;
+
+                string serialPortSettings = "SerialPortSettings";
+
+                string TomlCheckNulls(string Mode, string Menu , string Name)
+                {
+                    string data = "0";
+                    using (StreamReader reader = File.OpenText(Page1.FSSetToml))
+                    {
+                        TomlTable SPsettingstomlr = TOML.Parse(reader);             //读取TOML
+
+                        if (SPsettingstomlr[Menu][Name] != "Tommy.TomlLazy") data = SPsettingstomlr[Menu][Name];
+                        else
+                        {
+                            data = Mode;
+                        }
+                    }
+                    return data;
+                }
+
                 using (StreamReader reader = File.OpenText(Page1.FSSetToml))                    //打开TOML文件
                 {
                     settingstomlSp = TOML.Parse(reader);
@@ -294,35 +320,31 @@ namespace FSGaryityTool_Win11
                     if ((string)settingstomlSp["FSGravitySettings"]["DefaultNvPage"] != "Tommy.TomlLazy") defpage = settingstomlSp["FSGravitySettings"]["DefaultNvPage"];
                     else defpage = "0";
 
-                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultBAUD"] != "Tommy.TomlLazy") baud = settingstomlSp["SerialPortSettings"]["DefaultBAUD"];
-                    else baud = "115200";
-                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultParity"] != "Tommy.TomlLazy") party = settingstomlSp["SerialPortSettings"]["DefaultParity"];
-                    else party = "None";
-                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultSTOP"] != "Tommy.TomlLazy") stop = settingstomlSp["SerialPortSettings"]["DefaultSTOP"];
-                    else stop = "One";
-                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultDATA"] != "Tommy.TomlLazy") data = settingstomlSp["SerialPortSettings"]["DefaultDATA"];
-                    else data = "8";
-                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultRXHEX"] != "Tommy.TomlLazy") rxhex = settingstomlSp["SerialPortSettings"]["DefaultRXHEX"];
-                    else rxhex = "0";
-                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultTXHEX"] != "Tommy.TomlLazy") txhex = settingstomlSp["SerialPortSettings"]["DefaultTXHEX"];
-                    else txhex = "0";
-                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultDTR"] != "Tommy.TomlLazy") dtr = settingstomlSp["SerialPortSettings"]["DefaultDTR"];
-                    else dtr = "1";
-                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultRTS"] != "Tommy.TomlLazy") rts = settingstomlSp["SerialPortSettings"]["DefaultRTS"];
-                    else rts = "0";
-                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultSTime"] != "Tommy.TomlLazy") shtime = settingstomlSp["SerialPortSettings"]["DefaultSTime"];
-                    else shtime = "0";
-                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultAUTOSco"] != "Tommy.TomlLazy") autosco = settingstomlSp["SerialPortSettings"]["DefaultAUTOSco"];
-                    else autosco = "1";
-                    if ((string)settingstomlSp["SerialPortSettings"]["AutoDaveSet"] != "Tommy.TomlLazy") autosavrset = settingstomlSp["SerialPortSettings"]["AutoDaveSet"];
-                    else autosavrset = "1";
-                    if ((string)settingstomlSp["SerialPortSettings"]["AutoSerichCom"] != "Tommy.TomlLazy") autosercom = settingstomlSp["SerialPortSettings"]["AutoSerichCom"];
-                    else autosercom = "1";
-                    if ((string)settingstomlSp["SerialPortSettings"]["AutoConnect"] != "Tommy.TomlLazy") autoconnect = settingstomlSp["SerialPortSettings"]["AutoConnect"];
-                    else autoconnect = "1";
-                    if ((string)settingstomlSp["SerialPortSettings"]["DefaultTXNewLine"] != "Tommy.TomlLazy") txnewline = settingstomlSp["SerialPortSettings"]["DefaultTXNewLine"];
-                    else txnewline = "1";
+                    baud = TomlCheckNulls("115200", serialPortSettings, "DefaultBAUD");
+                    party = TomlCheckNulls("None", serialPortSettings, "DefaultParity");
+                    stop = TomlCheckNulls("One", serialPortSettings, "DefaultSTOP");
+                    data = TomlCheckNulls("8", serialPortSettings, "DefaultDATA");
+                    
+                    rxhex = TomlCheckNulls("0", serialPortSettings, "DefaultRXHEX");
+                    txhex = TomlCheckNulls("0", serialPortSettings, "DefaultTXHEX");
+                    dtr = TomlCheckNulls("1", serialPortSettings, "DefaultDTR");
+                    rts = TomlCheckNulls("0", serialPortSettings, "DefaultRTS");
+                    shtime = TomlCheckNulls("0", serialPortSettings, "DefaultSTime");
+                    autosco = TomlCheckNulls("1", serialPortSettings, "DefaultAUTOSco");
+                    autosavrset = TomlCheckNulls("1", serialPortSettings, "AutoDaveSet");
+                    autosercom = TomlCheckNulls("1", serialPortSettings, "AutoSerichCom");
+                    autoconnect = TomlCheckNulls("1", serialPortSettings, "AutoConnect");
+                    txnewline = TomlCheckNulls("1", serialPortSettings, "DefaultTXNewLine");
+                    
                     //if (settingstomlSp["SerialPortSettings"] != null)  = ;
+
+                    if ((string)settingstomlSp["SerialPortCOMData"]["CheckTime"] != "Tommy.TomlLazy") checkTime = settingstomlSp["SerialPortCOMData"]["CheckTime"];
+                    else checkTime = "2024-04-12 19:48:55";
+                    if ((string)settingstomlSp["SerialPortCOMData"]["CheckCounter"] != "Tommy.TomlLazy") checkCounter = settingstomlSp["SerialPortCOMData"]["CheckCounter"];
+                    else checkCounter = "0";
+                    if ((string)settingstomlSp["SerialPortCOMData"]["COMSaveDeviceinf"] != "Tommy.TomlLazy") checkCounter = settingstomlSp["SerialPortCOMData"]["COMSaveDeviceinf"];
+                    else checkCounter = "0";
+
 
                     settingstomlSp = new TomlTable
                     {
@@ -362,27 +384,26 @@ namespace FSGaryityTool_Win11
                         ["SerialPortCOMData"] =
                         {
                             Comment =
-                            "This is a cache of information for all serial devices.\r\n" +
-                            "",
+                            "This is a cache of information for all serial devices.\r\n",
+
                             ["CheckTime"] = "2024-04-12 19:48:55",
                             ["CheckCounter"] = "0",
-
-                            ["COMData"] =
+                            ["COMSaveDeviceinf"] = String.Join(",", cOMSaveDeviceinf)
+                        },
+                        ["COMData"] =
+                        {
+                            Comment =
+                            "This is an example of cached serial device information.\r\n",
+                            ["COM0"] =
                             {
-                                ["COM0"] =
-                                {
-                                    ["Icon"] = "\uE88E",
-                                    ["Description"] = "xxxx",
-                                    ["Name"] = "xxxx",
-                                    ["Manufacturer"] = "FairingStudio",
-                                    ["RSTBaudRate"] = "115200",
-                                    ["RSTTime"] = "300",
-                                    ["RSTMode"] = "0",
-                                },
-
+                                ["Icon"] = "uE88E",
+                                ["Description"] = "An example of a serial device format",
+                                ["Name"] = "example",
+                                ["Manufacturer"] = "FairingStudio",
+                                ["RSTBaudRate"] = "115200",
+                                ["RSTTime"] = "300",
+                                ["RSTMode"] = "0",
                             },
-
-
                         },
 
                     };
@@ -403,7 +424,12 @@ namespace FSGaryityTool_Win11
 
             }
 
-                                                     //设置默认页面
+            SerialPortI.Content = Page1.LanguageText("serialPort");
+            DownFlashI.Content = Page1.LanguageText("download Flash");
+            KeyboardI.Content = Page1.LanguageText("keyboard");
+            MouseI.Content = Page1.LanguageText("mouse");
+
+            //设置默认页面
 
             using (StreamReader reader = File.OpenText(FSSetToml))
             {

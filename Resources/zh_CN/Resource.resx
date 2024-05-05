@@ -137,6 +137,10 @@
     <value>热插拔检测</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="BackgroundDescription" xml:space="preserve">
+    <value>设置FSGravityTool的背景</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="baudRatel" xml:space="preserve">
     <value>波特率</value>
     <comment>Serial Port Page text</comment>
@@ -161,6 +165,18 @@
     <value>数据位</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="DefLanguage" xml:space="preserve">
+    <value>语言 Language</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="DefLanguageDescription" xml:space="preserve">
+    <value>选择FSGravityTool的显示的语言</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="defPageDescription" xml:space="preserve">
+    <value>指定启动FSGravityTool时显示的页面</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="defStartPage" xml:space="preserve">
     <value>默认起始页</value>
     <comment>Settings Page text</comment>
@@ -168,6 +184,10 @@
   <data name="disconnectl" xml:space="preserve">
     <value>断开设备串口</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="download Flash" xml:space="preserve">
+    <value>闪存烧录</value>
+    <comment>Main Page Text</comment>
   </data>
   <data name="downloadFlashSettings" xml:space="preserve">
     <value>闪存烧录设置</value>
@@ -177,9 +197,17 @@
     <value>常规</value>
     <comment>Settings Page text</comment>
   </data>
+  <data name="keyboard" xml:space="preserve">
+    <value>键盘</value>
+    <comment>Main Page Text</comment>
+  </data>
   <data name="keyboardSettings" xml:space="preserve">
     <value>键盘驱动设置</value>
     <comment>Settings Page text</comment>
+  </data>
+  <data name="mouse" xml:space="preserve">
+    <value>鼠标</value>
+    <comment>Main Page Text</comment>
   </data>
   <data name="mouseSettings" xml:space="preserve">
     <value>鼠标驱动设置</value>
@@ -188,6 +216,14 @@
   <data name="openSPErr" xml:space="preserve">
     <value>打开串口失败，请检查相关设置</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="openToml" xml:space="preserve">
+    <value>打开TOML文件</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="openTomlDescription" xml:space="preserve">
+    <value>打开设置文件</value>
+    <comment>Settings Page text</comment>
   </data>
   <data name="overSerichSP" xml:space="preserve">
     <value>搜索串口完成!</value>
@@ -201,12 +237,20 @@
     <value>十六进制接收</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="serialPort" xml:space="preserve">
+    <value>串口调试</value>
+    <comment>Main Page Text</comment>
+  </data>
   <data name="serialPortl" xml:space="preserve">
     <value>串口</value>
     <comment>Serial Port Page text</comment>
   </data>
   <data name="settings" xml:space="preserve">
     <value>设置</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="softToolBackground" xml:space="preserve">
+    <value>个性化设置背景</value>
     <comment>Settings Page text</comment>
   </data>
   <data name="spClose" xml:space="preserve">

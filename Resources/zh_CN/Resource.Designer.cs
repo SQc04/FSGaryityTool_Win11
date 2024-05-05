@@ -106,6 +106,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         }
         
         /// <summary>
+        ///   查找类似 设置FSGravityTool的背景 的本地化字符串。
+        /// </summary>
+        internal static string BackgroundDescription {
+            get {
+                return ResourceManager.GetString("BackgroundDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 波特率 的本地化字符串。
         /// </summary>
         internal static string baudRatel {
@@ -160,6 +169,33 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         }
         
         /// <summary>
+        ///   查找类似 语言 Language 的本地化字符串。
+        /// </summary>
+        internal static string DefLanguage {
+            get {
+                return ResourceManager.GetString("DefLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 选择FSGravityTool的显示的语言 的本地化字符串。
+        /// </summary>
+        internal static string DefLanguageDescription {
+            get {
+                return ResourceManager.GetString("DefLanguageDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 指定启动FSGravityTool时显示的页面 的本地化字符串。
+        /// </summary>
+        internal static string defPageDescription {
+            get {
+                return ResourceManager.GetString("defPageDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 默认起始页 的本地化字符串。
         /// </summary>
         internal static string defStartPage {
@@ -174,6 +210,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         internal static string disconnectl {
             get {
                 return ResourceManager.GetString("disconnectl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 闪存烧录 的本地化字符串。
+        /// </summary>
+        internal static string download_Flash {
+            get {
+                return ResourceManager.GetString("download Flash", resourceCulture);
             }
         }
         
@@ -196,11 +241,29 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         }
         
         /// <summary>
+        ///   查找类似 键盘 的本地化字符串。
+        /// </summary>
+        internal static string keyboard {
+            get {
+                return ResourceManager.GetString("keyboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 键盘驱动设置 的本地化字符串。
         /// </summary>
         internal static string keyboardSettings {
             get {
                 return ResourceManager.GetString("keyboardSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 鼠标 的本地化字符串。
+        /// </summary>
+        internal static string mouse {
+            get {
+                return ResourceManager.GetString("mouse", resourceCulture);
             }
         }
         
@@ -219,6 +282,24 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         internal static string openSPErr {
             get {
                 return ResourceManager.GetString("openSPErr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 打开TOML文件 的本地化字符串。
+        /// </summary>
+        internal static string openToml {
+            get {
+                return ResourceManager.GetString("openToml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 打开设置文件 的本地化字符串。
+        /// </summary>
+        internal static string openTomlDescription {
+            get {
+                return ResourceManager.GetString("openTomlDescription", resourceCulture);
             }
         }
         
@@ -250,6 +331,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         }
         
         /// <summary>
+        ///   查找类似 串口调试 的本地化字符串。
+        /// </summary>
+        internal static string serialPort {
+            get {
+                return ResourceManager.GetString("serialPort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 串口 的本地化字符串。
         /// </summary>
         internal static string serialPortl {
@@ -264,6 +354,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         internal static string settings {
             get {
                 return ResourceManager.GetString("settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 个性化设置背景 的本地化字符串。
+        /// </summary>
+        internal static string softToolBackground {
+            get {
+                return ResourceManager.GetString("softToolBackground", resourceCulture);
             }
         }
         
