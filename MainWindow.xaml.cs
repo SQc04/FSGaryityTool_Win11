@@ -60,7 +60,7 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.21";
+        public static string FSSoftVersion = "0.2.23";
         public static int FsPage = 0;
         public static TomlTable settingstomlSp;
 

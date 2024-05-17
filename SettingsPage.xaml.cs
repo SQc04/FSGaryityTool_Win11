@@ -22,6 +22,7 @@ using Tommy;
 using System.Diagnostics;
 using System.Reflection.PortableExecutable;
 using static System.Net.Mime.MediaTypeNames;
+using Windows.ApplicationModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,6 +39,10 @@ namespace FSGaryityTool_Win11
 
         public static string DefaultSTARTPage;
         public static int DefaultTomlSTARTPage;
+        public static string redirectedFilePath;
+
+        public static string appFilepath;
+        public static string appFolderPath;
 
         public class Folder
         {
@@ -58,8 +63,18 @@ namespace FSGaryityTool_Win11
             Settingsbar.ItemClicked += Settingsbar_ItemClicked;
             */
 
-            
-            
+            string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string packageName = Package.Current.Id.FamilyName;
+            appFolderPath = Path.Combine(localAppDataPath, "Packages", packageName, "LocalCache", "Local");
+            // 获取被重定向的文件夹路径
+            //ApplicationData.Current.LocalFolder.Path
+            string redirectedFolderPath = appFolderPath;
+            string FSFolder = Path.Combine(redirectedFolderPath, "FAIRINGSTUDIO");
+            string FSGravif = Path.Combine(FSFolder, "FSGravityTool");
+            // 获取被重定向的文件路径
+            appFilepath = FSGravif;
+            redirectedFilePath = Path.Combine(FSGravif, "Settings.toml");
+
 
             using (StreamReader reader = File.OpenText(Page1.FSSetToml))        //打开TOML文件
             {
@@ -188,8 +203,21 @@ namespace FSGaryityTool_Win11
 
         private void OpenToml_click(object sender, RoutedEventArgs e)
         {
-
-            System.Diagnostics.Process.Start("explorer.exe", Page1.FSSetToml);
+            //Debug.WriteLine(appFolderPath);
+            Debug.WriteLine(appFilepath);
+            if (Directory.Exists(appFilepath))
+            {
+                //Debug.WriteLine("找到文件夹,跳过新建文件夹");
+                System.Diagnostics.Process.Start("explorer.exe", redirectedFilePath);
+            }
+            else
+            {
+                System.Diagnostics.Process.Start("explorer.exe", Page1.FSSetToml);
+                //Debug.WriteLine("没有找到文件夹");
+            }
+            //System.Diagnostics.Process.Start("explorer.exe", Page1.FSSetToml);
+            //System.Diagnostics.Process.Start("explorer.exe", redirectedFilePath);
+            
         }
 
         private void SoftBackgroundCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
