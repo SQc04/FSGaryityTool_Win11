@@ -271,10 +271,10 @@
                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center" 
                 MinWidth="100" Margin="12,6,6,12">
-            <FontIcon Glyph="&#xE724;" FontFamily="Segoe MDL2 Assets" ></FontIcon>
+            <FontIcon Glyph="&#xE724;" ></FontIcon>
         </Button>
         <Button x:Name="CLEARButton" Grid.Column="4" Grid.Row="1" Click="CLEARButton_Click" HorizontalAlignment="Right" Width="45" Margin="6,6,12,12">
-            <FontIcon Glyph="&#xE711;" FontFamily="Segoe MDL2 Assets" ></FontIcon>
+            <FontIcon Glyph="&#xE711;" ></FontIcon>
         </Button>
     </Grid>
 </Page>

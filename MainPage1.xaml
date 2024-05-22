@@ -27,7 +27,7 @@
 
         <SelectorBar x:Name="SPSelectorBar" Grid.Row="1" HorizontalAlignment="Stretch" SelectionChanged="SPSelectorBar_SelectionChanged" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}">
             <SelectorBarItem x:Name="SerialPort" Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}" Text="Serial Port" IsSelected="True" Margin="6,0,6,0">
-                <FontIcon Glyph="&#xE8CB;" FontFamily="Segoe Fluent Icons" Margin="12,6,0,0"/>
+                <FontIcon Glyph="&#xE8CB;" Margin="12,6,0,0"/>
             </SelectorBarItem>
             <SelectorBarItem x:Name="Test1" Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}" Text="Test1" Margin="6,0,6,0">
                 

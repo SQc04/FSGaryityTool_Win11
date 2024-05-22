@@ -117,7 +117,7 @@
 
                     <toolkit:SettingsExpander x:Name="SPTSettingsl" Header="Serial Port Settings" Margin="0,2,0,3">
                         <toolkit:SettingsExpander.HeaderIcon>
-                            <FontIcon Glyph="&#xE8CB;" FontFamily="Segoe MDL2 Assets" FontSize="12" />
+                            <FontIcon Glyph="&#xE8CB;" FontSize="12" />
                         </toolkit:SettingsExpander.HeaderIcon>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard >
@@ -146,13 +146,13 @@
                         <!--66 "1,3,1,3" -->
                         <Grid>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                <FontIcon Glyph="&#xE8CB;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="6,0,12,0"/>
+                                <FontIcon Glyph="&#xE8CB;" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="6,0,12,0"/>
                                 <TextBlock VerticalAlignment="Center" Text="Serial Port Settings" Margin="12,0,12,0"/>
 
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
-                                <FontIcon Glyph="&#xE974;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="10" Margin="12,0,6,0"/>
+                                <FontIcon Glyph="&#xE974;" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="10" Margin="12,0,6,0"/>
                             </StackPanel>
                         </Grid>
                     </Button>
@@ -192,7 +192,7 @@
 
                     <toolkit:SettingsExpander Header="ABOUT " Margin="0,2,0,3" IsExpanded="True" >
                         <toolkit:SettingsExpander.HeaderIcon>
-                            <FontIcon Glyph="&#xF210;" FontFamily="Segoe MDL2 Assets" FontSize="12" />
+                            <FontIcon Glyph="&#xF210;" FontSize="12" />
                         </toolkit:SettingsExpander.HeaderIcon>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard >
@@ -266,13 +266,13 @@
                     <Button x:Name="Aboutp" Click="Aboutp_Click" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="66" Margin="1,3,1,3">
                         <Grid>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                <FontIcon Glyph="&#xE946;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="6,0,12,0"/>
+                                <FontIcon Glyph="&#xE946;" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="6,0,12,0"/>
                                 <TextBlock x:Name="AbputTl" VerticalAlignment="Center" Text="About" Margin="12,0,12,0"/>
 
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
-                                <FontIcon Glyph="&#xE974;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="10" Margin="12,0,6,0"/>
+                                <FontIcon Glyph="&#xE974;" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="10" Margin="12,0,6,0"/>
                             </StackPanel>
                         </Grid>
                     </Button>
