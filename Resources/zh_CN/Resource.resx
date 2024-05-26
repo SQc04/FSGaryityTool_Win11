@@ -145,6 +145,10 @@
     <value>波特率</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="comRstInfoBar" xml:space="preserve">
+    <value>要更改连接的设备，您需要重新连接串口。</value>
+    <comment>Serial Port Page text</comment>
+  </data>
   <data name="connectl" xml:space="preserve">
     <value>连接设备串口</value>
     <comment>Serial Port Page text</comment>

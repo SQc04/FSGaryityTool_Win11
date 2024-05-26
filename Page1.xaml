@@ -66,7 +66,7 @@
                                   BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
                                   BorderThickness="0" 
                                   MaxHeight="260"
-                                  Margin="0">
+                                  Margin="2">
                             <ListView.ItemContainerTransitions>
                                 <TransitionCollection>
                                     <AddDeleteThemeTransition />
@@ -190,11 +190,41 @@
                         </TransitionCollection>
                     </StackPanel.Transitions>
                 </StackPanel>
-                
+
+                <StackPanel Orientation="Horizontal">
+                    <Border x:Name="ChipToolKitBorder" CornerRadius="4" Width="240" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal">
+                                <Border CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                                    <StackPanel Orientation="Horizontal">
+                                        <FontIcon Glyph="&#xEC7A;" Margin="12,6,1,6"></FontIcon>
+                                        <TextBlock Text="MCU tools" Margin="6,6,9,6"></TextBlock>
+                                    </StackPanel>
+                                </Border>
+                                <ComboBox x:Name="ChipToolKitComboBox" SelectionChanged="ChipToolKitComboBox_SelectionChanged" Width="102" Margin="6"></ComboBox>
+                                <!--W226-->
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Frame x:Name="McuToolsFrame" Width="240" Margin="6">
+                                    
+                                </Frame>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Button x:Name="RSTButton" Click="RSTButton_Click" Width="114" Margin="6">RST</Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
+                </StackPanel>
+
                 <StackPanel Orientation="Horizontal" Height="36"></StackPanel>
 
                 <StackPanel Orientation="Horizontal">
-                    <Button x:Name="RSTButton" Click="RSTButton_Click" Width="120" Margin="6">RST</Button>
+                    
                     
                     <StackPanel.Transitions>
                         <TransitionCollection>

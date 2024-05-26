@@ -145,6 +145,10 @@
     <value>Baudrate</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="comRstInfoBar" xml:space="preserve">
+    <value>To change the connected device, you need to reconnect the serial port.</value>
+    <comment>Serial Port Page text</comment>
+  </data>
   <data name="connectl" xml:space="preserve">
     <value>CONNECT</value>
     <comment>Serial Port Page text</comment>

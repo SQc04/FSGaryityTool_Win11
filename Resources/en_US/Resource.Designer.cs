@@ -124,6 +124,15 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         }
         
         /// <summary>
+        ///   查找类似 To change the connected device, you need to reconnect the serial port. 的本地化字符串。
+        /// </summary>
+        internal static string comRstInfoBar {
+            get {
+                return ResourceManager.GetString("comRstInfoBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 CONNECT 的本地化字符串。
         /// </summary>
         internal static string connectl {

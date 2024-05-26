@@ -315,6 +315,7 @@ namespace FSGaryityTool_Win11
                 AutoComButton.Content = LanguageText("autoSerichComl");
                 AutoConnectButton.Content = LanguageText("autoConnectl");
                 CONTButton.Content = LanguageText("connectl");
+                COMRstInfoBar.Message = LanguageText("comRstInfoBar");
 
                 CommonRes._serialPort.DataReceived += _serialPort_DataReceived;
                 // 在你的代码后台，定义一个List<string>作为数据源
@@ -1083,7 +1084,9 @@ namespace FSGaryityTool_Win11
             if(Con == 1)
             {
                 if(ConCom != ComIs)
-                COMRstInfoBar.IsOpen = true;
+                    COMRstInfoBar.IsOpen = true;
+                else
+                    COMRstInfoBar.IsOpen = false;
             }
         }
 
@@ -1233,6 +1236,11 @@ namespace FSGaryityTool_Win11
                     writer.Flush();
                 }
             }
+            if (Con == 1)
+            {
+                CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);
+                RXTextBox.Text = RXTextBox.Text + "BaudRate = " + Convert.ToInt32(BANDComboBox.SelectedItem) + "\r\n";
+            }
         }
         private void PARComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -1250,6 +1258,11 @@ namespace FSGaryityTool_Win11
                     settingstomlr.WriteTo(writer);
                     writer.Flush();
                 }
+            }
+            if (Con == 1)
+            {
+                CommonRes._serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), (string)PARComboBox.SelectedItem);
+                RXTextBox.Text = RXTextBox.Text + "Parity = " + (Parity)Enum.Parse(typeof(Parity), (string)PARComboBox.SelectedItem) + "\r\n";
             }
         }
         private void STOPComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1269,6 +1282,11 @@ namespace FSGaryityTool_Win11
                     writer.Flush();
                 }
             }
+            if (Con == 1)
+            {
+                CommonRes._serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), (string)STOPComboBox.SelectedItem);
+                RXTextBox.Text = RXTextBox.Text + "StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), (string)STOPComboBox.SelectedItem) + "\r\n";
+            }
         }
         private void DATAComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -1286,6 +1304,11 @@ namespace FSGaryityTool_Win11
                     settingstomlr.WriteTo(writer);
                     writer.Flush();
                 }
+            }
+            if (Con == 1)
+            {
+                CommonRes._serialPort.DataBits = Convert.ToInt32(DATAComboBox.SelectedItem);
+                RXTextBox.Text = RXTextBox.Text + "DataBits = " + Convert.ToInt32(DATAComboBox.SelectedItem) + "\r\n";
             }
         }
 
@@ -1812,6 +1835,11 @@ namespace FSGaryityTool_Win11
         {
             COMComboBox.SelectedItem = null;
             COMListview.SelectedItem = null;
+        }
+
+        private void ChipToolKitComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

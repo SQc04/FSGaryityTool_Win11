@@ -124,6 +124,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         }
         
         /// <summary>
+        ///   查找类似 要更改连接的设备，您需要重新连接串口。 的本地化字符串。
+        /// </summary>
+        internal static string comRstInfoBar {
+            get {
+                return ResourceManager.GetString("comRstInfoBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 连接设备串口 的本地化字符串。
         /// </summary>
         internal static string connectl {
