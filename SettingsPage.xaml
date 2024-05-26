@@ -272,7 +272,7 @@
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
-                                <FontIcon Glyph="&#xE974;" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="10" Margin="12,0,6,0"/>
+                                <FontIcon Glyph="&#xE974;" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Margin="12,0,6,0"/>
                             </StackPanel>
                         </Grid>
                     </Button>

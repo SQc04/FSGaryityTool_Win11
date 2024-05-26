@@ -288,7 +288,7 @@ namespace FSGaryityTool_Win11
                 Debug.WriteLine(">");
 
                 //缓存设置
-                string defpage;
+                string defpage,defPageBackground,defLaunage;
                 string baud, party, stop, data, rxhex, txhex, dtr, rts, shtime, autosco, autosavrset, autosercom, autoconnect, txnewline;
                 string checkTime, checkCounter;
 
@@ -319,6 +319,14 @@ namespace FSGaryityTool_Win11
 
                     if ((string)settingstomlSp["FSGravitySettings"]["DefaultNvPage"] != "Tommy.TomlLazy") defpage = settingstomlSp["FSGravitySettings"]["DefaultNvPage"];
                     else defpage = "0";
+                    if ((string)settingstomlSp["FSGravitySettings"]["SoftBackground"] != "Tommy.TomlLazy") defPageBackground = settingstomlSp["FSGravitySettings"]["SoftBackground"];
+                    else defPageBackground = "0";
+
+                    var culture = System.Globalization.CultureInfo.CurrentUICulture;
+                    string lang = culture.Name;
+
+                    if ((string)settingstomlSp["FSGravitySettings"]["SoftDefLanguage"] != "Tommy.TomlLazy") defLaunage = settingstomlSp["FSGravitySettings"]["SoftDefLanguage"];
+                    else defLaunage = lang;
 
                     baud = TomlCheckNulls("115200", serialPortSettings, "DefaultBAUD");
                     party = TomlCheckNulls("None", serialPortSettings, "DefaultParity");
@@ -335,15 +343,15 @@ namespace FSGaryityTool_Win11
                     autosercom = TomlCheckNulls("1", serialPortSettings, "AutoSerichCom");
                     autoconnect = TomlCheckNulls("1", serialPortSettings, "AutoConnect");
                     txnewline = TomlCheckNulls("1", serialPortSettings, "DefaultTXNewLine");
-                    
+
                     //if (settingstomlSp["SerialPortSettings"] != null)  = ;
 
                     if ((string)settingstomlSp["SerialPortCOMData"]["CheckTime"] != "Tommy.TomlLazy") checkTime = settingstomlSp["SerialPortCOMData"]["CheckTime"];
                     else checkTime = "2024-04-12 19:48:55";
                     if ((string)settingstomlSp["SerialPortCOMData"]["CheckCounter"] != "Tommy.TomlLazy") checkCounter = settingstomlSp["SerialPortCOMData"]["CheckCounter"];
                     else checkCounter = "0";
-                    if ((string)settingstomlSp["SerialPortCOMData"]["COMSaveDeviceinf"] != "Tommy.TomlLazy") checkCounter = settingstomlSp["SerialPortCOMData"]["COMSaveDeviceinf"];
-                    else checkCounter = "0";
+                    if ((string)settingstomlSp["SerialPortCOMData"]["COMSaveDeviceinf"] != "Tommy.TomlLazy") cOMDeviceinf = settingstomlSp["SerialPortCOMData"]["COMSaveDeviceinf"];
+                    else cOMDeviceinf = "0";
 
 
                     settingstomlSp = new TomlTable
@@ -355,6 +363,8 @@ namespace FSGaryityTool_Win11
                             Comment =
                             "FSGaryityTool Settings:",
                             ["DefaultNvPage"] = defpage,
+                            ["SoftBackground"] = defPageBackground,
+                            ["SoftDefLanguage"] = defLaunage,
                         },
 
                         ["SerialPortSettings"] =
@@ -388,7 +398,7 @@ namespace FSGaryityTool_Win11
 
                             ["CheckTime"] = "2024-04-12 19:48:55",
                             ["CheckCounter"] = "0",
-                            ["COMSaveDeviceinf"] = String.Join(",", cOMSaveDeviceinf)
+                            ["COMSaveDeviceinf"] = cOMDeviceinf//String.Join(",", cOMSaveDeviceinf)
                         },
                         ["COMData"] =
                         {

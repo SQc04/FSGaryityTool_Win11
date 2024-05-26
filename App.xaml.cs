@@ -35,6 +35,7 @@ namespace FSGaryityTool_Win11
             this.InitializeComponent();
         }
 
+        public IntPtr MainWindowHandle { get; private set; }
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
@@ -43,6 +44,7 @@ namespace FSGaryityTool_Win11
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             m_window = new MainWindow();
+            MainWindowHandle = WinRT.Interop.WindowNative.GetWindowHandle(m_window);
             m_window.Activate();
         }
 

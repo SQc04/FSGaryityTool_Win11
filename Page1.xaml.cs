@@ -55,6 +55,7 @@ using System.Reflection.Metadata;
 using System.Globalization;
 using Microsoft.Windows.ApplicationModel.Resources;
 
+
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -127,13 +128,17 @@ namespace FSGaryityTool_Win11
 
 
 
+        private ITaskbarList3 taskbarInstance;
+
         public Page1()
         {
             this.InitializeComponent();
 
             this.Loaded += Page1_Loaded;
 
-            
+            this.taskbarInstance = (ITaskbarList3)new TaskbarList();
+            this.taskbarInstance.HrInit();
+
         }
 
         public static string LanguageText(string laugtext)
@@ -834,8 +839,16 @@ namespace FSGaryityTool_Win11
 
             settings.ColorValuesChanged += Settings_ColorValuesChanged;
 
+            // 获取当前窗口的句柄
+
             if (Con == 0)
             {
+                var app = (Application.Current as App);             // 尝试将当前应用程序实例转换为App类型
+                if (app != null)                                    // 检查转换是否成功
+                {
+                    var hWnd = app.MainWindowHandle;                // 获取主窗口的句柄
+                    this.taskbarInstance.SetProgressState(hWnd, FSGaryityTool_Win11.TBPFLAG.TBPF_INDETERMINATE);//开始任务栏加载动画
+                }
                 try
                 {
                     CommonRes._serialPort.PortName = (string)COMComboBox.SelectedItem;                  //开启的串口名称为选择串口的ComboBox组件中的内容
@@ -919,6 +932,12 @@ namespace FSGaryityTool_Win11
             }
             else
             {
+                var app = (Application.Current as App);
+                if (app != null)
+                {
+                    var hWnd = app.MainWindowHandle;
+                    this.taskbarInstance.SetProgressState(hWnd, FSGaryityTool_Win11.TBPFLAG.TBPF_NOPROGRESS);//停止任务栏加载动画
+                }
                 //RXTextBox.Text = RXTextBox.Text + "SerialPort IS DISCONNECT\r\n";
 
                 try
