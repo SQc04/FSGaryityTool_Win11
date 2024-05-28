@@ -48,7 +48,6 @@ using static System.Runtime.CompilerServices.RuntimeHelpers;
 using System.Windows.Input;
 using Windows.ApplicationModel.Contacts;
 using System.Reflection.Metadata.Ecma335;
-using static FSGaryityTool_Win11.Page1;
 using Windows.Devices.Sensors;
 using Windows.ApplicationModel.DataTransfer;
 using System.Reflection.Metadata;
@@ -617,6 +616,62 @@ namespace FSGaryityTool_Win11
 
         public void TimerSerialPortTick(Object stateInfo)       //串口热插拔检测
         {
+            string[] NowPort = SerialPort.GetPortNames(); // 获取当前所有可用的串口名称
+            string[] LastPort = ArryPort ?? NowPort; // 获取上一次检测到的串口名称，如果没有则使用当前串口名称
+            ArryPort = NowPort; // 更新上一次检测到的串口名称
+
+            var lastPortSet = new HashSet<string>(LastPort); // 创建一个包含上一次串口名称的HashSet
+            var nowPortSet = new HashSet<string>(NowPort); // 创建一个包含当前串口名称的HashSet
+
+            var insertedPorts = nowPortSet.Except(lastPortSet).ToArray(); // 找出新插入的串口
+            var removedPorts = lastPortSet.Except(nowPortSet).ToArray(); // 找出被拔出的串口
+
+            DispatcherQueue.TryEnqueue(() => // 在UI线程中执行以下操作
+            {
+                string selectedPort = (string)COMComboBox.SelectedItem; // 获取当前选中的串口
+
+                foreach (var port in insertedPorts) // 遍历所有新插入的串口
+                {
+                    SerialPortInfo info = SerialPortInfo.GetPort(port); // 获取串口的信息
+                    RXTextBox.Text += $"{port}: {info.Description} {LanguageText("spPlogin")}\r\n"; // 更新文本框的内容
+                }
+
+                foreach (var port in removedPorts) // 遍历所有被拔出的串口
+                {
+                    RXTextBox.Text += $"{port}{LanguageText("spPullout")}\r\n"; // 更新文本框的内容
+                    if (Con == 1 && port == selectedPort) // 如果当前连接的串口被拔出，则断开连接
+                    {
+                        CONTButton_Click(null, null);
+                    }
+                }
+
+                COMComboBox.Items.Clear(); // 清空组合框的内容
+                COMListview.Items.Clear(); // 清空列表视图的内容
+
+                foreach (var port in NowPort) // 遍历当前所有可用的串口
+                {
+                    COMComboBox.Items.Add(port); // 将串口名称添加到组合框中
+                    COMListview.Items.Add(port); // 将串口名称添加到列表视图中
+                }
+
+                COMComboBox.SelectedItem = selectedPort; // 将之前选中的串口重新选中
+                COMListview.SelectedItem = selectedPort; // 将之前选中的串口重新选中
+
+                if (Con == 0 && COMComboBox.SelectedItem == null && insertedPorts.Length > 0) // 如果没有选中的串口，并且有新插入的串口
+                {
+                    COMComboBox.SelectedItem = insertedPorts[0]; // 选中新插入的串口
+                    COMListview.SelectedItem = insertedPorts[0]; // 选中新插入的串口
+                    if (AutoConnectButton.IsChecked == true) // 如果设置了自动连接，则尝试连接新插入的串口
+                    {
+                        CONTButton_Click(null, null);
+                    }
+                }
+            });
+        }
+
+        /*
+        public void TimerSerialPortTick(Object stateInfo)       //串口热插拔检测
+        {
             int InOut = 0;
             int i = 0;
             int j = 0;
@@ -741,6 +796,7 @@ namespace FSGaryityTool_Win11
                 });
             }
         }
+        */
 
         //public event SerialDataReceivedEventHandler DataReceived;
 
@@ -919,6 +975,11 @@ namespace FSGaryityTool_Win11
                 {
                     RXTextBox.Text = RXTextBox.Text + LanguageText("openSPErr") + "\r\n";
                     //MessageBox.Show("打开串口失败，请检查相关设置", "错误");
+                    if (app != null)
+                    {
+                        var hWnd = app.MainWindowHandle;
+                        this.taskbarInstance.SetProgressState(hWnd, FSGaryityTool_Win11.TBPFLAG.TBPF_NOPROGRESS);//停止任务栏加载动画
+                    }
                     Con = 0;
                     //CONTButton.Content = "CONNECT";
                     CONTButton.Content = LanguageText("connectl");

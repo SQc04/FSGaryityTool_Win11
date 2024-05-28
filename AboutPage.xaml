@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
     NavigationCacheMode="Enabled">
     <!-- Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" -->
 
@@ -28,22 +29,102 @@
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     </Style>
                 </StackPanel.Resources>
-                <TextBlock Text="" Margin="0,12,0,0"/>
-                <TextBlock Text="About" Margin="0"/>
-                <Expander Margin="0,3,0,0">
-                    <Expander.Header>
-                        <Grid>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch">
-                                <Image Source="Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png" Width="22" Height="22" Margin="12,24,12,24"/>
-                                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12">
-                                    <TextBlock VerticalAlignment="Top" Text="FSGravity For Windows 11" />
-                                    <TextBlock VerticalAlignment="Center" Text="© 2019 - 2024 FairingStudio" FontSize="12"/>
+
+                <StackPanel>
+                    <Border x:Name="CDHBorder" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" HorizontalAlignment="Left" Height="300" Width="400" Margin="0,6">
+                        <Image Stretch="UniformToFill" HorizontalAlignment="Center" Source="Assets/FSBLUE12K.png" />
+                    </Border>
+                    
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
+                </StackPanel>
+                
+                
+                <StackPanel>
+                    <TextBlock Text="" Margin="0,12,0,0"/>
+                    <TextBlock Text="About" Margin="0"/>
+
+                    <toolkit:SettingsExpander Header="FSGravity For Windows 11" Description="© 2019 - 2024 FairingStudio" Margin="0,2,0,3" IsExpanded="False" >
+                        <toolkit:SettingsExpander.HeaderIcon>
+                            <BitmapIcon UriSource="Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png" ShowAsMonochrome="False"/>
+                        </toolkit:SettingsExpander.HeaderIcon>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <TextBlock Text="Version : " HorizontalTextAlignment="Right"/>
+                            <TextBlock Text="{x:Bind local:MainWindow.FSSoftVersion}" HorizontalTextAlignment="Right"/>
+                        </StackPanel>
+
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard >
+                                <Grid>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
+                                    </StackPanel>
+                                </Grid>
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard >
+                                <Grid>
+                                    <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                        
+                        <toolkit:SettingsExpander.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </toolkit:SettingsExpander.Transitions>
+                    </toolkit:SettingsExpander>
+
+                    <toolkit:SettingsExpander Header="FSGaryityTool_Win11 in Github" Description="FSGaryityTool for WinUI3" Margin="0,2,0,3" IsExpanded="True">
+                        <toolkit:SettingsExpander.HeaderIcon>
+                            <FontIcon Glyph="&#xE943;" />
+                        </toolkit:SettingsExpander.HeaderIcon>
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
+                                <StackPanel Orientation="Vertical">
+                                    <HyperlinkButton Content="Join the project on Github" NavigateUri="https://github.com/SQc04/FSGaryityTool_Win11" />
                                 </StackPanel>
-                            </StackPanel>
-                            <TextBlock x:Name="VersionAbout" VerticalAlignment="Center" HorizontalTextAlignment="Right" Margin="0"/>
-                        </Grid>
-                    </Expander.Header>
-                </Expander>
+                            </toolkit:SettingsCard>
+                            <!--
+                            <toolkit:SettingsCard >
+                                <Grid>
+                                    <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                            
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </toolkit:SettingsCard>
+                            -->
+                        </toolkit:SettingsExpander.Items>
+                        
+                        <toolkit:SettingsExpander.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </toolkit:SettingsExpander.Transitions>
+                    </toolkit:SettingsExpander>
+
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>

@@ -60,9 +60,10 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.23";
+        public static string FSSoftVersion = "0.2.24";
         public static int FsPage = 0;
         public static TomlTable settingstomlSp;
+
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
@@ -105,13 +106,65 @@ namespace FSGaryityTool_Win11
 
         public NavigationFailedEventHandler OnNavigationFailed { get; private set; }
 
+        ///*
+        [DllImport("user32.dll")]
+        public static extern IntPtr DefWindowProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("comctl32.dll")]
+        public static extern bool SetWindowSubclass(IntPtr hWnd, WndProcDelegate lpfnSubclass, IntPtr uIdSubclass, IntPtr dwRefData);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int x;
+            public int y;
+        };
+
+        public struct MINMAXINFO
+        {
+            public POINT ptReserved;
+            public POINT ptMaxSize;
+            public POINT ptMaxPosition;
+            public POINT ptMinTrackSize;
+            public POINT ptMaxTrackSize;
+        };
+
+        public const int WM_GETMINMAXINFO = 0x0024;
+
+        public delegate IntPtr WndProcDelegate(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData);
+        private static IntPtr WndProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData)
+        {
+            switch (uMsg)
+            {
+                case WM_GETMINMAXINFO:
+                    MINMAXINFO mmi = Marshal.PtrToStructure<MINMAXINFO>(lParam);
+                    mmi.ptMinTrackSize.x = 700;
+                    mmi.ptMinTrackSize.y = 200;
+                    Marshal.StructureToPtr(mmi, lParam, true);
+                    return IntPtr.Zero;
+            }
+
+            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+        }
+        //*/
 
         public MainWindow()
         {
             this.InitializeComponent();
 
+
+            ///*
+            var app = (Application.Current as App); // 尝试将当前应用程序实例转换为App类型
+            if (app != null) // 检查转换是否成功
+            {
+                var hWnd = app.MainWindowHandle; // 获取主窗口的句柄
+                //WindowHelper.SetMinWindowSize(hWnd, 700, 200); // 设置窗口的最小大小为500x500
+                SetWindowSubclass(hWnd, WndProc, IntPtr.Zero, IntPtr.Zero);
+            }
+            //*/
+
             // 将窗口的标题栏设置为自定义标题栏
-            
+
             this.ExtendsContentIntoTitleBar = true;  // enable custom titlebar
             SetTitleBar(AppTitleBara);
 

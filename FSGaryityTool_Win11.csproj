@@ -42,8 +42,6 @@
 		<Version />
 	</PropertyGroup>
   <ItemGroup>
-    <Content Remove="Assets\FSFSoft.png" />
-    <Content Remove="Assets\FSFSoftLogo.png" />
     <Content Remove="Assets\FSFSoftLogo.scale-100.png" />
     <Content Remove="Assets\FSFSoftLogo.scale-125.png" />
     <Content Remove="Assets\FSFSoftLogo.scale-150.png" />
@@ -60,6 +58,9 @@
     <None Remove="Assets\BadgeLogo.scale-150.png" />
     <None Remove="Assets\BadgeLogo.scale-200.png" />
     <None Remove="Assets\BadgeLogo.scale-400.png" />
+    <None Remove="Assets\FSBLUE12K.png" />
+    <None Remove="Assets\FSFSoft.png" />
+    <None Remove="Assets\FSFSoftLogo.png" />
     <None Remove="Assets\StoreLogo.png" />
     <None Remove="FSPage.xaml" />
     <None Remove="MainPage1.xaml" />
@@ -224,7 +225,7 @@
   </PropertyGroup>
 	
   <PropertyGroup>
-    <VersionPrefix>0.2.23</VersionPrefix>
+    <VersionPrefix>0.2.24</VersionPrefix>
   </PropertyGroup>
 	
 	

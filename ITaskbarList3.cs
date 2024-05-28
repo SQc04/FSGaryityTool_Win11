@@ -37,6 +37,24 @@ namespace FSGaryityTool_Win11
         TBPF_PAUSED = 0x8
     }
 
+    
+    public static class WindowHelper
+    {
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+        const uint SWP_NOMOVE = 0x0002;
+        const uint SWP_NOSIZE = 0x0001;
+        const uint SWP_NOZORDER = 0x0004;
+        const uint SWP_FRAMECHANGED = 0x0020;
+
+        public static void SetMinWindowSize(IntPtr hwnd, int width, int height)
+        {
+            SetWindowPos(hwnd, IntPtr.Zero, 0, 0, width, height, SWP_NOZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
+        }
+    }
+    
+
     [ComImport]
     [Guid("56FDF344-FD6D-11d0-958A-006097C9A090")]
     public class TaskbarList

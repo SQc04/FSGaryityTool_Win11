@@ -14,6 +14,8 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Media.Animation;
 using System.Security.AccessControl;
+using System.Threading;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,6 +29,7 @@ namespace FSGaryityTool_Win11
     {
         public static int Pge = 0;
 
+        private CancellationTokenSource delayCts = new CancellationTokenSource();
         public MainPage1()
         {
             this.InitializeComponent();
@@ -34,9 +37,10 @@ namespace FSGaryityTool_Win11
             //TabView_AddTabButtonClick(SPTabView, null);
 
             SerialPort.Text = Page1.LanguageText("serialPort");
+
         }
 
-        private void SPSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+        private async void SPSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
         {
             SelectorBarItem selectorBarItem = sender.SelectedItem;
             int currentSelectionIndex = sender.Items.IndexOf(selectorBarItem);
@@ -49,7 +53,7 @@ namespace FSGaryityTool_Win11
                     pageType = typeof(Page1);
                     break;
                 case 1:
-                    pageType = typeof(FSPage);
+                    pageType = typeof(Page2);
                     break;
             }
             var slideNavigationTransitionEffect = currentSelectionIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
@@ -58,6 +62,22 @@ namespace FSGaryityTool_Win11
 
             previousSelectedIndex = currentSelectionIndex;
 
+            // 取消之前的延时
+            delayCts.Cancel();
+            delayCts = new CancellationTokenSource();
+
+            try
+            {
+                // 等待2秒，如果在这期间被取消，将抛出 OperationCanceledException
+                await Task.Delay(500, delayCts.Token);
+
+                // 然后导航到同一个页面，但不播放过渡动画
+                FSSPagf.Navigate(pageType, null, null);
+            }
+            catch (OperationCanceledException)
+            {
+                // 如果延时被取消，不做任何事情
+            }
         }
 
 
