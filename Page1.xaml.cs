@@ -78,6 +78,7 @@ namespace FSGaryityTool_Win11
 
     public sealed partial class Page1 : Page
     {
+        public static int getPortInfo = 0;
         public static int Con = 0;
         public static string ConCom = "";
         public static int txf = 0;
@@ -537,6 +538,7 @@ namespace FSGaryityTool_Win11
             {
                 // 在应用程序启动时获取所有串口的设备描述
                 RefreshPortInfo();
+                getPortInfo = 1;
             }
 
             public static void RefreshPortInfo(string portName = null)
@@ -616,6 +618,7 @@ namespace FSGaryityTool_Win11
 
         public void TimerSerialPortTick(Object stateInfo)       //串口热插拔检测
         {
+            if (getPortInfo == 0) return;
             string[] NowPort = SerialPort.GetPortNames(); // 获取当前所有可用的串口名称
             string[] LastPort = ArryPort ?? NowPort; // 获取上一次检测到的串口名称，如果没有则使用当前串口名称
             ArryPort = NowPort; // 更新上一次检测到的串口名称

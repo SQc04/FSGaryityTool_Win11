@@ -60,11 +60,17 @@
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard ContentAlignment="Left">
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="Dependencies &amp; References" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,3,10,1"/>
-                                    <HyperlinkButton Content="Windows App SDK" NavigateUri="aka.ms/windowsappsdk" HorizontalAlignment="Right"/>
-                                    <HyperlinkButton Content="Windows UI Library" NavigateUri="aka.ms/winui" HorizontalAlignment="Right"/>
-                                    <HyperlinkButton Content="Windows Community Toolkit" NavigateUri="https://github.com/CommunityToolkit/Windows" HorizontalAlignment="Right"/>
-                                    <HyperlinkButton Content="Tommy" NavigateUri="https://github.com/dezhidki/Tommy" HorizontalAlignment="Right"/>
+                                    <TextBlock Text="Dependencies &amp; References" FontSize="14" FontWeight="Thin" HorizontalAlignment="Left" Margin="0,3,10,1"/>
+                                    <HyperlinkButton Content="Windows App SDK" NavigateUri="aka.ms/windowsappsdk" HorizontalAlignment="Left" Margin="-12,0,0,0"/>
+                                    <HyperlinkButton Content="Windows UI Library" NavigateUri="aka.ms/winui" HorizontalAlignment="Left" Margin="-12,0,0,0"/>
+                                    <HyperlinkButton Content="Windows Community Toolkit" NavigateUri="https://github.com/CommunityToolkit/Windows" HorizontalAlignment="Left" Margin="-12,0,0,0"/>
+                                    <HyperlinkButton Content="Tommy" NavigateUri="https://github.com/dezhidki/Tommy" HorizontalAlignment="Left" Margin="-12,0,0,0"/>
+                                </StackPanel>
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock TextWrapping="Wrap" Text="THIS CODE AND INFORMATION IS PROVIDED ‘AS IS’ WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE." Margin="0,0,0,0"/>
+                                    <HyperlinkButton Content="License &amp; Source" NavigateUri="https://github.com/SQc04/FSGaryityTool_Win11" Margin="-12,0,0,0"/>
                                 </StackPanel>
                             </toolkit:SettingsCard>
                         </toolkit:SettingsExpander.Items>
@@ -87,7 +93,7 @@
                                     <TextBlock Text="WillowKoishi" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
                                     <TextBlock Text="Programming Director / UI Layout Design" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
                                     <TextBlock Text="SQc04" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-                                    <TextBlock Text="Programming" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
+                                    <TextBlock Text="AI Programming Assistant/Consultant" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
                                     <TextBlock Text="Copliot" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
                                     <TextBlock Text="Payload" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
                                     <TextBlock Text="Asumoyz" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
@@ -101,7 +107,10 @@
                                         <TextBlock Text="か" CenterPoint="8,11,0" Rotation="90"  FontWeight="Medium" HorizontalAlignment="Right" Margin="-2,1,0,1"/>
                                     </StackPanel>
                                     <TextBlock Text="lfky" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-
+                                    <!--
+                                    <TextBlock Text="Software Tester" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
+                                    <TextBlock Text="" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                    -->
                                     <TextBlock Text="Special Thanks" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,12,0,1"/>
                                     <TextBlock Text="二月喵～" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
                                     <TextBlock Text="PangCiyuan" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
@@ -112,7 +121,12 @@
                                     <TextBlock Text="You!" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
                                 </StackPanel>
                             </toolkit:SettingsCard>
-                            
+                            <toolkit:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
+                                <StackPanel Orientation="Vertical">
+                                    <HyperlinkButton Content="Visit Our Studio Website" NavigateUri="https://fairingstudio.com/"  Margin="-12,0,0,0"/>
+                                    <HyperlinkButton Content="Help &amp; Feedback" NavigateUri="https://fairingstudio.com/"  Margin="-12,0,0,0"/>
+                                </StackPanel>
+                            </toolkit:SettingsCard>
                             <!--
                             <toolkit:SettingsCard >
                                 <Grid>
@@ -143,7 +157,7 @@
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
                                 <StackPanel Orientation="Vertical">
-                                    <HyperlinkButton Content="Join the project on Github" NavigateUri="https://github.com/SQc04/FSGaryityTool_Win11" />
+                                    <HyperlinkButton Content="Join the project on Github" NavigateUri="https://github.com/SQc04/FSGaryityTool_Win11"  Margin="-12,0,0,0"/>
                                 </StackPanel>
                             </toolkit:SettingsCard>
                             <!--
