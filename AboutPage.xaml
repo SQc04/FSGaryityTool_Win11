@@ -58,24 +58,14 @@
                         </StackPanel>
 
                         <toolkit:SettingsExpander.Items>
-                            <toolkit:SettingsCard >
-                                <Grid>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
-                                    </StackPanel>
-                                </Grid>
-                            </toolkit:SettingsCard>
-                            <toolkit:SettingsCard >
-                                <Grid>
-                                    <StackPanel Orientation="Vertical" VerticalAlignment="Top">
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Grid>
+                            <toolkit:SettingsCard ContentAlignment="Left">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Dependencies &amp; References" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,3,10,1"/>
+                                    <HyperlinkButton Content="Windows App SDK" NavigateUri="aka.ms/windowsappsdk" HorizontalAlignment="Right"/>
+                                    <HyperlinkButton Content="Windows UI Library" NavigateUri="aka.ms/winui" HorizontalAlignment="Right"/>
+                                    <HyperlinkButton Content="Windows Community Toolkit" NavigateUri="https://github.com/CommunityToolkit/Windows" HorizontalAlignment="Right"/>
+                                    <HyperlinkButton Content="Tommy" NavigateUri="https://github.com/dezhidki/Tommy" HorizontalAlignment="Right"/>
+                                </StackPanel>
                             </toolkit:SettingsCard>
                         </toolkit:SettingsExpander.Items>
                         
@@ -86,7 +76,67 @@
                         </toolkit:SettingsExpander.Transitions>
                     </toolkit:SettingsExpander>
 
-                    <toolkit:SettingsExpander Header="FSGaryityTool_Win11 in Github" Description="FSGaryityTool for WinUI3" Margin="0,2,0,3" IsExpanded="True">
+                    <toolkit:SettingsExpander Header="FairingStudio" Description="List of Producers / Special Thanks" Margin="0,2,0,3" IsExpanded="True">
+                        <toolkit:SettingsExpander.HeaderIcon>
+                            <BitmapIcon UriSource="Assets/FS2022.png" ShowAsMonochrome="False"/>
+                        </toolkit:SettingsExpander.HeaderIcon>
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard ContentAlignment="Left">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Production / Visual Design" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
+                                    <TextBlock Text="WillowKoishi" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                    <TextBlock Text="Programming Director / UI Layout Design" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
+                                    <TextBlock Text="SQc04" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                    <TextBlock Text="Programming" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
+                                    <TextBlock Text="Copliot" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                    <TextBlock Text="Payload" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
+                                    <TextBlock Text="Asumoyz" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                    <TextBlock Text="Software Framework" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
+                                    <TextBlock Text="ㅤㅤㅤㅤ" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="都" CenterPoint="8,10,0" Rotation="0"  FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                        <TextBlock Text="筑" CenterPoint="8,11,0" Rotation="90"  FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,1,1"/>
+                                        <TextBlock Text="は" CenterPoint="8,11,0" Rotation="180"  FontWeight="Medium" HorizontalAlignment="Right" Margin="1,1,0,1"/>
+                                        <TextBlock Text="る" CenterPoint="7,11,0" Rotation="0"  FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,-1,1"/>
+                                        <TextBlock Text="か" CenterPoint="8,11,0" Rotation="90"  FontWeight="Medium" HorizontalAlignment="Right" Margin="-2,1,0,1"/>
+                                    </StackPanel>
+                                    <TextBlock Text="lfky" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+
+                                    <TextBlock Text="Special Thanks" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,12,0,1"/>
+                                    <TextBlock Text="二月喵～" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                    <TextBlock Text="PangCiyuan" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                    <TextBlock Text="Canmi." FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                    <TextBlock Text="daelon_ely" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                    <TextBlock Text="游悦电子DIY" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                    <TextBlock Text="阿良良木翼i" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                    <TextBlock Text="You!" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                </StackPanel>
+                            </toolkit:SettingsCard>
+                            
+                            <!--
+                            <toolkit:SettingsCard >
+                                <Grid>
+                                    <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                        
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </toolkit:SettingsCard>
+                            -->
+                        </toolkit:SettingsExpander.Items>
+
+                        <toolkit:SettingsExpander.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </toolkit:SettingsExpander.Transitions>
+                    </toolkit:SettingsExpander>
+
+                    <toolkit:SettingsExpander Header="FSGaryityTool_Win11 in Github" Description="FSGaryityTool for WinUI3" Margin="0,3,0,3" IsExpanded="True">
                         <toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon Glyph="&#xE943;" />
                         </toolkit:SettingsExpander.HeaderIcon>
@@ -118,6 +168,8 @@
                             </TransitionCollection>
                         </toolkit:SettingsExpander.Transitions>
                     </toolkit:SettingsExpander>
+
+                    <TextBlock Text="" Margin="0,12,0,0"/>
 
                     <StackPanel.Transitions>
                         <TransitionCollection>
