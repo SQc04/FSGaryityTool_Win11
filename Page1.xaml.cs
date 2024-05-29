@@ -53,9 +53,6 @@ using Windows.ApplicationModel.DataTransfer;
 using System.Reflection.Metadata;
 using System.Globalization;
 using Microsoft.Windows.ApplicationModel.Resources;
-using System.Timers;
-using System.Text.RegularExpressions;
-using CommunityToolkit.WinUI;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -114,8 +111,8 @@ namespace FSGaryityTool_Win11
 
         public static TomlTable settingstomlr;
 
-        public System.Threading.Timer timer;
-        public System.Threading.Timer timerSerialPort;
+        public Timer timer;
+        public Timer timerSerialPort;
 
         private bool _isLoaded;
         public static string str;
@@ -147,26 +144,27 @@ namespace FSGaryityTool_Win11
         {
             var culture = System.Globalization.CultureInfo.CurrentUICulture;
             string lang = culture.Name;
-
-            // 创建一个字典来存储不同语言和对应的资源文件之间的映射
-            var resourceFiles = new Dictionary<string, string>
+            System.Resources.ResourceManager rm;
+            if (lang == "zh-CN")
             {
-                { "zh-CN", "FSGaryityTool_Win11.Resources.zh_CN.resource" },
-                { "en-US", "FSGaryityTool_Win11.Resources.en_US.resource" },
-            //  { "xx-xx", "FSGaryityTool_Win11.Resources.xx_xx.resource" },
-            };
-
-            // 如果当前语言不在字典中，则默认使用 "zh-CN" 的资源文件
-            if (!resourceFiles.ContainsKey(lang))
+                rm = new System.Resources.ResourceManager("FSGaryityTool_Win11.Resources.zh_CN.resource", Assembly.GetExecutingAssembly());
+            }
+            else if(lang == "en-US")
             {
-                lang = "zh-CN";
+                rm = new System.Resources.ResourceManager("FSGaryityTool_Win11.Resources.en_US.resource", Assembly.GetExecutingAssembly());
+            }
+            /*else if (lang == "xx-xx")
+            {
+                rm = new System.Resources.ResourceManager("FSGaryityTool_Win11.Resources.xx_xx.resource", Assembly.GetExecutingAssembly());
+            }*/
+            else
+            {
+                rm = new System.Resources.ResourceManager("FSGaryityTool_Win11.Resources.zh_CN.resource", Assembly.GetExecutingAssembly());
             }
 
-            var rm = new System.Resources.ResourceManager(resourceFiles[lang], Assembly.GetExecutingAssembly());
             string text = rm.GetString(laugtext);
             return text;
         }
-
 
         private void ToggleButtonIsChecked(int isChecked, ToggleButton toggleButton)
         {
@@ -388,6 +386,9 @@ namespace FSGaryityTool_Win11
                     AUTOScrollButton.Foreground = new SolidColorBrush(Colors.White);
                 }
                 */
+
+                COMButton_Click(this, new RoutedEventArgs());
+
                 ToggleButtonIsChecked(rx, RXHEXButton);
                 ToggleButtonIsChecked(tx, TXHEXButton);
 
@@ -421,9 +422,6 @@ namespace FSGaryityTool_Win11
                 ToggleButtonIsChecked(autosaveset, SaveSetButton);
                 ToggleButtonIsChecked(autoconnect, AutoConnectButton);
                 ToggleButtonIsChecked(txnewline, TXNewLineButton);
-
-                
-                COMButton_Click(this, new RoutedEventArgs());
             }
 
 
@@ -444,7 +442,7 @@ namespace FSGaryityTool_Win11
             ToggleButtonIsChecked(autosercom, AutoComButton);
             if (autosercom == 1)
             {
-                timerSerialPort = new System.Threading.Timer(TimerSerialPortTick, null, 0, 1500);
+                timerSerialPort = new Timer(TimerSerialPortTick, null, 0, 1500);
                 AutoSerchComProgressRing.IsActive = true;
             }
             else AutoSerchComProgressRing.IsActive = false;
@@ -802,12 +800,12 @@ namespace FSGaryityTool_Win11
 
         //public event SerialDataReceivedEventHandler DataReceived;
 
-        private async void COMButton_Click(object sender, RoutedEventArgs e)
+        private void COMButton_Click(object sender, RoutedEventArgs e)
         {
             //COMButton.Content = "Clicked";
-            await SearchAndAddSerialToComboBoxAsync(CommonRes._serialPort, COMComboBox);           //扫描并将串口添加至下拉列表
+            SearchAndAddSerialToComboBox(CommonRes._serialPort, COMComboBox);           //扫描并将串口添加至下拉列表
 
-            async Task SearchAndAddSerialToComboBoxAsync(SerialPort MyPort, ComboBox MyBox)
+            void SearchAndAddSerialToComboBox(SerialPort MyPort, ComboBox MyBox)
             {
                 RXTextBox.Text = RXTextBox.Text + LanguageText("startSerichSP") + "\r\n";
                 string commme = (string)COMComboBox.SelectedItem;           //记忆串口名
@@ -823,7 +821,7 @@ namespace FSGaryityTool_Win11
                 {
                     MyBox.Items.Add(ArryPort[i]);                           //将所有的可用串口号添加到端口对应的组合框中
                     COMListview.Items.Add(ArryPort[i]/* + (portDescription != null ? " | " + portDescription : "")*/);
-                    SerialPortInfo info = await Task.Run(() => SerialPortInfo.GetPort(ArryPort[i]));
+                    SerialPortInfo info = SerialPortInfo.GetPort(ArryPort[i]);
                     RXTextBox.Text += ArryPort[i] + ": " + info.Description + "\r\n";
                     //RXTextBox.Text += ArryPort[i] + "\r\n" + GetPortDescription(ArryPort[i]) + "\r\n";
                 }
@@ -847,7 +845,6 @@ namespace FSGaryityTool_Win11
             Thread COMButtonIconRotation = new Thread(COMButtonIcon_Rotation);
             COMButtonIconRotation.Start();
         }
-
 
         private void COMButtonIcon_Rotation(object name)
         {
@@ -950,7 +947,7 @@ namespace FSGaryityTool_Win11
 
                     CommonRes._serialPort.Open();                                                                               //打开串口
 
-                    timer = new System.Threading.Timer(TimerTick, null, 0, 250); // 每秒触发8次
+                    timer = new Timer(TimerTick, null, 0, 250); // 每秒触发8次
 
                     //CONTButton.Content = "DISCONNECT";
                     CONTButton.Content = LanguageText("disconnectl");
@@ -1180,128 +1177,117 @@ namespace FSGaryityTool_Win11
 
         }
 
-        ///*
-        // 当点击发送按钮时执行的操作
-        private void TXButton_Click(object sender, RoutedEventArgs e)
+        private void TXButton_Click(object sender, RoutedEventArgs e)//发送数据
         {
-            // 如果串口设备已经打开了
-            if (!CommonRes._serialPort.IsOpen) return;
-
-            try
+            if (CommonRes._serialPort.IsOpen)            // 如果串口设备已经打开了
             {
-                // 根据发送模式选择发送数据的方式
-                SendData();
-                // 发送完成后清空发送文本框的内容
+                if (tx == 0)        // 如果是以字符的形式发送数据
+                {
+                    string str = "";
+                    try
+                    {
+                        str = TXTextBox.Text;
+                        CommonRes._serialPort.Write(str);
+                        if (txnewline == 1)
+                        {
+                            CommonRes._serialPort.Write("\r\n");
+                        }
+                        RXTextBox.Text = RXTextBox.Text + "TX: " + TXTextBox.Text + "\r\n";
+                        
+                        //txf = 1;
+                    }
+                    catch
+                    {
+                        //MessageBox.Show("串口字符写入错误!", "错误");   // 弹出发送错误对话框
+                        RXTextBox.Text = RXTextBox.Text + LanguageText("txStringErr") + "\r\n";
+
+                        CONTButton_Click(sender, e);
+                    }
+                }
+                else                                                  // 如果以数值的形式发送
+                {
+                    byte[] Data = new byte[1];                        // 定义一个byte类型数据，相当于C语言的unsigned char类型
+                    int flag = 0;                                     // 定义一个标志，标志这是第几位
+                    int databits = 0;
+                    string str = "";
+                    try
+                    {
+                        byte[] bytes = new byte[TXTextBox.Text.Length];
+                        RXTextBox.Text += "TX: " + "0x ";
+                        for (int i = 0; i < TXTextBox.Text.Length; i++)
+                        {
+                            if (TXTextBox.Text.Substring(i, 1) == " " && flag == 0)                // 如果是第一位，并且为空字符
+                            {
+                                continue;
+                            }
+
+                            if (TXTextBox.Text.Substring(i, 1) != " " && flag == 0)                // 如果是第一位，但不为空字符
+                            {
+                                flag = 1;                                                          // 标志转到第二位数据去
+                                if (i == TXTextBox.Text.Length - 1)                                // 如果这是文本框字符串的最后一个字符
+                                {
+                                    Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i, 1), 16);  // 转化为byte类型数据，以16进制显示
+                                    bytes[databits] = Data[0];
+                                    foreach (byte data in Data)
+                                    {
+                                        str = data.ToString("X2");
+                                    }
+                                    RXTextBox.Text = RXTextBox.Text + str + " ";
+                                    flag = 0;                                                     // 标志回到第一位数据去
+                                    databits++;
+                                }
+                                continue;
+                            }
+                            else if (TXTextBox.Text.Substring(i, 1) == " " && flag == 1)           // 如果是第二位，且第二位字符为空
+                            {
+                                Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i - 1, 1), 16);  // 只将第一位字符转化为byte类型数据，以十六进制显示
+                                bytes[databits] = Data[0];
+                                foreach (byte data in Data)
+                                {
+                                    str = data.ToString("X2");
+                                }
+                                RXTextBox.Text = RXTextBox.Text + str + " ";
+                                flag = 0;                                                         // 标志回到第一位数据去
+                                databits++;
+                                continue;
+                            }
+                            else if (TXTextBox.Text.Substring(i, 1) != " " && flag == 1)           // 如果是第二位字符，且第一位字符不为空
+                            {
+                                Data[0] = Convert.ToByte(TXTextBox.Text.Substring(i - 1, 2), 16);  // 将第一，二位字符转化为byte类型数据，以十六进制显示
+                                bytes[databits] = Data[0];
+                                foreach (byte data in Data)
+                                {
+                                    str = data.ToString("X2");
+                                }
+                                RXTextBox.Text = RXTextBox.Text + str + " ";
+                                flag = 0;                                                         // 标志回到第一位数据去
+                                databits++;
+                                continue;
+                            }
+
+                        }
+                        CommonRes._serialPort.Write(bytes, 0, databits);                                     // 通过串口发送
+                        if (txnewline == 1)
+                        {
+                            CommonRes._serialPort.Write("\r\n");
+                        }
+                        RXTextBox.Text += "\r\n";
+                    }
+                    catch
+                    {
+                        //MessageBox.Show("串口数值写入错误!", "错误");
+                        RXTextBox.Text = RXTextBox.Text + LanguageText("txHexErr") + "\r\n";
+
+                        //CONTButton_Click(sender, e);
+                    }
+                }
+                
                 TXTextBox.Text = "";
             }
-            catch (Exception ex)
-            {
-                // 如果发送过程中出现错误，显示错误信息并断开串口连接
-                RXTextBox.Text += $"{ex.Message}\r\n";
-                CONTButton_Click(sender, e);
-            }
         }
 
-        // 根据发送模式选择发送数据的方式
-        private void SendData()
-        {
-            // 如果是以字符的形式发送数据
-            if (tx == 0)
-            {
-                SendStringData();
-            }
-            else // 如果以数值的形式发送
-            {
-                SendHexData();
-            }
-        }
 
-        // 以字符形式发送数据
-        private void SendStringData()
-        {
-            try
-            {
-                // 获取要发送的字符串
-                string str = TXTextBox.Text;
-                // 通过串口发送字符串
-                CommonRes._serialPort.Write(str);
-                // 如果需要在每条消息后添加换行符
-                AppendNewLineIfRequired();
-                // 更新接收文本框的内容
-                RXTextBox.Text += $"TX: {str}\r\n";
-            }
-            catch
-            {
-                // 如果串口字符写入出错，显示错误信息
-                RXTextBox.Text += $"{LanguageText("txStringErr")}\r\n";
-                // 抛出异常以便外层捕获
-                throw;
-            }
-        }
 
-        // 以十六进制数值形式发送数据
-        private void SendHexData()
-        {
-            try
-            {
-                // 获取要发送的十六进制字符串，并进行必要的预处理
-                string input = PrepareHexString();
-                // 将十六进制字符串转换为字节数组
-                byte[] bytes = ConvertHexStringToByteArray(input);
-                // 通过串口发送字节数组
-                CommonRes._serialPort.Write(bytes, 0, bytes.Length);
-                // 如果需要在每条消息后添加换行符
-                AppendNewLineIfRequired();
-                // 更新接收文本框的内容
-                RXTextBox.Text += $"TX: 0x {string.Join(" ", bytes.Select(b => b.ToString("X2")))}\r\n";
-            }
-            catch (FormatException)
-            {
-                // 如果输入的字符串不是有效的十六进制数，显示错误信息
-                RXTextBox.Text += $"{LanguageText("txHexErr")}\r\n";
-                // 抛出异常以便外层捕获
-                throw;
-            }
-        }
-
-        // 对输入的十六进制字符串进行预处理
-        private string PrepareHexString()
-        {
-            // 获取要发送的十六进制字符串，并去除所有空格
-            string input = TXTextBox.Text.Trim().Replace(" ", "");
-            // 如果长度为奇数，前面添加一个 '0'
-            if (input.Length % 2 != 0)
-            {
-                input = "0" + input;
-            }
-            return input;
-        }
-
-        // 将十六进制字符串转换为字节数组
-        private byte[] ConvertHexStringToByteArray(string input)
-        {
-            byte[] bytes = new byte[input.Length / 2];
-            for (int i = 0; i < input.Length; i += 2)
-            {
-                // 尝试将每两个字符转换为一个字节
-                if (!byte.TryParse(input.Substring(i, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out bytes[i / 2]))
-                {
-                    // 如果转换失败，抛出异常
-                    throw new FormatException();
-                }
-            }
-            return bytes;
-        }
-
-        // 如果需要在每条消息后添加换行符
-        private void AppendNewLineIfRequired()
-        {
-            if (txnewline == 1)
-            {
-                CommonRes._serialPort.Write("\r\n");
-            }
-        }
-        //*/
         private void CLEARButton_Click(object sender, RoutedEventArgs e)
         {
             RXListView.ItemsSource = null;
@@ -1718,7 +1704,7 @@ namespace FSGaryityTool_Win11
         {
             if (autosercom == 0)
             {
-                timerSerialPort = new System.Threading.Timer(TimerSerialPortTick, null, 0, 1500);
+                timerSerialPort = new Timer(TimerSerialPortTick, null, 0, 1500);
                 AutoSerchComProgressRing.IsActive = true;
                 autosercom = 1;
             }
