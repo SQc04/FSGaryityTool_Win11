@@ -45,6 +45,7 @@ using Newtonsoft.Json;
 using System.Reflection.PortableExecutable;
 using Windows.ApplicationModel.Activation;
 using System.Xml.Linq;
+using Microsoft.UI.Xaml.Media.Animation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -60,7 +61,7 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.26";
+        public static string FSSoftVersion = "0.2.28";
         public static int FsPage = 0;
         public static TomlTable settingstomlSp;
 
@@ -147,11 +148,36 @@ namespace FSGaryityTool_Win11
             return DefWindowProc(hWnd, uMsg, wParam, lParam);
         }
         //*/
+        public async void DelayedInitialize(UIElement mainContent)
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(500));  // 延时改为0.5秒
+
+            // 创建淡出动画
+            Storyboard storyboard = new Storyboard();
+            DoubleAnimation fadeOutAnimation = new DoubleAnimation()
+            {
+                From = 1.0,
+                To = 0.0,
+                Duration = new Duration(TimeSpan.FromMilliseconds(100))
+            };
+            Storyboard.SetTarget(fadeOutAnimation, (ExtendedSplash)App.m_window.Content);
+            Storyboard.SetTargetProperty(fadeOutAnimation, "Opacity");
+            storyboard.Children.Add(fadeOutAnimation);
+
+            // 播放淡出动画
+            storyboard.Begin();
+            await Task.Delay(TimeSpan.FromMilliseconds(1));  // 等待淡出动画完成
+            // 移除 ExtendedSplash
+            ((App)Application.Current).RemoveExtendedSplash(mainContent);
+        }
+
 
         public MainWindow()
         {
             this.InitializeComponent();
 
+            bool isFirstActivation = true;
+            UIElement mainContent = this.Content;
 
             ///*
             var app = (Application.Current as App); // 尝试将当前应用程序实例转换为App类型
@@ -164,7 +190,6 @@ namespace FSGaryityTool_Win11
             //*/
 
             // 将窗口的标题栏设置为自定义标题栏
-
             this.ExtendsContentIntoTitleBar = true;  // enable custom titlebar
             SetTitleBar(AppTitleBara);
 
@@ -172,6 +197,19 @@ namespace FSGaryityTool_Win11
             m_AppWindow.Title = "FSGravityTool";//Set AppWindow
             m_AppWindow.SetIcon("FSFSoftH.ico");
 
+            // 在窗口激活后注册 SizeChanged 事件处理器
+            this.Activated += (sender, e) =>
+            {
+                if (isFirstActivation)
+                {
+                    ExtendedSplash extendedSplash = new ExtendedSplash(this);
+                    this.Content = extendedSplash;
+                    if (Window.Current != null)
+                    {
+                        Window.Current.SizeChanged += extendedSplash.ExtendedSplash_OnResize;
+                    }
+                }
+            };
 
             string SYSAPLOCAL = Environment.GetFolderPath(folder: Environment.SpecialFolder.LocalApplicationData);
             string FSFolder = Path.Combine(SYSAPLOCAL, "FAIRINGSTUDIO");
@@ -492,8 +530,16 @@ namespace FSGaryityTool_Win11
             KeyboardI.Content = Page1.LanguageText("keyboard");
             MouseI.Content = Page1.LanguageText("mouse");
 
-            //设置默认页面
+            this.Activated += (sender, e) =>
+            {
+                if (isFirstActivation)
+                {
+                    DelayedInitialize(mainContent);
+                    isFirstActivation = false;
+                }
+            };
 
+            //设置默认页面
             using (StreamReader reader = File.OpenText(FSSetToml))
             {
                 TomlTable settingstomlr = TOML.Parse(reader);
@@ -560,6 +606,7 @@ namespace FSGaryityTool_Win11
                 m_acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 m_acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
             }
+
 
         }
 

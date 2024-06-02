@@ -15,6 +15,8 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Microsoft.UI.Xaml.Media.Imaging;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -43,12 +45,34 @@ namespace FSGaryityTool_Win11
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            m_window = new MainWindow();
-            MainWindowHandle = WinRT.Interop.WindowNative.GetWindowHandle(m_window);
+            if (m_window == null)
+            {
+                m_window = new MainWindow();
+                MainWindowHandle = WinRT.Interop.WindowNative.GetWindowHandle(m_window);
+            }
+
+            // 只有在 m_window.Content 为 null 时才创建 ExtendedSplash
+            if (m_window.Content == null)
+            {
+                // 创建 ExtendedSplash 实例
+                ExtendedSplash extendedSplash = new ExtendedSplash(m_window);
+                m_window.Content = extendedSplash;
+            }
+
+            // 确保当前窗口处于活动状态
             m_window.Activate();
         }
 
 
-        private Window m_window;
+        public static Window m_window;
+        public void RemoveExtendedSplash(UIElement mainContent)
+        {
+            if (m_window.Content is ExtendedSplash)
+            {
+                // 将 m_window.Content 设置为 MainWindow 的内容
+                m_window.Content = mainContent;
+            }
+        }
+
     }
 }
