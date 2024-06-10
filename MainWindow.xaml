@@ -61,6 +61,8 @@
                         BackRequested="NavigationView_BackRequested" 
                         SelectionChanged="NavigationView_SelectionChanged" 
                         DisplayModeChanged="NavigationView_DisplayModeChanged"
+                        CompactModeThresholdWidth="800"
+                        ExpandedModeThresholdWidth="1100"
                         Margin="0,0,0,0">
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Name="SerialPortI" Icon="Sort" Content="Serial Port" Tag="MainPage1" />

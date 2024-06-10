@@ -268,6 +268,24 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         }
         
         /// <summary>
+        ///   查找类似 Tools for ESP8266 的本地化字符串。
+        /// </summary>
+        internal static string mcuToolEsp8266 {
+            get {
+                return ResourceManager.GetString("mcuToolEsp8266", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 No tools was selected 的本地化字符串。
+        /// </summary>
+        internal static string mcuToolNone {
+            get {
+                return ResourceManager.GetString("mcuToolNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Mouse 的本地化字符串。
         /// </summary>
         internal static string mouse {

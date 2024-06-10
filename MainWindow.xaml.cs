@@ -61,7 +61,7 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.28";
+        public static string FSSoftVersion = "0.2.29";
         public static int FsPage = 0;
         public static TomlTable settingstomlSp;
 
@@ -663,7 +663,7 @@ namespace FSGaryityTool_Win11
         private void NavigationView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)     //返回按钮
         {
 
-            if (FsPage == 0) ;                  //SerialPortPage
+            if (FsPage == 0) Debug.WriteLine("SerialPortPage");                  //SerialPortPage
             //else if (FsPage == 1) ;           //
             //else if (FsPage == 2) ;           //
             //else if (FsPage == 3) ;           //

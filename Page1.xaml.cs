@@ -53,6 +53,7 @@ using Windows.ApplicationModel.DataTransfer;
 using System.Reflection.Metadata;
 using System.Globalization;
 using Microsoft.Windows.ApplicationModel.Resources;
+using FSGaryityTool_Win11.McuToolpage;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -68,6 +69,12 @@ namespace FSGaryityTool_Win11
     {
         public string Timesr { get; set; }
         public string Rxstr { get; set; }
+    }
+
+    public class MCUTool
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
     }
     /*
     public class ComDataItem
@@ -98,6 +105,9 @@ namespace FSGaryityTool_Win11
         public static string rxpstr;
         public static StringBuilder datapwate = new StringBuilder(2048);
 
+        private LinkedList<DataItem> dataList = new LinkedList<DataItem>();//定义接收链表
+        private LinkedList<DataItem> tempDataList = new LinkedList<DataItem>();
+
         public static int Rollta = 0;
 
         public static int RunPBT = 0;
@@ -109,6 +119,7 @@ namespace FSGaryityTool_Win11
         public static string FSSetJson = Path.Combine(FSGravif, "Settings.json");
         public static string FSSetToml = Path.Combine(FSGravif, "Settings.toml");
 
+        public static int baudrate = 0;
 
         public static TomlTable settingstomlr;
 
@@ -323,6 +334,17 @@ namespace FSGaryityTool_Win11
                 COMRstInfoBar.Message = LanguageText("comRstInfoBar");
 
                 CommonRes._serialPort.DataReceived += _serialPort_DataReceived;
+
+                List<MCUTool> mcuTools = new List<MCUTool>()
+                {
+                    new MCUTool() { Name = "None", Description = LanguageText("mcuToolNone") },
+                    new MCUTool() { Name = "ESP8266", Description = LanguageText("mcuToolEsp8266") }
+                };
+
+                ChipToolKitComboBox.ItemsSource = mcuTools;
+                ChipToolKitComboBox.SelectedItem = mcuTools[1];
+
+
                 // 在你的代码后台，定义一个List<string>作为数据源
                 List<string> BaudRates = new List<string>()
                 {
@@ -352,6 +374,7 @@ namespace FSGaryityTool_Win11
                     DATAComboBox.Items.Add(j);
                 }
                 DATAComboBox.SelectedItem = DefaultDATA;
+                DATANumberBox.Value = DefaultDATA;
 
                 var foregroundColor = COMButton.Foreground as SolidColorBrush;
                 var backgroundColor = COMButton.Background as SolidColorBrush;
@@ -451,7 +474,7 @@ namespace FSGaryityTool_Win11
             ToggleButtonIsChecked(autoconnect, AutoConnectButton);
             //ToggleButtonIsChecked();
 
-
+            
         }
 
         public void TimerTick(Object stateInfo)
@@ -672,6 +695,9 @@ namespace FSGaryityTool_Win11
             });
         }
 
+
+
+
         /*
         public void TimerSerialPortTick(Object stateInfo)       //串口热插拔检测
         {
@@ -825,8 +851,15 @@ namespace FSGaryityTool_Win11
                     MyBox.Items.Add(ArryPort[i]);                           //将所有的可用串口号添加到端口对应的组合框中
                     COMListview.Items.Add(ArryPort[i]/* + (portDescription != null ? " | " + portDescription : "")*/);
                     SerialPortInfo info = await Task.Run(() => SerialPortInfo.GetPort(ArryPort[i]));
-                    RXTextBox.Text += ArryPort[i] + ": " + info.Description + "\r\n";
-                    //RXTextBox.Text += ArryPort[i] + "\r\n" + GetPortDescription(ArryPort[i]) + "\r\n";
+                    if (info != null)
+                    {
+                        RXTextBox.Text += ArryPort[i] + ": " + info.Description + "\r\n";
+                    }
+                    else 
+                    {
+                        RXTextBox.Text += ArryPort[i] + "\r\n";
+                    }
+                        //RXTextBox.Text += ArryPort[i] + "\r\n" + GetPortDescription(ArryPort[i]) + "\r\n";
                 }
                 //MyBox.Items.Add("COM0");
                 RXTextBox.Text = RXTextBox.Text + LanguageText("overSerichSP") + "\r\n";
@@ -913,21 +946,9 @@ namespace FSGaryityTool_Win11
                 {
                     CommonRes._serialPort.PortName = (string)COMComboBox.SelectedItem;                  //开启的串口名称为选择串口的ComboBox组件中的内容
                     ConCom = (string)COMComboBox.SelectedItem;
+
+
                     CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);        //将选择波特率ComboBox组件中的数据转为Int型，并且进行波特率的设置
-
-                    //RXTextBox.Foreground = foregroundColor;
-                    /*
-                    if (theme == ApplicationTheme.Dark)
-                    {
-                        // 当前处于深色模式
-                        RXTextBox.Foreground = new SolidColorBrush(darkaccentColor);
-                    }
-                    else if (theme == ApplicationTheme.Light)
-                    {
-                        // 当前处于浅色模式
-                        RXTextBox.Foreground = new SolidColorBrush(ligtaccentColor);
-                    }*/
-
                     RXTextBox.Text = RXTextBox.Text + "BaudRate = " + Convert.ToInt32(BANDComboBox.SelectedItem) + "\r\n";
 
                     CommonRes._serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), (string)PARComboBox.SelectedItem);        //校验位
@@ -937,15 +958,14 @@ namespace FSGaryityTool_Win11
                     RXTextBox.Text = RXTextBox.Text + "StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), (string)STOPComboBox.SelectedItem) + "\r\n";
 
                     CommonRes._serialPort.DataBits = Convert.ToInt32(DATAComboBox.SelectedItem);                                //数据位
-
                     RXTextBox.Text = RXTextBox.Text + "DataBits = " + Convert.ToInt32(DATAComboBox.SelectedItem) + "\r\n";
 
                     CommonRes._serialPort.ReadTimeout = 1500;
+
                     //_SerialPort.DtrEnable = true;                                                                             //启用数据终端就绪信息
+
                     CommonRes._serialPort.Encoding = Encoding.UTF8;
                     CommonRes._serialPort.ReceivedBytesThreshold = 1;                                               //DataReceived触发前内部输入缓冲器的字节数
-
-                    //RXTextBox.Foreground = foregroundColor;
 
                     RXTextBox.Text = RXTextBox.Text + LanguageText("serialPortl") + " " + COMComboBox.SelectedItem + LanguageText("spConnect") + "\r\n";
 
@@ -956,10 +976,11 @@ namespace FSGaryityTool_Win11
                     //CONTButton.Content = "DISCONNECT";
                     CONTButton.Content = LanguageText("disconnectl");
                     Con = 1;
+
                     RunProgressBar.ShowPaused = false;
                     RunProgressBar.IsIndeterminate = true;
                     RunProgressBar.Visibility = Visibility.Visible;
-                    //CONTButton.Background = new SolidColorBrush(color);
+
                     if (theme == ApplicationTheme.Dark)                                                                         //设置连接按钮背景颜色
                     {
                         // 当前处于深色模式
@@ -1030,24 +1051,140 @@ namespace FSGaryityTool_Win11
         /*
         
         */
+        StringBuilder buffer = new StringBuilder();
+
+        private async void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            // 在另一个线程中处理串口数据
+            await Task.Run(() =>
+            {
+                // ... 其他代码
+
+                if (rx == 0) // 如果以字符串形式读取
+                {
+                    try
+                    {
+                        if (CommonRes._serialPort.IsOpen && CommonRes._serialPort.BytesToRead > 0)
+                        {
+                            buffer.Append(CommonRes._serialPort.ReadExisting()); // 将新接收的数据添加到缓冲区
+
+                            int newlineIndex;
+                            string bufferStr = buffer.ToString();
+                            while ((newlineIndex = bufferStr.IndexOf('\n')) != -1) // 只要缓冲区中还有换行符
+                            {
+                                string packet = bufferStr.Substring(0, newlineIndex).Replace("\r", ""); // 取出一个完整的数据包
+                                buffer.Remove(0, newlineIndex + 1); // 从缓冲区中移除这个数据包
+                                bufferStr = buffer.ToString(); // 更新bufferStr
+
+                                if (!string.IsNullOrWhiteSpace(packet)) // 如果packet不为空
+                                {
+                                    string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
+                                    DataItem item = new DataItem { Timesr = Timesr, Rxstr = packet };
+
+                                    // 将操作排队到UI线程
+                                    tempDataList.AddLast(item);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Error reading from serial port: " + ex.Message);
+                    }
+                }
+                else // 以数值形式读取
+                {
+                    int length = CommonRes._serialPort.BytesToRead; // 读取串口接收缓冲区字节数
+
+                    byte[] Data = new byte[length]; // 定义相同字节的数组
+
+                    CommonRes._serialPort.Read(Data, 0, length); // 串口读取缓冲区数据到数组中
+
+                    for (int i = 0; i < length; i++)
+                    {
+                        if (Data[i] == 0x0D && i < length - 1 && Data[i + 1] == 0x0A) // 如果遇到0D 0A
+                        {
+                            buffer.Append("0D 0A ");
+
+                            string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
+                            DataItem item = new DataItem { Timesr = Timesr, Rxstr = buffer.ToString() };
+
+                            // 将操作排队到UI线程
+                            tempDataList.AddLast(item);
+
+                            buffer.Clear(); // 清空buffer，开始新的一行
+                            i++; // 跳过0A
+                        }
+                        else
+                        {
+                            buffer.Append(Data[i].ToString("X2") + " ");
+                        }
+
+                        // 每十六个字节作为一个元素
+                        if (buffer.Length / 3 % 16 == 15) // 每个字节占3个字符（包括空格）
+                        {
+                            string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
+                            DataItem item = new DataItem { Timesr = Timesr, Rxstr = buffer.ToString() };
+
+                            // 将操作排队到UI线程
+                            tempDataList.AddLast(item);
+
+                            buffer.Clear(); // 清空buffer，开始新的一行
+                        }
+                    }
+
+                    // 如果buffer中还有剩余的数据，也添加到ListView中
+                    if (buffer.Length > 0)
+                    {
+                        string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
+                        DataItem item = new DataItem { Timesr = Timesr, Rxstr = buffer.ToString() };
+
+                        // 将操作排队到UI线程
+                        tempDataList.AddLast(item);
+
+                        buffer.Clear(); // 清空buffer
+                    }
+                }
+
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    UpdateItemsRepeater(tempDataList);
+                });
+                // ... 其他代码
+            });
+        }
+
+        private void UpdateItemsRepeater(LinkedList<DataItem> items)
+        {
+            foreach (var item in items)
+            {
+                dataList.AddLast(item); // 将新的数据添加到链表的末尾
+            }
+            items.Clear();
+
+            // 如果链表的长度超过1000，从头部删除元素
+            while (dataList.Count > 1000)
+            {
+                dataList.RemoveFirst();
+            }
+
+            // 更新ListView的ItemsSource
+            RXListView.ItemsSource = new ObservableCollection<DataItem>(dataList);
+
+            if (autotr == 1 && dataList.Count > 0) // 检查dataList是否为空
+            {
+                RXListView.ScrollIntoView(dataList.Last.Value); // 滚动到最后一个元素
+            }
+        }
 
 
+
+
+        /*
         private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             Thread.Sleep(500);
-            /*
-            if (txf == 1)
-            {
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    RXTextBox.Text += "\r\n";
-                });
-                
-                txf = 0;
-            }
-            */
-
-
+           
             string rxstr;
             string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
             string output;
@@ -1126,18 +1263,6 @@ namespace FSGaryityTool_Win11
 
             }
 
-            /*
-            ++rxs;                                          //接收自动清空(已弃用)
-            if (rxs == 200)
-            {
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    RXTextBox.Text = "";
-                });
-                rxs = 0;
-            }
-            */
-
         }
 
         private void UpdateItemsRepeater(string Timesr, string Rxstr)
@@ -1151,6 +1276,7 @@ namespace FSGaryityTool_Win11
                 RXListView.ScrollIntoView(item);
             }
         }
+        */
 
         /*
         private void ComItemsRepeater(string Com)
@@ -1310,6 +1436,7 @@ namespace FSGaryityTool_Win11
             RXListView.ItemsSource = null;
             RXTextBox.Text = "";    //清除文本框内容
             RXListView.ItemsSource = new ObservableCollection<DataItem>();
+            dataList.Clear();
         }
 
         private void RXTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -1338,6 +1465,7 @@ namespace FSGaryityTool_Win11
                 CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);
                 RXTextBox.Text = RXTextBox.Text + "BaudRate = " + Convert.ToInt32(BANDComboBox.SelectedItem) + "\r\n";
             }
+            baudrate = Convert.ToInt32(BANDComboBox.SelectedItem);
         }
         private void PARComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -1465,43 +1593,6 @@ namespace FSGaryityTool_Win11
             }
         }
 
-
-        private void RSTButton_Click(object sender, RoutedEventArgs e)      //自动重启
-        {
-            CommonRes._serialPort.BaudRate = 74880;// BANDComboBox.SelectedItem = "74880";//ESP12F
-
-            CommonRes._serialPort.RtsEnable = true;
-            Thread.Sleep(10);
-            CommonRes._serialPort.DtrEnable = true;
-            Thread.Sleep(10);
-            CommonRes._serialPort.DtrEnable = false;
-            Thread.Sleep(10);
-            CommonRes._serialPort.RtsEnable = false;
-
-            RSTButton_ClickAsync(null, null);
-        }
-
-        private Task RSTButton_ClickAsync(object sender, RoutedEventArgs e)
-        {
-            Thread.Sleep(10);
-            if (dtr == 1)
-            {
-                DTRButton_Click(sender, e);
-                Thread.Sleep(1);
-                DTRButton_Click(sender, e);
-            }
-            else
-            {
-                Thread.Sleep(1);
-                DTRButton_Click(sender, e);
-            }
-
-            //CommonRes._serialPort.DtrEnable = true;
-            Thread.Sleep(1);
-            CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);
-            return Task.CompletedTask;
-        }
-
         private void FsButtonChecked(int isChecked, Button button)
         {
             var foregroundColor = COMButton.Foreground as SolidColorBrush;
@@ -1530,6 +1621,7 @@ namespace FSGaryityTool_Win11
                 button.Foreground = foregroundColor;
             }
         }
+
 
         private void DTRButton_Click(object sender, RoutedEventArgs e)      //DTR信号使能
         {
@@ -1561,6 +1653,60 @@ namespace FSGaryityTool_Win11
                 }
             }
         }
+
+        public static async void RSTButtonRes()
+        {
+            await Task.Run(() =>
+            {
+                CommonRes._serialPort.BaudRate = 74880;// BANDComboBox.SelectedItem = "74880";//ESP12F
+
+                //ESP8266 Reset
+                CommonRes._serialPort.RtsEnable = true;
+                Thread.Sleep(10);
+                CommonRes._serialPort.DtrEnable = true;
+                Thread.Sleep(10);
+                CommonRes._serialPort.DtrEnable = false;
+                Thread.Sleep(10);
+                CommonRes._serialPort.RtsEnable = false;
+
+                Thread.Sleep(150);
+
+                CommonRes._serialPort.BaudRate = baudrate;
+
+                if (dtr == 1)
+                {
+                    CommonRes._serialPort.DtrEnable = true;
+                }
+                if (rts == 1)
+                {
+                    CommonRes._serialPort.DtrEnable = true;
+                }
+                //RSTButton_ClickAsync(null, null);
+            });
+        }
+        /*
+        private static Task RSTButton_ClickAsync(object sender, RoutedEventArgs e)
+        {
+            Thread.Sleep(200);
+
+
+            //CommonRes._serialPort.DtrEnable = true;
+            Thread.Sleep(1);
+
+            CommonRes._serialPort.BaudRate = baudrate;
+
+            if (dtr == 1)
+            {
+                CommonRes._serialPort.DtrEnable = true;
+            }
+            if (rts == 1)
+            {
+                CommonRes._serialPort.DtrEnable = true;
+            }
+
+            return Task.CompletedTask;
+        }
+        */
 
         private void RTSButton_Click(object sender, RoutedEventArgs e)      //RTS信号使能
         {
@@ -1649,12 +1795,6 @@ namespace FSGaryityTool_Win11
         {
 
         }
-        /*
-        private async void RXDataButton_Click(object sender, RoutedEventArgs e)
-        {
-            await AUTOScrollButton_ClickAsync(sender, e);
-        }
-        */
 
         private Task RXDATA_ClickAsync(object sender, RoutedEventArgs e)
         {
@@ -1937,6 +2077,23 @@ namespace FSGaryityTool_Win11
         private void ChipToolKitComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+            MCUTool selectedTool = (MCUTool)ChipToolKitComboBox.SelectedItem;
+
+            if (selectedTool != null)
+            {
+                switch (selectedTool.Name)
+                {
+                    case "None":
+                        McuToolsFrame.Navigate(typeof(NoneTools));
+                        break;
+                    case "ESP8266":
+                        McuToolsFrame.Navigate(typeof(ESP8266Tools));
+                        break;
+                    // 在这里添加更多的case语句来处理其他工具
+                    default:
+                        break;
+                }
+            }
         }
     }
 }

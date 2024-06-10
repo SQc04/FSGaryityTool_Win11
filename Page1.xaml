@@ -124,6 +124,15 @@
                     </StackPanel.Transitions>
                 </StackPanel>
 
+                <StackPanel Orientation="Horizontal" Height="0">
+                    <NumberBox x:Name="DATANumberBox" Maximum="9" Minimum="5" SmallChange="1" LargeChange="1" SpinButtonPlacementMode="Inline" Width="108" Margin="6"></NumberBox>
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
+                </StackPanel>
+
                 <StackPanel Orientation="Horizontal">
                     <Border x:Name="CDHBorder" CornerRadius="4" Height="32" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
                         <TextBlock x:Name="CDHTextBlock" Text="DCD" TextAlignment="Center" VerticalAlignment="Center" Width="54" Margin="0"/>
@@ -201,17 +210,25 @@
                                         <TextBlock Text="MCU tools" Margin="6,6,9,6"></TextBlock>
                                     </StackPanel>
                                 </Border>
-                                <ComboBox x:Name="ChipToolKitComboBox" SelectionChanged="ChipToolKitComboBox_SelectionChanged" Width="102" Margin="6"></ComboBox>
+                                <ComboBox x:Name="ChipToolKitComboBox" SelectionChanged="ChipToolKitComboBox_SelectionChanged" Width="102" Margin="6">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Name}" Width="64"/>
+                                                <TextBlock Text="   " Margin="24,0,24,0"/>
+                                                <TextBlock Text="{Binding Description}" FontStyle="Italic" Foreground="Gray" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
                                 <!--W226-->
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <Frame x:Name="McuToolsFrame" Width="240" Margin="6">
+                                <Frame x:Name="McuToolsFrame" Width="240" Margin="0">
                                     
                                 </Frame>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Button x:Name="RSTButton" Click="RSTButton_Click" Width="114" Margin="6">RST</Button>
-                            </StackPanel>
+                            
                         </StackPanel>
                     </Border>
                     <StackPanel.Transitions>
@@ -286,13 +303,13 @@
 
 
         <TextBox x:Name="RXTextBox" Grid.Column="3" Grid.Row="0" Grid.ColumnSpan="2" TextChanged="RXTextBox_TextChanged" IsReadOnly="True"  
-                 AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" Margin="12,12,12,6" />
+                 AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" IsSpellCheckEnabled="False" Margin="12,12,12,6" />
 
 
 
         <Toolkit:GridSplitter Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Left" />
 
-        <TextBox x:Name="TXTextBox" Grid.Column="2" Grid.Row="1" KeyUp="TXTextBox_KeyUp" TextChanged="TXTextBox_TextChanged" Margin="0,6,0,12" PlaceholderText="Type your data here...">
+        <TextBox x:Name="TXTextBox" Grid.Column="2" Grid.Row="1" KeyUp="TXTextBox_KeyUp" TextChanged="TXTextBox_TextChanged" Margin="0,6,0,12" IsSpellCheckEnabled="False" PlaceholderText="Type your data here...">
             
         </TextBox>
 

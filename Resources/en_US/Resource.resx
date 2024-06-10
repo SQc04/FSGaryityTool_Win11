@@ -209,6 +209,14 @@
     <value>Keyboard Settings</value>
     <comment>Settings Page text</comment>
   </data>
+  <data name="mcuToolEsp8266" xml:space="preserve">
+    <value>Tools for ESP8266</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="mcuToolNone" xml:space="preserve">
+    <value>No tools was selected</value>
+    <comment>Serial Port Page text</comment>
+  </data>
   <data name="mouse" xml:space="preserve">
     <value>Mouse</value>
     <comment>Main Page Text</comment>

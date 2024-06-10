@@ -209,6 +209,14 @@
     <value>键盘驱动设置</value>
     <comment>Settings Page text</comment>
   </data>
+  <data name="mcuToolEsp8266" xml:space="preserve">
+    <value>用于ESP8266的工具</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="mcuToolNone" xml:space="preserve">
+    <value>没有选择任何工具</value>
+    <comment>Serial Port Page text</comment>
+  </data>
   <data name="mouse" xml:space="preserve">
     <value>鼠标</value>
     <comment>Main Page Text</comment>
