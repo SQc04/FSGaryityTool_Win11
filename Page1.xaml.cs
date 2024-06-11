@@ -537,14 +537,16 @@ namespace FSGaryityTool_Win11
                 if(RI == 0)
                 {
                     // RI 信号使能
-                    FsBorderIsChecked(1, RIBorder, RITextBlock);
                     RI = 1;
+                    FsBorderIsChecked(RI, RIBorder, RITextBlock);
+                    
                 }
                 else
                 {
                     // RI 信号未使能
-                    FsBorderIsChecked(0, RIBorder, RITextBlock);
                     RI = 0;
+                    FsBorderIsChecked(RI, RIBorder, RITextBlock);
+                    
                 }
             }
         }
@@ -643,6 +645,8 @@ namespace FSGaryityTool_Win11
         {
             if (getPortInfo == 0) return;
             string[] NowPort = SerialPort.GetPortNames(); // 获取当前所有可用的串口名称
+            NowPort = new HashSet<string>(NowPort).ToArray(); // 移除可能的重复项
+
             string[] LastPort = ArryPort ?? NowPort; // 获取上一次检测到的串口名称，如果没有则使用当前串口名称
             ArryPort = NowPort; // 更新上一次检测到的串口名称
 
@@ -694,8 +698,6 @@ namespace FSGaryityTool_Win11
                 }
             });
         }
-
-
 
 
         /*
@@ -839,6 +841,7 @@ namespace FSGaryityTool_Win11
                 RXTextBox.Text = RXTextBox.Text + LanguageText("startSerichSP") + "\r\n";
                 string commme = (string)COMComboBox.SelectedItem;           //记忆串口名
                 ArryPort = SerialPort.GetPortNames();                       //SerialPort.GetPortNames()函数功能为获取计算机所有可用串口，以字符串数组形式输出
+                ArryPort = new HashSet<string>(ArryPort).ToArray(); // 移除可能的重复项
                 string scom = String.Join("\r\n", ArryPort);
                 //RXTextBox.Text = RXTextBox.Text + scom + "\r\n";
                 MyBox.Items.Clear();                                        //清除当前组合框下拉菜单内容
@@ -855,11 +858,11 @@ namespace FSGaryityTool_Win11
                     {
                         RXTextBox.Text += ArryPort[i] + ": " + info.Description + "\r\n";
                     }
-                    else 
+                    else
                     {
                         RXTextBox.Text += ArryPort[i] + "\r\n";
                     }
-                        //RXTextBox.Text += ArryPort[i] + "\r\n" + GetPortDescription(ArryPort[i]) + "\r\n";
+                    //RXTextBox.Text += ArryPort[i] + "\r\n" + GetPortDescription(ArryPort[i]) + "\r\n";
                 }
                 //MyBox.Items.Add("COM0");
                 RXTextBox.Text = RXTextBox.Text + LanguageText("overSerichSP") + "\r\n";
@@ -881,6 +884,7 @@ namespace FSGaryityTool_Win11
             Thread COMButtonIconRotation = new Thread(COMButtonIcon_Rotation);
             COMButtonIconRotation.Start();
         }
+
 
 
         private void COMButtonIcon_Rotation(object name)
