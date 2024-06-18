@@ -1,0 +1,32 @@
+﻿File Type: DLL
+
+  Section contains the following exports for ClevoEcInfo.dll
+
+    00000000 characteristics
+    5555968A time date stamp Fri May 15 14:47:38 2015
+        0.00 version
+           1 ordinal base
+          11 number of functions
+          11 number of names
+
+    ordinal hint RVA      name
+
+        3    0 000010F0 GetCpuFanRpm      // 获取CPU风扇的转速
+        2    1 00001020 GetECVersion      // 获取EC（Embedded Controller）的版本信息
+        4    2 000011B0 GetFanCount       // 获取风扇的数量
+        6    3 000012D0 GetGpu1FanRpm     // 获取GPU1风扇的转速
+        5    4 00001210 GetGpuFanRpm      // 获取GPU0风扇的转速
+        7    5 00001390 GetOptionModual   // 获取选项模块
+        8    6 000013E0 GetTempFanDuty    // 获取风扇的温度和占空比
+        9    7 000014F0 GetX72FanRpm      // 获取X72风扇的转速
+        1    8 00001000 InitIo            // 初始化IO
+        10   9 000015B0 SetFanDuty        // 设置风扇的占空比
+        11   A 00001650 SetFanDutyAuto    // 设置风扇的占空比为自动
+
+  Summary
+
+        3000 .data
+        5000 .rdata
+        3000 .reloc
+        1000 .rsrc
+        7000 .text

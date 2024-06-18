@@ -77,6 +77,11 @@
                         <FontIcon Glyph="&#xE962;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem x:Name="FanTest" Content="FanTest" Tag="Page5" >
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE770;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
                 <!--<NavigationViewItem Content="About" Tag="AboutPage" >

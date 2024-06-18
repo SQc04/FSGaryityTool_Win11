@@ -72,6 +72,7 @@
     <None Remove="Page2.xaml" />
     <None Remove="Page3.xaml" />
     <None Remove="Page4.xaml" />
+    <None Remove="Page5.xaml" />
     <None Remove="SettingsPage.xaml" />
   </ItemGroup>
 
@@ -92,13 +93,14 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.HeaderedControls" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.LayoutTransformControl" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.RadialGauge" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.RangeSelector" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.0.240109" />
     <PackageReference Include="MICA" Version="2.4.3" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26031-preview" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240404000" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.IO.Ports" Version="8.0.0" />
@@ -114,6 +116,11 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="ClevoEcControlinfo">
+      <HintPath>..\ClevoEcControlinfo\bin\Debug\net6.0\ClevoEcControlinfo.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
@@ -191,6 +198,12 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <None Update="Reliance\ClevoEcInfo.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Page Update="Page5.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="McuToolpage\NoneTools.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -237,7 +250,7 @@
   </PropertyGroup>
 	
   <PropertyGroup>
-    <VersionPrefix>0.2.29</VersionPrefix>
+    <VersionPrefix>0.2.30</VersionPrefix>
   </PropertyGroup>
 	
 	

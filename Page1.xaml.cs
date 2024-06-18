@@ -54,6 +54,7 @@ using System.Reflection.Metadata;
 using System.Globalization;
 using Microsoft.Windows.ApplicationModel.Resources;
 using FSGaryityTool_Win11.McuToolpage;
+using System.Timers;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -87,7 +88,7 @@ namespace FSGaryityTool_Win11
     {
         public static int getPortInfo = 0;
         public static int Con = 0;
-        public static string ConCom = "";
+        public static string conCom = "";
         public static int txf = 0;
         public static int tx = 0; //TXHEX
         public static int rx = 0; //RXHEX
@@ -123,8 +124,8 @@ namespace FSGaryityTool_Win11
 
         public static TomlTable settingstomlr;
 
-        public Timer timer;
-        public Timer timerSerialPort;
+        public System.Threading.Timer timer;
+        public System.Threading.Timer timerSerialPort;
 
         private bool _isLoaded;
         public static string str;
@@ -156,27 +157,21 @@ namespace FSGaryityTool_Win11
         {
             var culture = System.Globalization.CultureInfo.CurrentUICulture;
             string lang = culture.Name;
-            System.Resources.ResourceManager rm;
-            if (lang == "zh-CN")
+
+            var resourceManagerMap = new Dictionary<string, string>
             {
-                rm = new System.Resources.ResourceManager("FSGaryityTool_Win11.Resources.zh_CN.resource", Assembly.GetExecutingAssembly());
-            }
-            else if(lang == "en-US")
-            {
-                rm = new System.Resources.ResourceManager("FSGaryityTool_Win11.Resources.en_US.resource", Assembly.GetExecutingAssembly());
-            }
-            /*else if (lang == "xx-xx")
-            {
-                rm = new System.Resources.ResourceManager("FSGaryityTool_Win11.Resources.xx_xx.resource", Assembly.GetExecutingAssembly());
-            }*/
-            else
-            {
-                rm = new System.Resources.ResourceManager("FSGaryityTool_Win11.Resources.zh_CN.resource", Assembly.GetExecutingAssembly());
-            }
+                {"zh-CN", "FSGaryityTool_Win11.Resources.zh_CN.resource"},
+                {"en-US", "FSGaryityTool_Win11.Resources.en_US.resource"},
+                // {"xx-xx", "FSGaryityTool_Win11.Resources.xx_xx.resource"}
+            };
+
+            string resourcePath = resourceManagerMap.ContainsKey(lang) ? resourceManagerMap[lang] : "FSGaryityTool_Win11.Resources.zh_CN.resource";
+            var rm = new System.Resources.ResourceManager(resourcePath, Assembly.GetExecutingAssembly());
 
             string text = rm.GetString(laugtext);
             return text;
         }
+
 
         private void ToggleButtonIsChecked(int isChecked, ToggleButton toggleButton)
         {
@@ -249,7 +244,22 @@ namespace FSGaryityTool_Win11
                 textBlock.Foreground = foregroundColor;
             }
         }
+        private T TomlGetValueOrDefault<T>(TomlTable table, string menu, string name, T defaultValue)
+        {
+            if (table[menu][name] != "Tommy.TomlLazy")
+            {
+                var value = table[menu][name].AsString.Value;
+                return (T)Convert.ChangeType(value, typeof(T));
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
 
+
+
+        /*
         private int TomlCheckNull(string Menu, string Name)
         {
             int data = 0;
@@ -262,7 +272,7 @@ namespace FSGaryityTool_Win11
             }
             return data;
         }
-
+        */
         private void Page1_Loaded(object sender, RoutedEventArgs e)
         {
             if (!_isLoaded)
@@ -280,26 +290,22 @@ namespace FSGaryityTool_Win11
                                                                                 //Debug.WriteLine("Print:" + SPsettingstomlr["FSGravitySettings"]["DefaultNvPage"]);
                                                                                 //NvPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
                     string spSettings = "SerialPortSettings";
-                                                                                //检查设置是否为NULL
-                    if (SPsettingstomlr[spSettings]["DefaultBAUD"] != "Tommy.TomlLazy") DefaultBAUD = SPsettingstomlr[spSettings]["DefaultBAUD"];
-                    else DefaultBAUD = "115200";
-                    if (SPsettingstomlr[spSettings]["DefaultParity"] != "Tommy.TomlLazy") DefaultPart = SPsettingstomlr[spSettings]["DefaultParity"];
-                    else DefaultPart = "None";
-                    if (SPsettingstomlr[spSettings]["DefaultSTOP"] != "Tommy.TomlLazy") DefaultSTOP = SPsettingstomlr[spSettings]["DefaultSTOP"];
-                    else DefaultSTOP = "One";
-                    if (SPsettingstomlr[spSettings]["DefaultDATA"] != "Tommy.TomlLazy") DefaultDATA = int.Parse(SPsettingstomlr[spSettings]["DefaultDATA"]);
-                    else DefaultDATA = 8;
+                    //检查设置是否为NULL
+                    DefaultBAUD = TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultBAUD", "115200");
+                    DefaultPart = TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultParity", "None");
+                    DefaultSTOP = TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultSTOP", "One");
+                    DefaultDATA = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultDATA", "8"));
 
-                    tx = TomlCheckNull(spSettings, "DefaultTXHEX");
-                    rx = TomlCheckNull(spSettings, "DefaultRXHEX");
-                    dtr = TomlCheckNull(spSettings, "DefaultDTR");
-                    rts = TomlCheckNull(spSettings, "DefaultRTS");
-                    shtime = TomlCheckNull(spSettings, "DefaultSTime");
-                    autotr = TomlCheckNull(spSettings, "DefaultAUTOSco");
-                    autosaveset = TomlCheckNull(spSettings, "AutoDaveSet");
-                    autosercom = TomlCheckNull(spSettings, "AutoSerichCom");
-                    autoconnect = TomlCheckNull(spSettings, "AutoConnect");
-                    txnewline = TomlCheckNull(spSettings, "DefaultTXNewLine");
+                    tx = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultTXHEX", "0"));
+                    rx = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultRXHEX", "0"));
+                    dtr = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultDTR", "1"));
+                    rts = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultRTS", "0"));
+                    shtime = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultSTime", "0"));
+                    autotr = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultAUTOSco", "1"));
+                    autosaveset = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "AutoDaveSet", "1"));
+                    autosercom = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "AutoSerichCom", "1"));
+                    autoconnect = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "AutoConnect", "1"));
+                    txnewline = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultTXNewLine", "0"));
 
                     /*
                     ["DefaultBAUD"] = "115200",
@@ -466,7 +472,7 @@ namespace FSGaryityTool_Win11
             ToggleButtonIsChecked(autosercom, AutoComButton);
             if (autosercom == 1)
             {
-                timerSerialPort = new Timer(TimerSerialPortTick, null, 0, 1500);
+                timerSerialPort = new System.Threading.Timer(TimerSerialPortTick, null, 0, 1500);
                 AutoSerchComProgressRing.IsActive = true;
             }
             else AutoSerchComProgressRing.IsActive = false;
@@ -949,7 +955,7 @@ namespace FSGaryityTool_Win11
                 try
                 {
                     CommonRes._serialPort.PortName = (string)COMComboBox.SelectedItem;                  //开启的串口名称为选择串口的ComboBox组件中的内容
-                    ConCom = (string)COMComboBox.SelectedItem;
+                    conCom = (string)COMComboBox.SelectedItem;
 
 
                     CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);        //将选择波特率ComboBox组件中的数据转为Int型，并且进行波特率的设置
@@ -975,7 +981,7 @@ namespace FSGaryityTool_Win11
 
                     CommonRes._serialPort.Open();                                                                               //打开串口
 
-                    timer = new Timer(TimerTick, null, 0, 250); // 每秒触发8次
+                    timer = new System.Threading.Timer(TimerTick, null, 0, 250); // 每秒触发8次
 
                     //CONTButton.Content = "DISCONNECT";
                     CONTButton.Content = LanguageText("disconnectl");
@@ -1053,8 +1059,106 @@ namespace FSGaryityTool_Win11
 
 
         /*
-        
+        private DateTime lastReceivedTime = DateTime.Now; // 添加这一行来声明lastReceivedTime变量
+StringBuilder buffer = new StringBuilder();
+
+private async void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+{
+    // 在另一个线程中处理串口数据
+    await Task.Run(() =>
+    {
+        // ... 其他代码
+
+        if (rx == 0) // 如果以字符串形式读取
+        {
+            try
+            {
+                if (CommonRes._serialPort.IsOpen && CommonRes._serialPort.BytesToRead > 0)
+                {
+                    buffer.Append(CommonRes._serialPort.ReadExisting()); // 将新接收的数据添加到缓冲区
+
+                    int newlineIndex;
+                    string bufferStr = buffer.ToString();
+                    while ((newlineIndex = bufferStr.IndexOf('\n')) != -1) // 只要缓冲区中还有换行符
+                    {
+                        string packet = bufferStr.Substring(0, newlineIndex).Replace("\r", ""); // 取出一个完整的数据包
+                        buffer.Remove(0, newlineIndex + 1); // 从缓冲区中移除这个数据包
+                        bufferStr = buffer.ToString(); // 更新bufferStr
+
+                        if (!string.IsNullOrWhiteSpace(packet)) // 如果packet不为空
+                        {
+                            string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
+                            DataItem item = new DataItem { Timesr = Timesr, Rxstr = packet };
+
+                            // 将操作排队到UI线程
+                            tempDataList.AddLast(item);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error reading from serial port: " + ex.Message);
+            }
+        }
+        else // 以数值形式读取
+        {
+            int length = CommonRes._serialPort.BytesToRead; // 读取串口接收缓冲区字节数
+
+            byte[] Data = new byte[length]; // 定义相同字节的数组
+
+            CommonRes._serialPort.Read(Data, 0, length); // 串口读取缓冲区数据到数组中
+
+            int byteCount = 0; // 添加一个计数器来跟踪已处理的字节数
+
+            for (int i = 0; i < length; i++)
+            {
+                buffer.Append(Data[i].ToString("X2") + " ");
+                byteCount++; // 增加字节计数器
+
+                if (byteCount == 16) // 每16个字节作为一个元素
+                {
+                    string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
+                    DataItem item = new DataItem { Timesr = Timesr, Rxstr = buffer.ToString() };
+
+                    // 将操作排队到UI线程
+                    tempDataList.AddLast(item);
+
+                    buffer.Clear(); // 清空buffer，开始新的一行
+                    byteCount = 0; // 重置字节计数器
+                }
+            }
+
+            // 如果buffer中还有剩余的数据，也添加到ListView中
+            if (buffer.Length > 0 && (DateTime.Now - lastReceivedTime).TotalMilliseconds > 50)
+            {
+                string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
+                DataItem item = new DataItem { Timesr = Timesr, Rxstr = buffer.ToString() };
+
+                // 将操作排队到UI线程
+                tempDataList.AddLast(item);
+
+                buffer.Clear(); // 清空buffer
+            }
+
+            lastReceivedTime = DateTime.Now; // 更新最后接收数据的时间
+        }
+
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            UpdateItemsRepeater(tempDataList);
+        });
+        // ... 其他代码
+    });
+}
+
+private void UpdateItemsRepeater(LinkedList<DataItem> items)
+{
+    foreach (var item in items)
+    {
+        dataList.AddLast(item);新的
         */
+        private DateTime lastReceivedTime = DateTime.Now; // 添加这一行来声明lastReceivedTime变量
         StringBuilder buffer = new StringBuilder();
 
         private async void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -1062,7 +1166,7 @@ namespace FSGaryityTool_Win11
             // 在另一个线程中处理串口数据
             await Task.Run(() =>
             {
-                // ... 其他代码
+                string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
 
                 if (rx == 0) // 如果以字符串形式读取
                 {
@@ -1082,7 +1186,6 @@ namespace FSGaryityTool_Win11
 
                                 if (!string.IsNullOrWhiteSpace(packet)) // 如果packet不为空
                                 {
-                                    string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
                                     DataItem item = new DataItem { Timesr = Timesr, Rxstr = packet };
 
                                     // 将操作排队到UI线程
@@ -1104,57 +1207,30 @@ namespace FSGaryityTool_Win11
 
                     CommonRes._serialPort.Read(Data, 0, length); // 串口读取缓冲区数据到数组中
 
-                    for (int i = 0; i < length; i++)
+                    DataItem itemh = new DataItem { Timesr = Timesr, Rxstr = str };
+                    tempDataList.AddLast(itemh);
+
+                    for (int i = 0; i < length; i += 16)
                     {
-                        if (Data[i] == 0x0D && i < length - 1 && Data[i + 1] == 0x0A) // 如果遇到0D 0A
+                        string str = "";
+                        for (int j = i; j < i + 16 && j < length; j++)
                         {
-                            buffer.Append("0D 0A ");
-
-                            string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
-                            DataItem item = new DataItem { Timesr = Timesr, Rxstr = buffer.ToString() };
-
-                            // 将操作排队到UI线程
-                            tempDataList.AddLast(item);
-
-                            buffer.Clear(); // 清空buffer，开始新的一行
-                            i++; // 跳过0A
-                        }
-                        else
-                        {
-                            buffer.Append(Data[i].ToString("X2") + " ");
+                            str += Data[j].ToString("X2") + " ";
                         }
 
-                        // 每十六个字节作为一个元素
-                        if (buffer.Length / 3 % 16 == 15) // 每个字节占3个字符（包括空格）
-                        {
-                            string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
-                            DataItem item = new DataItem { Timesr = Timesr, Rxstr = buffer.ToString() };
+                        string Timesrh = "|                                     |"; //显示时间
+                        DataItem item = new DataItem { Timesr = Timesrh, Rxstr = str };
 
-                            // 将操作排队到UI线程
-                            tempDataList.AddLast(item);
-
-                            buffer.Clear(); // 清空buffer，开始新的一行
-                        }
-                    }
-
-                    // 如果buffer中还有剩余的数据，也添加到ListView中
-                    if (buffer.Length > 0)
-                    {
-                        string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
-                        DataItem item = new DataItem { Timesr = Timesr, Rxstr = buffer.ToString() };
-
-                        // 将操作排队到UI线程
                         tempDataList.AddLast(item);
-
-                        buffer.Clear(); // 清空buffer
                     }
+
+                    lastReceivedTime = DateTime.Now; // 更新最后接收数据的时间
                 }
 
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     UpdateItemsRepeater(tempDataList);
                 });
-                // ... 其他代码
             });
         }
 
@@ -1180,9 +1256,6 @@ namespace FSGaryityTool_Win11
                 RXListView.ScrollIntoView(dataList.Last.Value); // 滚动到最后一个元素
             }
         }
-
-
-
 
         /*
         private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -1297,7 +1370,7 @@ namespace FSGaryityTool_Win11
             COMListview.SelectedItem = ComIs;
             if(Con == 1)
             {
-                if(ConCom != ComIs)
+                if(conCom != ComIs)
                     COMRstInfoBar.IsOpen = true;
                 else
                     COMRstInfoBar.IsOpen = false;
@@ -1431,9 +1504,6 @@ namespace FSGaryityTool_Win11
                 CommonRes._serialPort.Write("\r\n");
             }
         }
-
-
-
 
         private void CLEARButton_Click(object sender, RoutedEventArgs e)
         {
@@ -1865,7 +1935,7 @@ namespace FSGaryityTool_Win11
         {
             if (autosercom == 0)
             {
-                timerSerialPort = new Timer(TimerSerialPortTick, null, 0, 1500);
+                timerSerialPort = new System.Threading.Timer(TimerSerialPortTick, null, 0, 1500);
                 AutoSerchComProgressRing.IsActive = true;
                 autosercom = 1;
             }

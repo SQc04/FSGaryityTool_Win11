@@ -61,46 +61,42 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.29";
+        public static string FSSoftVersion = "0.2.30";
         public static int FsPage = 0;
         public static TomlTable settingstomlSp;
 
+        private Dictionary<string, Type> pageTypeMap = new Dictionary<string, Type>
+        {
+            {"MainPage1", typeof(MainPage1)},
+            {"Page2", typeof(Page2)},
+            {"Page3", typeof(Page3)},
+            {"Page4", typeof(Page4)},
+            {"Page5", typeof(Page5)},
+            {"FSPage", typeof(FSPage)},
+        };
+
+        private Dictionary<int, Action> backRequestedMap = new Dictionary<int, Action>
+        {
+            {0, () => Debug.WriteLine("SerialPortPage")},
+            {4, () => { if (FSPage.fSPage.MyWebView2.CanGoBack) FSPage.fSPage.MyWebView2.GoBack(); }},
+        };
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             var selectedItem = (NavigationViewItem)args.SelectedItem;
-            if ((string)selectedItem.Tag == "MainPage1")
+            string tag = (string)selectedItem.Tag;
+
+            if (pageTypeMap.ContainsKey(tag))
             {
-                FSnvf.Navigate(typeof(MainPage1));
-                FsPage = 0;
-            }
-            else if ((string)selectedItem.Tag == "Page2")
-            {
-                FSnvf.Navigate(typeof(Page2));
-                FsPage = 1;
-            }
-            else if ((string)selectedItem.Tag == "Page3")
-            {
-                FSnvf.Navigate(typeof(Page3));
-                FsPage = 2;
-            }
-            else if ((string)selectedItem.Tag == "Page4")
-            {
-                FSnvf.Navigate(typeof(Page4));
-                FsPage = 3;
-            }
-            else if ((string)selectedItem.Tag == "FSPage")
-            {
-                FSnvf.Navigate(typeof(FSPage));
-                FsPage = 4;                             //Footer
+                FSnvf.Navigate(pageTypeMap[tag]);
+                FsPage = Array.IndexOf(pageTypeMap.Keys.ToArray(), tag);
             }
 
             if (args.IsSettingsSelected)
             {
                 FSnvf.Navigate(typeof(MainSettingsPage));
-                FsPage = 5;
+                FsPage = 6;
             }
-
         }
 
         private AppWindow m_AppWindow;
@@ -659,22 +655,12 @@ namespace FSGaryityTool_Win11
             WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
             return AppWindow.GetFromWindowId(wndId);
         }
-
-        private void NavigationView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)     //返回按钮
+        private void NavigationView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
         {
-
-            if (FsPage == 0) Debug.WriteLine("SerialPortPage");                  //SerialPortPage
-            //else if (FsPage == 1) ;           //
-            //else if (FsPage == 2) ;           //
-            //else if (FsPage == 3) ;           //
-            else if (FsPage == 4)               //FSPage
+            if (backRequestedMap.ContainsKey(FsPage))
             {
-                if (FSPage.fSPage.MyWebView2.CanGoBack == true)
-                {
-                    FSPage.fSPage.MyWebView2.GoBack();
-                }
+                backRequestedMap[FsPage]();
             }
-            //else if (FsPage == 5) ;           //SettingsPage
         }
 
         private void NavigationView_DisplayModeChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewDisplayModeChangedEventArgs args)
