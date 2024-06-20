@@ -16,6 +16,9 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using ClevoEcControlinfo;
 using Windows.UI.Core;
+using System.Threading;
+using System.ComponentModel;
+using Microsoft.UI.Xaml.Media.Animation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,38 +31,57 @@ namespace FSGaryityTool_Win11
     public sealed partial class Page5 : Page
     {
         public System.Threading.Timer tempTimer;
+        private System.Threading.Timer cpuDelayTimer;
+        private System.Threading.Timer gpuDelayTimer;
+
         public string CpuTempDisplay => $"{CpuTemp.Value}℃";
         public string GpuTempDisplay => $"{GpuTemp.Value}℃";
 
-        public static int oldCpuDutySet = 500, oldGpuDutySet = 500;
+        public static int oldCpuDutySet = 500, oldGpuDutySet = 500, cpuDutySet = 166, gpuDutySet = 166;
 
         public Page5()
         {
             this.InitializeComponent();
-            Clevoinfo_Click(null, null);
-            
-            bool info = ClevoEcControl.InitIo();
-            int fan_id = 1;
-            ClevoEcControl.ECData data = ClevoEcControl.GetTempFanDuty(fan_id);
-            CPUFanRadialGauge.Value = (int)Math.Round((data.FanDuty / 255.0) * 100);
-            fan_id = 2;
-            data = ClevoEcControl.GetTempFanDuty(fan_id);
-            GPUFanRadialGauge.Value = (int)Math.Round((data.FanDuty / 255.0) * 100);
-            tempTimer = new System.Threading.Timer(TempTimerTick, null, 0, 1000);
-            CpuTempText.Text = "50℃";
-            GpuTempText.Text = "50℃";
 
+            Clevoinfo_Click(null, null);
+
+            bool isConnect = ClevoEcControl.IsServerStarted();
+            if (isConnect)
+            {
+                bool info = ClevoEcControl.InitIo();
+                int fan_id = 1;
+                ClevoEcControl.ECData data = ClevoEcControl.GetTempFanDuty(fan_id);
+                CPUFanRadialGauge.Value = (int)Math.Round((data.FanDuty / 255.0) * 100);
+                fan_id = 2;
+                data = ClevoEcControl.GetTempFanDuty(fan_id);
+                GPUFanRadialGauge.Value = (int)Math.Round((data.FanDuty / 255.0) * 100);
+                CpuTempText.Text = "50℃";
+                GpuTempText.Text = "50℃";
+            }
+            else
+            {
+                CPUFanRadialGauge.Value = 60;
+                GPUFanRadialGauge.Value = 60;
+                CpuTempText.Text = "N/A℃";
+                GpuTempText.Text = "N/A℃";
+            }
+            CPUFanRpmRadialGauge.Value = 500;
+            GPUFanRpmRadialGauge.Value = 500;
+
+            tempTimer = new System.Threading.Timer(TempTimerTick, null, 0, 1000);
+            CPUFanRadialGauge.ValueChanged += CPUFanRadialGauge_ValueChanged;
+            GPUFanRadialGauge.ValueChanged += GPUFanRadialGauge_ValueChanged;
+            // 初始化定时器，但不启动
+            cpuDelayTimer = new System.Threading.Timer(CpuOnTimer, null, Timeout.Infinite, Timeout.Infinite);
+            gpuDelayTimer = new System.Threading.Timer(GpuOnTimer, null, Timeout.Infinite, Timeout.Infinite);
         }
         public void TempTimerTick(Object stateInfo)
         {
-            
             bool isConnect = ClevoEcControl.IsServerStarted();
             //Debug.WriteLine($"isConnect: " + isConnect.ToString());
 
             if (isConnect)
             {
-                int cpuDutySet = 166, gpuDutySet = 166;
-
                 int val = ClevoEcControl.GetCpuFanRpm();
                 int cpuFanRpm = 500;
                 if (val == 0)
@@ -86,6 +108,7 @@ namespace FSGaryityTool_Win11
                 {
                     cpuDutySet = (int)Math.Round((CPUFanRadialGauge.Value / 100.0) * 255);
                     gpuDutySet = (int)Math.Round((GPUFanRadialGauge.Value / 100.0) * 255);
+
                     CPUFanRpmRadialGauge.Value = cpuFanRpm;
                     GPUFanRpmRadialGauge.Value = gpuFanRpm;
                 });
@@ -118,7 +141,15 @@ namespace FSGaryityTool_Win11
                 oldCpuDutySet = cpuDutySet;
                 oldGpuDutySet = gpuDutySet;
             }
-            
+            else
+            {
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    CpuTempText.Text = "N/A℃";
+                    GpuTempText.Text = "N/A℃";
+                });
+            }
+
         }
         private void ClevoGetFaninfo_Click(object sender, RoutedEventArgs e)
         {
@@ -168,6 +199,48 @@ namespace FSGaryityTool_Win11
             else
             {
                 ClevoGetFaninfo.IsEnabled= false;
+            }
+        }
+        private void CPUFanRadialGauge_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            // 检查是否是Value属性发生了变化
+            cpuDelayTimer.Change(200, Timeout.Infinite);
+        }
+        private void GPUFanRadialGauge_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            // 检查是否是Value属性发生了变化
+            gpuDelayTimer.Change(200, Timeout.Infinite);
+        }
+        private void CpuOnTimer(object state)
+        {
+            int cpuFanId = 1;
+            // 从RadialGauge获取数据
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                cpuDutySet = (int)Math.Round((CPUFanRadialGauge.Value / 100.0) * 255);
+            });
+            bool isConnect = ClevoEcControl.IsServerStarted();
+            if (isConnect)
+            {
+                
+                ClevoEcControl.SetFanDuty(cpuFanId, cpuDutySet);
+                oldCpuDutySet = cpuDutySet;
+            }
+        }
+        private void GpuOnTimer(object state)
+        {
+            int gpuFanId = 2;
+            // 从RadialGauge获取数据
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                gpuDutySet = (int)Math.Round((GPUFanRadialGauge.Value / 100.0) * 255);
+            });
+            bool isConnect = ClevoEcControl.IsServerStarted();
+            if (isConnect)
+            {
+                
+                ClevoEcControl.SetFanDuty(gpuFanId, gpuDutySet);
+                oldGpuDutySet = gpuDutySet;
             }
         }
     }
