@@ -68,6 +68,7 @@
     <None Remove="MainSettingsPage.xaml" />
     <None Remove="McuToolpage\ESP8266Tools.xaml" />
     <None Remove="McuToolpage\NoneTools.xaml" />
+    <None Remove="McuToolpage\RP2040MPYTools.xaml" />
     <None Remove="Page1.xaml" />
     <None Remove="Page2.xaml" />
     <None Remove="Page3.xaml" />
@@ -198,6 +199,9 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <Page Update="McuToolpage\RP2040MPYTools.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <None Update="Reliance\ClevoEcInfo.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -220,6 +224,9 @@
     <Page Update="Page4.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="PcControlToolspage\" />
   </ItemGroup>
 
   <!-- 

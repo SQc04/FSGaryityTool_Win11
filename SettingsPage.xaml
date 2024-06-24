@@ -82,17 +82,18 @@
                             </StackPanel>
                         </Grid>
                     </toolkit:SettingsCard>
-
-                    <toolkit:SettingsCard x:Name="SoftLanguage" HeaderIcon="{ui:FontIcon Glyph=&#xF2B7;}" Header="Language" Description="Set the background of FSGravityTool."
+                    
+                    <StackPanel Height="0">
+                        <toolkit:SettingsCard x:Name="SoftLanguage" HeaderIcon="{ui:FontIcon Glyph=&#xF2B7;}" Header="Language" Description="Set the background of FSGravityTool."
                                           HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
 
-                        <Grid>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <ComboBox x:Name="SoftLanguageCombobox" SelectionChanged="SoftLanguageCombobox_SelectionChanged" Width="150" Margin="0,0,27,0"></ComboBox>
-                            </StackPanel>
-                        </Grid>
-                    </toolkit:SettingsCard>
-
+                            <Grid>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <ComboBox x:Name="SoftLanguageCombobox" SelectionChanged="SoftLanguageCombobox_SelectionChanged" Width="150" Margin="0,0,27,0"></ComboBox>
+                                </StackPanel>
+                            </Grid>
+                        </toolkit:SettingsCard>
+                    </StackPanel>
                     <toolkit:SettingsCard x:Name="OpenToml" HeaderIcon="{ui:FontIcon Glyph=&#xE835;}" Header="Open TOML file" Description="Open the settings file."
                                           Click="OpenToml_click" IsClickEnabled="True" ActionIcon="{ui:FontIcon Glyph=&#xE8A7;}"
                                           HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
@@ -190,9 +191,9 @@
                     <TextBlock Text="" Margin="0,12,0,0"/>
                     <TextBlock x:Name="DowFlashl" Text="Download Flash Settings" Margin="0"/>
 
-                    <toolkit:SettingsExpander Header="ABOUT " Margin="0,2,0,3" IsExpanded="True" >
+                    <toolkit:SettingsExpander x:Name="DFSettingsl" Header="Download Flash Settings" Margin="0,2,0,3" IsExpanded="True" >
                         <toolkit:SettingsExpander.HeaderIcon>
-                            <FontIcon Glyph="&#xF210;" FontSize="12" />
+                            <FontIcon Glyph="&#xec59;" FontSize="12" />
                         </toolkit:SettingsExpander.HeaderIcon>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard >
@@ -225,21 +226,21 @@
                 </StackPanel>
 
                 <StackPanel>
-                    <toolkit:SettingsCard Header="Open TOML file" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" >
+                    <toolkit:SettingsCard Header="Test 0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
                         <toolkit:SettingsCard.HeaderIcon>
-                            <FontIcon Glyph="&#xE8E5;"/>
+                            <FontIcon Glyph="&#xF210;"/>
                         </toolkit:SettingsCard.HeaderIcon>
                         
                         
 
                         <Grid>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button Content="Open Settings TOML" Width="150" Margin="0,0,27,0"></Button>
+                                <Button Content="Test 0" Width="150" Margin="0,0,27,0"></Button>
                             </StackPanel>
                         </Grid>
                     </toolkit:SettingsCard>
-                    
-                    <toolkit:SettingsCard Header="Open TOML file" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" >
+
+                    <toolkit:SettingsCard Header="Test 1" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
                         <toolkit:SettingsCard.HeaderIcon>
                             <FontIcon Glyph="&#xE8E5;"/>
                         </toolkit:SettingsCard.HeaderIcon>
@@ -247,7 +248,7 @@
 
                         <Grid>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button Content="Open Settings TOML" Width="150" Margin="0,0,27,0"></Button>
+                                <Button Content="Test 1" Width="150" Margin="0,0,27,0"></Button>
                             </StackPanel>
                         </Grid>
                     </toolkit:SettingsCard>

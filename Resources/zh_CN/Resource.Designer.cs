@@ -286,6 +286,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         }
         
         /// <summary>
+        ///   查找类似 用于RP2040的 MicroPython工具 的本地化字符串。
+        /// </summary>
+        internal static string mcuToolRP2040MPY {
+            get {
+                return ResourceManager.GetString("mcuToolRP2040MPY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 鼠标 的本地化字符串。
         /// </summary>
         internal static string mouse {

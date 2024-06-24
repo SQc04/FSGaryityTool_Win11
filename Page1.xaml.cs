@@ -344,7 +344,8 @@ namespace FSGaryityTool_Win11
                 List<MCUTool> mcuTools = new List<MCUTool>()
                 {
                     new MCUTool() { Name = "None", Description = LanguageText("mcuToolNone") },
-                    new MCUTool() { Name = "ESP8266", Description = LanguageText("mcuToolEsp8266") }
+                    new MCUTool() { Name = "ESP8266", Description = LanguageText("mcuToolEsp8266") },
+                    new MCUTool() { Name = "RP2040        M", Description = LanguageText("mcuToolRP2040MPY") }
                 };
 
                 ChipToolKitComboBox.ItemsSource = mcuTools;
@@ -662,48 +663,53 @@ namespace FSGaryityTool_Win11
             var insertedPorts = nowPortSet.Except(lastPortSet).ToArray(); // 找出新插入的串口
             var removedPorts = lastPortSet.Except(nowPortSet).ToArray(); // 找出被拔出的串口
 
-            DispatcherQueue.TryEnqueue(() => // 在UI线程中执行以下操作
+            if (insertedPorts.Length > 0 || removedPorts.Length > 0) // 如果有新插入的串口或者有串口被拔出
             {
-                string selectedPort = (string)COMComboBox.SelectedItem; // 获取当前选中的串口
-
-                foreach (var port in insertedPorts) // 遍历所有新插入的串口
+                DispatcherQueue.TryEnqueue(() => // 在UI线程中执行以下操作
                 {
-                    SerialPortInfo info = SerialPortInfo.GetPort(port); // 获取串口的信息
-                    RXTextBox.Text += $"{port}: {info.Description} {LanguageText("spPlogin")}\r\n"; // 更新文本框的内容
-                }
+                    string selectedPort = (string)COMComboBox.SelectedItem; // 获取当前选中的串口
 
-                foreach (var port in removedPorts) // 遍历所有被拔出的串口
-                {
-                    RXTextBox.Text += $"{port}{LanguageText("spPullout")}\r\n"; // 更新文本框的内容
-                    if (Con == 1 && port == selectedPort) // 如果当前连接的串口被拔出，则断开连接
+                    foreach (var port in insertedPorts) // 遍历所有新插入的串口
                     {
-                        CONTButton_Click(null, null);
+                        SerialPortInfo info = SerialPortInfo.GetPort(port); // 获取串口的信息
+                        RXTextBox.Text += $"{port}{LanguageText("spPlogin")}\r\n"; // 更新文本框的内容
+                        
                     }
-                }
 
-                COMComboBox.Items.Clear(); // 清空组合框的内容
-                COMListview.Items.Clear(); // 清空列表视图的内容
-
-                foreach (var port in NowPort) // 遍历当前所有可用的串口
-                {
-                    COMComboBox.Items.Add(port); // 将串口名称添加到组合框中
-                    COMListview.Items.Add(port); // 将串口名称添加到列表视图中
-                }
-
-                COMComboBox.SelectedItem = selectedPort; // 将之前选中的串口重新选中
-                COMListview.SelectedItem = selectedPort; // 将之前选中的串口重新选中
-
-                if (Con == 0 && COMComboBox.SelectedItem == null && insertedPorts.Length > 0) // 如果没有选中的串口，并且有新插入的串口
-                {
-                    COMComboBox.SelectedItem = insertedPorts[0]; // 选中新插入的串口
-                    COMListview.SelectedItem = insertedPorts[0]; // 选中新插入的串口
-                    if (AutoConnectButton.IsChecked == true) // 如果设置了自动连接，则尝试连接新插入的串口
+                    foreach (var port in removedPorts) // 遍历所有被拔出的串口
                     {
-                        CONTButton_Click(null, null);
+                        RXTextBox.Text += $"{port}{LanguageText("spPullout")}\r\n"; // 更新文本框的内容
+                        if (Con == 1 && port == selectedPort) // 如果当前连接的串口被拔出，则断开连接
+                        {
+                            CONTButton_Click(null, null);
+                        }
                     }
-                }
-            });
+
+                    COMComboBox.Items.Clear(); // 清空组合框的内容
+                    COMListview.Items.Clear(); // 清空列表视图的内容
+
+                    foreach (var port in NowPort) // 遍历当前所有可用的串口
+                    {
+                        COMComboBox.Items.Add(port); // 将串口名称添加到组合框中
+                        COMListview.Items.Add(port); // 将串口名称添加到列表视图中
+                    }
+
+                    COMComboBox.SelectedItem = selectedPort; // 将之前选中的串口重新选中
+                    COMListview.SelectedItem = selectedPort; // 将之前选中的串口重新选中
+
+                    if (Con == 0 && COMComboBox.SelectedItem == null && insertedPorts.Length > 0) // 如果没有选中的串口，并且有新插入的串口
+                    {
+                        COMComboBox.SelectedItem = insertedPorts[0]; // 选中新插入的串口
+                        COMListview.SelectedItem = insertedPorts[0]; // 选中新插入的串口
+                        if (AutoConnectButton.IsChecked == true) // 如果设置了自动连接，则尝试连接新插入的串口
+                        {
+                            CONTButton_Click(null, null);
+                        }
+                    }
+                });
+            }
         }
+
 
 
         /*
@@ -979,7 +985,7 @@ namespace FSGaryityTool_Win11
 
                     RXTextBox.Text = RXTextBox.Text + LanguageText("serialPortl") + " " + COMComboBox.SelectedItem + LanguageText("spConnect") + "\r\n";
 
-                    CommonRes._serialPort.Open();                                                                               //打开串口
+                    CommonRes._serialPort.Open(); // 打开串口
 
                     timer = new System.Threading.Timer(TimerTick, null, 0, 250); // 每秒触发8次
 
@@ -2162,6 +2168,9 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
                         break;
                     case "ESP8266":
                         McuToolsFrame.Navigate(typeof(ESP8266Tools));
+                        break;
+                    case "RP2040        M":
+                        McuToolsFrame.Navigate(typeof(RP2040MPYTools));
                         break;
                     // 在这里添加更多的case语句来处理其他工具
                     default:

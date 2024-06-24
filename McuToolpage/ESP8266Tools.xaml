@@ -13,7 +13,7 @@
     <Grid>
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
-                <Button x:Name="RSTButton" Click="RSTButton_Click" Width="114" Margin="6">RST</Button>
+                <Button x:Name="RSTButton" Click="RSTButton_Click" Width="114" Margin="6">Hardware RST</Button>
             </StackPanel>
         </StackPanel>
     </Grid>

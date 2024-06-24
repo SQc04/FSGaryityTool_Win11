@@ -107,6 +107,7 @@ namespace FSGaryityTool_Win11
             SpSwttingsl.Text = Page1.LanguageText("spSettings");
             SPTSettingsl.Header = Page1.LanguageText("spSettings");
             DowFlashl.Text = Page1.LanguageText("downloadFlashSettings");
+            DFSettingsl.Header = Page1.LanguageText("downloadFlashSettings");
 
             Aboutl.Text = Page1.LanguageText("about");
             AbputTl.Text = Page1.LanguageText("about");

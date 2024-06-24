@@ -217,6 +217,10 @@
     <value>No tools was selected</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="mcuToolRP2040MPY" xml:space="preserve">
+    <value>Tools for MicroPython in RP2040</value>
+    <comment>Serial Port Page text</comment>
+  </data>
   <data name="mouse" xml:space="preserve">
     <value>Mouse</value>
     <comment>Main Page Text</comment>

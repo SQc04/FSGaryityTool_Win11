@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="FSGaryityTool_Win11.McuToolpage.NoneTools"
+    x:Class="FSGaryityTool_Win11.McuToolpage.RP2040MPYTools"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:FSGaryityTool_Win11.McuToolpage"
@@ -11,12 +11,10 @@
     NavigationCacheMode="Enabled">
 
     <Grid>
-        <StackPanel Orientation="Vertical" Margin="0,0,0,6">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock>No tools was selected</TextBlock>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock>Please select tools</TextBlock>
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="RSTButton" Click="RSTButton_Click" Width="114" Margin="6">Hardware RST</Button>
+                <Button x:Name="SoftRSTButton" Click="SoftRSTButton_Click" Width="102" Margin="6">Soft RST</Button>
             </StackPanel>
         </StackPanel>
     </Grid>

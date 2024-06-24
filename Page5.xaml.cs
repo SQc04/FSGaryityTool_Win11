@@ -65,8 +65,8 @@ namespace FSGaryityTool_Win11
                 CpuTempText.Text = "N/A¡æ";
                 GpuTempText.Text = "N/A¡æ";
             }
-            CPUFanRpmRadialGauge.Value = 500;
-            GPUFanRpmRadialGauge.Value = 500;
+            CPUFanRpmRadialGauge.Value = 0;
+            GPUFanRpmRadialGauge.Value = 0;
 
             tempTimer = new System.Threading.Timer(TempTimerTick, null, 0, 1000);
             CPUFanRadialGauge.ValueChanged += CPUFanRadialGauge_ValueChanged;
@@ -83,7 +83,7 @@ namespace FSGaryityTool_Win11
             if (isConnect)
             {
                 int val = ClevoEcControl.GetCpuFanRpm();
-                int cpuFanRpm = 500;
+                int cpuFanRpm = 0;
                 if (val == 0)
                 {
                     cpuFanRpm = 0;
@@ -94,7 +94,7 @@ namespace FSGaryityTool_Win11
                 }
 
                 val = ClevoEcControl.GetGpuFanRpm();
-                int gpuFanRpm = 500;
+                int gpuFanRpm = 0;
                 if (val == 0)
                 {
                     gpuFanRpm = 0;

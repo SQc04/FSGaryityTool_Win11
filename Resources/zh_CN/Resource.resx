@@ -217,6 +217,10 @@
     <value>没有选择任何工具</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="mcuToolRP2040MPY" xml:space="preserve">
+    <value>用于RP2040的 MicroPython工具</value>
+    <comment>Serial Port Page text</comment>
+  </data>
   <data name="mouse" xml:space="preserve">
     <value>鼠标</value>
     <comment>Main Page Text</comment>
