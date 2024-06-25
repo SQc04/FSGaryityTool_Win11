@@ -11,6 +11,7 @@
         <DesktopAcrylicBackdrop />
     </Window.SystemBackdrop> -->
     
+
     <Grid x:Name="AppTitleBar">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="LeftPaddingColumn" Width="0"/>
@@ -64,6 +65,14 @@
                         CompactModeThresholdWidth="800"
                         ExpandedModeThresholdWidth="1100"
                         Margin="0,0,0,0">
+            <NavigationView.Resources>
+                <!-- This top margin is the height of the custom titleBar -->
+                <Thickness x:Key="NavigationViewContentMargin">0,48,0,0</Thickness>
+                <Thickness x:Key="NavigationViewMinimalContentMargin">0,48,0,0</Thickness>
+                <Thickness x:Key="NavigationViewContentGridBorderThickness">1,1,0,0</Thickness>
+                <!-- This is the rounded corner on the Top left of the L Pattern -->
+                <CornerRadius x:Key="NavigationViewContentGridCornerRadius">8,0,0,0</CornerRadius>
+            </NavigationView.Resources>
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Name="SerialPortI" Icon="Sort" Content="Serial Port" Tag="MainPage1" />
                 <NavigationViewItem x:Name="DownFlashI" Content="Download FLASH" Tag="Page2">
@@ -96,7 +105,7 @@
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
 
-            <Frame x:Name="FSnvf" Margin="0,48,0,0" />
+            <Frame x:Name="FSnvf" Margin="0,0,0,0" />
         </NavigationView>
 
     </Grid>

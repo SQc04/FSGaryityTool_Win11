@@ -61,7 +61,7 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.32";
+        public static string FSSoftVersion = "0.2.33";
         public static int FsPage = 0;
         public static TomlTable settingstomlSp;
 
@@ -184,6 +184,8 @@ namespace FSGaryityTool_Win11
                 SetWindowSubclass(hWnd, WndProc, IntPtr.Zero, IntPtr.Zero);
             }
             //*/
+
+            
 
             // 将窗口的标题栏设置为自定义标题栏
             this.ExtendsContentIntoTitleBar = true;  // enable custom titlebar
@@ -583,6 +585,7 @@ namespace FSGaryityTool_Win11
 
             if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
             {
+                bool useAcrylicThin = true;
                 // Hooking up the policy object.
                 m_configurationSource = new Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration();
                 this.Activated += Window_Activated;
@@ -595,7 +598,7 @@ namespace FSGaryityTool_Win11
 
                 m_acrylicController = new Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController();
 
-                m_acrylicController.Kind = Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Thin;
+                m_acrylicController.Kind = useAcrylicThin ? Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Thin : Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Base;
 
                 // Enable the system backdrop.
                 // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
@@ -606,45 +609,63 @@ namespace FSGaryityTool_Win11
 
         }
 
+        // 定义一个DesktopAcrylicController对象，用于控制窗口的背景
         Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController m_acrylicController;
+        // 定义一个SystemBackdropConfiguration对象，用于配置窗口的背景
         Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration m_configurationSource;
 
+        // 当窗口被激活时，此方法会被调用
         private void Window_Activated(object sender, WindowActivatedEventArgs args)
         {
+            // 根据窗口的激活状态来更新m_configurationSource.IsInputActive的值
             m_configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
         }
 
+        // 当窗口被关闭时，此方法会被调用
         private void Window_Closed(object sender, WindowEventArgs args)
         {
-            // Make sure any Mica/Acrylic controller is disposed so it doesn't try to
-            // use this closed window.
-            
+            // 释放m_acrylicController的资源，并将其设置为null
             if (m_acrylicController != null)
             {
                 m_acrylicController.Dispose();
                 m_acrylicController = null;
             }
+            // 移除窗口激活事件的处理方法
             this.Activated -= Window_Activated;
+            // 将配置对象设置为null
             m_configurationSource = null;
         }
 
+        // 当窗口的主题改变时，此方法会被调用
         private void Window_ThemeChanged(FrameworkElement sender, object args)
         {
+            // 如果配置对象不为null，则根据当前的主题来更新m_configurationSource.Theme的值
             if (m_configurationSource != null)
             {
                 SetConfigurationSourceTheme();
             }
         }
 
+        // 根据当前的主题来设置m_configurationSource.Theme的值
         private void SetConfigurationSourceTheme()
         {
             switch (((FrameworkElement)this.Content).ActualTheme)
             {
-                case ElementTheme.Dark: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark; break;
-                case ElementTheme.Light: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light; break;
-                case ElementTheme.Default: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Default; break;
+                case ElementTheme.Dark:
+                    // 如果主题是深色，SystemBackdropTheme会被设置为Dark
+                    m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark;
+                    break;
+                case ElementTheme.Light:
+                    // 如果主题是浅色，SystemBackdropTheme会被设置为Light
+                    m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light;
+                    break;
+                case ElementTheme.Default:
+                    // 如果主题是默认的，SystemBackdropTheme会被设置为Default
+                    m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Default;
+                    break;
             }
         }
+
         // Call your extend acrylic code in the OnLaunched event, after
         // calling Window.Current.Activate.
 

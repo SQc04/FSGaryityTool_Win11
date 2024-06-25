@@ -8,8 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
-    NavigationCacheMode="Enabled"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    NavigationCacheMode="Enabled">
 
     <Grid>
         <StackPanel VerticalAlignment="Center" Orientation="Vertical">

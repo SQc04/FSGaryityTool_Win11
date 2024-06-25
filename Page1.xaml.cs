@@ -1617,7 +1617,6 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
             }
         }
 
-
         private void RXHEXButton_Click(object sender, RoutedEventArgs e)    //接收以十六进制数显示
         {
             if (rx == 0)

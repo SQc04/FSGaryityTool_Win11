@@ -255,10 +255,14 @@
                 <StackPanel Orientation="Horizontal">
 
                 </StackPanel>
+                
+                <!--弃用功能-->
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="0">
                     <Button x:Name="RXDataButton" Click="RXDataButton_Click" Width="120" Margin="6">RX</Button>
                     <ToggleButton x:Name="ShowTimeButton" Click="ShowTimeButton_Click" Width="108" Margin="6">Showtimestamp</ToggleButton>
                 </StackPanel>
+                <!--弃用功能-->
+                
             </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Column="1" Grid.Row="0" VerticalAlignment="Bottom" Orientation="Vertical" Margin="6,6,6,6">
