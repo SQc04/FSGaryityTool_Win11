@@ -141,6 +141,10 @@
     <value>Set the background of FSGravityTool.</value>
     <comment>Settings Page text</comment>
   </data>
+  <data name="base" xml:space="preserve">
+    <value>Base</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="baudRatel" xml:space="preserve">
     <value>Baudrate</value>
     <comment>Serial Port Page text</comment>
@@ -296,6 +300,10 @@
   <data name="stopBits" xml:space="preserve">
     <value>Stop bits</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="thin" xml:space="preserve">
+    <value>Thin</value>
+    <comment>Settings Page text</comment>
   </data>
   <data name="txHexErr" xml:space="preserve">
     <value>ERROR\r\nThe input is not a hexadecimal number!</value>

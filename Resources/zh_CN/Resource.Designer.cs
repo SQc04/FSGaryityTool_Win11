@@ -61,6 +61,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         }
         
         /// <summary>
+        ///   查找类似 基础亚克力 的本地化字符串。
+        /// </summary>
+        internal static string _base {
+            get {
+                return ResourceManager.GetString("base", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 关于 的本地化字符串。
         /// </summary>
         internal static string about {
@@ -462,6 +471,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         internal static string stopBits {
             get {
                 return ResourceManager.GetString("stopBits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 薄亚克力 的本地化字符串。
+        /// </summary>
+        internal static string thin {
+            get {
+                return ResourceManager.GetString("thin", resourceCulture);
             }
         }
         

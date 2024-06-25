@@ -141,6 +141,10 @@
     <value>设置FSGravityTool的背景</value>
     <comment>Settings Page text</comment>
   </data>
+  <data name="base" xml:space="preserve">
+    <value>基础亚克力</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="baudRatel" xml:space="preserve">
     <value>波特率</value>
     <comment>Serial Port Page text</comment>
@@ -296,6 +300,10 @@
   <data name="stopBits" xml:space="preserve">
     <value>停止位</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="thin" xml:space="preserve">
+    <value>薄亚克力</value>
+    <comment>Settings Page text</comment>
   </data>
   <data name="txHexErr" xml:space="preserve">
     <value>输入内容不是十六进制数!</value>

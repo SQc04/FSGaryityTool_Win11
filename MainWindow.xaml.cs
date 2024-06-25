@@ -61,8 +61,9 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.33";
+        public static string FSSoftVersion = "0.2.34";
         public static int FsPage = 0;
+        public static bool defWindowBackGround = true;
         public static TomlTable settingstomlSp;
 
         private Dictionary<string, Type> pageTypeMap = new Dictionary<string, Type>
@@ -102,6 +103,7 @@ namespace FSGaryityTool_Win11
         private AppWindow m_AppWindow;
 
         public NavigationFailedEventHandler OnNavigationFailed { get; private set; }
+        public static MainWindow Instance { get; private set; }
 
         ///*
         [DllImport("user32.dll")]
@@ -171,6 +173,7 @@ namespace FSGaryityTool_Win11
         public MainWindow()
         {
             this.InitializeComponent();
+            Instance = this;
 
             bool isFirstActivation = true;
             UIElement mainContent = this.Content;
@@ -546,8 +549,15 @@ namespace FSGaryityTool_Win11
                 FSnv.SelectedItem = FSnv.MenuItems[NvPage];             //设置默认页面
                 FsPage = NvPage;
             }
-
-            
+            using (StreamReader reader = File.OpenText(FSSetToml))
+            {
+                TomlTable settingstomlr = TOML.Parse(reader);
+                Debug.WriteLine("Print:" + settingstomlr["FSGravitySettings"]["SoftBackground"]);
+                int defPageBackground = int.Parse(settingstomlr["FSGravitySettings"]["SoftBackground"]);
+                if (defPageBackground == 0) defWindowBackGround = true;
+                else if (defPageBackground == 1) defWindowBackGround = false;
+                lastdefWindowBackGround = defPageBackground;
+            }
 
             /*
             if (AppWindowTitleBar.IsCustomizationSupported())
@@ -585,27 +595,57 @@ namespace FSGaryityTool_Win11
 
             if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
             {
-                bool useAcrylicThin = true;
-                // Hooking up the policy object.
+                // 连接策略对象。
                 m_configurationSource = new Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration();
-                this.Activated += Window_Activated;
-                this.Closed += Window_Closed;
-                ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
+                this.Activated += Window_Activated;  // 当窗口被激活时的事件处理。
+                this.Closed += Window_Closed;  // 当窗口被关闭时的事件处理。
+                ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;  // 当窗口主题改变时的事件处理。
 
-                // Initial configuration state.
-                m_configurationSource.IsInputActive = true;
-                SetConfigurationSourceTheme();
+                // 初始配置状态。
+                m_configurationSource.IsInputActive = true;  // 设置输入活动状态为真。
+                SetConfigurationSourceTheme();  // 设置配置源主题。
 
-                m_acrylicController = new Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController();
+                m_acrylicController = new Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController();  // 创建一个新的亚克力控制器。
 
-                m_acrylicController.Kind = useAcrylicThin ? Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Thin : Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Base;
+                // 根据defWindowBackGround的值选择亚克力效果的类型。
+                m_acrylicController.Kind = defWindowBackGround ? Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Thin : Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Base;
 
-                // Enable the system backdrop.
-                // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
-                m_acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                m_acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
+                // 启用系统背景。
+                // 注意：确保使用了"using WinRT;"以支持Window.As<...>()调用。
+                m_acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());  // 添加系统背景目标。
+                m_acrylicController.SetSystemBackdropConfiguration(m_configurationSource);  // 设置系统背景配置。
             }
 
+
+        }
+        int lastdefWindowBackGround = 0;
+        public void WindowBackSetting()
+        {
+            if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
+            {
+                using (StreamReader reader = File.OpenText(Page1.FSSetToml))                    //打开TOML文件
+                {
+                    TomlTable settingstomlr = TOML.Parse(reader);
+                    Debug.WriteLine("Print:" + settingstomlr["FSGravitySettings"]["SoftBackground"]);
+                    int defPageBackground = int.Parse(settingstomlr["FSGravitySettings"]["SoftBackground"]);
+                    if (defPageBackground != lastdefWindowBackGround)
+                    {
+                        if (defPageBackground == 0) defWindowBackGround = true;
+                        else if (defPageBackground == 1) defWindowBackGround = false;
+                    }
+                    lastdefWindowBackGround = defPageBackground;
+                }
+
+                SetConfigurationSourceTheme();  // 设置配置源主题。
+
+                // 根据defWindowBackGround的值选择亚克力效果的类型。
+                m_acrylicController.Kind = defWindowBackGround ? Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Thin : Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Base;
+                
+                // 启用系统背景。
+                // 注意：确保使用了"using WinRT;"以支持Window.As<...>()调用。
+                m_acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());  // 添加系统背景目标。
+                m_acrylicController.SetSystemBackdropConfiguration(m_configurationSource);  // 设置系统背景配置。
+            }
 
         }
 

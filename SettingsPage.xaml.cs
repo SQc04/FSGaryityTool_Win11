@@ -39,6 +39,8 @@ namespace FSGaryityTool_Win11
 
         public static string DefaultSTARTPage;
         public static int DefaultTomlSTARTPage;
+        public static string DefaultPageBackGround;
+        public static int DefaultTomlPageBackGround;
         public static string redirectedFilePath;
 
         public static string appFilepath;
@@ -80,6 +82,7 @@ namespace FSGaryityTool_Win11
             {
                 TomlTable settingstomlr = TOML.Parse(reader);
                 DefaultTomlSTARTPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
+                DefaultTomlPageBackGround = int.Parse(settingstomlr["FSGravitySettings"]["SoftBackground"]);
             }
 
             List<string> STARTPage = new List<string>()         //新建字符串
@@ -93,10 +96,17 @@ namespace FSGaryityTool_Win11
             else if (DefaultTomlSTARTPage == 2) DefaultSTARTPage = Page1.LanguageText("keyboard");
             else if (DefaultTomlSTARTPage == 3) DefaultSTARTPage = Page1.LanguageText("mouse");
             //else if (DefaultTomlSTARTPage == 4) DefaultSTARTPage = "";
-
-
             StartPageCombobox.SelectedItem = DefaultSTARTPage;  //将TOML设置添加到选择框
 
+            List<string> pageBackGround = new List<string>()         //新建字符串
+            {
+                Page1.LanguageText("thin"), Page1.LanguageText("base")//, ""
+            };
+            SoftBackgroundCombobox.ItemsSource = pageBackGround;
+            if (DefaultTomlPageBackGround == 0) DefaultPageBackGround = Page1.LanguageText("thin");
+            else if (DefaultTomlPageBackGround == 1) DefaultPageBackGround = Page1.LanguageText("base");
+
+            SoftBackgroundCombobox.SelectedItem = DefaultPageBackGround;  //将TOML设置添加到选择框
 
             // = Page1.LanguageText("");
             StartPage.Header = Page1.LanguageText("defStartPage");
@@ -223,8 +233,31 @@ namespace FSGaryityTool_Win11
 
         private void SoftBackgroundCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            using (StreamReader reader = File.OpenText(Page1.FSSetToml))                    //打开TOML文件
+            {
+                settingstomlr = TOML.Parse(reader);
 
+                if ((string)SoftBackgroundCombobox.SelectedItem == Page1.LanguageText("thin")) settingstomlr["FSGravitySettings"]["SoftBackground"] = "0";
+                else if ((string)SoftBackgroundCombobox.SelectedItem == Page1.LanguageText("base")) settingstomlr["FSGravitySettings"]["SoftBackground"] = "1";
+                //else if ((string)SoftBackgroundCombobox.SelectedItem == "") settingstomlr["FSGravitySettings"]["SoftBackground"] = "4";
+
+            }
+
+            using (StreamWriter writer = File.CreateText(Page1.FSSetToml))                  //将设置写入TOML文件
+            {
+                settingstomlr.WriteTo(writer);
+                Debug.WriteLine("写入Toml" + settingstomlr["FSGravitySettings"]["SoftBackground"]);
+                // Remember to flush the data if needed!
+                writer.Flush();
+            }
+
+            // 获取MainWindow的实例
+            MainWindow mainWindow = MainWindow.Instance;
+
+            // 更新窗口的背景
+            mainWindow.WindowBackSetting();
         }
+
 
         private void SoftLanguageCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

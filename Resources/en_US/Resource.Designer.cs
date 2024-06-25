@@ -61,6 +61,15 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         }
         
         /// <summary>
+        ///   查找类似 Base 的本地化字符串。
+        /// </summary>
+        internal static string _base {
+            get {
+                return ResourceManager.GetString("base", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 About 的本地化字符串。
         /// </summary>
         internal static string about {
@@ -462,6 +471,15 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         internal static string stopBits {
             get {
                 return ResourceManager.GetString("stopBits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Thin 的本地化字符串。
+        /// </summary>
+        internal static string thin {
+            get {
+                return ResourceManager.GetString("thin", resourceCulture);
             }
         }
         
