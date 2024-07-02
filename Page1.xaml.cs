@@ -55,6 +55,7 @@ using System.Globalization;
 using Microsoft.Windows.ApplicationModel.Resources;
 using FSGaryityTool_Win11.McuToolpage;
 using System.Timers;
+using System.Text.RegularExpressions;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -927,17 +928,36 @@ namespace FSGaryityTool_Win11
 
         }
 
-        private void Settings_ColorValuesChanged(Windows.UI.ViewManagement.UISettings sender, object args)
+        private void OnThemeChanged(DependencyObject sender, DependencyProperty dp)
         {
-            var color = sender.GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
-            CONTButton.Background = new SolidColorBrush(color);
+            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
+            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
+            // 当主题改变时，此函数会被调用
+            var theme = Application.Current.RequestedTheme;
+
+            if (Con == 1)
+            {
+                if (theme == ApplicationTheme.Dark)                                                                         //设置连接按钮背景颜色
+                {
+                    // 当前处于深色模式
+                    CONTButton.Background = new SolidColorBrush(darkaccentColor);
+                    CONTButton.Foreground = new SolidColorBrush(Colors.Black);
+                }
+                else if (theme == ApplicationTheme.Light)
+                {
+                    // 当前处于浅色模式
+                    CONTButton.Background = new SolidColorBrush(ligtaccentColor);
+                    CONTButton.Foreground = new SolidColorBrush(Colors.White);
+                }
+            }
         }
+
+        
 
         private void CONTButton_Click(object sender, RoutedEventArgs e)
         {
             var settings = new Windows.UI.ViewManagement.UISettings();
             var color = settings.GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
-
 
             var foregroundColor = COMButton.Foreground as SolidColorBrush;
             var backgroundColor = COMButton.Background as SolidColorBrush;
@@ -945,8 +965,6 @@ namespace FSGaryityTool_Win11
             var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
             var theme = Application.Current.RequestedTheme;
 
-
-            settings.ColorValuesChanged += Settings_ColorValuesChanged;
 
             // 获取当前窗口的句柄
 
@@ -1525,28 +1543,42 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
         }
         private void BANDComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (autosaveset == 1)
+            // 检查输入的是否为数字
+            if (!int.TryParse((string)BANDComboBox.SelectedItem, out int baudRate) || baudRate == 0)
             {
+                // 如果输入的不是数字，使用设置文件中的数字覆盖它
                 using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
                 {
                     settingstomlr = TOML.Parse(reader);
-
-                    settingstomlr["SerialPortSettings"]["DefaultBAUD"] = (string)BANDComboBox.SelectedItem;
-                }
-
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
-                {
-                    settingstomlr.WriteTo(writer);
-                    writer.Flush();
+                    BANDComboBox.SelectedItem = ((Tommy.TomlString)settingstomlr["SerialPortSettings"]["DefaultBAUD"]).Value;
                 }
             }
-            if (Con == 1)
+            else
             {
-                CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);
-                RXTextBox.Text = RXTextBox.Text + "BaudRate = " + Convert.ToInt32(BANDComboBox.SelectedItem) + "\r\n";
+                if (autosaveset == 1)
+                {
+                    using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
+                    {
+                        settingstomlr = TOML.Parse(reader);
+
+                        settingstomlr["SerialPortSettings"]["DefaultBAUD"] = (string)BANDComboBox.SelectedItem;
+                    }
+
+                    using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
+                    {
+                        settingstomlr.WriteTo(writer);
+                        writer.Flush();
+                    }
+                }
+                if (Con == 1)
+                {
+                    CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);
+                    RXTextBox.Text = RXTextBox.Text + "BaudRate = " + Convert.ToInt32(BANDComboBox.SelectedItem) + "\r\n";
+                }
+                baudrate = Convert.ToInt32(BANDComboBox.SelectedItem);
             }
-            baudrate = Convert.ToInt32(BANDComboBox.SelectedItem);
         }
+
         private void PARComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (autosaveset == 1)

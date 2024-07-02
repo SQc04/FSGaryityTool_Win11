@@ -61,7 +61,7 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.34";
+        public static string FSSoftVersion = "0.2.35";
         public static int FsPage = 0;
         public static bool defWindowBackGround = true;
         public static TomlTable settingstomlSp;

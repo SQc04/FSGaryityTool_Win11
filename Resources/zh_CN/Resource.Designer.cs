@@ -61,7 +61,7 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         }
         
         /// <summary>
-        ///   查找类似 基础亚克力 的本地化字符串。
+        ///   查找类似 亚克力 的本地化字符串。
         /// </summary>
         internal static string _base {
             get {

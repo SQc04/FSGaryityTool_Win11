@@ -80,7 +80,7 @@
                     <Border x:Name="BorderBack1" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
                         <TextBlock x:Name="BaudTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="120" Margin="0">BAUDRATE</TextBlock>
                     </Border>
-                    <ComboBox x:Name="BANDComboBox" IsEditable="True" SelectionChanged="BANDComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                    <ComboBox x:Name="BANDComboBox" IsEditable="True"  SelectionChanged="BANDComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
                     <StackPanel.Transitions>
                         <TransitionCollection>
                             <RepositionThemeTransition />
