@@ -8,56 +8,114 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
+    xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
     NavigationCacheMode="Enabled">
 
     <Grid>
-        <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <Grid Margin="-67,0,0,0">
-                    <TextBlock Text="RPM"  Margin="-60,198,0,0"/>
-                    <TextBlock Text="%"  Margin="-68,225,0,0"/>
-                </Grid>
-            </StackPanel>
-        </StackPanel>
-        <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <Grid Margin="105,0,0,0">
-                    <TextBlock Text="RPM"  Margin="280,198,0,0"/>
-                    <TextBlock Text="%"  Margin="270,225,0,0"/>
-                </Grid>
-            </StackPanel>
-        </StackPanel>
-        <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <Toolkit:RadialGauge x:Name="CPUFanRpmRadialGauge" Width="220" Maximum="8000" TickSpacing="500" IsInteractive="False" 
-                                     ScaleWidth="8" TickWidth="0" NeedleLength="0" Margin="42,-31,42,0"/>
-                <Toolkit:RadialGauge x:Name="GPUFanRpmRadialGauge" Width="220" Maximum="6000" TickSpacing="500" IsInteractive="False" 
-                                     ScaleWidth="8" TickWidth="0" NeedleLength="0" Margin="42,-31,42,0"/>
-            </StackPanel>
-        </StackPanel>
-        <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                    <Slider x:Name="CpuTemp" Height="240" Orientation="Vertical"
-                            TickFrequency="10" TickPlacement="Outside" Maximum="120" Minimum="0"/>
-                    <TextBlock x:Name="CpuTempText" FontSize="20"
-                               HorizontalAlignment="Center" Margin="-5,0,0,0"/>
-                </StackPanel>
+        <ScrollViewer Margin="60,0,0,0">
+            <StackPanel VerticalAlignment="Top" Orientation="Vertical" Margin="0,0,60,0">
+                <StackPanel Margin="0,48,0,0"/>
+                <TextBlock Text="CPU FAN" Margin="0"/>
+                <Border x:Name="CpuFanControlRadialGauge" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Height="300" Margin="0,3,0,3">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="300"/>
+                            <ColumnDefinition Width="*" MinWidth="90" MaxWidth="150"/>
+                            <ColumnDefinition Width="4*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                <Toolkit:RadialGauge x:Name="CPUFanRadialGauge" Width="280" TickPadding="21" Maximum="100" TickSpacing="5" Margin="12"/>
-                <Toolkit:RadialGauge x:Name="GPUFanRadialGauge" Width="280" TickPadding="21" Maximum="100" TickSpacing="5" Margin="12"/>
-                
-                <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                    <Slider x:Name="GpuTemp" Height="240" Orientation="Vertical"
-                            TickFrequency="10" TickPlacement="Outside" Maximum="120" Minimum="0"/>
-                    <TextBlock x:Name="GpuTempText" FontSize="20"
-                               HorizontalAlignment="Center" Margin="-5,0,0,0"/>
+                        <Border Grid.Column="0" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Toolkit:RadialGauge x:Name="CPUFanRpmRadialGauge" Maximum="8000" TickSpacing="500" IsInteractive="False" 
+                                                ScaleWidth="8" TickWidth="0" NeedleLength="0" Margin="39"/>
+                                <Toolkit:RadialGauge x:Name="CPUFanRadialGauge" TickPadding="21" Maximum="100" TickSpacing="5" Margin="12"/>
+                                <TextBlock Text="RPM" FontSize="12" Margin="168,232,0,0"/>
+                                <TextBlock Text="%"  Margin="163,254,0,0"/>
+                            </Grid>
+                        </Border>
+                        <Border Grid.Column="1" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                            <Grid HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="36"/>
+                                </Grid.RowDefinitions>
+
+                                <Slider x:Name="CpuTemp" Grid.Row="0" Orientation="Vertical" Margin="0,12,0,6"
+                                        TickFrequency="10" TickPlacement="Outside" Maximum="120" Minimum="0"/>
+                                <TextBlock x:Name="CpuTempText" Grid.Row="1" FontSize="20" 
+                                        HorizontalAlignment="Center" Margin="0,0,0,12"/>
+
+                            </Grid>
+                        </Border>
+                        <Border Grid.Column="2" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                            <Grid>
+
+                            </Grid>
+                        </Border>
+
+                    </Grid>
+                </Border>
+                <TextBlock Text="GPU FAN" Margin="0"/>
+                <Border x:Name="GpuFanControlRadialGauge" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Height="300" Margin="0,3,0,3">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="300"/>
+                            <ColumnDefinition Width="*" MinWidth="90" MaxWidth="150"/>
+                            <ColumnDefinition Width="4*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Column="0" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Toolkit:RadialGauge x:Name="GPUFanRpmRadialGauge" Maximum="6000" TickSpacing="500" IsInteractive="False" 
+                                    ScaleWidth="8" TickWidth="0" NeedleLength="0" Margin="39"/>
+                                <Toolkit:RadialGauge x:Name="GPUFanRadialGauge" TickPadding="21" Maximum="100" TickSpacing="5" Margin="12"/>
+                                <TextBlock Text="RPM" FontSize="12" Margin="168,232,0,0"/>
+                                <TextBlock Text="%"  Margin="163,254,0,0"/>
+                            </Grid>
+                        </Border>
+                        <Border Grid.Column="1" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                            <Grid HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="36"/>
+                                </Grid.RowDefinitions>
+
+                                <Slider x:Name="GpuTemp" Grid.Row="0" Orientation="Vertical" Margin="0,12,0,6"
+                                        TickFrequency="10" TickPlacement="Outside" Maximum="120" Minimum="0"/>
+                                <TextBlock x:Name="GpuTempText" Grid.Row="1" FontSize="20" 
+                                        HorizontalAlignment="Center" Margin="0,0,0,12"/>
+
+                            </Grid>
+                        </Border>
+                        <Border Grid.Column="2" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                            <Grid>
+
+                            </Grid>
+                        </Border>
+
+                    </Grid>
+                </Border>
+
+                <StackPanel Margin="0,48,0,0"/>
+
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="6">
+                    <Button x:Name="ClevoGetFaninfo" Click="ClevoGetFaninfo_Click" Content="GetFaninfo" IsEnabled="False"></Button>
+                    <Button x:Name="Clevoinfo" Click="Clevoinfo_Click" Content="Getinfo"></Button>
+                    <Button x:Name="WatchDogStart" Click="WatchDogStart_Click" Content="WatchDogStart"></Button>
+                    <Button x:Name="WatchDogClose" Click="WatchDogClose_Click" Content="WatchDogClose"></Button>
+                </StackPanel>
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="6">
+                    <Border CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Width="324" Height="224" Margin="6">
+                        <win2d:CanvasControl x:Name="canvasControl" Draw="OnDraw" Margin="12"/>
+                    </Border>
                 </StackPanel>
             </StackPanel>
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-            <Button x:Name="ClevoGetFaninfo" Click="ClevoGetFaninfo_Click" Content="GetFaninfo" IsEnabled="False"></Button>
-            <Button x:Name="Clevoinfo" Click="Clevoinfo_Click" Content="Getinfo"></Button>
-            </StackPanel>
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

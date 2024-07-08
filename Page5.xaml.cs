@@ -20,6 +20,15 @@ using System.Threading;
 using System.ComponentModel;
 using Microsoft.UI.Xaml.Media.Animation;
 
+using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.Graphics.Canvas.Geometry;
+using System.Numerics;
+
+using Microsoft.UI;
+using Windows.UI;
+
+
+
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -206,6 +215,29 @@ namespace FSGaryityTool_Win11
             // 检查是否是Value属性发生了变化
             cpuDelayTimer.Change(200, Timeout.Infinite);
         }
+
+        private void WatchDogStart_Click(object sender, RoutedEventArgs e)
+        {
+            bool isStart = ClevoEcControl.IsWatchDogStarted();
+            Debug.WriteLine($"isStart: " + isStart.ToString());
+            if (!isStart)
+            {
+                ClevoEcControl.SetWatchDogStarted();
+            }
+            Debug.WriteLine("WatchDogserver is Start");
+        }
+
+        private void WatchDogClose_Click(object sender, RoutedEventArgs e)
+        {
+            bool isStart = ClevoEcControl.IsWatchDogStarted();
+            Debug.WriteLine($"isStart: " + isStart.ToString());
+            if (isStart)
+            {
+                ClevoEcControl.SetWatchDogClosed();
+            }
+            Debug.WriteLine("WatchDogserver is Close");
+        }
+
         private void GPUFanRadialGauge_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             // 检查是否是Value属性发生了变化
@@ -243,5 +275,33 @@ namespace FSGaryityTool_Win11
                 oldGpuDutySet = gpuDutySet;
             }
         }
+        private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)
+        {
+            Vector2 point1 = new Vector2(0, 200); // 起点
+            Vector2 controlPoint1 = new Vector2(100, 100); // 控制点1
+            Vector2 controlPoint2 = new Vector2(200, 150); // 控制点2
+            Vector2 point2 = new Vector2(300, 0); // 终点
+
+            var pathBuilder = new CanvasPathBuilder(sender);
+            pathBuilder.BeginFigure(point1);
+            pathBuilder.AddCubicBezier(controlPoint1, controlPoint2, point2);
+            pathBuilder.EndFigure(CanvasFigureLoop.Open);
+
+            var path = CanvasGeometry.CreatePath(pathBuilder);
+
+            Color color;
+            if (Application.Current.RequestedTheme == ApplicationTheme.Dark)
+            {
+                color = (Color)Application.Current.Resources["SystemAccentColorLight2"];
+            }
+            else
+            {
+                color = (Color)Application.Current.Resources["SystemAccentColorDark1"];
+            }
+
+            args.DrawingSession.DrawGeometry(path, color, 3);
+        }
+
+
     }
 }

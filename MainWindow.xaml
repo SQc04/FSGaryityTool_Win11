@@ -86,7 +86,7 @@
                         <FontIcon Glyph="&#xE962;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="FanTest" Content="FanTest" Tag="Page5" >
+                <NavigationViewItem x:Name="FanControl" Content="FanControl" Tag="Page5" >
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE770;" />
                     </NavigationViewItem.Icon>

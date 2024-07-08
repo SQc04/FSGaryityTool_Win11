@@ -56,6 +56,8 @@ using Microsoft.Windows.ApplicationModel.Resources;
 using FSGaryityTool_Win11.McuToolpage;
 using System.Timers;
 using System.Text.RegularExpressions;
+using Windows.System;
+using Microsoft.UI.Input;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -1185,10 +1187,11 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
         private DateTime lastReceivedTime = DateTime.Now; // 添加这一行来声明lastReceivedTime变量
         StringBuilder buffer = new StringBuilder();
 
-        private async void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             // 在另一个线程中处理串口数据
-            await Task.Run(() =>
+            
+            Task.Run(() =>
             {
                 string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
 
@@ -1250,12 +1253,12 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
 
                     lastReceivedTime = DateTime.Now; // 更新最后接收数据的时间
                 }
-
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     UpdateItemsRepeater(tempDataList);
                 });
             });
+
         }
 
         private void UpdateItemsRepeater(LinkedList<DataItem> items)
@@ -1455,7 +1458,7 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
                 // 如果需要在每条消息后添加换行符
                 AppendNewLineIfRequired();
                 // 更新接收文本框的内容
-                RXTextBox.Text += $"TX: {str}\r\n";
+                RXTextBox.Text += $"TX: {str}" + "\r\n";
             }
             catch
             {
@@ -1473,14 +1476,23 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
             {
                 // 获取要发送的十六进制字符串，并进行必要的预处理
                 string input = PrepareHexString();
-                // 将十六进制字符串转换为字节数组
-                byte[] bytes = ConvertHexStringToByteArray(input);
-                // 通过串口发送字节数组
-                CommonRes._serialPort.Write(bytes, 0, bytes.Length);
-                // 如果需要在每条消息后添加换行符
-                AppendNewLineIfRequired();
-                // 更新接收文本框的内容
-                RXTextBox.Text += $"TX: 0x {string.Join(" ", bytes.Select(b => b.ToString("X2")))}\r\n";
+                Task.Run(() =>
+                {
+                    // 将十六进制字符串转换为字节数组
+                    byte[] bytes = ConvertHexStringToByteArray(input);
+                    // 通过串口发送字节数组
+                    CommonRes._serialPort.Write(bytes, 0, bytes.Length);
+                    // 如果需要在每条消息后添加换行符
+                    AppendNewLineIfRequired();
+
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        // 更新接收文本框的内容
+                        RXTextBox.Text += $"TX: 0x {string.Join(" ", bytes.Select(b => b.ToString("X2")))}\r\n";
+                    });
+                    input = "";
+                });
+                
             }
             catch (FormatException)
             {
@@ -1496,6 +1508,7 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
         {
             // 获取要发送的十六进制字符串，并去除所有空格
             string input = TXTextBox.Text.Trim().Replace(" ", "");
+            input = input.Replace("\r", "").Replace("\t", "");
             // 如果长度为奇数，前面添加一个 '0'
             if (input.Length % 2 != 0)
             {
@@ -1503,6 +1516,7 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
             }
             return input;
         }
+
 
         // 将十六进制字符串转换为字节数组
         private byte[] ConvertHexStringToByteArray(string input)
@@ -1765,9 +1779,9 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
             }
         }
 
-        public static async void RSTButtonRes()
+        public static void RSTButtonRes()
         {
-            await Task.Run(() =>
+            Task.Run(() =>
             {
                 CommonRes._serialPort.BaudRate = 74880;// BANDComboBox.SelectedItem = "74880";//ESP12F
 
@@ -1925,13 +1939,28 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
             return Task.CompletedTask;
         }
 
+        public bool isCtrlDown = false;
+        private void TXTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Control)
+            {
+                isCtrlDown = true;
+            }
+        }
+
         private void TXTextBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == Windows.System.VirtualKey.Enter)
+            if (e.Key == Windows.System.VirtualKey.Enter && isCtrlDown)
             {
                 TXButton_Click(this, new RoutedEventArgs());
             }
+            if (e.Key == Windows.System.VirtualKey.Control)
+            {
+                isCtrlDown = false;
+            }
         }
+
+        
 
         private void SaveSetButton_Click(object sender, RoutedEventArgs e)
         {

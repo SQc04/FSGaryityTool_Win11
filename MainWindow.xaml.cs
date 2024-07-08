@@ -61,10 +61,11 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.35";
+        public static string FSSoftVersion = "0.2.37";
         public static int FsPage = 0;
         public static bool defWindowBackGround = true;
         public static TomlTable settingstomlSp;
+
 
         private Dictionary<string, Type> pageTypeMap = new Dictionary<string, Type>
         {
@@ -79,8 +80,16 @@ namespace FSGaryityTool_Win11
         private Dictionary<int, Action> backRequestedMap = new Dictionary<int, Action>
         {
             {0, () => Debug.WriteLine("SerialPortPage")},
-            {4, () => { if (FSPage.fSPage.MyWebView2.CanGoBack) FSPage.fSPage.MyWebView2.GoBack(); }},
+            {5, () => { if (FSPage.fSPage.MyWebView2.CanGoBack) FSPage.fSPage.MyWebView2.GoBack(); }},
         };
+
+        void CanvasControl_Draw(
+        Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender,
+        Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
+        {
+            args.DrawingSession.DrawEllipse(155, 115, 80, 30, Microsoft.UI.Colors.Black, 3);
+            args.DrawingSession.DrawText("Hello, Win2D World!", 100, 100, Microsoft.UI.Colors.Yellow);
+        }
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
@@ -146,27 +155,38 @@ namespace FSGaryityTool_Win11
             return DefWindowProc(hWnd, uMsg, wParam, lParam);
         }
         //*/
-        public async void DelayedInitialize(UIElement mainContent)
+        public void DelayedInitialize(UIElement mainContent)
         {
-            await Task.Delay(TimeSpan.FromMilliseconds(500));  // 延时改为0.5秒
-
-            // 创建淡出动画
-            Storyboard storyboard = new Storyboard();
-            DoubleAnimation fadeOutAnimation = new DoubleAnimation()
+            Task.Run(() =>
             {
-                From = 1.0,
-                To = 0.0,
-                Duration = new Duration(TimeSpan.FromMilliseconds(100))
-            };
-            Storyboard.SetTarget(fadeOutAnimation, (ExtendedSplash)App.m_window.Content);
-            Storyboard.SetTargetProperty(fadeOutAnimation, "Opacity");
-            storyboard.Children.Add(fadeOutAnimation);
+                Thread.Sleep(500);  // 延时改为0.5秒
 
-            // 播放淡出动画
-            storyboard.Begin();
-            await Task.Delay(TimeSpan.FromMilliseconds(1));  // 等待淡出动画完成
-            // 移除 ExtendedSplash
-            ((App)Application.Current).RemoveExtendedSplash(mainContent);
+                // 创建淡出动画
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    Storyboard storyboard = new Storyboard();
+                    DoubleAnimation fadeOutAnimation = new DoubleAnimation()
+                    {
+                        From = 1.0,
+                        To = 0.0,
+                        Duration = new Duration(TimeSpan.FromMilliseconds(50))
+                    };
+                    Storyboard.SetTarget(fadeOutAnimation, (ExtendedSplash)App.m_window.Content);
+                    Storyboard.SetTargetProperty(fadeOutAnimation, "Opacity");
+                    storyboard.Children.Add(fadeOutAnimation);
+
+                    // 播放淡出动画
+                    storyboard.Begin();
+                });
+
+                Thread.Sleep(1);  // 等待淡出动画完成
+
+                // 移除 ExtendedSplash
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    ((App)Application.Current).RemoveExtendedSplash(mainContent);
+                });
+            });
         }
 
 
@@ -177,7 +197,6 @@ namespace FSGaryityTool_Win11
 
             bool isFirstActivation = true;
             UIElement mainContent = this.Content;
-
             ///*
             var app = (Application.Current as App); // 尝试将当前应用程序实例转换为App类型
             if (app != null) // 检查转换是否成功
@@ -188,7 +207,6 @@ namespace FSGaryityTool_Win11
             }
             //*/
 
-            
 
             // 将窗口的标题栏设置为自定义标题栏
             this.ExtendsContentIntoTitleBar = true;  // enable custom titlebar
@@ -212,85 +230,88 @@ namespace FSGaryityTool_Win11
                 }
             };
 
-            string SYSAPLOCAL = Environment.GetFolderPath(folder: Environment.SpecialFolder.LocalApplicationData);
-            string FSFolder = Path.Combine(SYSAPLOCAL, "FAIRINGSTUDIO");
-            string FSGravif = Path.Combine(FSFolder, "FSGravityTool");
-            string FSSetJson = Path.Combine(FSGravif, "Settings.json");
-            string FSSetToml = Path.Combine(FSGravif, "Settings.toml");
-
-            //Debug.WriteLine("开始搜索文件夹");
-            Debug.WriteLine("开始搜索文件夹  " + FSFolder);            //新建FS文件夹
-
-            
-            if (Directory.Exists(FSFolder))
+            Task.Run(() =>
             {
-                //Debug.WriteLine("找到文件夹,跳过新建文件夹");
-            }
-            else
-            {
-                //Debug.WriteLine("没有找到文件夹");
-                Directory.CreateDirectory(FSFolder);
-                //Debug.WriteLine("新建文件夹");
-            }
+
+                string SYSAPLOCAL = Environment.GetFolderPath(folder: Environment.SpecialFolder.LocalApplicationData);
+                string FSFolder = Path.Combine(SYSAPLOCAL, "FAIRINGSTUDIO");
+                string FSGravif = Path.Combine(FSFolder, "FSGravityTool");
+                string FSSetJson = Path.Combine(FSGravif, "Settings.json");
+                string FSSetToml = Path.Combine(FSGravif, "Settings.toml");
+
+                //Debug.WriteLine("开始搜索文件夹");
+                Debug.WriteLine("开始搜索文件夹  " + FSFolder);            //新建FS文件夹
 
 
-            if (Directory.Exists(FSGravif))
-            {
-                //Debug.WriteLine("找到文件夹,跳过新建文件夹");
-            }
-            else
-            {
-                //Debug.WriteLine("没有找到文件夹");
-                Directory.CreateDirectory(FSGravif);
-                //Debug.WriteLine("新建文件夹");
-            }
-            
-
-            /*
-            if (File.Exists(FSSetJson))
-            {
-                Debug.WriteLine("找到JSON文件,跳过新建文件");
-            }
-            else
-            {
-                Debug.WriteLine("没有找到JSON文件");
-                var SettJson = new              //创建对象
+                if (Directory.Exists(FSFolder))
                 {
-                    FSGravity = "Tool",
-                    SerialSettings = "1",
-                    DefaultBAUD = "115200",
-                    DefaultParity = "None",
-                    DefaultSTOP = "One",
-                    DefaultDATA = "8",
-                    DefaultRXHEX = "0",
-                    DefaultTXHEX = "0",
-                    DefaultDTR = "1",
-                    DefaultRTS = "0",
-                    DefaultSTime = "0",
-                    DefaultAUTOSco = "1",
-                };
-                var jsonstring1 = JsonConvert.SerializeObject(SettJson);        //序列化Json
-                using (StreamWriter file = File.CreateText(FSSetJson))          //创建json
-                {
-                    file.WriteLine(jsonstring1);
+                    //Debug.WriteLine("找到文件夹,跳过新建文件夹");
                 }
-                Debug.WriteLine("新建JSON");
-            }
-            */
-
-            if (File.Exists(FSSetToml))             //生成TOML
-            {
-                Debug.WriteLine("找到TOML文件,跳过新建文件");
-            }
-            else
-            {
-                Debug.WriteLine("没有找到TOML文件");
-                string[] cOMSaveDeviceinf = { "0" };
-                TomlTable settingstoml = new TomlTable
+                else
                 {
-                    ["Version"] = FSSoftVersion,
+                    //Debug.WriteLine("没有找到文件夹");
+                    Directory.CreateDirectory(FSFolder);
+                    //Debug.WriteLine("新建文件夹");
+                }
 
-                    ["FSGravitySettings"] =
+
+                if (Directory.Exists(FSGravif))
+                {
+                    //Debug.WriteLine("找到文件夹,跳过新建文件夹");
+                }
+                else
+                {
+                    //Debug.WriteLine("没有找到文件夹");
+                    Directory.CreateDirectory(FSGravif);
+                    //Debug.WriteLine("新建文件夹");
+                }
+
+
+                /*
+                if (File.Exists(FSSetJson))
+                {
+                    Debug.WriteLine("找到JSON文件,跳过新建文件");
+                }
+                else
+                {
+                    Debug.WriteLine("没有找到JSON文件");
+                    var SettJson = new              //创建对象
+                    {
+                        FSGravity = "Tool",
+                        SerialSettings = "1",
+                        DefaultBAUD = "115200",
+                        DefaultParity = "None",
+                        DefaultSTOP = "One",
+                        DefaultDATA = "8",
+                        DefaultRXHEX = "0",
+                        DefaultTXHEX = "0",
+                        DefaultDTR = "1",
+                        DefaultRTS = "0",
+                        DefaultSTime = "0",
+                        DefaultAUTOSco = "1",
+                    };
+                    var jsonstring1 = JsonConvert.SerializeObject(SettJson);        //序列化Json
+                    using (StreamWriter file = File.CreateText(FSSetJson))          //创建json
+                    {
+                        file.WriteLine(jsonstring1);
+                    }
+                    Debug.WriteLine("新建JSON");
+                }
+                */
+
+                if (File.Exists(FSSetToml))             //生成TOML
+                {
+                    Debug.WriteLine("找到TOML文件,跳过新建文件");
+                }
+                else
+                {
+                    Debug.WriteLine("没有找到TOML文件");
+                    string[] cOMSaveDeviceinf = { "0" };
+                    TomlTable settingstoml = new TomlTable
+                    {
+                        ["Version"] = FSSoftVersion,
+
+                        ["FSGravitySettings"] =
                     {
                         Comment =
                         "FSGaryityTool Settings:",
@@ -299,9 +320,9 @@ namespace FSGaryityTool_Win11
                         ["SoftDefLanguage"] = "zh-CN",
                     },
 
-                    ["SerialPortSettings"] =
+                        ["SerialPortSettings"] =
                     {
-                        Comment = 
+                        Comment =
                         "FSGaryityTool SerialPort Settings:\r\n" +
                         "Parity:None,Odd,Even,Mark,Space\r\n" +
                         "STOPbits:None,One,OnePointFive,Two\r\n" +
@@ -323,17 +344,17 @@ namespace FSGaryityTool_Win11
                         ["DefaultTXNewLine"] = "1"
                     },
 
-                    ["SerialPortCOMData"] =
+                        ["SerialPortCOMData"] =
                     {
                         Comment =
-                        "This is a cache of information for all serial devices.\r\n" + 
+                        "This is a cache of information for all serial devices.\r\n" +
                         "",
                         ["CheckTime"] = "2024-04-12 19:48:55",                  //串口设备信息更新的时间
                         ["CheckCounter"] = "0",                                 //串口设备信息更新次数
                         ["COMSaveDeviceinf"] = String.Join(",", cOMSaveDeviceinf),//已保存串口设备的映射表
                     },
 
-                    ["COMData"] =
+                        ["COMData"] =
                     {
                         Comment =
                         "This is an example of cached serial device information.\r\n",
@@ -350,107 +371,107 @@ namespace FSGaryityTool_Win11
 
                     },
 
-                };
+                    };
 
-                using (StreamWriter writer = File.CreateText(FSSetToml))
-                {
-                    settingstoml.WriteTo(writer);
-                    Debug.WriteLine("写入Toml");
-                    // Remember to flush the data if needed!
-                    writer.Flush();
-                }
-                Debug.WriteLine("新建TOML");
-            }
-
-
-
-            string TomlfsVersion;       //版本号比较
-
-            using (StreamReader reader = File.OpenText(FSSetToml))
-            {
-                TomlTable settingstomlr = TOML.Parse(reader);
-                TomlfsVersion = settingstomlr["Version"];
-            }
-
-            Version TomlVersion = new Version(TomlfsVersion);
-            Version FSGrVersion = new Version(FSSoftVersion);
-
-            if (FSGrVersion > TomlVersion)              //Settings.Toml版本管理
-            {
-                Debug.WriteLine(">");
-
-                //缓存设置
-                string defpage,defPageBackground,defLaunage;
-                string baud, party, stop, data, rxhex, txhex, dtr, rts, shtime, autosco, autosavrset, autosercom, autoconnect, txnewline;
-                string checkTime, checkCounter;
-
-                string[] cOMSaveDeviceinf = {"0","1"};
-                string cOMDeviceinf;
-
-                string serialPortSettings = "SerialPortSettings";
-
-                string TomlCheckNulls(string Mode, string Menu , string Name)
-                {
-                    string data = "0";
-                    using (StreamReader reader = File.OpenText(Page1.FSSetToml))
+                    using (StreamWriter writer = File.CreateText(FSSetToml))
                     {
-                        TomlTable SPsettingstomlr = TOML.Parse(reader);             //读取TOML
-
-                        if (SPsettingstomlr[Menu][Name] != "Tommy.TomlLazy") data = SPsettingstomlr[Menu][Name];
-                        else
-                        {
-                            data = Mode;
-                        }
+                        settingstoml.WriteTo(writer);
+                        Debug.WriteLine("写入Toml");
+                        // Remember to flush the data if needed!
+                        writer.Flush();
                     }
-                    return data;
+                    Debug.WriteLine("新建TOML");
                 }
 
-                using (StreamReader reader = File.OpenText(Page1.FSSetToml))                    //打开TOML文件
+
+
+                string TomlfsVersion;       //版本号比较
+
+                using (StreamReader reader = File.OpenText(FSSetToml))
                 {
-                    settingstomlSp = TOML.Parse(reader);
+                    TomlTable settingstomlr = TOML.Parse(reader);
+                    TomlfsVersion = settingstomlr["Version"];
+                }
 
-                    if ((string)settingstomlSp["FSGravitySettings"]["DefaultNvPage"] != "Tommy.TomlLazy") defpage = settingstomlSp["FSGravitySettings"]["DefaultNvPage"];
-                    else defpage = "0";
-                    if ((string)settingstomlSp["FSGravitySettings"]["SoftBackground"] != "Tommy.TomlLazy") defPageBackground = settingstomlSp["FSGravitySettings"]["SoftBackground"];
-                    else defPageBackground = "0";
+                Version TomlVersion = new Version(TomlfsVersion);
+                Version FSGrVersion = new Version(FSSoftVersion);
 
-                    var culture = System.Globalization.CultureInfo.CurrentUICulture;
-                    string lang = culture.Name;
+                if (FSGrVersion > TomlVersion)              //Settings.Toml版本管理
+                {
+                    Debug.WriteLine(">");
 
-                    if ((string)settingstomlSp["FSGravitySettings"]["SoftDefLanguage"] != "Tommy.TomlLazy") defLaunage = settingstomlSp["FSGravitySettings"]["SoftDefLanguage"];
-                    else defLaunage = lang;
+                    //缓存设置
+                    string defpage, defPageBackground, defLaunage;
+                    string baud, party, stop, data, rxhex, txhex, dtr, rts, shtime, autosco, autosavrset, autosercom, autoconnect, txnewline;
+                    string checkTime, checkCounter;
 
-                    baud = TomlCheckNulls("115200", serialPortSettings, "DefaultBAUD");
-                    party = TomlCheckNulls("None", serialPortSettings, "DefaultParity");
-                    stop = TomlCheckNulls("One", serialPortSettings, "DefaultSTOP");
-                    data = TomlCheckNulls("8", serialPortSettings, "DefaultDATA");
-                    
-                    rxhex = TomlCheckNulls("0", serialPortSettings, "DefaultRXHEX");
-                    txhex = TomlCheckNulls("0", serialPortSettings, "DefaultTXHEX");
-                    dtr = TomlCheckNulls("1", serialPortSettings, "DefaultDTR");
-                    rts = TomlCheckNulls("0", serialPortSettings, "DefaultRTS");
-                    shtime = TomlCheckNulls("0", serialPortSettings, "DefaultSTime");
-                    autosco = TomlCheckNulls("1", serialPortSettings, "DefaultAUTOSco");
-                    autosavrset = TomlCheckNulls("1", serialPortSettings, "AutoDaveSet");
-                    autosercom = TomlCheckNulls("1", serialPortSettings, "AutoSerichCom");
-                    autoconnect = TomlCheckNulls("1", serialPortSettings, "AutoConnect");
-                    txnewline = TomlCheckNulls("1", serialPortSettings, "DefaultTXNewLine");
+                    string[] cOMSaveDeviceinf = { "0", "1" };
+                    string cOMDeviceinf;
 
-                    //if (settingstomlSp["SerialPortSettings"] != null)  = ;
+                    string serialPortSettings = "SerialPortSettings";
 
-                    if ((string)settingstomlSp["SerialPortCOMData"]["CheckTime"] != "Tommy.TomlLazy") checkTime = settingstomlSp["SerialPortCOMData"]["CheckTime"];
-                    else checkTime = "2024-04-12 19:48:55";
-                    if ((string)settingstomlSp["SerialPortCOMData"]["CheckCounter"] != "Tommy.TomlLazy") checkCounter = settingstomlSp["SerialPortCOMData"]["CheckCounter"];
-                    else checkCounter = "0";
-                    if ((string)settingstomlSp["SerialPortCOMData"]["COMSaveDeviceinf"] != "Tommy.TomlLazy") cOMDeviceinf = settingstomlSp["SerialPortCOMData"]["COMSaveDeviceinf"];
-                    else cOMDeviceinf = "0";
-
-
-                    settingstomlSp = new TomlTable
+                    string TomlCheckNulls(string Mode, string Menu, string Name)
                     {
-                        ["Version"] = FSSoftVersion,
+                        string data = "0";
+                        using (StreamReader reader = File.OpenText(Page1.FSSetToml))
+                        {
+                            TomlTable SPsettingstomlr = TOML.Parse(reader);             //读取TOML
 
-                        ["FSGravitySettings"] =
+                            if (SPsettingstomlr[Menu][Name] != "Tommy.TomlLazy") data = SPsettingstomlr[Menu][Name];
+                            else
+                            {
+                                data = Mode;
+                            }
+                        }
+                        return data;
+                    }
+
+                    using (StreamReader reader = File.OpenText(Page1.FSSetToml))                    //打开TOML文件
+                    {
+                        settingstomlSp = TOML.Parse(reader);
+
+                        if ((string)settingstomlSp["FSGravitySettings"]["DefaultNvPage"] != "Tommy.TomlLazy") defpage = settingstomlSp["FSGravitySettings"]["DefaultNvPage"];
+                        else defpage = "0";
+                        if ((string)settingstomlSp["FSGravitySettings"]["SoftBackground"] != "Tommy.TomlLazy") defPageBackground = settingstomlSp["FSGravitySettings"]["SoftBackground"];
+                        else defPageBackground = "0";
+
+                        var culture = System.Globalization.CultureInfo.CurrentUICulture;
+                        string lang = culture.Name;
+
+                        if ((string)settingstomlSp["FSGravitySettings"]["SoftDefLanguage"] != "Tommy.TomlLazy") defLaunage = settingstomlSp["FSGravitySettings"]["SoftDefLanguage"];
+                        else defLaunage = lang;
+
+                        baud = TomlCheckNulls("115200", serialPortSettings, "DefaultBAUD");
+                        party = TomlCheckNulls("None", serialPortSettings, "DefaultParity");
+                        stop = TomlCheckNulls("One", serialPortSettings, "DefaultSTOP");
+                        data = TomlCheckNulls("8", serialPortSettings, "DefaultDATA");
+
+                        rxhex = TomlCheckNulls("0", serialPortSettings, "DefaultRXHEX");
+                        txhex = TomlCheckNulls("0", serialPortSettings, "DefaultTXHEX");
+                        dtr = TomlCheckNulls("1", serialPortSettings, "DefaultDTR");
+                        rts = TomlCheckNulls("0", serialPortSettings, "DefaultRTS");
+                        shtime = TomlCheckNulls("0", serialPortSettings, "DefaultSTime");
+                        autosco = TomlCheckNulls("1", serialPortSettings, "DefaultAUTOSco");
+                        autosavrset = TomlCheckNulls("1", serialPortSettings, "AutoDaveSet");
+                        autosercom = TomlCheckNulls("1", serialPortSettings, "AutoSerichCom");
+                        autoconnect = TomlCheckNulls("1", serialPortSettings, "AutoConnect");
+                        txnewline = TomlCheckNulls("1", serialPortSettings, "DefaultTXNewLine");
+
+                        //if (settingstomlSp["SerialPortSettings"] != null)  = ;
+
+                        if ((string)settingstomlSp["SerialPortCOMData"]["CheckTime"] != "Tommy.TomlLazy") checkTime = settingstomlSp["SerialPortCOMData"]["CheckTime"];
+                        else checkTime = "2024-04-12 19:48:55";
+                        if ((string)settingstomlSp["SerialPortCOMData"]["CheckCounter"] != "Tommy.TomlLazy") checkCounter = settingstomlSp["SerialPortCOMData"]["CheckCounter"];
+                        else checkCounter = "0";
+                        if ((string)settingstomlSp["SerialPortCOMData"]["COMSaveDeviceinf"] != "Tommy.TomlLazy") cOMDeviceinf = settingstomlSp["SerialPortCOMData"]["COMSaveDeviceinf"];
+                        else cOMDeviceinf = "0";
+
+
+                        settingstomlSp = new TomlTable
+                        {
+                            ["Version"] = FSSoftVersion,
+
+                            ["FSGravitySettings"] =
                         {
                             Comment =
                             "FSGaryityTool Settings:",
@@ -459,7 +480,7 @@ namespace FSGaryityTool_Win11
                             ["SoftDefLanguage"] = defLaunage,
                         },
 
-                        ["SerialPortSettings"] =
+                            ["SerialPortSettings"] =
                         {
                             Comment =
                             "FSGaryityTool SerialPort Settings:\r\n" +
@@ -483,7 +504,7 @@ namespace FSGaryityTool_Win11
                             ["DefaultTXNewLine"] = txnewline,
                         },
 
-                        ["SerialPortCOMData"] =
+                            ["SerialPortCOMData"] =
                         {
                             Comment =
                             "This is a cache of information for all serial devices.\r\n",
@@ -492,7 +513,7 @@ namespace FSGaryityTool_Win11
                             ["CheckCounter"] = "0",
                             ["COMSaveDeviceinf"] = cOMDeviceinf//String.Join(",", cOMSaveDeviceinf)
                         },
-                        ["COMData"] =
+                            ["COMData"] =
                         {
                             Comment =
                             "This is an example of cached serial device information.\r\n",
@@ -508,56 +529,85 @@ namespace FSGaryityTool_Win11
                             },
                         },
 
-                    };
+                        };
 
+                    }
+                    //更新Toml
+                    using (StreamWriter writer = File.CreateText(Page1.FSSetToml))                  //将设置写入TOML文件
+                    {
+                        settingstomlSp.WriteTo(writer);
+                        //Debug.WriteLine("写入Toml" + settingstomlSp["FSGravitySettings"]["DefaultNvPage"]);
+                        // Remember to flush the data if needed!
+                        writer.Flush();
+                    }
                 }
-                //更新Toml
-                using (StreamWriter writer = File.CreateText(Page1.FSSetToml))                  //将设置写入TOML文件
+                else
                 {
-                    settingstomlSp.WriteTo(writer);
-                    //Debug.WriteLine("写入Toml" + settingstomlSp["FSGravitySettings"]["DefaultNvPage"]);
-                    // Remember to flush the data if needed!
-                    writer.Flush();
+                    Debug.WriteLine("<=");
+
                 }
-            }
-            else
-            {
-                Debug.WriteLine("<=");
 
-            }
-
-            SerialPortI.Content = Page1.LanguageText("serialPort");
-            DownFlashI.Content = Page1.LanguageText("download Flash");
-            KeyboardI.Content = Page1.LanguageText("keyboard");
-            MouseI.Content = Page1.LanguageText("mouse");
-
-            this.Activated += (sender, e) =>
-            {
-                if (isFirstActivation)
+                
+                // 在初始化完成后，回到 UI 线程移除 ExtendedSplash
+                this.DispatcherQueue.TryEnqueue(() =>
                 {
-                    DelayedInitialize(mainContent);
-                    isFirstActivation = false;
-                }
-            };
+                    SerialPortI.Content = Page1.LanguageText("serialPort");
+                    DownFlashI.Content = Page1.LanguageText("download Flash");
+                    KeyboardI.Content = Page1.LanguageText("keyboard");
+                    MouseI.Content = Page1.LanguageText("mouse");
 
-            //设置默认页面
-            using (StreamReader reader = File.OpenText(FSSetToml))
-            {
-                TomlTable settingstomlr = TOML.Parse(reader);
-                Debug.WriteLine("Print:" + settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
-                int NvPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
-                FSnv.SelectedItem = FSnv.MenuItems[NvPage];             //设置默认页面
-                FsPage = NvPage;
-            }
-            using (StreamReader reader = File.OpenText(FSSetToml))
-            {
-                TomlTable settingstomlr = TOML.Parse(reader);
-                Debug.WriteLine("Print:" + settingstomlr["FSGravitySettings"]["SoftBackground"]);
-                int defPageBackground = int.Parse(settingstomlr["FSGravitySettings"]["SoftBackground"]);
-                if (defPageBackground == 0) defWindowBackGround = true;
-                else if (defPageBackground == 1) defWindowBackGround = false;
-                lastdefWindowBackGround = defPageBackground;
-            }
+                    //设置默认页面
+                    using (StreamReader reader = File.OpenText(FSSetToml))
+                    {
+                        TomlTable settingstomlr = TOML.Parse(reader);
+                        Debug.WriteLine("Print:" + settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
+                        int NvPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
+                        FSnv.SelectedItem = FSnv.MenuItems[NvPage];             //设置默认页面
+                        FsPage = NvPage;
+                    }
+                    using (StreamReader reader = File.OpenText(FSSetToml))
+                    {
+                        TomlTable settingstomlr = TOML.Parse(reader);
+                        Debug.WriteLine("Print:" + settingstomlr["FSGravitySettings"]["SoftBackground"]);
+                        int defPageBackground = int.Parse(settingstomlr["FSGravitySettings"]["SoftBackground"]);
+                        if (defPageBackground == 0) defWindowBackGround = true;
+                        else if (defPageBackground == 1) defWindowBackGround = false;
+                        lastdefWindowBackGround = defPageBackground;
+                    }
+                    TitleBarTextBlock.Text = "FSGravityTool";
+                    //SystemBackdrop = new MicaBackdrop()
+                    //{ Kind = MicaKind.BaseAlt };
+
+                    //SystemBackdrop = new DesktopAcrylicBackdrop();
+
+                    if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
+                    {
+                        // 连接策略对象。
+                        m_configurationSource = new Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration();
+                        this.Activated += Window_Activated;  // 当窗口被激活时的事件处理。
+                        this.Closed += Window_Closed;  // 当窗口被关闭时的事件处理。
+                        ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;  // 当窗口主题改变时的事件处理。
+
+                        // 初始配置状态。
+                        m_configurationSource.IsInputActive = true;  // 设置输入活动状态为真。
+                        SetConfigurationSourceTheme();  // 设置配置源主题。
+
+                        m_acrylicController = new Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController();  // 创建一个新的亚克力控制器。
+
+                        // 根据defWindowBackGround的值选择亚克力效果的类型。
+                        m_acrylicController.Kind = defWindowBackGround ? Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Thin : Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Base;
+
+                        // 启用系统背景。
+                        // 注意：确保使用了"using WinRT;"以支持Window.As<...>()调用。
+                        m_acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());  // 添加系统背景目标。
+                        m_acrylicController.SetSystemBackdropConfiguration(m_configurationSource);  // 设置系统背景配置。
+                    }
+
+                    
+                });
+
+                
+            });
 
             /*
             if (AppWindowTitleBar.IsCustomizationSupported())
@@ -587,36 +637,16 @@ namespace FSGaryityTool_Win11
                 
             }*/
 
-            TitleBarTextBlock.Text = "FSGravityTool";
-            //SystemBackdrop = new MicaBackdrop()
-            //{ Kind = MicaKind.BaseAlt };
 
-            //SystemBackdrop = new DesktopAcrylicBackdrop();
-
-            if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
+            this.Activated += (sender, e) =>
             {
-                // 连接策略对象。
-                m_configurationSource = new Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration();
-                this.Activated += Window_Activated;  // 当窗口被激活时的事件处理。
-                this.Closed += Window_Closed;  // 当窗口被关闭时的事件处理。
-                ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;  // 当窗口主题改变时的事件处理。
 
-                // 初始配置状态。
-                m_configurationSource.IsInputActive = true;  // 设置输入活动状态为真。
-                SetConfigurationSourceTheme();  // 设置配置源主题。
-
-                m_acrylicController = new Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController();  // 创建一个新的亚克力控制器。
-
-                // 根据defWindowBackGround的值选择亚克力效果的类型。
-                m_acrylicController.Kind = defWindowBackGround ? Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Thin : Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Base;
-
-                // 启用系统背景。
-                // 注意：确保使用了"using WinRT;"以支持Window.As<...>()调用。
-                m_acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());  // 添加系统背景目标。
-                m_acrylicController.SetSystemBackdropConfiguration(m_configurationSource);  // 设置系统背景配置。
-            }
-
-
+                if (isFirstActivation)
+                {
+                    DelayedInitialize(mainContent);
+                    isFirstActivation = false;
+                }
+            };
         }
         int lastdefWindowBackGround = 0;
         public void WindowBackSetting()

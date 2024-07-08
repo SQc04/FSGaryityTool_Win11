@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Reflection.PortableExecutable;
 using static System.Net.Mime.MediaTypeNames;
 using Windows.ApplicationModel;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
