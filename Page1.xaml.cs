@@ -158,6 +158,7 @@ namespace FSGaryityTool_Win11
 
         public static string LanguageText(string laugtext)
         {
+            //System.Globalization.CultureInfo.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             var culture = System.Globalization.CultureInfo.CurrentUICulture;
             string lang = culture.Name;
 
@@ -326,33 +327,10 @@ namespace FSGaryityTool_Win11
 
                 RXListView.ItemsSource = new ObservableCollection<DataItem>();
 
+                CommonRes._serialPort.DataReceived += _serialPort_DataReceived;
                 //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
 
-                BaudTextBlock.Text = LanguageText("baudRatel");
-                PartTextBlock.Text = LanguageText("parityl");
-                StopTextBlock.Text = LanguageText("stopBits");
-                DataTextBlock.Text = LanguageText("dataBits");
-                RXHEXButton.Content = LanguageText("rxHexl");
-                TXHEXButton.Content = LanguageText("txHexl");
-                TXNewLineButton.Content = LanguageText("txNewLinel");
-                SaveSetButton.Content = LanguageText("autoSaveSetl");
-                AUTOScrollButton.Content = LanguageText("autoScrolll");
-                AutoComButton.Content = LanguageText("autoSerichComl");
-                AutoConnectButton.Content = LanguageText("autoConnectl");
-                CONTButton.Content = LanguageText("connectl");
-                COMRstInfoBar.Message = LanguageText("comRstInfoBar");
-
-                CommonRes._serialPort.DataReceived += _serialPort_DataReceived;
-
-                List<MCUTool> mcuTools = new List<MCUTool>()
-                {
-                    new MCUTool() { Name = "None", Description = LanguageText("mcuToolNone") },
-                    new MCUTool() { Name = "ESP8266", Description = LanguageText("mcuToolEsp8266") },
-                    new MCUTool() { Name = "RP2040        M", Description = LanguageText("mcuToolRP2040MPY") }
-                };
-
-                ChipToolKitComboBox.ItemsSource = mcuTools;
-                ChipToolKitComboBox.SelectedItem = mcuTools[1];
+                LaunageSetting();
 
 
                 // 在你的代码后台，定义一个List<string>作为数据源
@@ -486,7 +464,32 @@ namespace FSGaryityTool_Win11
 
             
         }
+        public void LaunageSetting()
+        {
+            BaudTextBlock.Text = LanguageText("baudRatel");
+            PartTextBlock.Text = LanguageText("parityl");
+            StopTextBlock.Text = LanguageText("stopBits");
+            DataTextBlock.Text = LanguageText("dataBits");
+            RXHEXButton.Content = LanguageText("rxHexl");
+            TXHEXButton.Content = LanguageText("txHexl");
+            TXNewLineButton.Content = LanguageText("txNewLinel");
+            SaveSetButton.Content = LanguageText("autoSaveSetl");
+            AUTOScrollButton.Content = LanguageText("autoScrolll");
+            AutoComButton.Content = LanguageText("autoSerichComl");
+            AutoConnectButton.Content = LanguageText("autoConnectl");
+            CONTButton.Content = LanguageText("connectl");
+            COMRstInfoBar.Message = LanguageText("comRstInfoBar");
 
+            List<MCUTool> mcuTools = new List<MCUTool>()
+                {
+                    new MCUTool() { Name = "None", Description = LanguageText("mcuToolNone") },
+                    new MCUTool() { Name = "ESP8266", Description = LanguageText("mcuToolEsp8266") },
+                    new MCUTool() { Name = "RP2040        M", Description = LanguageText("mcuToolRP2040MPY") }
+                };
+
+            ChipToolKitComboBox.ItemsSource = mcuTools;
+            ChipToolKitComboBox.SelectedItem = mcuTools[1];
+        }
         public void TimerTick(Object stateInfo)
         {
             DispatcherQueue.TryEnqueue(() =>

@@ -66,6 +66,10 @@ namespace FSGaryityTool_Win11
             Settingsbar.ItemClicked += Settingsbar_ItemClicked;
             */
 
+            LaunageSetting();
+        }
+        public void LaunageSetting()
+        {
             string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string packageName = Package.Current.Id.FamilyName;
             appFolderPath = Path.Combine(localAppDataPath, "Packages", packageName, "LocalCache", "Local");
@@ -77,7 +81,6 @@ namespace FSGaryityTool_Win11
             // 获取被重定向的文件路径
             appFilepath = FSGravif;
             redirectedFilePath = Path.Combine(FSGravif, "Settings.toml");
-
 
             using (StreamReader reader = File.OpenText(Page1.FSSetToml))        //打开TOML文件
             {
@@ -93,7 +96,7 @@ namespace FSGaryityTool_Win11
             StartPageCombobox.ItemsSource = STARTPage;          //将字符串添加到选择框
                                                                 //读取TOML设置
             if (DefaultTomlSTARTPage == 0) DefaultSTARTPage = Page1.LanguageText("serialPort");
-            else if (DefaultTomlSTARTPage == 1)  DefaultSTARTPage = Page1.LanguageText("download Flash");
+            else if (DefaultTomlSTARTPage == 1) DefaultSTARTPage = Page1.LanguageText("download Flash");
             else if (DefaultTomlSTARTPage == 2) DefaultSTARTPage = Page1.LanguageText("keyboard");
             else if (DefaultTomlSTARTPage == 3) DefaultSTARTPage = Page1.LanguageText("mouse");
             //else if (DefaultTomlSTARTPage == 4) DefaultSTARTPage = "";
@@ -132,7 +135,6 @@ namespace FSGaryityTool_Win11
             SoftLanguage.Header = Page1.LanguageText("DefLanguage");
             SoftLanguage.Description = Page1.LanguageText("DefLanguageDescription");
         }
-
         private void Aboutp_Click(object sender, RoutedEventArgs e)
         {
 

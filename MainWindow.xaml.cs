@@ -551,10 +551,7 @@ namespace FSGaryityTool_Win11
                 // 在初始化完成后，回到 UI 线程移除 ExtendedSplash
                 this.DispatcherQueue.TryEnqueue(() =>
                 {
-                    SerialPortI.Content = Page1.LanguageText("serialPort");
-                    DownFlashI.Content = Page1.LanguageText("download Flash");
-                    KeyboardI.Content = Page1.LanguageText("keyboard");
-                    MouseI.Content = Page1.LanguageText("mouse");
+                    LaunageSetting();
 
                     //设置默认页面
                     using (StreamReader reader = File.OpenText(FSSetToml))
@@ -649,6 +646,14 @@ namespace FSGaryityTool_Win11
             };
         }
         int lastdefWindowBackGround = 0;
+
+        public void LaunageSetting()
+        {
+            SerialPortI.Content = Page1.LanguageText("serialPort");
+            DownFlashI.Content = Page1.LanguageText("download Flash");
+            KeyboardI.Content = Page1.LanguageText("keyboard");
+            MouseI.Content = Page1.LanguageText("mouse");
+        }
         public void WindowBackSetting()
         {
             if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())

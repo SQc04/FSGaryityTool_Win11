@@ -266,7 +266,7 @@
     <comment>Serial Port Page text</comment>
   </data>
   <data name="settings" xml:space="preserve">
-    <value>ettings</value>
+    <value>Settings</value>
     <comment>Settings Page text</comment>
   </data>
   <data name="softToolBackground" xml:space="preserve">

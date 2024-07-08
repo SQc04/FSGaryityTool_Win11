@@ -394,7 +394,7 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         }
         
         /// <summary>
-        ///   查找类似 ettings 的本地化字符串。
+        ///   查找类似 Settings 的本地化字符串。
         /// </summary>
         internal static string settings {
             get {
