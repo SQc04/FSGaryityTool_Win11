@@ -17,10 +17,12 @@ using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
 
+using FSGaryityTool_Win11.Views.Pages.FlashDownloadPage;
+
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace FSGaryityTool_Win11
+namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

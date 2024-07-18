@@ -62,19 +62,24 @@
     <None Remove="Assets\FSFSoft.png" />
     <None Remove="Assets\FSFSoftLogo.png" />
     <None Remove="Assets\StoreLogo.png" />
+    <None Remove="Controls\FanAUserControl.xaml" />
     <None Remove="ExtendedSplash.xaml" />
+    <None Remove="Fonts\Segoe Fluent Icons EULA.txt" />
     <None Remove="FSPage.xaml" />
     <None Remove="MainPage1.xaml" />
     <None Remove="MainSettingsPage.xaml" />
-    <None Remove="McuToolpage\ESP8266Tools.xaml" />
-    <None Remove="McuToolpage\NoneTools.xaml" />
-    <None Remove="McuToolpage\RP2040MPYTools.xaml" />
     <None Remove="Page1.xaml" />
     <None Remove="Page2.xaml" />
     <None Remove="Page3.xaml" />
     <None Remove="Page4.xaml" />
     <None Remove="Page5.xaml" />
     <None Remove="SettingsPage.xaml" />
+    <None Remove="Views\McuToolpage\ESP8266Tools.xaml" />
+    <None Remove="Views\McuToolpage\NoneTools.xaml" />
+    <None Remove="Views\McuToolpage\RP2040MPYTools.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Themes\Generic.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -200,19 +205,16 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <Page Update="McuToolpage\RP2040MPYTools.xaml">
+    <None Update="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <Page Update="Controls\FanAUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <None Update="Reliance\ClevoEcInfo.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Page Update="Page5.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="McuToolpage\NoneTools.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="McuToolpage\ESP8266Tools.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="ExtendedSplash.xaml">
@@ -225,9 +227,29 @@
     <Page Update="Page4.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Update="Views\McuToolpage\ESP8266Tools.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\McuToolpage\NoneTools.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\McuToolpage\RP2040MPYTools.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="PcControlToolspage\" />
+    <Folder Include="Fonts\" />
+    <Folder Include="Views\Pages\FanControlPage\" />
+    <Folder Include="Views\Pages\SerialPortPage\" />
+    <Folder Include="Views\Pages\SettingsPage\" />
+    <Folder Include="Views\Pages\MousePage\" />
+    <Folder Include="Views\Pages\KeyboardPage\" />
+    <Folder Include="Views\Pages\FlashDownloadPage\" />
+    <Folder Include="Views\Pages\FairingStudioPage\" />
   </ItemGroup>
 
   <!-- 
@@ -258,7 +280,7 @@
   </PropertyGroup>
 	
   <PropertyGroup>
-    <VersionPrefix>0.2.37</VersionPrefix>
+    <VersionPrefix>0.2.38</VersionPrefix>
   </PropertyGroup>
 	
 	

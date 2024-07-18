@@ -9,7 +9,7 @@
   <Identity
     Name="8153eea4-0701-4df3-b478-ccfc268ddd1b"
     Publisher="CN=FAIRING STUDIO"
-    Version="0.2.37.0" />
+    Version="0.2.38.0" />
 
   <Properties>
     <DisplayName>FSGaryityTool</DisplayName>

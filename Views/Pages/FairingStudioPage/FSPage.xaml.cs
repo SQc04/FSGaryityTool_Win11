@@ -16,18 +16,19 @@ using Microsoft.UI.Xaml.Navigation;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace FSGaryityTool_Win11
+namespace FSGaryityTool_Win11.Views.Pages.FairingStudioPage
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class Page2 : Page
+    public sealed partial class FSPage : Page
     {
-        public Page2()
+        public static FSPage fSPage;
+
+        public FSPage()
         {
             this.InitializeComponent();
+            fSPage = this;
         }
-
-
     }
 }

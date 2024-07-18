@@ -83,13 +83,15 @@
                         <Border x:Name="BorderBack1" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
                             <Grid HorizontalAlignment="Center" Width="120">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                    <FontIcon Glyph="&#xE916;" Margin="12,0,6,0"></FontIcon>
+                                    <FontIcon Glyph="&#xEC4A;" Margin="12,0,6,0"></FontIcon>
                                     <TextBlock x:Name="BaudTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="70" Margin="0">BAUDRATE</TextBlock>
                                 </StackPanel>
                             </Grid>
                             
                         </Border>
-                        <ComboBox x:Name="BANDComboBox" IsEditable="True"  SelectionChanged="BANDComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                        <ComboBox x:Name="BANDComboBox" IsEditable="True" SelectionChanged="BANDComboBox_SelectionChanged" Width="108" Margin="6">
+                            
+                        </ComboBox>
                         <StackPanel.Transitions>
                             <TransitionCollection>
                                 <RepositionThemeTransition />
@@ -101,12 +103,14 @@
                         <Border x:Name="BorderBack2" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
                             <Grid HorizontalAlignment="Center" Width="120">
                                 <StackPanel  Orientation="Horizontal" HorizontalAlignment="Left">
-                                    <FontIcon Glyph="&#xE928;" Margin="12,0,6,0"></FontIcon>
+                                    <FontIcon Glyph="&#xEA18;" Margin="12,0,6,0"></FontIcon>
                                     <TextBlock x:Name="PartTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="70" Margin="0">Parity</TextBlock>
                                 </StackPanel>
                             </Grid>
                         </Border>
-                        <ComboBox x:Name="PARComboBox" SelectionChanged="PARComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                        <ComboBox x:Name="PARComboBox" SelectionChanged="PARComboBox_SelectionChanged" Width="108" Margin="6">
+                            
+                        </ComboBox>
                         <StackPanel.Transitions>
                             <TransitionCollection>
                                 <RepositionThemeTransition />
@@ -135,7 +139,8 @@
                         <Border x:Name="BorderBack4" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
                             <Grid HorizontalAlignment="Center" Width="120">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                    <FontIcon Glyph="&#xF785;" Margin="12,0,6,0"></FontIcon>
+                                    <FontIcon Glyph="&#xE950;" Margin="12,0,6,0"></FontIcon>
+                                    <!--&#xF785;-->
                                     <TextBlock x:Name="DataTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="70" Margin="0">DATA Bits</TextBlock>
                                 </StackPanel>
                             </Grid>
@@ -351,7 +356,7 @@
         <Toolkit:GridSplitter Grid.Column="2" Grid.ColumnSpan="1" Grid.Row="1" VerticalAlignment="Top" Margin="0,-6.05,0,0"/>
 
         <Grid Grid.Column="2" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <TextBox x:Name="TXTextBox" KeyDown="TXTextBox_KeyDown" KeyUp="TXTextBox_KeyUp" TextChanged="TXTextBox_TextChanged" Margin="0,6,0,12" 
+            <TextBox x:Name="TXTextBox" PreviewKeyDown="TXTextBox_PreviewKeyDown" KeyUp="TXTextBox_KeyUp" TextChanged="TXTextBox_TextChanged" Margin="0,6,0,12" 
                     IsSpellCheckEnabled="False" PlaceholderText="Type your data here...&#x0a;Press Ctrl+Enter to send data." AcceptsReturn="True" TextWrapping="Wrap">
 
             </TextBox>

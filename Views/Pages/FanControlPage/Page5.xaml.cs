@@ -32,7 +32,7 @@ using Windows.UI;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace FSGaryityTool_Win11
+namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -58,14 +58,15 @@ namespace FSGaryityTool_Win11
             if (isConnect)
             {
                 bool info = ClevoEcControl.InitIo();
+                int fanNum = ClevoEcControl.GetFanCount();
+                Debug.WriteLine($"info: " + fanNum.ToString());
+
                 int fan_id = 1;
                 ClevoEcControl.ECData data = ClevoEcControl.GetTempFanDuty(fan_id);
                 CPUFanRadialGauge.Value = (int)Math.Round((data.FanDuty / 255.0) * 100);
                 fan_id = 2;
                 data = ClevoEcControl.GetTempFanDuty(fan_id);
                 GPUFanRadialGauge.Value = (int)Math.Round((data.FanDuty / 255.0) * 100);
-                CpuTempText.Text = "50¡æ";
-                GpuTempText.Text = "50¡æ";
             }
             else
             {
@@ -73,9 +74,10 @@ namespace FSGaryityTool_Win11
                 GPUFanRadialGauge.Value = 60;
                 CpuTempText.Text = "N/A¡æ";
                 GpuTempText.Text = "N/A¡æ";
+                CPUFanRpmRadialGauge.Value = 0;
+                GPUFanRpmRadialGauge.Value = 0;
             }
-            CPUFanRpmRadialGauge.Value = 0;
-            GPUFanRpmRadialGauge.Value = 0;
+            
 
             tempTimer = new System.Threading.Timer(TempTimerTick, null, 0, 1000);
             CPUFanRadialGauge.ValueChanged += CPUFanRadialGauge_ValueChanged;
@@ -302,6 +304,6 @@ namespace FSGaryityTool_Win11
             args.DrawingSession.DrawGeometry(path, color, 3);
         }
 
-
+        /**/
     }
 }

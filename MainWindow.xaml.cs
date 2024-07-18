@@ -47,6 +47,12 @@ using Windows.ApplicationModel.Activation;
 using System.Xml.Linq;
 using Microsoft.UI.Xaml.Media.Animation;
 
+using FSGaryityTool_Win11.Views.Pages.KsyboardPage;
+using FSGaryityTool_Win11.Views.Pages.MousePage;
+using FSGaryityTool_Win11.Views.Pages.FanControlPage;
+using FSGaryityTool_Win11.Views.Pages.FlashDownloadPage;
+using FSGaryityTool_Win11.Views.Pages.FairingStudioPage;
+
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -61,7 +67,7 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.37";
+        public static string FSSoftVersion = "0.2.38";
         public static int FsPage = 0;
         public static bool defWindowBackGround = true;
         public static TomlTable settingstomlSp;

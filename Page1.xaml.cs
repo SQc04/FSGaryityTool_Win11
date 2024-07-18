@@ -1943,11 +1943,15 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
         }
 
         public bool isCtrlDown = false;
-        private void TXTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        private void TXTextBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Control)
             {
                 isCtrlDown = true;
+            }
+            else if (e.Key == Windows.System.VirtualKey.Enter && isCtrlDown)
+            {
+                e.Handled = true;  // 阻止事件继续传递
             }
         }
 
@@ -1963,7 +1967,6 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
             }
         }
 
-        
 
         private void SaveSetButton_Click(object sender, RoutedEventArgs e)
         {

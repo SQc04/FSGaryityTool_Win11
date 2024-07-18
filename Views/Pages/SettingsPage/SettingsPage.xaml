@@ -210,7 +210,9 @@
                                             <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
+                                            <ComboBox Width="150" Margin="0,12,0,10">
+                                                
+                                            </ComboBox>
                                         </StackPanel>
                                     </StackPanel>
                                 </Grid>

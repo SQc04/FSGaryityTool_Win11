@@ -32,7 +32,7 @@
 
                 <StackPanel>
                     <Border x:Name="CDHBorder" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" HorizontalAlignment="Left" Height="300" Width="400" Margin="0,6">
-                        <Image Stretch="UniformToFill" HorizontalAlignment="Center" Source="Assets/FSBLUE12K.png" />
+                        <Image Stretch="UniformToFill" HorizontalAlignment="Center" Source="ms-appx:///Assets/FSBLUE12K.png" />
                     </Border>
                     
                     <StackPanel.Transitions>
@@ -49,7 +49,7 @@
 
                     <toolkit:SettingsExpander Header="FSGravity For Windows 11" Description="© 2019 - 2024 FairingStudio" Margin="0,2,0,3" IsExpanded="False" >
                         <toolkit:SettingsExpander.HeaderIcon>
-                            <BitmapIcon UriSource="Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png" ShowAsMonochrome="False"/>
+                            <BitmapIcon UriSource="ms-appx:///Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png" ShowAsMonochrome="False"/>
                         </toolkit:SettingsExpander.HeaderIcon>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
