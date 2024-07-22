@@ -65,26 +65,34 @@
                                     <HyperlinkButton Content="Windows UI Library" NavigateUri="https://aka.ms/winui" HorizontalAlignment="Left" Margin="-12,0,0,0"/>
                                     <HyperlinkButton Content="Windows Community Toolkit" NavigateUri="https://github.com/CommunityToolkit/Windows" HorizontalAlignment="Left" Margin="-12,0,0,0"/>
                                     <HyperlinkButton Content="Tommy" NavigateUri="https://github.com/dezhidki/Tommy" HorizontalAlignment="Left" Margin="-12,0,0,0"/>
+                                    
+                                    <StackPanel.ChildrenTransitions>
+                                        <TransitionCollection>
+                                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
+                                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                                        </TransitionCollection>
+                                    </StackPanel.ChildrenTransitions>
                                 </StackPanel>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock TextWrapping="Wrap" Text="THIS CODE AND INFORMATION IS PROVIDED ‘AS IS’ WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE." Margin="0,0,0,0"/>
                                     <HyperlinkButton Content="License &amp; Source" NavigateUri="https://github.com/SQc04/FSGaryityTool_Win11/blob/master/LICENSE.txt" Margin="-12,0,0,0"/>
+                                    
+                                    <StackPanel.ChildrenTransitions>
+                                        <TransitionCollection>
+                                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
+                                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                                        </TransitionCollection>
+                                    </StackPanel.ChildrenTransitions>
                                 </StackPanel>
                             </toolkit:SettingsCard>
                         </toolkit:SettingsExpander.Items>
-                        
-                        <toolkit:SettingsExpander.Transitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition />
-                            </TransitionCollection>
-                        </toolkit:SettingsExpander.Transitions>
                     </toolkit:SettingsExpander>
 
                     <toolkit:SettingsExpander Header="FairingStudio" Description="List of Producers / Special Thanks" Margin="0,2,0,3" IsExpanded="True">
                         <toolkit:SettingsExpander.HeaderIcon>
-                            <BitmapIcon UriSource="Assets/FS2022.png" ShowAsMonochrome="False"/>
+                            <BitmapIcon UriSource="ms-appx:///Assets/FS2022.png" ShowAsMonochrome="False"/>
                         </toolkit:SettingsExpander.HeaderIcon>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard ContentAlignment="Left">
@@ -119,12 +127,26 @@
                                     <TextBlock Text="游悦电子DIY" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
                                     <TextBlock Text="阿良良木翼i" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
                                     <TextBlock Text="You!" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+
+                                    <StackPanel.ChildrenTransitions>
+                                        <TransitionCollection>
+                                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="10"/>
+                                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                                        </TransitionCollection>
+                                    </StackPanel.ChildrenTransitions>
                                 </StackPanel>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
                                 <StackPanel Orientation="Vertical">
                                     <HyperlinkButton Content="Visit Our Studio Website" NavigateUri="https://fairingstudio.com/"  Margin="-12,0,0,0"/>
                                     <HyperlinkButton Content="Help &amp; Feedback" NavigateUri="https://fairingstudio.com/"  Margin="-12,0,0,0"/>
+
+                                    <StackPanel.ChildrenTransitions>
+                                        <TransitionCollection>
+                                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
+                                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                                        </TransitionCollection>
+                                    </StackPanel.ChildrenTransitions>
                                 </StackPanel>
                             </toolkit:SettingsCard>
                             <!--
@@ -142,12 +164,6 @@
                             </toolkit:SettingsCard>
                             -->
                         </toolkit:SettingsExpander.Items>
-
-                        <toolkit:SettingsExpander.Transitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition />
-                            </TransitionCollection>
-                        </toolkit:SettingsExpander.Transitions>
                     </toolkit:SettingsExpander>
 
                     <toolkit:SettingsExpander Header="FSGaryityTool_Win11 in Github" Description="FSGaryityTool for WinUI3" Margin="0,3,0,3" IsExpanded="True">
@@ -175,22 +191,23 @@
                             </toolkit:SettingsCard>
                             -->
                         </toolkit:SettingsExpander.Items>
-                        
-                        <toolkit:SettingsExpander.Transitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition />
-                            </TransitionCollection>
-                        </toolkit:SettingsExpander.Transitions>
                     </toolkit:SettingsExpander>
 
                     <TextBlock Text="" Margin="0,12,0,0"/>
-
-                    <StackPanel.Transitions>
+                    <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
-                            <RepositionThemeTransition />
+                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
+                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
                         </TransitionCollection>
-                    </StackPanel.Transitions>
+                    </StackPanel.ChildrenTransitions>
                 </StackPanel>
+                
+                <StackPanel.ChildrenTransitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
+                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                    </TransitionCollection>
+                </StackPanel.ChildrenTransitions>
             </StackPanel>
         </ScrollViewer>
     </Grid>

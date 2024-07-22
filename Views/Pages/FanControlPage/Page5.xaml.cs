@@ -40,6 +40,7 @@ namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
     public sealed partial class Page5 : Page
     {
         public System.Threading.Timer tempTimer;
+        public Timer ServerRunCheckTimer;
         private System.Threading.Timer cpuDelayTimer;
         private System.Threading.Timer gpuDelayTimer;
 
@@ -52,23 +53,46 @@ namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
         {
             this.InitializeComponent();
 
-            Clevoinfo_Click(null, null);
-
-            bool isConnect = ClevoEcControl.IsServerStarted();
-            if (isConnect)
+            try
             {
-                bool info = ClevoEcControl.InitIo();
-                int fanNum = ClevoEcControl.GetFanCount();
-                Debug.WriteLine($"info: " + fanNum.ToString());
+                bool isConnect = ClevoEcControl.IsServerStarted();
+                if (isConnect)
+                {
+                    bool isInitialize = ClevoEcControl.InitIo();
+                    Debug.WriteLine($"isInitialize: " + isInitialize.ToString());
+                    if (isInitialize)
+                    {
+                        int fanNum = ClevoEcControl.GetFanCount();
+                        Debug.WriteLine($"info: " + fanNum.ToString());
 
-                int fan_id = 1;
-                ClevoEcControl.ECData data = ClevoEcControl.GetTempFanDuty(fan_id);
-                CPUFanRadialGauge.Value = (int)Math.Round((data.FanDuty / 255.0) * 100);
-                fan_id = 2;
-                data = ClevoEcControl.GetTempFanDuty(fan_id);
-                GPUFanRadialGauge.Value = (int)Math.Round((data.FanDuty / 255.0) * 100);
+                        int fan_id = 1;
+                        ClevoEcControl.ECData data = ClevoEcControl.GetTempFanDuty(fan_id);
+                        CPUFanRadialGauge.Value = (int)Math.Round((data.FanDuty / 255.0) * 100);
+                        fan_id = 2;
+                        data = ClevoEcControl.GetTempFanDuty(fan_id);
+                        GPUFanRadialGauge.Value = (int)Math.Round((data.FanDuty / 255.0) * 100);
+                    }
+                    else
+                    {
+                        CPUFanRadialGauge.Value = 60;
+                        GPUFanRadialGauge.Value = 60;
+                        CpuTempText.Text = "N/A℃";
+                        GpuTempText.Text = "N/A℃";
+                        CPUFanRpmRadialGauge.Value = 0;
+                        GPUFanRpmRadialGauge.Value = 0;
+                    }
+                }
+                else
+                {
+                    CPUFanRadialGauge.Value = 60;
+                    GPUFanRadialGauge.Value = 60;
+                    CpuTempText.Text = "N/A℃";
+                    GpuTempText.Text = "N/A℃";
+                    CPUFanRpmRadialGauge.Value = 0;
+                    GPUFanRpmRadialGauge.Value = 0;
+                }
             }
-            else
+            catch
             {
                 CPUFanRadialGauge.Value = 60;
                 GPUFanRadialGauge.Value = 60;
@@ -78,14 +102,105 @@ namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
                 GPUFanRpmRadialGauge.Value = 0;
             }
             
+            
 
-            tempTimer = new System.Threading.Timer(TempTimerTick, null, 0, 1000);
-            CPUFanRadialGauge.ValueChanged += CPUFanRadialGauge_ValueChanged;
-            GPUFanRadialGauge.ValueChanged += GPUFanRadialGauge_ValueChanged;
-            // 初始化定时器，但不启动
-            cpuDelayTimer = new System.Threading.Timer(CpuOnTimer, null, Timeout.Infinite, Timeout.Infinite);
-            gpuDelayTimer = new System.Threading.Timer(GpuOnTimer, null, Timeout.Infinite, Timeout.Infinite);
+            if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
+            {
+                Debug.WriteLine("An instance of this application is already running.");
+                return;
+            }
+            else
+            {
+                CPUFanRadialGauge.ValueChanged += CPUFanRadialGauge_ValueChanged;
+                GPUFanRadialGauge.ValueChanged += GPUFanRadialGauge_ValueChanged;
+                // 初始化定时器，但不启动
+                cpuDelayTimer = new System.Threading.Timer(CpuOnTimer, null, Timeout.Infinite, Timeout.Infinite);
+                gpuDelayTimer = new System.Threading.Timer(GpuOnTimer, null, Timeout.Infinite, Timeout.Infinite);
+
+                Clevoinfo_Click(null, null);
+
+                ServerRunCheckTimer = new Timer(ServerRunCheckTimeTick, null, 0, 5000);
+            }
+
         }
+
+        public bool serverRunInfo = false;
+        public bool serverRun = false;
+        public int serverTimeout = 0;
+        public int serverTimeoutInfo = 0;
+        public void ServerRunCheckTimeTick(Object stateInfo)
+        {
+            try
+            {
+                bool isConnect = ClevoEcControl.IsServerStarted();
+                if (isConnect)
+                {
+                    if (!serverRunInfo)
+                    {
+                        bool isInitialize = ClevoEcControl.InitIo();
+                        Debug.WriteLine($"ServerRunInitialize: " + isInitialize.ToString());
+
+                        if (isInitialize)
+                        {
+                            Thread.Sleep(500);
+                            tempTimer = new System.Threading.Timer(TempTimerTick, null, 0, 1000);
+                            serverRun = true;
+                        }
+                    }
+                    serverRunInfo = true;
+                }
+                else
+                {
+                    HandleServerDisconnection();
+                }
+                Debug.WriteLine($"ServerRun: " + isConnect.ToString());
+
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    ServerTimeoutInfoTextBlock.Text = "  serverTimeoutInfo: " + serverTimeoutInfo.ToString();
+                });
+            }
+            catch
+            {
+                serverRunInfo = false;
+            }
+        }
+
+        private void HandleServerDisconnection()
+        {
+            if (serverRun)
+            {
+                tempTimer.Dispose();
+                serverRun = false;
+            }
+            serverRunInfo = false;
+
+            Process[] processes = Process.GetProcessesByName("ClevoEcControl");
+            if (processes.Length == 0)
+            {
+                // 如果 ClevoEcControl.exe 没有运行，那么启动它
+                //Process.Start("ClevoEcControl.exe");
+            }
+            else
+            {
+                HandleServerTimeout(processes);
+            }
+        }
+
+        private void HandleServerTimeout(Process[] processes)
+        {
+            serverTimeout++;
+            serverTimeoutInfo++;
+            if (serverTimeout > 5)
+            {
+                foreach (var process in processes)
+                {
+                    process.Kill();
+                }
+                serverTimeout = 0;
+            }
+        }
+
         public void TempTimerTick(Object stateInfo)
         {
             bool isConnect = ClevoEcControl.IsServerStarted();
@@ -158,6 +273,8 @@ namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
                 {
                     CpuTempText.Text = "N/A℃";
                     GpuTempText.Text = "N/A℃";
+                    CPUFanRpmRadialGauge.Value = 0;
+                    GPUFanRpmRadialGauge.Value = 0;
                 });
             }
 
@@ -203,9 +320,14 @@ namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
             bool isConnect =  ClevoEcControl.IsServerStarted();
             Debug.WriteLine($"isConnect: " + isConnect.ToString());
 
+            
+
             if (isConnect)
             {
                 ClevoGetFaninfo.IsEnabled = true;
+
+                bool isInitialize = ClevoEcControl.InitIo();
+                Debug.WriteLine($"isInitialize: " + isInitialize.ToString());
             }
             else
             {

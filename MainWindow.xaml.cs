@@ -52,6 +52,8 @@ using FSGaryityTool_Win11.Views.Pages.MousePage;
 using FSGaryityTool_Win11.Views.Pages.FanControlPage;
 using FSGaryityTool_Win11.Views.Pages.FlashDownloadPage;
 using FSGaryityTool_Win11.Views.Pages.FairingStudioPage;
+using FSGaryityTool_Win11.Views.Pages.SerialPortPage;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -67,7 +69,7 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.38";
+        public static string FSSoftVersion = "0.2.40";
         public static int FsPage = 0;
         public static bool defWindowBackGround = true;
         public static TomlTable settingstomlSp;
@@ -110,7 +112,7 @@ namespace FSGaryityTool_Win11
 
             if (args.IsSettingsSelected)
             {
-                FSnvf.Navigate(typeof(MainSettingsPage));
+                FSnvf.Navigate(typeof(MainSettingsPage), null, new SuppressNavigationTransitionInfo());
                 FsPage = 6;
             }
         }
@@ -120,47 +122,55 @@ namespace FSGaryityTool_Win11
         public NavigationFailedEventHandler OnNavigationFailed { get; private set; }
         public static MainWindow Instance { get; private set; }
 
+        public new static Microsoft.UI.Windowing.AppWindow AppWindow { get; set; }
         ///*
-        [DllImport("user32.dll")]
-        public static extern IntPtr DefWindowProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
+        // 窗口的最小宽度和高度
+        private const int MinWidth = 642;
+        private const int MinHeight = 409;
 
-        [DllImport("comctl32.dll")]
-        public static extern bool SetWindowSubclass(IntPtr hWnd, WndProcDelegate lpfnSubclass, IntPtr uIdSubclass, IntPtr dwRefData);
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct POINT
+        // 窗口的默认宽度和高度
+        private const int DefaultWidth = 1840;
+        private const int DefaultHeight = 960;
+        public static bool Resize(Window window, int width, int height)
         {
-            public int x;
-            public int y;
-        };
-
-        public struct MINMAXINFO
-        {
-            public POINT ptReserved;
-            public POINT ptMaxSize;
-            public POINT ptMaxPosition;
-            public POINT ptMinTrackSize;
-            public POINT ptMaxTrackSize;
-        };
-
-        public const int WM_GETMINMAXINFO = 0x0024;
-
-        public delegate IntPtr WndProcDelegate(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData);
-        private static IntPtr WndProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData)
-        {
-            switch (uMsg)
+            try
             {
-                case WM_GETMINMAXINFO:
-                    MINMAXINFO mmi = Marshal.PtrToStructure<MINMAXINFO>(lParam);
-                    mmi.ptMinTrackSize.x = 700;
-                    mmi.ptMinTrackSize.y = 200;
-                    Marshal.StructureToPtr(mmi, lParam, true);
-                    return IntPtr.Zero;
-            }
+                IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+                Microsoft.UI.WindowId windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+                AppWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+                AppWindow.Resize(new Windows.Graphics.SizeInt32 { Width = width, Height = height });
+                AppWindow.Changed += AppWindow_Changed;
 
-            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
+            return false;
+        }
+
+        private static void AppWindow_Changed(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowChangedEventArgs args)
+        {
+            try
+            {
+                if (AppWindow == null)
+                    return;
+
+                if (AppWindow.Size.Height < MinHeight && AppWindow.Size.Width < MinWidth)
+                    AppWindow.Resize(new Windows.Graphics.SizeInt32 { Width = MinWidth, Height = MinHeight });
+                else if (AppWindow.Size.Height < MinHeight)
+                    AppWindow.Resize(new Windows.Graphics.SizeInt32 { Width = AppWindow.Size.Width, Height = MinHeight });
+                else if (AppWindow.Size.Width < MinWidth)
+                    AppWindow.Resize(new Windows.Graphics.SizeInt32 { Width = MinWidth, Height = AppWindow.Size.Height });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
         }
         //*/
+
         public void DelayedInitialize(UIElement mainContent)
         {
             Task.Run(() =>
@@ -203,14 +213,9 @@ namespace FSGaryityTool_Win11
 
             bool isFirstActivation = true;
             UIElement mainContent = this.Content;
+
             ///*
-            var app = (Application.Current as App); // 尝试将当前应用程序实例转换为App类型
-            if (app != null) // 检查转换是否成功
-            {
-                var hWnd = app.MainWindowHandle; // 获取主窗口的句柄
-                //WindowHelper.SetMinWindowSize(hWnd, 700, 200); // 设置窗口的最小大小为500x500
-                SetWindowSubclass(hWnd, WndProc, IntPtr.Zero, IntPtr.Zero);
-            }
+            Resize(this, DefaultWidth, DefaultHeight);
             //*/
 
 
@@ -324,6 +329,7 @@ namespace FSGaryityTool_Win11
                         ["DefaultNvPage"] = "0",
                         ["SoftBackground"] = "0",
                         ["SoftDefLanguage"] = "zh-CN",
+                        ["DefNavigationViewMode"] = "0",
                     },
 
                         ["SerialPortSettings"] =
@@ -407,13 +413,14 @@ namespace FSGaryityTool_Win11
                     Debug.WriteLine(">");
 
                     //缓存设置
-                    string defpage, defPageBackground, defLaunage;
+                    string defpage, defPageBackground, defLaunage,defNavigationViewMode;
                     string baud, party, stop, data, rxhex, txhex, dtr, rts, shtime, autosco, autosavrset, autosercom, autoconnect, txnewline;
                     string checkTime, checkCounter;
 
                     string[] cOMSaveDeviceinf = { "0", "1" };
                     string cOMDeviceinf;
 
+                    string fsGravitySettings = "FSGravitySettings";
                     string serialPortSettings = "SerialPortSettings";
 
                     string TomlCheckNulls(string Mode, string Menu, string Name)
@@ -440,6 +447,7 @@ namespace FSGaryityTool_Win11
                         else defpage = "0";
                         if ((string)settingstomlSp["FSGravitySettings"]["SoftBackground"] != "Tommy.TomlLazy") defPageBackground = settingstomlSp["FSGravitySettings"]["SoftBackground"];
                         else defPageBackground = "0";
+                        defNavigationViewMode = TomlCheckNulls("0", fsGravitySettings, "DefNavigationViewMode");
 
                         var culture = System.Globalization.CultureInfo.CurrentUICulture;
                         string lang = culture.Name;
@@ -484,6 +492,7 @@ namespace FSGaryityTool_Win11
                             ["DefaultNvPage"] = defpage,
                             ["SoftBackground"] = defPageBackground,
                             ["SoftDefLanguage"] = defLaunage,
+                            ["DefNavigationViewMode"] = defNavigationViewMode,
                         },
 
                             ["SerialPortSettings"] =
@@ -643,9 +652,11 @@ namespace FSGaryityTool_Win11
 
             this.Activated += (sender, e) =>
             {
+                AppWindow.Changed += AppWindow_Changed;
 
                 if (isFirstActivation)
                 {
+
                     DelayedInitialize(mainContent);
                     isFirstActivation = false;
                 }

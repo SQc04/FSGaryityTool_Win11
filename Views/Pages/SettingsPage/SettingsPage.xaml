@@ -44,49 +44,50 @@
 
             <Frame.ContentTransitions>
                 <TransitionCollection>
-                    <NavigationThemeTransition  />
+                    <NavigationThemeTransition />
                 </TransitionCollection>
             </Frame.ContentTransitions>
 
         </Frame>
 
         <ScrollViewer Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" >
-            <StackPanel Margin="0,0,60,0">
-                <StackPanel.Resources>
-                    <Style TargetType="Expander">
-                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    </Style>
-                </StackPanel.Resources>
-
+            <StackPanel Margin="0,0,60,0" HorizontalAlignment="Stretch">
+                <TextBlock Text="" Margin="0,12,0,0"/>
+                <TextBlock x:Name="Generiall" Text="General" Margin="0"/>
                 <StackPanel>
-                    <TextBlock Text="" Margin="0,12,0,0"/>
-                    <TextBlock x:Name="Generiall" Text="General" Margin="0"/>
-
-                    <toolkit:SettingsCard x:Name="StartPage" HeaderIcon="{ui:FontIcon Glyph=&#xE8A1;}" Header="Default start page" Description="Specifies the page that is displayed when FSGravityTool is launched."
-                                          HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
-                        
-                        <Grid>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <ComboBox x:Name="StartPageCombobox" SelectionChanged="StartPageCombobox_SelectionChanged" Width="150" Margin="0,0,27,0"></ComboBox>
-                            </StackPanel>
-                        </Grid>
-                    </toolkit:SettingsCard>
-
-                    <toolkit:SettingsCard x:Name="SoftToolBackground" HeaderIcon="{ui:FontIcon Glyph=&#xEF1F;}" Header="Personalize the background" Description="Set the background of FSGravityTool."
-                                          HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
-
-                        <Grid>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <ComboBox x:Name="SoftBackgroundCombobox" SelectionChanged="SoftBackgroundCombobox_SelectionChanged" Width="150" Margin="0,0,27,0"></ComboBox>
-                            </StackPanel>
-                        </Grid>
-                    </toolkit:SettingsCard>
                     
-                    <StackPanel Height="0">
-                        <toolkit:SettingsCard x:Name="SoftLanguage" HeaderIcon="{ui:FontIcon Glyph=&#xF2B7;}" Header="Language" Description="Set the background of FSGravityTool."
-                                          HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
-
+                    <StackPanel>
+                        <toolkit:SettingsCard x:Name="StartPage" Header="Default start page" 
+                                              Description="Specifies the page that is displayed when FSGravityTool is launched." Margin="0,3,0,3">
+                            <toolkit:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xE8A1;" FontSize="12" />
+                            </toolkit:SettingsCard.HeaderIcon>
+                            <Grid>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <ComboBox x:Name="StartPageCombobox" SelectionChanged="StartPageCombobox_SelectionChanged" Width="150" Margin="0,0,27,0"></ComboBox>
+                                </StackPanel>
+                            </Grid>
+                        </toolkit:SettingsCard>
+                    </StackPanel>
+                    <StackPanel>
+                        <toolkit:SettingsCard x:Name="SoftToolBackground" Header="Personalize the background" 
+                                              Description="Set the background of FSGravityTool." Margin="0,3,0,3">
+                            <toolkit:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xEF1F;" FontSize="12" />
+                            </toolkit:SettingsCard.HeaderIcon>
+                            <Grid>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <ComboBox x:Name="SoftBackgroundCombobox" SelectionChanged="SoftBackgroundCombobox_SelectionChanged" Width="150" Margin="0,0,27,0"></ComboBox>
+                                </StackPanel>
+                            </Grid>
+                        </toolkit:SettingsCard>
+                    </StackPanel>
+                    <StackPanel>
+                        <toolkit:SettingsCard x:Name="SoftLanguage" Header="Language" 
+                                              Description="Set the background of FSGravityTool." Margin="0,3,0,3">
+                            <toolkit:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xF2B7;" FontSize="12" />
+                            </toolkit:SettingsCard.HeaderIcon>
                             <Grid>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                     <ComboBox x:Name="SoftLanguageCombobox" SelectionChanged="SoftLanguageCombobox_SelectionChanged" Width="150" Margin="0,0,27,0"></ComboBox>
@@ -94,54 +95,64 @@
                             </Grid>
                         </toolkit:SettingsCard>
                     </StackPanel>
-                    <toolkit:SettingsCard x:Name="OpenToml" HeaderIcon="{ui:FontIcon Glyph=&#xE835;}" Header="Open TOML file" Description="Open the settings file."
-                                          Click="OpenToml_click" IsClickEnabled="True" ActionIcon="{ui:FontIcon Glyph=&#xE8A7;}"
-                                          HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
+                    <StackPanel>
+                        <toolkit:SettingsCard x:Name="OpenToml" Header="Open TOML file" 
+                                              Description="Open the settings file." Click="OpenToml_click" IsClickEnabled="True" 
+                                              Margin="0,3,0,3">
+                            <toolkit:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xE835;" FontSize="12" />
+                            </toolkit:SettingsCard.HeaderIcon>
+                            
+                            <toolkit:SettingsCard.ActionIcon>
+                                <FontIcon Glyph="&#xE8A7;" FontSize="12" />
+                            </toolkit:SettingsCard.ActionIcon>
+                            <Grid>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
-                        <Grid>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                
-                            </StackPanel>
-                        </Grid>
-                    </toolkit:SettingsCard>
+                                </StackPanel>
+                            </Grid>
+                        </toolkit:SettingsCard>
+                    </StackPanel>
 
-                    <StackPanel.Transitions>
+                    <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
-                            <RepositionThemeTransition />
+                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
+                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
                         </TransitionCollection>
-                    </StackPanel.Transitions>
+                    </StackPanel.ChildrenTransitions>
                 </StackPanel>
-
+                <!---->
                 <StackPanel>
                     <TextBlock Text="" Margin="0,12,0,0"/>
                     <TextBlock x:Name="SpSwttingsl" Text="Serial Port Settings" Margin="0"/>
-
-                    <toolkit:SettingsExpander x:Name="SPTSettingsl" Header="Serial Port Settings" Margin="0,2,0,3">
-                        <toolkit:SettingsExpander.HeaderIcon>
-                            <FontIcon Glyph="&#xE8CB;" FontSize="12" />
-                        </toolkit:SettingsExpander.HeaderIcon>
-                        <toolkit:SettingsExpander.Items>
-                            <toolkit:SettingsCard >
-                                <Grid>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
-                                    </StackPanel>
-                                </Grid>
-                            </toolkit:SettingsCard>
-                            <toolkit:SettingsCard >
-                                <Grid>
-                                    <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                    <StackPanel>
+                        <toolkit:SettingsExpander x:Name="SPTSettingsl" Header="Serial Port Settings" Margin="0,2,0,3">
+                            <toolkit:SettingsExpander.HeaderIcon>
+                                <FontIcon Glyph="&#xE8CB;" FontSize="12" />
+                            </toolkit:SettingsExpander.HeaderIcon>
+                            <toolkit:SettingsExpander.Items>
+                                <toolkit:SettingsCard >
+                                    <Grid>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                             <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
                                         </StackPanel>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
+                                    </Grid>
+                                </toolkit:SettingsCard>
+                                <toolkit:SettingsCard >
+                                    <Grid>
+                                        <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
+                                            </StackPanel>
                                         </StackPanel>
-                                    </StackPanel>
-                                </Grid>
-                            </toolkit:SettingsCard>
-                        </toolkit:SettingsExpander.Items>
-                    </toolkit:SettingsExpander>
+                                    </Grid>
+                                </toolkit:SettingsCard>
+                            </toolkit:SettingsExpander.Items>
+                        </toolkit:SettingsExpander>
+                    </StackPanel>
                     
                     <Button x:Name="SPSettings" Click="SPSettings_Click" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="0" Margin="0">
                         <!--66 "1,3,1,3" -->
@@ -159,110 +170,111 @@
                     </Button>
 
                     <!--
-                    <Button x:Name="Aboutq" Click="Aboutq_Click" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="70" Margin="1,3,1,3">
-                        <Grid>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                <FontIcon Glyph="&#xF210;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="6,0,12,0"/>
-                                <TextBlock VerticalAlignment="Center" Text="About" Margin="12,0,12,0"/>
+                <Button x:Name="Aboutq" Click="Aboutq_Click" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Height="70" Margin="1,3,1,3">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                            <FontIcon Glyph="&#xF210;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="6,0,12,0"/>
+                            <TextBlock VerticalAlignment="Center" Text="About" Margin="12,0,12,0"/>
 
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="12,0,9,0">
-                                <FontIcon x:Name="Fro1" Glyph="&#xE971;" FontFamily="Segoe MDL2 Assets" FontSize="12"  >
-                                    <FontIcon.RotationTransition>
-                                        <ScalarTransition/>
-                                    </FontIcon.RotationTransition>
-                                    <FontIcon.TranslationTransition>
-                                        <Vector3Transition />
-                                    </FontIcon.TranslationTransition>
-                                </FontIcon>
-                            </StackPanel>
-                        </Grid>
-                    </Button>
-                    -->
-
-                    <StackPanel.Transitions>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="12,0,9,0">
+                            <FontIcon x:Name="Fro1" Glyph="&#xE971;" FontFamily="Segoe MDL2 Assets" FontSize="12"  >
+                                <FontIcon.RotationTransition>
+                                    <ScalarTransition/>
+                                </FontIcon.RotationTransition>
+                                <FontIcon.TranslationTransition>
+                                    <Vector3Transition />
+                                </FontIcon.TranslationTransition>
+                            </FontIcon>
+                        </StackPanel>
+                    </Grid>
+                </Button>
+                -->
+                    <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
-                            <RepositionThemeTransition />
+                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
+                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
                         </TransitionCollection>
-                    </StackPanel.Transitions>
+                    </StackPanel.ChildrenTransitions>
                 </StackPanel>
-
+                <!---->
                 <StackPanel>
                     <TextBlock Text="" Margin="0,12,0,0"/>
                     <TextBlock x:Name="DowFlashl" Text="Download Flash Settings" Margin="0"/>
-
-                    <toolkit:SettingsExpander x:Name="DFSettingsl" Header="Download Flash Settings" Margin="0,2,0,3" IsExpanded="True" >
-                        <toolkit:SettingsExpander.HeaderIcon>
-                            <FontIcon Glyph="&#xec59;" FontSize="12" />
-                        </toolkit:SettingsExpander.HeaderIcon>
-                        <toolkit:SettingsExpander.Items>
-                            <toolkit:SettingsCard >
-                                <Grid>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
-                                    </StackPanel>
-                                </Grid>
-                            </toolkit:SettingsCard>
-                            <toolkit:SettingsCard >
-                                <Grid>
-                                    <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                    <StackPanel>
+                        <toolkit:SettingsExpander x:Name="DFSettingsl" Header="Download Flash Settings" Margin="0,2,0,3" IsExpanded="False" >
+                            <toolkit:SettingsExpander.HeaderIcon>
+                                <FontIcon Glyph="&#xec59;" FontSize="12" />
+                            </toolkit:SettingsExpander.HeaderIcon>
+                            <toolkit:SettingsExpander.Items>
+                                <toolkit:SettingsCard >
+                                    <Grid>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                             <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
                                         </StackPanel>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <ComboBox Width="150" Margin="0,12,0,10">
-                                                
-                                            </ComboBox>
+                                    </Grid>
+                                </toolkit:SettingsCard>
+                                <toolkit:SettingsCard >
+                                    <Grid>
+                                        <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <ComboBox Width="150" Margin="0,12,0,10"></ComboBox>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <ComboBox Width="150" Margin="0,12,0,10">
+
+                                                </ComboBox>
+                                            </StackPanel>
                                         </StackPanel>
-                                    </StackPanel>
-                                </Grid>
-                            </toolkit:SettingsCard>
-                        </toolkit:SettingsExpander.Items>
-                    </toolkit:SettingsExpander>
-
-                    <StackPanel.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </StackPanel.Transitions>
-                </StackPanel>
-
-                <StackPanel>
-                    <toolkit:SettingsCard Header="Test 0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
-                        <toolkit:SettingsCard.HeaderIcon>
-                            <FontIcon Glyph="&#xF210;"/>
-                        </toolkit:SettingsCard.HeaderIcon>
-                        
-                        
-
-                        <Grid>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button Content="Test 0" Width="150" Margin="0,0,27,0"></Button>
-                            </StackPanel>
-                        </Grid>
-                    </toolkit:SettingsCard>
-
-                    <toolkit:SettingsCard Header="Test 1" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,3,0,3">
-                        <toolkit:SettingsCard.HeaderIcon>
-                            <FontIcon Glyph="&#xE8E5;"/>
-                        </toolkit:SettingsCard.HeaderIcon>
-
-
-                        <Grid>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button Content="Test 1" Width="150" Margin="0,0,27,0"></Button>
-                            </StackPanel>
-                        </Grid>
-                    </toolkit:SettingsCard>
-
-                    <StackPanel.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </StackPanel.Transitions>
+                                    </Grid>
+                                </toolkit:SettingsCard>
+                            </toolkit:SettingsExpander.Items>
+                        </toolkit:SettingsExpander>
+                    </StackPanel>
                     
+                    <StackPanel.ChildrenTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
+                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                        </TransitionCollection>
+                    </StackPanel.ChildrenTransitions>
                 </StackPanel>
+                <!---->
+                <StackPanel>
+                    <StackPanel>
+                        <toolkit:SettingsCard Header="Test 0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="Collapsed" Margin="0,3,0,3">
+                            <toolkit:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xF210;"/>
+                            </toolkit:SettingsCard.HeaderIcon>
 
+                            <Grid>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="Test 0" Width="150" Margin="0,0,27,0"></Button>
+                                </StackPanel>
+                            </Grid>
+                        </toolkit:SettingsCard>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <toolkit:SettingsCard Header="Test 1" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="Collapsed" Margin="0,3,0,3">
+                            <toolkit:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xE8E5;"/>
+                            </toolkit:SettingsCard.HeaderIcon>
+
+
+                            <Grid>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="Test 1" Width="150" Margin="0,0,27,0"></Button>
+                                </StackPanel>
+                            </Grid>
+                        </toolkit:SettingsCard>
+                    </StackPanel>
+
+                    <Border CornerRadius="4" Height="66" Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}" Visibility="Collapsed" Margin="1,3,1,3">
+
+                    </Border>
+                </StackPanel>
+                <!---->
                 <StackPanel>
                     <TextBlock Text="" Margin="0,12,0,0"/>
                     <TextBlock x:Name="Aboutl" Text="About" Margin="0"/>
@@ -279,19 +291,31 @@
                             </StackPanel>
                         </Grid>
                     </Button>
-
-                    <StackPanel.Transitions>
+                    <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
-                            <RepositionThemeTransition />
+                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
+                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
                         </TransitionCollection>
-                    </StackPanel.Transitions>
+                    </StackPanel.ChildrenTransitions>
                 </StackPanel>
-
-                
-                <TextBlock Text="" Margin="0,12,0,0"/>
-
+                <!---->
+                <StackPanel>
+                    <TextBlock Text="" Margin="0,12,0,0"/>
+                    
+                    <StackPanel.ChildrenTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
+                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                        </TransitionCollection>
+                    </StackPanel.ChildrenTransitions>
+                </StackPanel>
+                <StackPanel.ChildrenTransitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
+                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                    </TransitionCollection>
+                </StackPanel.ChildrenTransitions>
             </StackPanel>
-
         </ScrollViewer>
     </Grid>
     

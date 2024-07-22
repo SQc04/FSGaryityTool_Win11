@@ -91,7 +91,7 @@ namespace FSGaryityTool_Win11
 
             List<string> STARTPage = new List<string>()         //新建字符串
             {
-                Page1.LanguageText("serialPort"), Page1.LanguageText("download Flash"), Page1.LanguageText("keyboard"), Page1.LanguageText("mouse")//, ""
+                Page1.LanguageText("serialPort"), Page1.LanguageText("download Flash"), Page1.LanguageText("keyboard"), Page1.LanguageText("mouse"), "FANControl"//, ""
             };
             StartPageCombobox.ItemsSource = STARTPage;          //将字符串添加到选择框
                                                                 //读取TOML设置
@@ -99,7 +99,8 @@ namespace FSGaryityTool_Win11
             else if (DefaultTomlSTARTPage == 1) DefaultSTARTPage = Page1.LanguageText("download Flash");
             else if (DefaultTomlSTARTPage == 2) DefaultSTARTPage = Page1.LanguageText("keyboard");
             else if (DefaultTomlSTARTPage == 3) DefaultSTARTPage = Page1.LanguageText("mouse");
-            //else if (DefaultTomlSTARTPage == 4) DefaultSTARTPage = "";
+            else if (DefaultTomlSTARTPage == 4) DefaultSTARTPage = "FANControl";
+            //else if (DefaultTomlSTARTPage == 5) DefaultSTARTPage = "";
             StartPageCombobox.SelectedItem = DefaultSTARTPage;  //将TOML设置添加到选择框
 
             List<string> pageBackGround = new List<string>()         //新建字符串
@@ -200,7 +201,8 @@ namespace FSGaryityTool_Win11
                 else if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("download Flash")) settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "1";
                 else if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("keyboard")) settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "2";
                 else if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("mouse")) settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "3";
-                //else if ((string)StartPageCombobox.SelectedItem == "") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "4";
+                else if ((string)StartPageCombobox.SelectedItem == "FANControl") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "4";
+                //else if ((string)StartPageCombobox.SelectedItem == "") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "5";
 
 
 
