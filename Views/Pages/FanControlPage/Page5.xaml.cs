@@ -47,7 +47,7 @@ namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
         public string CpuTempDisplay => $"{CpuTemp.Value}¡æ";
         public string GpuTempDisplay => $"{GpuTemp.Value}¡æ";
 
-        public static int oldCpuDutySet = 500, oldGpuDutySet = 500, cpuDutySet = 166, gpuDutySet = 166;
+        public static int cpuFanDuty, gpuFanDuty, cpuDutySet = 166, gpuDutySet = 166;
 
         public Page5()
         {
@@ -242,12 +242,13 @@ namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
                 int fan_id = 1;
                 ClevoEcControl.ECData data = ClevoEcControl.GetTempFanDuty(fan_id);
                 int cpuTemp = data.Remote;
+                cpuFanDuty = data.FanDuty;
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     CpuTemp.Value = cpuTemp;
                     CpuTempText.Text = cpuTemp.ToString() + "¡æ";
                 });
-                if (oldCpuDutySet != cpuDutySet)
+                if (cpuFanDuty != cpuDutySet)
                 {
                     ClevoEcControl.SetFanDuty(fan_id, cpuDutySet);
                 }
@@ -255,17 +256,16 @@ namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
                 fan_id = 2;
                 data = ClevoEcControl.GetTempFanDuty(fan_id);
                 int gpuTemp = data.Remote;
+                gpuFanDuty = data.FanDuty;
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     GpuTemp.Value = gpuTemp;
                     GpuTempText.Text = gpuTemp.ToString() + "¡æ";
                 });
-                if (oldGpuDutySet != gpuDutySet)
+                if (gpuFanDuty != gpuDutySet)
                 {
                     ClevoEcControl.SetFanDuty(fan_id, gpuDutySet);
                 }
-                oldCpuDutySet = cpuDutySet;
-                oldGpuDutySet = gpuDutySet;
             }
             else
             {
@@ -378,9 +378,10 @@ namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
             bool isConnect = ClevoEcControl.IsServerStarted();
             if (isConnect)
             {
-                
-                ClevoEcControl.SetFanDuty(cpuFanId, cpuDutySet);
-                oldCpuDutySet = cpuDutySet;
+                if (cpuFanDuty != cpuDutySet)
+                {
+                    ClevoEcControl.SetFanDuty(cpuFanId, cpuDutySet);
+                }
             }
         }
         private void GpuOnTimer(object state)
@@ -394,9 +395,10 @@ namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
             bool isConnect = ClevoEcControl.IsServerStarted();
             if (isConnect)
             {
-                
-                ClevoEcControl.SetFanDuty(gpuFanId, gpuDutySet);
-                oldGpuDutySet = gpuDutySet;
+                if (cpuFanDuty != gpuDutySet)
+                {
+                    ClevoEcControl.SetFanDuty(gpuFanId, cpuDutySet);
+                }
             }
         }
         private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)

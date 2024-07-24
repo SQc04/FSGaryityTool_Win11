@@ -47,8 +47,8 @@
     <Content Remove="Assets\FSFSoftLogo.scale-150.png" />
     <Content Remove="Assets\FSFSoftLogo.scale-200.png" />
     <Content Remove="Assets\FSFSoftLogo.scale-400.png" />
-    <Content Remove="Resources\en_US\Resource.resx" />
-    <Content Remove="Resources\zh_CN\Resource.resx" />
+    <Content Remove="Resources\en-US\Resource.resx" />
+    <Content Remove="Resources\zh-CN\Resource.resx" />
     <Content Remove="Assets\StoreLogo.png" />
   </ItemGroup>
   <ItemGroup>
@@ -135,25 +135,27 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Resources\en_US\Resource.Designer.cs">
+    <Compile Update="Resources\en-US\Resource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
-    <Compile Update="Resources\zh_CN\Resource.Designer.cs">
+    <Compile Update="Resources\zh-CN\Resource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Resources\en_US\Resource.resx">
+    <EmbeddedResource Update="Resources\en-US\Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>FSGaryityTool_Win11.Resources.en_US</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Update="Resources\zh_CN\Resource.resx">
+    <EmbeddedResource Update="Resources\zh-CN\Resource.resx">
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>
+      <CustomToolNamespace>FSGaryityTool_Win11.Resources.zh_CN</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
