@@ -16,34 +16,16 @@ using Windows.Foundation.Collections;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace FSGaryityTool_Win11.McuToolpage
+namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class RP2040MPYTools : Page
+    public sealed partial class SerialPlotterPage : Page
     {
-        public RP2040MPYTools()
+        public SerialPlotterPage()
         {
             this.InitializeComponent();
-        }
-
-        private void RSTButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (Page1.portIsConnect == 1)
-            {
-                string rsttext = "machine.reset()";
-                Page1.CommonRes._serialPort.Write(rsttext + "\r\n");
-            }
-        }
-
-        private void SoftRSTButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (Page1.portIsConnect == 1)
-            {
-                string rsttext = "machine.soft_reset()";
-                Page1.CommonRes._serialPort.Write(rsttext + "\r\n");
-            }
         }
     }
 }

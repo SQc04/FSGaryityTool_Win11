@@ -58,7 +58,7 @@
                         IsTitleBarAutoPaddingEnabled="False" 
                         PaneDisplayMode="Auto" 
                         IsTabStop="False" 
-                        IsBackEnabled="True" 
+                        IsBackEnabled="True"
                         BackRequested="NavigationView_BackRequested" 
                         SelectionChanged="NavigationView_SelectionChanged" 
                         DisplayModeChanged="NavigationView_DisplayModeChanged"
@@ -72,10 +72,11 @@
                 <Thickness x:Key="NavigationViewContentGridBorderThickness">1,1,0,0</Thickness>
                 <!-- This is the rounded corner on the Top left of the L Pattern -->
                 <CornerRadius x:Key="NavigationViewContentGridCornerRadius">8,0,0,0</CornerRadius>
-                <!--<SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="{ThemeResource SolidBackgroundFillColorBaseBrush}" />-->
-                <!--<SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{ThemeResource SolidBackgroundFillColorSecondaryBrush}" />-->
                 
+                <!--StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="AcrylicBackgroundFillColorBaseBrush"/>-->
+                <!--<StaticResource x:Key="NavigationViewExpandedPaneBackground" ResourceKey="AcrylicBackgroundFillColorBaseBrush"/>-->
             </NavigationView.Resources>
+            
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Name="SerialPortI" Icon="Sort" Content="Serial Port" Tag="MainPage1" />
                 <NavigationViewItem x:Name="DownFlashI" Content="Download FLASH" Tag="Page2">

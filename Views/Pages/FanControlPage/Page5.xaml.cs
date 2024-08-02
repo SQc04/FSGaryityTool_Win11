@@ -266,6 +266,8 @@ namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
                 {
                     ClevoEcControl.SetFanDuty(fan_id, gpuDutySet);
                 }
+                cpuFanDuty = cpuDutySet;
+                gpuFanDuty = gpuDutySet;
             }
             else
             {
@@ -382,6 +384,7 @@ namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
                 {
                     ClevoEcControl.SetFanDuty(cpuFanId, cpuDutySet);
                 }
+                cpuFanDuty = cpuDutySet;
             }
         }
         private void GpuOnTimer(object state)
@@ -397,7 +400,7 @@ namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
             {
                 if (cpuFanDuty != gpuDutySet)
                 {
-                    ClevoEcControl.SetFanDuty(gpuFanId, cpuDutySet);
+                    ClevoEcControl.SetFanDuty(gpuFanId, gpuDutySet);
                 }
             }
         }

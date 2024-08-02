@@ -69,11 +69,13 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.2.40";
+        public static string FSSoftVersion = "0.2.44";
         public static int FsPage = 0;
         public static bool defWindowBackGround = true;
         public static TomlTable settingstomlSp;
+        public static MainPage1 mainPage1;
 
+        //public static Page1 page1Instance;
 
         private Dictionary<string, Type> pageTypeMap = new Dictionary<string, Type>
         {
@@ -108,6 +110,11 @@ namespace FSGaryityTool_Win11
             {
                 FSnvf.Navigate(pageTypeMap[tag]);
                 FsPage = Array.IndexOf(pageTypeMap.Keys.ToArray(), tag);
+
+                if (tag == "MainPage1")
+                {
+                    UpdateSplitViewDisplayMode();
+                }
             }
 
             if (args.IsSettingsSelected)
@@ -240,6 +247,8 @@ namespace FSGaryityTool_Win11
                     }
                 }
             };
+
+            //page1Instance = new Page1(); // 初始化Page1实例
 
             Task.Run(() =>
             {
@@ -786,8 +795,25 @@ namespace FSGaryityTool_Win11
             {
                 AppTitleBara.Margin = new Thickness(0, 0, 0, 0);
             }
+
+            UpdateSplitViewDisplayMode();
         }
 
+        private void UpdateSplitViewDisplayMode()
+        {
+            var currentPage = this.FSnvf.Content as MainPage1;
+            if (currentPage != null)
+            {
+                if (this.FSnv.DisplayMode == NavigationViewDisplayMode.Expanded)
+                {
+                    currentPage.ChangeSplitViewDisplayMode(SplitViewDisplayMode.CompactInline);
+                }
+                else
+                {
+                    currentPage.ChangeSplitViewDisplayMode(SplitViewDisplayMode.CompactOverlay);
+                }
+            }
+        }
         /*
         
         public class Tab1

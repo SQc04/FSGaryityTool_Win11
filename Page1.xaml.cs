@@ -58,6 +58,7 @@ using System.Timers;
 using System.Text.RegularExpressions;
 using Windows.System;
 using Microsoft.UI.Input;
+using FSGaryityTool_Win11.Views.Pages.SerialPortPage;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -90,7 +91,7 @@ namespace FSGaryityTool_Win11
     public sealed partial class Page1 : Page
     {
         public static int getPortInfo = 0;
-        public static int Con = 0;
+        public static int portIsConnect = 0;
         public static string conCom = "";
         public static int txf = 0;
         public static int tx = 0; //TXHEX
@@ -109,8 +110,8 @@ namespace FSGaryityTool_Win11
         public static string rxpstr;
         public static StringBuilder datapwate = new StringBuilder(2048);
 
-        private LinkedList<DataItem> dataList = new LinkedList<DataItem>();//定义接收链表
-        private LinkedList<DataItem> tempDataList = new LinkedList<DataItem>();
+        public ObservableCollection<DataItem> dataList { get; set; } = new ObservableCollection<DataItem>();
+
 
         public static int Rollta = 0;
 
@@ -126,6 +127,7 @@ namespace FSGaryityTool_Win11
         public static int baudrate = 0;
 
         public static TomlTable settingstomlr;
+        public static Page1 page1;
 
         public System.Threading.Timer timer;
         public System.Threading.Timer timerSerialPort;
@@ -141,14 +143,12 @@ namespace FSGaryityTool_Win11
 
         }
 
-
-
         private ITaskbarList3 taskbarInstance;
 
         public Page1()
         {
             this.InitializeComponent();
-
+            page1 = this;
             this.Loaded += Page1_Loaded;
 
             this.taskbarInstance = (ITaskbarList3)new TaskbarList();
@@ -325,7 +325,6 @@ namespace FSGaryityTool_Win11
                     */
                 }
 
-                RXListView.ItemsSource = new ObservableCollection<DataItem>();
 
                 CommonRes._serialPort.DataReceived += _serialPort_DataReceived;
                 //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
@@ -399,7 +398,7 @@ namespace FSGaryityTool_Win11
                 }
                 */
 
-                COMButton_Click(this, new RoutedEventArgs());
+                //COMButton_Click(this, new RoutedEventArgs());
 
                 ToggleButtonIsChecked(rx, RXHEXButton);
                 ToggleButtonIsChecked(tx, TXHEXButton);
@@ -494,7 +493,7 @@ namespace FSGaryityTool_Win11
         {
             DispatcherQueue.TryEnqueue(() =>
             {
-                RXDATA_ClickAsync(null, null);
+                //RXDATA_ClickAsync(null, null);
 
                 if (RunT == 0) RunPBT += 2;
 
@@ -685,7 +684,7 @@ namespace FSGaryityTool_Win11
                     foreach (var port in removedPorts) // 遍历所有被拔出的串口
                     {
                         RXTextBox.Text += $"{port}{LanguageText("spPullout")}\r\n"; // 更新文本框的内容
-                        if (Con == 1 && port == selectedPort) // 如果当前连接的串口被拔出，则断开连接
+                        if (portIsConnect == 1 && port == selectedPort) // 如果当前连接的串口被拔出，则断开连接
                         {
                             CONTButton_Click(null, null);
                         }
@@ -703,7 +702,7 @@ namespace FSGaryityTool_Win11
                     COMComboBox.SelectedItem = selectedPort; // 将之前选中的串口重新选中
                     COMListview.SelectedItem = selectedPort; // 将之前选中的串口重新选中
 
-                    if (Con == 0 && COMComboBox.SelectedItem == null && insertedPorts.Length > 0) // 如果没有选中的串口，并且有新插入的串口
+                    if (portIsConnect == 0 && COMComboBox.SelectedItem == null && insertedPorts.Length > 0) // 如果没有选中的串口，并且有新插入的串口
                     {
                         COMComboBox.SelectedItem = insertedPorts[0]; // 选中新插入的串口
                         COMListview.SelectedItem = insertedPorts[0]; // 选中新插入的串口
@@ -805,7 +804,7 @@ namespace FSGaryityTool_Win11
                         }
                         COMComboBox.SelectedItem = commme;
                         COMListview.SelectedItem = commne;
-                        if (Con == 0)
+                        if (portIsConnect == 0)
                         {
                             if (COMComboBox.SelectedItem == null)
                             {
@@ -821,7 +820,7 @@ namespace FSGaryityTool_Win11
                     else
                     {
                         RXTextBox.Text = RXTextBox.Text + InOutCom + LanguageText("spPullout") + "\r\n";
-                        if (Con == 1)                                                   //自动断开已拔出的设备串口连接
+                        if (portIsConnect == 1)                                                   //自动断开已拔出的设备串口连接
                         {
                             if (InOutCom == (string)COMComboBox.SelectedItem)
                             {
@@ -940,7 +939,7 @@ namespace FSGaryityTool_Win11
             // 当主题改变时，此函数会被调用
             var theme = Application.Current.RequestedTheme;
 
-            if (Con == 1)
+            if (portIsConnect == 1)
             {
                 if (theme == ApplicationTheme.Dark)                                                                         //设置连接按钮背景颜色
                 {
@@ -957,7 +956,22 @@ namespace FSGaryityTool_Win11
             }
         }
 
-        
+        public void SerialPortConnrct(string portName ,int baudRate ,string parity ,string stopBits ,int dataBits,int timeout, Encoding encoding)
+        {
+            CommonRes._serialPort.PortName = portName;
+            CommonRes._serialPort.BaudRate = baudRate;
+            CommonRes._serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), parity);        //校验位
+            CommonRes._serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), stopBits); //停止位
+            CommonRes._serialPort.DataBits = dataBits;                                //数据位
+            CommonRes._serialPort.ReadTimeout = timeout;
+
+            //_SerialPort.DtrEnable = true;                                                                             //启用数据终端就绪信息
+
+            CommonRes._serialPort.Encoding = encoding;
+            CommonRes._serialPort.ReceivedBytesThreshold = 1;
+
+            CommonRes._serialPort.Open(); // 打开串口
+        }
 
         private void CONTButton_Click(object sender, RoutedEventArgs e)
         {
@@ -973,7 +987,7 @@ namespace FSGaryityTool_Win11
 
             // 获取当前窗口的句柄
 
-            if (Con == 0)
+            if (portIsConnect == 0)
             {
                 var app = (Application.Current as App);             // 尝试将当前应用程序实例转换为App类型
                 if (app != null)                                    // 检查转换是否成功
@@ -1010,11 +1024,11 @@ namespace FSGaryityTool_Win11
 
                     CommonRes._serialPort.Open(); // 打开串口
 
-                    timer = new System.Threading.Timer(TimerTick, null, 0, 250); // 每秒触发8次
+                    //timer = new System.Threading.Timer(TimerTick, null, 0, 250); // 每秒触发8次
 
                     //CONTButton.Content = "DISCONNECT";
                     CONTButton.Content = LanguageText("disconnectl");
-                    Con = 1;
+                    portIsConnect = 1;
 
                     RunProgressBar.ShowPaused = false;
                     RunProgressBar.IsIndeterminate = true;
@@ -1044,7 +1058,7 @@ namespace FSGaryityTool_Win11
                         var hWnd = app.MainWindowHandle;
                         this.taskbarInstance.SetProgressState(hWnd, FSGaryityTool_Win11.TBPFLAG.TBPF_NOPROGRESS);//停止任务栏加载动画
                     }
-                    Con = 0;
+                    portIsConnect = 0;
                     //CONTButton.Content = "CONNECT";
                     CONTButton.Content = LanguageText("connectl");
                     CONTButton.Background = backgroundColor;
@@ -1076,7 +1090,7 @@ namespace FSGaryityTool_Win11
                 }
                 //CONTButton.Content = "CONNECT";
                 CONTButton.Content = LanguageText("connectl");
-                Con = 0;
+                portIsConnect = 0;
                 CONTButton.Background = backgroundColor;
                 CONTButton.Foreground = foregroundColor;
                 RunProgressBar.IsIndeterminate = false;
@@ -1190,100 +1204,160 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
         private DateTime lastReceivedTime = DateTime.Now; // 添加这一行来声明lastReceivedTime变量
         StringBuilder buffer = new StringBuilder();
 
+        private bool _isProcessing = false;
+        private readonly object _lock = new object();
+
         private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            // 在另一个线程中处理串口数据
-            
-            Task.Run(() =>
+            lock (_lock)
             {
-                string Timesr = current_time.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
+                string data = CommonRes._serialPort.ReadExisting();
+                buffer.Append(data);
 
-                if (rx == 0) // 如果以字符串形式读取
+                if (!_isProcessing)
                 {
-                    try
-                    {
-                        if (CommonRes._serialPort.IsOpen && CommonRes._serialPort.BytesToRead > 0)
-                        {
-                            buffer.Append(CommonRes._serialPort.ReadExisting()); // 将新接收的数据添加到缓冲区
+                    _isProcessing = true;
+                    Thread.Sleep(5);
+                    Task.Run(ProcessData);
+                }
+            }
+        }
 
-                            int newlineIndex;
-                            string bufferStr = buffer.ToString();
-                            while ((newlineIndex = bufferStr.IndexOf('\n')) != -1) // 只要缓冲区中还有换行符
+        private void ProcessData()
+        {
+            try
+            {
+                string Timesr = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
+
+                while (true)
+                {
+                    string data = null;
+
+                    lock (_lock)
+                    {
+                        if (buffer.Length > 0)
+                        {
+                            data = buffer.ToString();
+                            buffer.Clear();
+                        }
+                        else
+                        {
+                            _isProcessing = false;
+                            break;
+                        }
+                    }
+
+                    if (data != null)
+                    {
+                        if (rx == 0) // 如果以字符串形式读取
+                        {
+                            DataItem itemh = new DataItem { Timesr = Timesr, Rxstr = data };
+                            DispatcherQueue.TryEnqueue(() =>
                             {
-                                string packet = bufferStr.Substring(0, newlineIndex).Replace("\r", ""); // 取出一个完整的数据包
-                                buffer.Remove(0, newlineIndex + 1); // 从缓冲区中移除这个数据包
-                                bufferStr = buffer.ToString(); // 更新bufferStr
+                                dataList.Add(itemh);
+                            });
+                            /*
+                            int newlineIndex;
+                            while ((newlineIndex = data.IndexOf('\n')) != -1) // 只要缓冲区中还有换行符
+                            {
+                                string packet = data.Substring(0, newlineIndex); // 取出一个完整的数据包 .Replace("\r", "")
+                                data = data.Substring(newlineIndex + 1); // 从缓冲区中移除这个数据包
 
                                 if (!string.IsNullOrWhiteSpace(packet)) // 如果packet不为空
                                 {
                                     DataItem item = new DataItem { Timesr = Timesr, Rxstr = packet };
 
                                     // 将操作排队到UI线程
-                                    tempDataList.AddLast(item);
+                                    DispatcherQueue.TryEnqueue(() =>
+                                    {
+                                        dataList.Add(item);
+                                    });
                                 }
                             }
+                            
+                            // 检查缓冲区中是否还有剩余数据
+                            if (!string.IsNullOrWhiteSpace(data))
+                            {
+                                if (dataList.Count > 0)
+                                {
+                                    
+                                    DispatcherQueue.TryEnqueue(() =>
+                                    {
+                                        // 将剩余数据添加到最后一个链表元素的Rxstr属性中
+                                        dataList.Last().Rxstr += data;
+                                    });
+                                }
+                                else
+                                {
+                                    // 如果链表为空，则新建一个链表元素
+                                    DataItem item = new DataItem { Timesr = Timesr, Rxstr = data };
+                                    DispatcherQueue.TryEnqueue(() =>
+                                    {
+                                        dataList.Add(item);
+                                    });
+                                }
+                            }
+                            */
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine("Error reading from serial port: " + ex.Message);
-                    }
-                }
-                else // 以数值形式读取
-                {
-                    int length = CommonRes._serialPort.BytesToRead; // 读取串口接收缓冲区字节数
-
-                    byte[] Data = new byte[length]; // 定义相同字节的数组
-
-                    CommonRes._serialPort.Read(Data, 0, length); // 串口读取缓冲区数据到数组中
-
-                    DataItem itemh = new DataItem { Timesr = Timesr, Rxstr = str };
-                    tempDataList.AddLast(itemh);
-
-                    for (int i = 0; i < length; i += 16)
-                    {
-                        string str = "";
-                        for (int j = i; j < i + 16 && j < length; j++)
+                        else // 以数值形式读取
                         {
-                            str += Data[j].ToString("X2") + " ";
+                            byte[] Data = Encoding.ASCII.GetBytes(data); // 将字符串转换为字节数组
+                            int length = Data.Length;
+
+                            DataItem itemh = new DataItem { Timesr = Timesr, Rxstr = data };
+                            DispatcherQueue.TryEnqueue(() =>
+                            {
+                                dataList.Add(itemh);
+                            });
+
+                            for (int i = 0; i < length; i += 16)
+                            {
+                                string str = "";
+                                for (int j = i; j < i + 16 && j < length; j++)
+                                {
+                                    str += Data[j].ToString("X2") + " ";
+                                }
+
+                                string Timesrh = "|                                     |"; //显示时间
+                                DataItem item = new DataItem { Timesr = Timesrh, Rxstr = str };
+
+                                DispatcherQueue.TryEnqueue(() =>
+                                {
+                                    dataList.Add(item);
+                                    UpdateItemsRepeater();
+                                });
+                            }
+
+                            //lastReceivedTime = DateTime.Now; // 更新最后接收数据的时间
                         }
-
-                        string Timesrh = "|                                     |"; //显示时间
-                        DataItem item = new DataItem { Timesr = Timesrh, Rxstr = str };
-
-                        tempDataList.AddLast(item);
                     }
-
-                    lastReceivedTime = DateTime.Now; // 更新最后接收数据的时间
                 }
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    UpdateItemsRepeater(tempDataList);
-                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error processing data: " + ex.Message);
+            }
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                UpdateItemsRepeater();
             });
-
         }
 
-        private void UpdateItemsRepeater(LinkedList<DataItem> items)
+        private void UpdateItemsRepeater()
         {
-            foreach (var item in items)
-            {
-                dataList.AddLast(item); // 将新的数据添加到链表的末尾
-            }
-            items.Clear();
-
+            
             // 如果链表的长度超过1000，从头部删除元素
-            while (dataList.Count > 1000)
-            {
-                dataList.RemoveFirst();
-            }
+            //while (dataList.Count > 1000)
+            //{
+            //dataList.RemoveFirst();
+            //}
 
             // 更新ListView的ItemsSource
-            RXListView.ItemsSource = new ObservableCollection<DataItem>(dataList);
+
 
             if (autotr == 1 && dataList.Count > 0) // 检查dataList是否为空
             {
-                RXListView.ScrollIntoView(dataList.Last.Value); // 滚动到最后一个元素
+                RXListView.ScrollIntoView(dataList.Last()); // 滚动到最后一个元素
             }
         }
 
@@ -1398,7 +1472,7 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
             string ComIs;
             ComIs = (string)COMComboBox.SelectedItem;
             COMListview.SelectedItem = ComIs;
-            if(Con == 1)
+            if(portIsConnect == 1)
             {
                 if(conCom != ComIs)
                     COMRstInfoBar.IsOpen = true;
@@ -1540,7 +1614,7 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
         // 如果需要在每条消息后添加换行符
         private void AppendNewLineIfRequired()
         {
-            if (txnewline == 1)
+            if (SerialPortToolsPage.txnewline == 1)
             {
                 CommonRes._serialPort.Write("\r\n");
             }
@@ -1548,9 +1622,8 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
 
         private void CLEARButton_Click(object sender, RoutedEventArgs e)
         {
-            RXListView.ItemsSource = null;
+            
             RXTextBox.Text = "";    //清除文本框内容
-            RXListView.ItemsSource = new ObservableCollection<DataItem>();
             dataList.Clear();
         }
 
@@ -1587,7 +1660,7 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
                         writer.Flush();
                     }
                 }
-                if (Con == 1)
+                if (portIsConnect == 1)
                 {
                     CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);
                     RXTextBox.Text = RXTextBox.Text + "BaudRate = " + Convert.ToInt32(BANDComboBox.SelectedItem) + "\r\n";
@@ -1613,7 +1686,7 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
                     writer.Flush();
                 }
             }
-            if (Con == 1)
+            if (portIsConnect == 1)
             {
                 CommonRes._serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), (string)PARComboBox.SelectedItem);
                 RXTextBox.Text = RXTextBox.Text + "Parity = " + (Parity)Enum.Parse(typeof(Parity), (string)PARComboBox.SelectedItem) + "\r\n";
@@ -1636,7 +1709,7 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
                     writer.Flush();
                 }
             }
-            if (Con == 1)
+            if (portIsConnect == 1)
             {
                 CommonRes._serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), (string)STOPComboBox.SelectedItem);
                 RXTextBox.Text = RXTextBox.Text + "StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), (string)STOPComboBox.SelectedItem) + "\r\n";
@@ -1659,7 +1732,7 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
                     writer.Flush();
                 }
             }
-            if (Con == 1)
+            if (portIsConnect == 1)
             {
                 CommonRes._serialPort.DataBits = Convert.ToInt32(DATAComboBox.SelectedItem);
                 RXTextBox.Text = RXTextBox.Text + "DataBits = " + Convert.ToInt32(DATAComboBox.SelectedItem) + "\r\n";
@@ -1928,16 +2001,16 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
         {
             // 在这里添加你的异步代码
             // 例如：await SomeAsyncMethod();
-            current_time = System.DateTime.Now;     //获取当前时间
+            //current_time = System.DateTime.Now;     //获取当前时间
             //RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";
             //Timesr = current_time.ToString("HH:mm:ss");
 
 
 
             //rxpstr = System.Text.Encoding.UTF8.GetString(datapwate);
-            rxpstr = datapwate.ToString();                          //将缓冲区赋值到输出
-            RXTextBox.Text = RXTextBox.Text + rxpstr + "";          //输出接收的数据
-            datapwate.Clear();                                      //清空缓冲区
+            //rxpstr = datapwate.ToString();                          //将缓冲区赋值到输出
+            //RXTextBox.Text = RXTextBox.Text + rxpstr + "";          //输出接收的数据
+            //datapwate.Clear();                                      //清空缓冲区
 
             return Task.CompletedTask;
         }
@@ -1999,7 +2072,6 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
             ComIs = (string)COMListview.SelectedItem;
             COMComboBox.SelectedItem = ComIs;
 
-            
         }
 
 

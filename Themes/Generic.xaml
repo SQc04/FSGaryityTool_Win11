@@ -16,4 +16,29 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="local2:CustomTextBox" xmlns:local2="using:FSGaryityTool_Win11.Controls">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local2:CustomTextBox">
+                    <Border CornerRadius="{StaticResource ControlCornerRadius}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <ScrollViewer x:Name="ScrollViewer"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto">
+                            <TextBox x:Name="ContentElement"
+                         Text="{TemplateBinding Text}"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         Background="Transparent"
+                         BorderThickness="0" />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

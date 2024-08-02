@@ -62,6 +62,7 @@
     <None Remove="Assets\FSFSoft.png" />
     <None Remove="Assets\FSFSoftLogo.png" />
     <None Remove="Assets\StoreLogo.png" />
+    <None Remove="Audio\jesper_k_.mod" />
     <None Remove="Controls\FanAUserControl.xaml" />
     <None Remove="ExtendedSplash.xaml" />
     <None Remove="Fonts\Segoe Fluent Icons EULA.txt" />
@@ -77,6 +78,10 @@
     <None Remove="Views\McuToolpage\ESP8266Tools.xaml" />
     <None Remove="Views\McuToolpage\NoneTools.xaml" />
     <None Remove="Views\McuToolpage\RP2040MPYTools.xaml" />
+    <None Remove="Views\Pages\SerialPortPage\SerialPlotterPage.xaml" />
+    <None Remove="Views\Pages\SerialPortPage\SerialPortBasicInOutPage.xaml" />
+    <None Remove="Views\Pages\SerialPortPage\SerialPortToolsPage.xaml" />
+    <None Remove="Views\Pages\TestPage\TestPage1.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Page Remove="Themes\Generic.xaml" />
@@ -96,11 +101,15 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.CameraPreview" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.HeaderedControls" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.ImageCropper" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.LayoutTransformControl" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.MetadataControl" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.RadialGauge" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.RangeSelector" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.RichSuggestBox" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.0.240109" />
@@ -108,7 +117,8 @@
     <PackageReference Include="MICA" Version="2.4.3" />
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240404000" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240627000" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.IO.Ports" Version="8.0.0" />
     <PackageReference Include="System.Management" Version="8.0.0" />
@@ -210,6 +220,12 @@
     <None Update="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
+    <Page Update="Views\Pages\TestPage\TestPage1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Pages\SerialPortPage\SerialPortToolsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Controls\FanAUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -246,12 +262,16 @@
     <Folder Include="PcControlToolspage\" />
     <Folder Include="Fonts\" />
     <Folder Include="Views\Pages\FanControlPage\" />
-    <Folder Include="Views\Pages\SerialPortPage\" />
     <Folder Include="Views\Pages\SettingsPage\" />
     <Folder Include="Views\Pages\MousePage\" />
     <Folder Include="Views\Pages\KeyboardPage\" />
     <Folder Include="Views\Pages\FlashDownloadPage\" />
     <Folder Include="Views\Pages\FairingStudioPage\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Audio\jesper_k_.mod">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <!-- 
@@ -282,8 +302,24 @@
   </PropertyGroup>
 	
   <PropertyGroup>
-    <VersionPrefix>0.2.40</VersionPrefix>
+    <VersionPrefix>0.2.44</VersionPrefix>
   </PropertyGroup>
+	
+  <ItemGroup>
+    <CustomAdditionalCompileInputs Remove="Views\Pages\SerialPortPage\SerialPlotterPage.xaml" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <Resource Remove="Views\Pages\SerialPortPage\SerialPlotterPage.xaml" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <CustomAdditionalCompileInputs Remove="Views\Pages\SerialPortPage\SerialPortBasicInOutPage.xaml" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <Resource Remove="Views\Pages\SerialPortPage\SerialPortBasicInOutPage.xaml" />
+  </ItemGroup>
 	
 	
 </Project>

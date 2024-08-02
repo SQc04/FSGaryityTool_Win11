@@ -61,6 +61,7 @@ namespace FSGaryityTool_Win11
 
             // 确保当前窗口处于活动状态
             m_window.Activate();
+
         }
 
 
