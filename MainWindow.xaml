@@ -4,13 +4,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:media="using:Microsoft.UI.Xaml.Media"
     mc:Ignorable="d">
     <!--
     <Window.SystemBackdrop>
         <MicaBackdrop Kind="BaseAlt"/>
         <DesktopAcrylicBackdrop />
     </Window.SystemBackdrop> -->
-    
 
     <Grid x:Name="AppTitleBar">
         <Grid.ColumnDefinitions>
@@ -26,16 +26,23 @@
 
         </Grid.RowDefinitions>
 
+        <Grid Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0" Grid.RowSpan="2">
+            <Image x:Name="BackgroundImage" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="UniformToFill" 
+                   Source="ms-appx:///Assets/BackgroundTest/TestAlpha.jpg" Opacity="0.5" Margin="0,0,0,0"/>
+        </Grid>
 
-        
-
+        <Border Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0" Grid.RowSpan="2">
+            <Border.Background>
+                <AcrylicBrush TintColor="Transparent" TintOpacity="0.1" Opacity="0" FallbackColor="Transparent" />
+            </Border.Background>
+        </Border>
 
         <Border x:Name="AppTitleBara" Grid.Column="2" Grid.Row="0" Height="48" VerticalAlignment="Top" Canvas.ZIndex="9" Margin="0,0,0,0">
             <!--Background="{ThemeResource SystemAccentColorLight2}"-->
             <!--<TextBlock x:Name="AppTitle" VerticalAlignment="Top" Margin="0,8,0,0" />-->
             <Grid>
                 <StackPanel Grid.Column="2" Grid.Row="0" Orientation="Horizontal" Canvas.ZIndex="10">
-                    <Image x:Name="TitleBarIcon" Stretch="Fill" Source="Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png"
+                    <Image x:Name="TitleBarIcon" Stretch="Fill" Source="ms-appx:///Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png"
                             HorizontalAlignment="Left"
                             Width="20" Height="20"
                             Margin="0,2,0,0"/>
@@ -72,11 +79,11 @@
                 <Thickness x:Key="NavigationViewContentGridBorderThickness">1,1,0,0</Thickness>
                 <!-- This is the rounded corner on the Top left of the L Pattern -->
                 <CornerRadius x:Key="NavigationViewContentGridCornerRadius">8,0,0,0</CornerRadius>
-                
+
                 <!--StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="AcrylicBackgroundFillColorBaseBrush"/>-->
                 <!--<StaticResource x:Key="NavigationViewExpandedPaneBackground" ResourceKey="AcrylicBackgroundFillColorBaseBrush"/>-->
             </NavigationView.Resources>
-            
+
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Name="SerialPortI" Icon="Sort" Content="Serial Port" Tag="MainPage1" />
                 <NavigationViewItem x:Name="DownFlashI" Content="Download FLASH" Tag="Page2">
@@ -95,6 +102,11 @@
                         <FontIcon Glyph="&#xE770;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem x:Name="CameraControl" Content="CameraControl" Tag="CameraControlMainPage" >
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE722;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
                 <!--<NavigationViewItem Content="About" Tag="AboutPage" >
@@ -108,8 +120,9 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
-
-            <Frame x:Name="FSnvf" Margin="0,0,0,0" />
+            <Grid>
+                <Frame x:Name="FSnvf" Margin="0,0,0,0" />
+            </Grid>
         </NavigationView>
 
     </Grid>

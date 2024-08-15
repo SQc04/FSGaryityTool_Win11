@@ -201,6 +201,10 @@
     <value>闪存烧录设置</value>
     <comment>Settings Page text</comment>
   </data>
+  <data name="encoding" xml:space="preserve">
+    <value>串口编码</value>
+    <comment>Serial Port Page text</comment>
+  </data>
   <data name="general" xml:space="preserve">
     <value>常规</value>
     <comment>Settings Page text</comment>
@@ -224,6 +228,14 @@
   <data name="mcuToolRP2040MPY" xml:space="preserve">
     <value>用于RP2040的 MicroPython工具</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="mica" xml:space="preserve">
+    <value>云母</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="micaAlt" xml:space="preserve">
+    <value>云母替代</value>
+    <comment>Settings Page text</comment>
   </data>
   <data name="mouse" xml:space="preserve">
     <value>鼠标</value>
@@ -249,8 +261,28 @@
     <value>搜索串口完成!</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="parityEven" xml:space="preserve">
+    <value>偶校验</value>
+    <comment>Serial Port Page text</comment>
+  </data>
   <data name="parityl" xml:space="preserve">
     <value>奇偶校验</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="parityMark" xml:space="preserve">
+    <value>标记校验</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="parityNone" xml:space="preserve">
+    <value>无校验</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="parityOdd" xml:space="preserve">
+    <value>奇校验</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="paritySpace" xml:space="preserve">
+    <value>空格校验</value>
     <comment>Serial Port Page text</comment>
   </data>
   <data name="rxHexl" xml:space="preserve">
@@ -299,6 +331,22 @@
   </data>
   <data name="stopBits" xml:space="preserve">
     <value>停止位</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="stopNone" xml:space="preserve">
+    <value>无</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="stopOne" xml:space="preserve">
+    <value>1</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="stopOnePointFive" xml:space="preserve">
+    <value>1.5</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="stopTwo" xml:space="preserve">
+    <value>2</value>
     <comment>Serial Port Page text</comment>
   </data>
   <data name="thin" xml:space="preserve">

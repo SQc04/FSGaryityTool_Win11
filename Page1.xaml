@@ -15,7 +15,6 @@
     <Grid >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0"/>
-            <ColumnDefinition Width="0" />
             <ColumnDefinition MinWidth="160" Width="*" />
             <ColumnDefinition MinWidth="120" MaxWidth="400" Width="250"/>
             <ColumnDefinition Width="63"/>
@@ -26,283 +25,18 @@
             <RowDefinition MaxHeight="200" MinHeight="52" Height="70" />
         </Grid.RowDefinitions>
 
-        
-        <ProgressBar x:Name="RunProgressBar" Grid.Column="1" Grid.ColumnSpan="4" VerticalAlignment="Bottom" Grid.Row="1" IsIndeterminate="False" ShowPaused="False" ShowError="False" Margin="0,0,0,0" />
-
         <!--<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" Height="10000"/>-->
-        
-        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" VerticalAlignment="Stretch">
-            
+
+        <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Vertical" VerticalAlignment="Stretch">
+
         </StackPanel>
-        
-        <Grid Grid.Column="1" Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <ScrollViewer Margin="0,0,0,6">
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="6,0,0,0">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <ComboBox x:Name="COMComboBox" SelectionChanged="COMComboBox_SelectionChanged" Width="120" Margin="6,0,6,6">
-                                <ComboBoxItem Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"/>
-                            </ComboBox>
-                            <Button x:Name="ClearCOMCombobox" Click="ClearCOMCombobox_Click" Width="42" Height="32" Style="{StaticResource AccentButtonStyle}" Margin="-49,0,0,6">
-                                <FontIcon Glyph="&#xE74D;" FontSize="16" VerticalAlignment="Center">
 
-                                </FontIcon>
-                            </Button>
-
-                            <Button x:Name="COMButton" Click="COMButton_Click" Width="60" Margin="6,0,6,6">
-                                <FontIcon x:Name="COMButtonIcon" CenterPoint="10,10,0" Glyph="&#xE72C;" VerticalAlignment="Center">
-                                    <FontIcon.RotationTransition>
-                                        <ScalarTransition x:Name="COMButtonIconScalar" />
-                                    </FontIcon.RotationTransition>
-                                </FontIcon>
-                            </Button>
-                            <Border CornerRadius="4" Width="36" Margin="6,0,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}">
-                                <ProgressRing x:Name="AutoSerchComProgressRing" IsActive="False" Width="24" Height="24"/>
-                            </Border>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal">
-                            <ToggleButton x:Name="AutoComButton" Click="AutoComButton_Click" IsThreeState="False" IsChecked="False" Width="120" Margin="6">
-                                AutoSerichCom
-                            </ToggleButton>
-                            <ToggleButton x:Name="AutoConnectButton" Click="AutoConnectButton_Click" IsThreeState="False" IsChecked="False" Width="108" Margin="6">
-                                Auto Connect
-                            </ToggleButton>
-
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal">
-                            <Border CornerRadius="4" Width="240" Height="Auto" Margin="6,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}">
-                                <!--MaxHeight="140"-->
-                                <ListView x:Name="COMListview"
-                                          SelectionChanged="COMListview_SelectionChanged"
-                                          SelectionMode="Single"
-                                          BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-                                          BorderThickness="0" 
-                                          MaxHeight="260"
-                                          Margin="2">
-                                    <ListView.ItemContainerTransitions>
-                                        <TransitionCollection>
-                                            <AddDeleteThemeTransition />
-                                        </TransitionCollection>
-                                    </ListView.ItemContainerTransitions>
-                                </ListView>
-                            </Border>
-                        </StackPanel>
-                    </StackPanel>
-                    
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Border x:Name="BorderBack1" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                                <Grid HorizontalAlignment="Center" Width="120">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                        <FontIcon Glyph="&#xEC4A;" Margin="12,0,6,0"></FontIcon>
-                                        <TextBlock x:Name="BaudTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="70" Margin="0">BAUDRATE</TextBlock>
-                                    </StackPanel>
-                                </Grid>
-
-                            </Border>
-                            <ComboBox x:Name="BANDComboBox" IsEditable="True" SelectionChanged="BANDComboBox_SelectionChanged" Width="108" Margin="6">
-
-                            </ComboBox>
-
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal">
-                            <Border x:Name="BorderBack2" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                                <Grid HorizontalAlignment="Center" Width="120">
-                                    <StackPanel  Orientation="Horizontal" HorizontalAlignment="Left">
-                                        <FontIcon Glyph="&#xEA18;" Margin="12,0,6,0"></FontIcon>
-                                        <TextBlock x:Name="PartTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="70" Margin="0">Parity</TextBlock>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                            <ComboBox x:Name="PARComboBox" SelectionChanged="PARComboBox_SelectionChanged" Width="108" Margin="6">
-
-                            </ComboBox>
-
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal">
-                            <Border x:Name="BorderBack3" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                                <Grid HorizontalAlignment="Center" Width="120">
-                                    <StackPanel  Orientation="Horizontal" HorizontalAlignment="Left">
-                                        <FontIcon Glyph="&#xE81A;" Margin="12,0,6,0"></FontIcon>
-                                        <TextBlock x:Name="StopTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="70" Margin="0">STOP Bits</TextBlock>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                            <ComboBox x:Name="STOPComboBox" SelectionChanged="STOPComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
-
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal">
-                            <Border x:Name="BorderBack4" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                                <Grid HorizontalAlignment="Center" Width="120">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                        <FontIcon Glyph="&#xE950;" Margin="12,0,6,0"></FontIcon>
-                                        <!--&#xF785;-->
-                                        <TextBlock x:Name="DataTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="70" Margin="0">DATA Bits</TextBlock>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                            <ComboBox x:Name="DATAComboBox" SelectionChanged="DATAComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
-
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Border x:Name="CDHBorder" CornerRadius="4" Height="32" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                                <TextBlock x:Name="CDHTextBlock" Text="DCD" TextAlignment="Center" VerticalAlignment="Center" Width="54" Margin="0"/>
-                            </Border>
-                            <Border x:Name="RIBorder" CornerRadius="4" Height="32" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                                <TextBlock x:Name="RITextBlock" Text="RI" TextAlignment="Center" VerticalAlignment="Center" Width="53.5" Margin="0"/>
-                            </Border>
-                            <Border x:Name="DSRBorder" CornerRadius="4" Height="32" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                                <TextBlock x:Name="DSRTextBlock" Text="DSR" TextAlignment="Center" VerticalAlignment="Center" Width="48" Margin="0"/>
-                            </Border>
-                            <Border x:Name="CTSBorder" CornerRadius="4" Height="32" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                                <TextBlock x:Name="CTSTextBlock" Text="CTS" TextAlignment="Center" VerticalAlignment="Center" Width="48" Margin="0"/>
-                            </Border>
-
-                        </StackPanel>
-                        
-                        <StackPanel.ChildrenTransitions>
-                            <TransitionCollection>
-                                <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
-                                <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                            </TransitionCollection>
-                        </StackPanel.ChildrenTransitions>
-                    </StackPanel>
-                    
-
-                    <StackPanel Orientation="Horizontal" Height="0">
-                        <NumberBox x:Name="DATANumberBox" Maximum="9" Minimum="5" SmallChange="1" LargeChange="1" SpinButtonPlacementMode="Inline" Width="108" Margin="6"></NumberBox>
-                        
-                    </StackPanel>
-
-                   
-
-                    <StackPanel Orientation="Horizontal">
-                        <ProgressBar x:Name="RunTProgressBar" Width="240" Value="0" Margin="6"/>
-                        
-                        <StackPanel.ChildrenTransitions>
-                            <TransitionCollection>
-                                <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
-                                <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                            </TransitionCollection>
-                        </StackPanel.ChildrenTransitions>
-                    </StackPanel>
-
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <ToggleButton x:Name="RXHEXButton" Click="RXHEXButton_Click" Width="120" Margin="6">RX HEX</ToggleButton>
-                            <ToggleButton x:Name="TXHEXButton" Click="TXHEXButton_Click" Width="108" Margin="6">TX HEX</ToggleButton>
-
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <ToggleButton x:Name="TXNewLineButton" Click="TXNewLineButton_Click" Width="120" Margin="6">TXNewLine</ToggleButton>
-                            <ToggleButton x:Name="DTRButton" Click="DTRButton_Click" Width="48" Margin="6">DTR</ToggleButton>
-                            <ToggleButton x:Name="RTSButton" Click="RTSButton_Click" Width="48" Margin="6">RTS</ToggleButton>
-
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <ToggleButton x:Name="SaveSetButton" Click="SaveSetButton_Click" IsThreeState="False" IsChecked="False" Width="120" Margin="6">AutoSaveSet</ToggleButton>
-                            <ToggleButton x:Name="AUTOScrollButton" Click="AUTOScrollButton_Click" Width="108" Margin="6">AUTOScroll</ToggleButton>
-
-                        </StackPanel>
-                        
-                        <StackPanel.ChildrenTransitions>
-                            <TransitionCollection>
-                                <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
-                                <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                            </TransitionCollection>
-                        </StackPanel.ChildrenTransitions>
-                    </StackPanel>
-                    
-                    <StackPanel Orientation="Horizontal">
-                        <Border x:Name="ChipToolKitBorder" CornerRadius="4" Width="240" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                            <StackPanel Orientation="Vertical">
-                                <StackPanel Orientation="Horizontal">
-                                    <Border CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
-                                        <StackPanel Orientation="Horizontal">
-                                            <FontIcon Glyph="&#xEC7A;" Margin="12,6,1,6"></FontIcon>
-                                            <TextBlock Text="MCU tools" Margin="6,6,9,6"></TextBlock>
-                                        </StackPanel>
-                                    </Border>
-                                    <ComboBox x:Name="ChipToolKitComboBox" SelectionChanged="ChipToolKitComboBox_SelectionChanged" Width="102" Margin="6">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Name}" Width="64"/>
-                                                    <TextBlock Text="   " Margin="24,0,24,0"/>
-                                                    <TextBlock Text="{Binding Description}" FontStyle="Italic" Foreground="Gray" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                    </ComboBox>
-                                    <!--W226-->
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Frame x:Name="McuToolsFrame" Width="240" Margin="0">
-
-                                    </Frame>
-                                </StackPanel>
-
-                            </StackPanel>
-                        </Border>
-                        
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Height="36"></StackPanel>
-
-                    <StackPanel Orientation="Horizontal">
-
-
-                        
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Height="36"></StackPanel>
-                    <StackPanel Orientation="Horizontal" Height="12"></StackPanel>
-                    <StackPanel Orientation="Horizontal">
-
-                    </StackPanel>
-
-                    <!--弃用功能-->
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="0">
-                        <Button x:Name="RXDataButton" Click="RXDataButton_Click" Width="120" Margin="6">RX</Button>
-                        <ToggleButton x:Name="ShowTimeButton" Click="ShowTimeButton_Click" Width="108" Margin="6">Showtimestamp</ToggleButton>
-                    </StackPanel>
-                    <!--弃用功能-->
-                    <StackPanel.ChildrenTransitions>
-                        <TransitionCollection>
-                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
-                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                        </TransitionCollection>
-                    </StackPanel.ChildrenTransitions>
-                </StackPanel>
-            </ScrollViewer>
-            
-            <StackPanel VerticalAlignment="Bottom" Orientation="Vertical" Margin="6,6,6,6">
-                <Border CornerRadius="4" Width="240" Height="200" >
-
-                </Border>
-            </StackPanel>
-        </Grid>
-        
-        
-
-        <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <Button x:Name="CONTButton" Click="CONTButton_Click" 
-                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                    Margin="12,6,12,12">CONNECT</Button>
-        </Grid>
-
-        <InfoBar x:Name="COMRstInfoBar" x:FieldModifier="public" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="1" Margin="12,24,12,12"
+        <InfoBar x:Name="COMRstInfoBar" x:FieldModifier="public" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" Margin="12,24,12,12"
             IsOpen="False" Severity="Warning" IsIconVisible="True" IsClosable="True" Canvas.ZIndex="2"
             Title="Warning" Message="To change the connected device, you need to reconnect the serial port." />
 
-        <Grid Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0">
-            <Border x:Name="BorderBackRX"  Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4" MinWidth="300" Margin="0,0,0,6">
+        <Grid Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0">
+            <Border x:Name="BorderBackRX"  Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4" BorderBrush="{ThemeResource TextControlElevationBorderBrush}" BorderThickness="1" MinWidth="300" Margin="0,0,0,6">
                 <ListView x:Name="RXListView" 
                           BorderThickness="0" 
                           RightTapped="RXListView_RightTapped"
@@ -321,8 +55,10 @@
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Top" Text="{x:Bind Timesr}" Height="18" Margin="0,0,10,0"/>
                                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind Rxstr}" HorizontalAlignment="Stretch" Height="auto" 
-                           TextWrapping="Wrap" IsTextSelectionEnabled="True" SelectionHighlightColor="{ThemeResource AccentTextFillColorTertiaryBrush}" 
-                           Margin="0,0,10,0"/>
+                                           TextWrapping="Wrap" IsTextSelectionEnabled="True" 
+                                           SelectionHighlightColor="{ThemeResource AccentTextFillColorTertiaryBrush}" 
+                                           PointerCanceled="RxstrTextBlock_PointerCanceled"
+                                           Margin="0,0,10,0"/>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -333,24 +69,24 @@
             </Border>
         </Grid>
 
-        <Grid Grid.Column="3" Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <TextBox x:Name="RXTextBox" x:FieldModifier="public" TextChanged="RXTextBox_TextChanged" IsReadOnly="True"  
                     AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                     HorizontalAlignment="Stretch" IsSpellCheckEnabled="False" Margin="12,0,12,6" />
         </Grid>
         
 
-        <Toolkit:GridSplitter Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Left" />
-        <Toolkit:GridSplitter Grid.Column="2" Grid.ColumnSpan="1" Grid.Row="1" VerticalAlignment="Top" Margin="0,-6.05,0,0"/>
+        <Toolkit:GridSplitter Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Left" />
+        <Toolkit:GridSplitter Grid.Column="1" Grid.ColumnSpan="1" Grid.Row="1" VerticalAlignment="Top" Margin="0,-6.05,0,0"/>
 
-        <Grid Grid.Column="2" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0">
+        <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0">
             <TextBox x:Name="TXTextBox" PreviewKeyDown="TXTextBox_PreviewKeyDown" KeyUp="TXTextBox_KeyUp" TextChanged="TXTextBox_TextChanged" Margin="0,6,0,12" 
                     IsSpellCheckEnabled="False" PlaceholderText="Type your data here...&#x0a;Press Ctrl+Enter to send data." AcceptsReturn="True" TextWrapping="Wrap">
 
             </TextBox>
         </Grid>
         
-        <Grid Grid.Column="3" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid Grid.Column="2" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Button x:Name="TXButton"  Click="TXButton_Click" 
                     Style="{StaticResource AccentButtonStyle}"
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
@@ -364,7 +100,7 @@
             </Button>
         </Grid>
 
-        <Grid Grid.Column="4" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid Grid.Column="3" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Button x:Name="CLEARButton" Click="CLEARButton_Click" 
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="6,6,12,12">

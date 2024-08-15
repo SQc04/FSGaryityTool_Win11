@@ -24,6 +24,8 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Text;
 using FSGaryityTool_Win11.McuToolpage;
+using System.Numerics;
+using System.Diagnostics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -58,7 +60,21 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
 
         private bool _isLoaded;
 
-
+        public class ParityOption
+        {
+            public string DisplayText { get; set; }
+            public string Value { get; set; }
+        }
+        public class StopBitsOption
+        {
+            public string DisplayText { get; set; }
+            public string Value { get; set; }
+        }
+        public class MCUTool
+        {
+            public string Name { get; set; }
+            public string Description { get; set; }
+        }
 
         public static SerialPortToolsPage serialPortToolsPage;
         public SerialPortToolsPage()
@@ -66,11 +82,13 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             this.InitializeComponent();
             serialPortToolsPage = this;
             this.Loaded += SerialPortToolsPage_Loaded;
+
         }
         private void FsBorderIsChecked(int isChecked, Border border, TextBlock textBlock)
         {
-            var foregroundColor = COMButton.Foreground as SolidColorBrush;
-            var backgroundColor = (SolidColorBrush)Application.Current.Resources["LayerOnAcrylicFillColorDefaultBrush"];
+            var foregroundColor = (SolidColorBrush)Application.Current.Resources["TextFillColorPrimaryBrush"];
+            var backgroundColor = (SolidColorBrush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
+            var foreCheckColor = (SolidColorBrush)Application.Current.Resources["TextOnAccentFillColorPrimaryBrush"];
             var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
             var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
             var theme = Application.Current.RequestedTheme;
@@ -81,14 +99,13 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
                 {
                     // 当前处于深色模式
                     border.Background = new SolidColorBrush(darkaccentColor);
-                    textBlock.Foreground = new SolidColorBrush(Colors.Black);
                 }
                 else if (theme == ApplicationTheme.Light)
                 {
                     // 当前处于浅色模式
                     border.Background = new SolidColorBrush(ligtaccentColor);
-                    textBlock.Foreground = new SolidColorBrush(Colors.White);
                 }
+                textBlock.Foreground = foreCheckColor;
             }
             else
             {
@@ -129,6 +146,7 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
                 string DefaultPart;
                 string DefaultSTOP;
                 int DefaultDATA;
+                string DefaultEncoding;
 
                 using (StreamReader reader = File.OpenText(Page1.FSSetToml))
                 {
@@ -141,6 +159,7 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
                     DefaultPart = TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultParity", "None");
                     DefaultSTOP = TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultSTOP", "One");
                     DefaultDATA = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultDATA", "8"));
+                    DefaultEncoding = TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultEncoding", "utf-8");
 
                     txHex = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultTXHEX", "0"));
                     rxHex = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultRXHEX", "0"));
@@ -177,31 +196,58 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
                 // 设置默认选项
                 BANDComboBox.SelectedItem = DefaultBAUD; // 将"9600"设置为默认选项
 
-                List<string> ParRates = new List<string>()
+                List<ParityOption> ParRates = new List<ParityOption>()
                 {
-                    "None", "Odd", "Even", "Mark", "Space"
+                    new ParityOption { DisplayText = LanguageText("parityNone"), Value = "None" },
+                    new ParityOption { DisplayText = LanguageText("parityOdd"), Value = "Odd" },
+                    new ParityOption { DisplayText = LanguageText("parityEven"), Value = "Even" },
+                    new ParityOption { DisplayText = LanguageText("parityMark"), Value = "Mark" },
+                    new ParityOption { DisplayText = LanguageText("paritySpace"), Value = "Space" }
                 };
                 PARComboBox.ItemsSource = ParRates;
-                PARComboBox.SelectedItem = DefaultPart;
+                PARComboBox.DisplayMemberPath = "DisplayText";
+                PARComboBox.SelectedValuePath = "Value";
+                PARComboBox.SelectedValue = DefaultPart;
 
-                List<string> StopRates = new List<string>()
+                List<StopBitsOption> StopRates = new List<StopBitsOption>()
                 {
-                    "None", "One", "OnePointFive", "Two"
+                    //new StopBitsOption { DisplayText = LanguageText("stopNone"), Value = "None" },
+                    new StopBitsOption { DisplayText = LanguageText("stopOne"), Value = "One" },
+                    new StopBitsOption { DisplayText = LanguageText("stopOnePointFive"), Value = "OnePointFive" },
+                    new StopBitsOption { DisplayText = LanguageText("stopTwo"), Value = "Two" }
                 };
                 STOPComboBox.ItemsSource = StopRates;
-                STOPComboBox.SelectedItem = DefaultSTOP;
+                STOPComboBox.DisplayMemberPath = "DisplayText";
+                STOPComboBox.SelectedValuePath = "Value";
+                STOPComboBox.SelectedValue = DefaultSTOP;
 
-                for (int j = 5; j < 10; ++j)
+                for (int j = 5; j < 9; ++j)
                 {
                     DATAComboBox.Items.Add(j);
                 }
                 DATAComboBox.SelectedItem = DefaultDATA;
                 DATANumberBox.Value = DefaultDATA;
 
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                EncodingInfo[] encodings = Encoding.GetEncodings();
+                // 创建一个 List<string> 来存储编码名称
+                List<string> Encodings = new List<string>() 
+                {
+                    "gb2312",
+                };
+                // 将编码名称添加到 List<string> 中
+                foreach (EncodingInfo encodingInfo in encodings)
+                {
+                    Encodings.Add(encodingInfo.Name);
+                }
+
+                EncodingComboBox.ItemsSource = Encodings;
+                EncodingComboBox.SelectedItem = DefaultEncoding;
+
                 COMButton_Click(this, new RoutedEventArgs());
 
-                ToggleButtonIsChecked(rx, RXHEXButton);
-                ToggleButtonIsChecked(tx, TXHEXButton);
+                ToggleButtonIsChecked(rxHex, RXHEXButton);
+                ToggleButtonIsChecked(txHex, TXHEXButton);
 
                 ToggleButtonIsChecked(dtr, DTRButton);
                 if (dtr == 1)
@@ -241,16 +287,40 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
                 else AutoSerchComProgressRing.IsActive = false;
 
                 ToggleButtonIsChecked(autoconnect, AutoConnectButton);
+                //ToggleButtonIsChecked();
 
+                //EncodingTest();
             }
 
         }
+
+        public void EncodingTest()
+        {
+            // Print the header.
+            Debug.Write("CodePage identifier and name     ");
+            Debug.Write("BrDisp   BrSave   ");
+            Debug.Write("MNDisp   MNSave   ");
+            Debug.WriteLine("1-Byte   ReadOnly ");
+
+            // For every encoding, get the property values.
+            foreach (EncodingInfo ei in Encoding.GetEncodings())
+            {
+                Encoding e = ei.GetEncoding();
+
+                Debug.Write(string.Format("{0,-6} {1,-25} ", ei.CodePage, ei.Name));
+                Debug.Write(string.Format("{0,-8} {1,-8} ", e.IsBrowserDisplay, e.IsBrowserSave));
+                Debug.Write(string.Format("{0,-8} {1,-8} ", e.IsMailNewsDisplay, e.IsMailNewsSave));
+                Debug.WriteLine(string.Format("{0,-8} {1,-8} ", e.IsSingleByte, e.IsReadOnly));
+            }
+        }
+
         public void LaunageSetting()
         {
             BaudTextBlock.Text = LanguageText("baudRatel");
             PartTextBlock.Text = LanguageText("parityl");
             StopTextBlock.Text = LanguageText("stopBits");
             DataTextBlock.Text = LanguageText("dataBits");
+            EncodingTextBlock.Text = LanguageText("encoding");
             RXHEXButton.Content = LanguageText("rxHexl");
             TXHEXButton.Content = LanguageText("txHexl");
             TXNewLineButton.Content = LanguageText("txNewLinel");
@@ -468,6 +538,134 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
                 });
             }
         }
+        /*
+        public void TimerSerialPortTick(Object stateInfo)       //串口热插拔检测
+        {
+            int InOut = 0;
+            int i = 0;
+            int j = 0;
+            string[] LastPort = ArryPort;
+            string[] NowPort = SerialPort.GetPortNames();
+            string InOutCom;
+            string commne = "";
+
+            if (LastPort == null)
+            {
+                LastPort = SerialPort.GetPortNames();
+            }
+            if (Enumerable.SequenceEqual(LastPort, NowPort) == false || ArryPort == null)
+            {
+                if (LastPort.Length < NowPort.Length)
+                {
+                    InOut = 1;
+                    for (j = 0; j < NowPort.Length; j++)         //遍历插入的设备
+                    {
+                        Debug.WriteLine("SER J " + j);
+                        for (i = 0; i < LastPort.Length; i++)
+                        {
+                            if (NowPort[j] == LastPort[i])
+                            {
+                                Debug.WriteLine("SER I " + i);
+                                break;
+                            }
+                        }
+                        Debug.WriteLine("Now" + i);
+                    }
+                    Debug.WriteLine("=" + i);
+                }
+                else if (LastPort.Length > NowPort.Length)
+                {
+                    InOut = 0;
+                    for (i = 0; i < LastPort.Length; i++)       //遍历拔出的设备
+                    {
+                        for (j = 0; j < NowPort.Length; j++)
+                        {
+                            if (LastPort[i] == NowPort[j])
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    Debug.WriteLine("Last" + j);
+                }
+                Debug.WriteLine("INOUT" + InOut);
+
+
+                if (InOut == 1)
+                {
+                    InOutCom = NowPort[i];
+                }
+                else
+                {
+                    InOutCom = LastPort[j];
+                }
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    if (COMComboBox.SelectedItem != null)
+                    {
+                        commne = (string)COMComboBox.SelectedItem;
+                    }
+                    if (InOut != 0)
+                    {
+                        string commme = (string)COMComboBox.SelectedItem;
+                        SerialPortInfo info = SerialPortInfo.GetPort(InOutCom);
+                        RXTextBox.Text = RXTextBox.Text + InOutCom + ": " + info.Description + " " + LanguageText("spPlogin") + "\r\n";
+                        COMComboBox.Items.Clear();
+                        COMListview.Items.Clear();
+                        //COMListview.ItemsSource = null;
+                        //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
+                        ArryPort = SerialPort.GetPortNames();
+                        
+                        for (int k = 0; k < NowPort.Length; k++)
+                        {
+                            //string portDescription = ports.Find(p => p.Name == ArryPort[k])?.Description;  // 查找对应串口的设备描述
+                            
+                            COMComboBox.Items.Add(ArryPort[k]);                           //将所有的可用串口号添加到端口对应的组合框中
+                            COMListview.Items.Add(ArryPort[k]);
+                        }
+                        COMComboBox.SelectedItem = commme;
+                        COMListview.SelectedItem = commne;
+                        if (portIsConnect == 0)
+                        {
+                            if (COMComboBox.SelectedItem == null)
+                            {
+                                COMComboBox.SelectedItem = InOutCom;
+                                COMListview.SelectedItem = InOutCom;
+                                if (AutoConnectButton.IsChecked == true)
+                                {
+                                    CONTButton_Click(null, null);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        RXTextBox.Text = RXTextBox.Text + InOutCom + LanguageText("spPullout") + "\r\n";
+                        if (portIsConnect == 1)                                                   //自动断开已拔出的设备串口连接
+                        {
+                            if (InOutCom == (string)COMComboBox.SelectedItem)
+                            {
+                                CONTButton_Click(null, null);
+                            }
+                        }
+
+                        COMComboBox.Items.Clear();
+                        COMListview.Items.Clear();
+                        //COMListview.ItemsSource = null;
+                        //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
+                        ArryPort = SerialPort.GetPortNames();
+                        for (int k = 0; k < NowPort.Length; k++)
+                        {
+                            COMComboBox.Items.Add(ArryPort[k]);                           //将所有的可用串口号添加到端口对应的组合框中
+                            COMListview.Items.Add(ArryPort[k]);
+                        }
+                        COMComboBox.SelectedItem = commne;
+                        COMListview.SelectedItem = commne;
+                    }
+                });
+            }
+        }
+        */
         private async void COMButton_Click(object sender, RoutedEventArgs e)
         {
             //COMButton.Content = "Clicked";
@@ -545,16 +743,18 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
 
             string portName = (string)COMComboBox.SelectedItem;
             int bandRate = Convert.ToInt32(BANDComboBox.SelectedItem);
-            string parity = (string)PARComboBox.SelectedItem;
-            string stopBits = (string)STOPComboBox.SelectedItem;
+            string parity = ((ParityOption)PARComboBox.SelectedItem).Value;
+            string stopBits = ((StopBitsOption)STOPComboBox.SelectedItem).Value;
             int dataBits = Convert.ToInt32(DATAComboBox.SelectedItem);
+            string encoding = (string)EncodingComboBox.SelectedItem;
 
-            page1.SerialPortConnrct(portName,bandRate,parity,stopBits,dataBits,1500, Encoding.UTF8);
+            page1.SerialPortConnrct(portName, bandRate, parity, stopBits, dataBits, 1500, encoding);
 
             page1.RXTextBox.Text = page1.RXTextBox.Text + "BaudRate = " + Convert.ToInt32(BANDComboBox.SelectedItem) + "\r\n";
-            page1.RXTextBox.Text = page1.RXTextBox.Text + "Parity = " + (Parity)Enum.Parse(typeof(Parity), (string)PARComboBox.SelectedItem) + "\r\n";
-            page1.RXTextBox.Text = page1.RXTextBox.Text + "StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), (string)STOPComboBox.SelectedItem) + "\r\n";
+            page1.RXTextBox.Text = page1.RXTextBox.Text + "Parity = " + (Parity)Enum.Parse(typeof(Parity), ((ParityOption)PARComboBox.SelectedItem).Value) + "\r\n";
+            page1.RXTextBox.Text = page1.RXTextBox.Text + "StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), ((StopBitsOption)STOPComboBox.SelectedItem).Value) + "\r\n";
             page1.RXTextBox.Text = page1.RXTextBox.Text + "DataBits = " + Convert.ToInt32(DATAComboBox.SelectedItem) + "\r\n";
+            page1.RXTextBox.Text = page1.RXTextBox.Text + "Encoding = " + (string)EncodingComboBox.SelectedItem + "\r\n";
             page1.RXTextBox.Text = page1.RXTextBox.Text + LanguageText("serialPortl") + " " + COMComboBox.SelectedItem + LanguageText("spConnect") + "\r\n";
 
             timer = new System.Threading.Timer(TimerTick, null, 0, 250); // 每秒触发8次
@@ -600,6 +800,23 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             COMComboBox.SelectedItem = null;
             COMListview.SelectedItem = null;
         }
+
+        private void ComboboxSaveSetting(string menuName, string name, string settingItem)
+        {
+            using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
+            {
+                settingstomlr = TOML.Parse(reader);
+
+                settingstomlr[menuName][name] = settingItem;
+            }
+
+            using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
+            {
+                settingstomlr.WriteTo(writer);
+                writer.Flush();
+            }
+        }
+
         private void AutoComButton_Click(object sender, RoutedEventArgs e)
         {
             if (autosercom == 0)
@@ -616,18 +833,7 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
-                {
-                    settingstomlr = TOML.Parse(reader);
-
-                    settingstomlr["SerialPortSettings"]["AutoSerichCom"] = Convert.ToString(autosercom);
-                }
-
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
-                {
-                    settingstomlr.WriteTo(writer);
-                    writer.Flush();
-                }
+                ComboboxSaveSetting("SerialPortSettings", "AutoSerichCom", Convert.ToString(autosercom));
             }
         }
         private void AutoConnectButton_Click(object sender, RoutedEventArgs e)
@@ -642,18 +848,7 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
-                {
-                    settingstomlr = TOML.Parse(reader);
-
-                    settingstomlr["SerialPortSettings"]["AutoConnect"] = Convert.ToString(autoconnect);
-                }
-
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
-                {
-                    settingstomlr.WriteTo(writer);
-                    writer.Flush();
-                }
+                ComboboxSaveSetting("SerialPortSettings", "AutoConnect", Convert.ToString(autoconnect));
             }
         }
         private void COMListview_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -679,18 +874,7 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             {
                 if (autosaveset == 1)
                 {
-                    using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
-                    {
-                        settingstomlr = TOML.Parse(reader);
-
-                        settingstomlr["SerialPortSettings"]["DefaultBAUD"] = (string)BANDComboBox.SelectedItem;
-                    }
-
-                    using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
-                    {
-                        settingstomlr.WriteTo(writer);
-                        writer.Flush();
-                    }
+                    ComboboxSaveSetting("SerialPortSettings", "DefaultBAUD", (string)BANDComboBox.SelectedItem);
                 }
                 if (portIsConnect == 1)
                 {
@@ -717,124 +901,99 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
         {
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
-                {
-                    settingstomlr = TOML.Parse(reader);
-
-                    settingstomlr["SerialPortSettings"]["DefaultParity"] = (string)PARComboBox.SelectedItem;
-                }
-
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
-                {
-                    settingstomlr.WriteTo(writer);
-                    writer.Flush();
-                }
+                ComboboxSaveSetting("SerialPortSettings", "DefaultParity", ((ParityOption)PARComboBox.SelectedItem).Value);
             }
             if (portIsConnect == 1)
             {
-                CommonRes._serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), (string)PARComboBox.SelectedItem);
-                page1.RXTextBox.Text = page1.RXTextBox.Text + "Parity = " + (Parity)Enum.Parse(typeof(Parity), (string)PARComboBox.SelectedItem) + "\r\n";
+                CommonRes._serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), ((ParityOption)PARComboBox.SelectedItem).Value);
+                page1.RXTextBox.Text = page1.RXTextBox.Text + "Parity = " + (Parity)Enum.Parse(typeof(Parity), ((ParityOption)PARComboBox.SelectedItem).Value) + "\r\n";
             }
         }
         private void STOPComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
-                {
-                    settingstomlr = TOML.Parse(reader);
-
-                    settingstomlr["SerialPortSettings"]["DefaultSTOP"] = (string)STOPComboBox.SelectedItem;
-                }
-
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
-                {
-                    settingstomlr.WriteTo(writer);
-                    writer.Flush();
-                }
+                ComboboxSaveSetting("SerialPortSettings", "DefaultSTOP", ((StopBitsOption)STOPComboBox.SelectedItem).Value);
             }
             if (portIsConnect == 1)
             {
-                CommonRes._serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), (string)STOPComboBox.SelectedItem);
-                page1.RXTextBox.Text = page1.RXTextBox.Text + "StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), (string)STOPComboBox.SelectedItem) + "\r\n";
+                CommonRes._serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), ((StopBitsOption)STOPComboBox.SelectedItem).Value);
+                page1.RXTextBox.Text = page1.RXTextBox.Text + "StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), ((StopBitsOption)STOPComboBox.SelectedItem).Value) + "\r\n";
+            }
+            if (STOPComboBox.SelectedItem is StopBitsOption selectedOption)
+            {
+                if (float.TryParse(selectedOption.DisplayText, out float stopBits))
+                {
+                    StopBorder.Scale = new Vector3(stopBits, 1, 1);
+                }
+                else
+                {
+                    // 处理解析失败的情况
+                    StopBorder.Scale = new Vector3(1, 1, 1);
+                }
             }
         }
         private void DATAComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
-                {
-                    settingstomlr = TOML.Parse(reader);
-
-                    settingstomlr["SerialPortSettings"]["DefaultDATA"] = Convert.ToString(DATAComboBox.SelectedItem);
-                }
-
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
-                {
-                    settingstomlr.WriteTo(writer);
-                    writer.Flush();
-                }
+                ComboboxSaveSetting("SerialPortSettings", "DefaultDATA", Convert.ToString(DATAComboBox.SelectedItem));
             }
             if (portIsConnect == 1)
             {
                 CommonRes._serialPort.DataBits = Convert.ToInt32(DATAComboBox.SelectedItem);
                 page1.RXTextBox.Text = page1.RXTextBox.Text + "DataBits = " + Convert.ToInt32(DATAComboBox.SelectedItem) + "\r\n";
             }
+            DatainfoBadge.Value = Convert.ToInt32(DATAComboBox.SelectedItem);
+        }
+
+        private void EncodingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (autosaveset == 1)
+            {
+                ComboboxSaveSetting("SerialPortSettings", "DefaultEncoding", (string)EncodingComboBox.SelectedItem);
+            }
+            if (portIsConnect == 1)
+            {
+                CommonRes._serialPort.Encoding = Encoding.GetEncoding((string)EncodingComboBox.SelectedItem);
+                page1.RXTextBox.Text = page1.RXTextBox.Text + "Encoding = " + (string)EncodingComboBox.SelectedItem + "\r\n";
+            }
         }
 
         private void RXHEXButton_Click(object sender, RoutedEventArgs e)    //接收以十六进制数显示
         {
-            if (rx == 0)
+            if (rxHex == 0)
             {
-                rx = 1;
+                rxHex = 1;
+                RXHEXButton.IsChecked = true;
             }
             else
             {
-                rx = 0;
+                rxHex = 0;
+                RXHEXButton.IsChecked = false;
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
-                {
-                    settingstomlr = TOML.Parse(reader);
-
-                    settingstomlr["SerialPortSettings"]["DefaultRXHEX"] = Convert.ToString(rx);
-                }
-
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
-                {
-                    settingstomlr.WriteTo(writer);
-                    writer.Flush();
-                }
+                ComboboxSaveSetting("SerialPortSettings", "DefaultRXHEX", Convert.ToString(rxHex));
             }
         }
 
         private void TXHEXButton_Click(object sender, RoutedEventArgs e)    //发送以十六进制数显示
         {
 
-            if (tx == 0)
+            if (txHex == 0)
             {
-                tx = 1;
+                txHex = 1;
+                TXHEXButton.IsChecked = true;
             }
             else
             {
-                tx = 0;
+                txHex = 0;
+                TXHEXButton.IsChecked = false;
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
-                {
-                    settingstomlr = TOML.Parse(reader);
-
-                    settingstomlr["SerialPortSettings"]["DefaultTXHEX"] = Convert.ToString(tx);
-                }
-
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
-                {
-                    settingstomlr.WriteTo(writer);
-                    writer.Flush();
-                }
+                ComboboxSaveSetting("SerialPortSettings", "DefaultTXHEX", Convert.ToString(txHex));
             }
         }
         private void DTRButton_Click(object sender, RoutedEventArgs e)      //DTR信号使能
@@ -853,18 +1012,7 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
-                {
-                    settingstomlr = TOML.Parse(reader);
-
-                    settingstomlr["SerialPortSettings"]["DefaultDTR"] = Convert.ToString(dtr);
-                }
-
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
-                {
-                    settingstomlr.WriteTo(writer);
-                    writer.Flush();
-                }
+                ComboboxSaveSetting("SerialPortSettings", "DefaultDTR", Convert.ToString(dtr));
             }
         }
         private void RTSButton_Click(object sender, RoutedEventArgs e)      //RTS信号使能
@@ -883,18 +1031,7 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
-                {
-                    settingstomlr = TOML.Parse(reader);
-
-                    settingstomlr["SerialPortSettings"]["DefaultRTS"] = Convert.ToString(rts);
-                }
-
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
-                {
-                    settingstomlr.WriteTo(writer);
-                    writer.Flush();
-                }
+                ComboboxSaveSetting("SerialPortSettings", "DefaultRTS", Convert.ToString(rts));
             }
         }
         private void TXNewLineButton_Click(object sender, RoutedEventArgs e)
@@ -909,18 +1046,7 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
-                {
-                    settingstomlr = TOML.Parse(reader);
-
-                    settingstomlr["SerialPortSettings"]["DefaultTXNewLine"] = Convert.ToString(txnewline);
-                }
-
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
-                {
-                    settingstomlr.WriteTo(writer);
-                    writer.Flush();
-                }
+                ComboboxSaveSetting("SerialPortSettings", "DefaultTXNewLine", Convert.ToString(txnewline));
             }
         }
         private void SaveSetButton_Click(object sender, RoutedEventArgs e)
@@ -933,18 +1059,7 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             {
                 autosaveset = 0;
             }
-            using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
-            {
-                settingstomlr = TOML.Parse(reader);
-
-                settingstomlr["SerialPortSettings"]["AutoDaveSet"] = Convert.ToString(autosaveset);
-            }
-
-            using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
-            {
-                settingstomlr.WriteTo(writer);
-                writer.Flush();
-            }
+            ComboboxSaveSetting("SerialPortSettings", "AutoDaveSet", Convert.ToString(autosaveset));
         }
         private void AUTOScrollButton_Click(object sender, RoutedEventArgs e)
         {
@@ -960,18 +1075,7 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             }
             if (autosaveset == 1)
             {
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //打开TOML文件
-                {
-                    settingstomlr = TOML.Parse(reader);
-
-                    settingstomlr["SerialPortSettings"]["DefaultAUTOSco"] = Convert.ToString(autotr);
-                }
-
-                using (StreamWriter writer = File.CreateText(FSSetToml))                  //将设置写入TOML文件
-                {
-                    settingstomlr.WriteTo(writer);
-                    writer.Flush();
-                }
+                ComboboxSaveSetting("SerialPortSettings", "DefaultAUTOSco", Convert.ToString(autotr));
             }
         }
         private void ChipToolKitComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1026,8 +1130,5 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
 
         }
 
-        
-
-        
     }
 }

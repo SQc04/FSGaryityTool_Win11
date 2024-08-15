@@ -201,6 +201,10 @@
     <value>Flash Burn Settings</value>
     <comment>Settings Page text</comment>
   </data>
+  <data name="encoding" xml:space="preserve">
+    <value>Encoding</value>
+    <comment>Serial Port Page text</comment>
+  </data>
   <data name="general" xml:space="preserve">
     <value>General</value>
     <comment>Settings Page text</comment>
@@ -224,6 +228,14 @@
   <data name="mcuToolRP2040MPY" xml:space="preserve">
     <value>Tools for MicroPython in RP2040</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="mica" xml:space="preserve">
+    <value>Mica</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="micaAlt" xml:space="preserve">
+    <value>Mica Alt</value>
+    <comment>Settings Page text</comment>
   </data>
   <data name="mouse" xml:space="preserve">
     <value>Mouse</value>
@@ -249,8 +261,28 @@
     <value>Search SerialPort succeed!</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="parityEven" xml:space="preserve">
+    <value>Even</value>
+    <comment>Serial Port Page text</comment>
+  </data>
   <data name="parityl" xml:space="preserve">
     <value>Parity</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="parityMark" xml:space="preserve">
+    <value>Mark</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="parityNone" xml:space="preserve">
+    <value>None</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="parityOdd" xml:space="preserve">
+    <value>Odd</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="paritySpace" xml:space="preserve">
+    <value>Space</value>
     <comment>Serial Port Page text</comment>
   </data>
   <data name="rxHexl" xml:space="preserve">
@@ -299,6 +331,22 @@
   </data>
   <data name="stopBits" xml:space="preserve">
     <value>Stop bits</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="stopNone" xml:space="preserve">
+    <value>None</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="stopOne" xml:space="preserve">
+    <value>1</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="stopOnePointFive" xml:space="preserve">
+    <value>1.5</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="stopTwo" xml:space="preserve">
+    <value>2</value>
     <comment>Serial Port Page text</comment>
   </data>
   <data name="thin" xml:space="preserve">

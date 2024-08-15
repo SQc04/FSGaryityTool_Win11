@@ -78,8 +78,10 @@
     <None Remove="Views\McuToolpage\ESP8266Tools.xaml" />
     <None Remove="Views\McuToolpage\NoneTools.xaml" />
     <None Remove="Views\McuToolpage\RP2040MPYTools.xaml" />
+    <None Remove="Views\Pages\CameraControlPage\CameraControlMainPage.xaml" />
     <None Remove="Views\Pages\SerialPortPage\SerialPlotterPage.xaml" />
     <None Remove="Views\Pages\SerialPortPage\SerialPortBasicInOutPage.xaml" />
+    <None Remove="Views\Pages\SerialPortPage\SerialPortCoreServicesPage.xaml" />
     <None Remove="Views\Pages\SerialPortPage\SerialPortToolsPage.xaml" />
     <None Remove="Views\Pages\TestPage\TestPage1.xaml" />
   </ItemGroup>
@@ -120,8 +122,11 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240627000" />
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="OpenCvSharp4" Version="4.10.0.20240616" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.10.0.20240616" />
     <PackageReference Include="System.IO.Ports" Version="8.0.0" />
     <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.0-preview.7.24405.7" />
     <PackageReference Include="Tommy" Version="3.1.2" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
@@ -220,6 +225,12 @@
     <None Update="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
+    <Page Update="Views\Pages\CameraControlPage\CameraControlMainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Pages\SerialPortPage\SerialPortCoreServicesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\Pages\TestPage\TestPage1.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -259,7 +270,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="PcControlToolspage\" />
+    <Folder Include="Assets\BackgroundTest\" />
     <Folder Include="Fonts\" />
     <Folder Include="Views\Pages\FanControlPage\" />
     <Folder Include="Views\Pages\SettingsPage\" />
@@ -302,7 +313,7 @@
   </PropertyGroup>
 	
   <PropertyGroup>
-    <VersionPrefix>0.2.44</VersionPrefix>
+    <VersionPrefix>0.2.46</VersionPrefix>
   </PropertyGroup>
 	
   <ItemGroup>
@@ -319,6 +330,15 @@
 	
   <ItemGroup>
     <Resource Remove="Views\Pages\SerialPortPage\SerialPortBasicInOutPage.xaml" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <Content Update="Assets\BackgroundTest\TestAlpha.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\BackgroundTest\TestBeta.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 	
 	

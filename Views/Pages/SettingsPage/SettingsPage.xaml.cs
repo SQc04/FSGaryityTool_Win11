@@ -105,11 +105,13 @@ namespace FSGaryityTool_Win11
 
             List<string> pageBackGround = new List<string>()         //新建字符串
             {
-                Page1.LanguageText("thin"), Page1.LanguageText("base")//, ""
+                Page1.LanguageText("thin"), Page1.LanguageText("base"), Page1.LanguageText("mica"), Page1.LanguageText("micaAlt")//, ""
             };
             SoftBackgroundCombobox.ItemsSource = pageBackGround;
             if (DefaultTomlPageBackGround == 0) DefaultPageBackGround = Page1.LanguageText("thin");
             else if (DefaultTomlPageBackGround == 1) DefaultPageBackGround = Page1.LanguageText("base");
+            else if (DefaultTomlPageBackGround == 2) DefaultPageBackGround = Page1.LanguageText("mica");
+            else if (DefaultTomlPageBackGround == 3) DefaultPageBackGround = Page1.LanguageText("micaAlt");
 
             SoftBackgroundCombobox.SelectedItem = DefaultPageBackGround;  //将TOML设置添加到选择框
 
@@ -244,7 +246,8 @@ namespace FSGaryityTool_Win11
 
                 if ((string)SoftBackgroundCombobox.SelectedItem == Page1.LanguageText("thin")) settingstomlr["FSGravitySettings"]["SoftBackground"] = "0";
                 else if ((string)SoftBackgroundCombobox.SelectedItem == Page1.LanguageText("base")) settingstomlr["FSGravitySettings"]["SoftBackground"] = "1";
-                //else if ((string)SoftBackgroundCombobox.SelectedItem == "") settingstomlr["FSGravitySettings"]["SoftBackground"] = "4";
+                else if ((string)SoftBackgroundCombobox.SelectedItem == Page1.LanguageText("mica")) settingstomlr["FSGravitySettings"]["SoftBackground"] = "2";
+                else if ((string)SoftBackgroundCombobox.SelectedItem == Page1.LanguageText("micaAlt")) settingstomlr["FSGravitySettings"]["SoftBackground"] = "3";
 
             }
 
@@ -262,6 +265,7 @@ namespace FSGaryityTool_Win11
             // 更新窗口的背景
             mainWindow.WindowBackSetting();
         }
+
 
 
         private void SoftLanguageCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)

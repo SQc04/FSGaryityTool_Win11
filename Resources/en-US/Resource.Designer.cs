@@ -250,6 +250,15 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         }
         
         /// <summary>
+        ///   查找类似 Encoding 的本地化字符串。
+        /// </summary>
+        internal static string encoding {
+            get {
+                return ResourceManager.GetString("encoding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 General 的本地化字符串。
         /// </summary>
         internal static string general {
@@ -300,6 +309,24 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         internal static string mcuToolRP2040MPY {
             get {
                 return ResourceManager.GetString("mcuToolRP2040MPY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Mica 的本地化字符串。
+        /// </summary>
+        internal static string mica {
+            get {
+                return ResourceManager.GetString("mica", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Mica Alt 的本地化字符串。
+        /// </summary>
+        internal static string micaAlt {
+            get {
+                return ResourceManager.GetString("micaAlt", resourceCulture);
             }
         }
         
@@ -358,11 +385,56 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         }
         
         /// <summary>
+        ///   查找类似 Even 的本地化字符串。
+        /// </summary>
+        internal static string parityEven {
+            get {
+                return ResourceManager.GetString("parityEven", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Parity 的本地化字符串。
         /// </summary>
         internal static string parityl {
             get {
                 return ResourceManager.GetString("parityl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Mark 的本地化字符串。
+        /// </summary>
+        internal static string parityMark {
+            get {
+                return ResourceManager.GetString("parityMark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 None 的本地化字符串。
+        /// </summary>
+        internal static string parityNone {
+            get {
+                return ResourceManager.GetString("parityNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Odd 的本地化字符串。
+        /// </summary>
+        internal static string parityOdd {
+            get {
+                return ResourceManager.GetString("parityOdd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Space 的本地化字符串。
+        /// </summary>
+        internal static string paritySpace {
+            get {
+                return ResourceManager.GetString("paritySpace", resourceCulture);
             }
         }
         
@@ -471,6 +543,42 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         internal static string stopBits {
             get {
                 return ResourceManager.GetString("stopBits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 None 的本地化字符串。
+        /// </summary>
+        internal static string stopNone {
+            get {
+                return ResourceManager.GetString("stopNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 1 的本地化字符串。
+        /// </summary>
+        internal static string stopOne {
+            get {
+                return ResourceManager.GetString("stopOne", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 1.5 的本地化字符串。
+        /// </summary>
+        internal static string stopOnePointFive {
+            get {
+                return ResourceManager.GetString("stopOnePointFive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 2 的本地化字符串。
+        /// </summary>
+        internal static string stopTwo {
+            get {
+                return ResourceManager.GetString("stopTwo", resourceCulture);
             }
         }
         

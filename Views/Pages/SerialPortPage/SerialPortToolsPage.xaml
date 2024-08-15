@@ -8,6 +8,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        
+    </Page.Resources>
+
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="48"/>
@@ -37,7 +42,7 @@
                                     </FontIcon.RotationTransition>
                                 </FontIcon>
                             </Button>
-                            <Border CornerRadius="4" Width="36" Margin="6,0,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}">
+                            <Border CornerRadius="4" Width="36" Margin="6,0,6,6" BorderBrush="{ThemeResource ControlElevationBorderBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                                 <ProgressRing x:Name="AutoSerchComProgressRing" IsActive="False" Width="24" Height="24"/>
                             </Border>
                         </StackPanel>
@@ -84,14 +89,14 @@
                             <Border Height="32" Width="32" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="1,6,6,6">
                                 <FontIcon x:Name="BaudrateIcon" Glyph="&#xEC48;"/>
                             </Border>
-                            <Border x:Name="BorderBack1" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                            <Border x:Name="BorderBack1" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlElevationBorderBrush}" BorderThickness="1" Margin="6">
                                 <Grid HorizontalAlignment="Center" Width="120">
                                     <TextBlock x:Name="BaudTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="70" Margin="0">BAUDRATE</TextBlock>
                                 </Grid>
 
                             </Border>
                             <ComboBox x:Name="BANDComboBox" IsEditable="True" SelectionChanged="BANDComboBox_SelectionChanged" Width="108" Margin="6">
-
+                                
                             </ComboBox>
 
                         </StackPanel>
@@ -100,36 +105,48 @@
                             <Border Height="32" Width="32" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="1,6,6,6">
                                 <FontIcon Glyph="&#xEA18;"/>
                             </Border>
-                            <Border x:Name="BorderBack2" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                            <Border x:Name="BorderBack2" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlElevationBorderBrush}" BorderThickness="1" Margin="6">
                                 <Grid HorizontalAlignment="Center" Width="120">
                                     <TextBlock x:Name="PartTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="70" Margin="0">Parity</TextBlock>
                                 </Grid>
                             </Border>
                             <ComboBox x:Name="PARComboBox" SelectionChanged="PARComboBox_SelectionChanged" Width="108" Margin="6">
-
+                                
                             </ComboBox>
 
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal">
                             <Border Height="32" Width="32" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="1,6,6,6">
-                                <FontIcon Glyph="&#xE81A;"/>
+                                <Grid>
+                                    <Border x:Name="StopBorder" HorizontalAlignment="Left" Background="{ThemeResource SystemFillColorAttentionBrush}" CornerRadius="2" Width="10" Opacity="0.9" Height="13.5" Margin="6,-1,0,0" Scale="1,1,1">
+                                        <Border.ScaleTransition>
+                                            <Vector3Transition />
+                                        </Border.ScaleTransition>
+                                    </Border>
+                                    <Border HorizontalAlignment="Center" BorderBrush="{ThemeResource TextFillColorPrimaryBrush}" BorderThickness="1.5" CornerRadius="3" Width="27" Opacity="0.9" Height="20" Margin="1,-1,0,0"/>
+                                    <FontIcon Glyph="&#xE7FD;" FontSize="14"/>
+                                    <!--&#xE81A;-->
+                                </Grid>
                             </Border>
-                            <Border x:Name="BorderBack3" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                            <Border x:Name="BorderBack3" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlElevationBorderBrush}" BorderThickness="1" Margin="6">
                                 <Grid HorizontalAlignment="Center" Width="120">
                                     <TextBlock x:Name="StopTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="70" Margin="0">STOP Bits</TextBlock>
                                 </Grid>
                             </Border>
-                            <ComboBox x:Name="STOPComboBox" SelectionChanged="STOPComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                            <ComboBox x:Name="STOPComboBox" SelectionChanged="STOPComboBox_SelectionChanged" Width="108" Margin="6" ></ComboBox>
 
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal">
                             <Border Height="32" Width="32" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="1,6,6,6">
-                                <FontIcon Glyph="&#xE950;"/>
+                                <Grid>
+                                    <FontIcon Glyph="&#xE950;"/>
+                                    <InfoBadge x:Name="DatainfoBadge" Width="16" Value="8" Margin="14,14,0,0"/>
+                                </Grid>
                                 <!--&#xF785;-->
                             </Border>
-                            <Border x:Name="BorderBack4" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                            <Border x:Name="BorderBack4" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlElevationBorderBrush}" BorderThickness="1" Margin="6">
                                 <Grid HorizontalAlignment="Center" Width="120">
                                     <TextBlock x:Name="DataTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="70" Margin="0">DATA Bits</TextBlock>
                                 </Grid>
@@ -137,21 +154,48 @@
                             <ComboBox x:Name="DATAComboBox" SelectionChanged="DATAComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
 
                         </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Border Height="32" Width="32" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="1,6,6,6">
+                                <Grid>
+                                    <FontIcon Glyph="&#xF2B7;"/>
+                                </Grid>
+                            </Border>
+                            <Border CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlElevationBorderBrush}" BorderThickness="1" Margin="6">
+                                <Grid HorizontalAlignment="Center" Width="120">
+                                    <TextBlock x:Name="EncodingTextBlock" TextAlignment="Center" VerticalAlignment="Center" Width="70" Margin="0">Encoding</TextBlock>
+                                </Grid>
+                            </Border>
+                            <ComboBox x:Name="EncodingComboBox" SelectionChanged="EncodingComboBox_SelectionChanged" Width="108" Margin="6"></ComboBox>
+                        </StackPanel>
+
                         <StackPanel Orientation="Horizontal">
                             <Border Height="32" Width="32" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="1,6,6,6">
                                 <FontIcon Glyph="&#xECF3;" />
                             </Border>
-                            <Border x:Name="CDHBorder" CornerRadius="4" Height="32" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                            <Border x:Name="CDHBorder" CornerRadius="4" Height="32" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="6">
                                 <TextBlock x:Name="CDHTextBlock" Text="DCD" TextAlignment="Center" VerticalAlignment="Center" Width="54" Margin="0"/>
+                                <Border.BackgroundTransition>
+                                    <BrushTransition />
+                                </Border.BackgroundTransition>
                             </Border>
-                            <Border x:Name="RIBorder" CornerRadius="4" Height="32" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                            <Border x:Name="RIBorder" CornerRadius="4" Height="32" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="6">
                                 <TextBlock x:Name="RITextBlock" Text="RI" TextAlignment="Center" VerticalAlignment="Center" Width="53.5" Margin="0"/>
+                                <Border.BackgroundTransition>
+                                    <BrushTransition />
+                                </Border.BackgroundTransition>
                             </Border>
-                            <Border x:Name="DSRBorder" CornerRadius="4" Height="32" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                            <Border x:Name="DSRBorder" CornerRadius="4" Height="32" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="6">
                                 <TextBlock x:Name="DSRTextBlock" Text="DSR" TextAlignment="Center" VerticalAlignment="Center" Width="48" Margin="0"/>
+                                <Border.BackgroundTransition>
+                                    <BrushTransition />
+                                </Border.BackgroundTransition>
                             </Border>
-                            <Border x:Name="CTSBorder" CornerRadius="4" Height="32" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
+                            <Border x:Name="CTSBorder" CornerRadius="4" Height="32" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="6">
                                 <TextBlock x:Name="CTSTextBlock" Text="CTS" TextAlignment="Center" VerticalAlignment="Center" Width="48" Margin="0"/>
+                                <Border.BackgroundTransition>
+                                    <BrushTransition />
+                                </Border.BackgroundTransition>
                             </Border>
 
                         </StackPanel>
