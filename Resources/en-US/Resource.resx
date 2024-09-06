@@ -221,6 +221,10 @@
     <value>Tools for ESP8266</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="mcuToolLPC1768SMOOTH" xml:space="preserve">
+    <value>Tools for Smoothieboard</value>
+    <comment>Serial Port Page text</comment>
+  </data>
   <data name="mcuToolNone" xml:space="preserve">
     <value>No tools was selected</value>
     <comment>Serial Port Page text</comment>
@@ -287,6 +291,10 @@
   </data>
   <data name="rxHexl" xml:space="preserve">
     <value>Hex reception</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="serialPlotter" xml:space="preserve">
+    <value>Serial Plotter</value>
     <comment>Serial Port Page text</comment>
   </data>
   <data name="serialPort" xml:space="preserve">

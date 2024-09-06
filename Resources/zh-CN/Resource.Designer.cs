@@ -295,6 +295,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         }
         
         /// <summary>
+        ///   查找类似 用于冰沙主板的工具 的本地化字符串。
+        /// </summary>
+        internal static string mcuToolLPC1768SMOOTH {
+            get {
+                return ResourceManager.GetString("mcuToolLPC1768SMOOTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 没有选择任何工具 的本地化字符串。
         /// </summary>
         internal static string mcuToolNone {
@@ -444,6 +453,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         internal static string rxHexl {
             get {
                 return ResourceManager.GetString("rxHexl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 串口绘图器 的本地化字符串。
+        /// </summary>
+        internal static string serialPlotter {
+            get {
+                return ResourceManager.GetString("serialPlotter", resourceCulture);
             }
         }
         

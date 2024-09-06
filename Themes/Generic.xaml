@@ -41,4 +41,18 @@
         </Setter>
     </Style>
 
+
+    <Style TargetType="local2:LogarithmicSlider" xmlns:local2="using:FSGaryityTool_Win11.Controls">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local2:LogarithmicSlider">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

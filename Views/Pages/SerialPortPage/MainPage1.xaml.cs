@@ -55,10 +55,9 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             this.InitializeComponent();
 
             mainPage1 = this;
-            //TabView_AddTabButtonClick(SPTabView, null);
-            //var page1 = MainWindow.page1Instance;
 
-            SerialPort.Text = Page1.LanguageText("serialPort");
+            SerialPortTextBlock.Text = Page1.LanguageText("serialPort");
+            SerialPlotterTextBlock.Text = Page1.LanguageText("serialPlotter");
 
             SerialPortToolsFrame.Navigate(typeof(SerialPortToolsPage));
 
@@ -66,17 +65,17 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
 
             FSSPagf.Navigate(typeof(Page1), null, null);//≥ı ºªØPage1
 
-            
-
             switch (selectorBarDefaultNumber)
             {
                 case 0:
-                    SerialPort.IsSelected = true;
+                    SerialPortPageNavigationView.SelectedItem = SerialPort;
                     break;
                 case 1:
-                    SerialPlotter.IsSelected = true;
+                    SerialPortPageNavigationView.SelectedItem = SerialPlotter;
                     break;
-
+                case 2:
+                    SerialPortPageNavigationView.SelectedItem = Test2;
+                    break;
             }
 
             this.taskbarInstance = (ITaskbarList3)new TaskbarList();
@@ -86,11 +85,11 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             RunProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        private async void SPSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+        private async void SerialPortPageNavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            SelectorBarItem selectorBarItem = sender.SelectedItem;
-            int currentSelectionIndex = sender.Items.IndexOf(selectorBarItem);
-            
+            var selectedItem = args.SelectedItem as NavigationViewItem;
+            int currentSelectionIndex = sender.MenuItems.IndexOf(selectedItem);
+
             System.Type pageType = typeof(Page2);
 
             switch (currentSelectionIndex)
@@ -220,6 +219,7 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
                     RunProgressBar.IsIndeterminate = true;
                     RunProgressBar.ShowPaused = false;
                     RunProgressBar.Visibility = Visibility.Visible;
+                    serialPortToolsPage._hideTimer.Start();
                 }
                 catch 
                 {
@@ -234,6 +234,7 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
                     RunProgressBar.IsIndeterminate = true;
                     RunProgressBar.ShowPaused = true;
                     RunProgressBar.Visibility = Visibility.Visible;
+                    SerialPortToolsToggleButton.IsChecked = true;
                 }
             }
             else
@@ -258,37 +259,10 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
                 RunProgressBar.IsIndeterminate = false;
                 RunProgressBar.ShowPaused = false;
                 RunProgressBar.Visibility = Visibility.Collapsed;
+                SerialPortToolsToggleButton.IsChecked = true;
 
             }
         }
-
-        /*
-        // Add a new Tab to the TabView
-        private void TabView_AddTabButtonClick(TabView sender, object args)
-        {
-            var newTab = new TabViewItem();
-            newTab.IconSource = new SymbolIconSource() { Symbol = Symbol.Sort };
-            newTab.Header = "Serial Port " + Pge;
-
-            // The Content of a TabViewItem is often a frame which hosts a page.
-            Frame frame = new Frame();
-            newTab.Content = frame;
-            frame.Navigate(typeof(Page1));
-
-            sender.TabItems.Add(newTab);
-
-            Pge++;
-        }
-
-        // Remove the requested tab from the TabView
-        private void TabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
-        {
-            sender.TabItems.Remove(args.Tab);
-            Pge--;
-        }
-
-        
-        */
 
     }
 }

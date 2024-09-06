@@ -26,6 +26,8 @@ using System.Text;
 using FSGaryityTool_Win11.McuToolpage;
 using System.Numerics;
 using System.Diagnostics;
+using FSGaryityTool_Win11.Views.McuToolpage;
+using Microsoft.UI.Xaml.Media.Animation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -82,6 +84,10 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             this.InitializeComponent();
             serialPortToolsPage = this;
             this.Loaded += SerialPortToolsPage_Loaded;
+
+            _hideTimer = new DispatcherTimer();
+            _hideTimer.Interval = TimeSpan.FromMilliseconds(750);
+            _hideTimer.Tick += HideTimer_Tick;
 
         }
         private void FsBorderIsChecked(int isChecked, Border border, TextBlock textBlock)
@@ -335,7 +341,8 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
                 {
                     new MCUTool() { Name = "None", Description = LanguageText("mcuToolNone") },
                     new MCUTool() { Name = "ESP8266", Description = LanguageText("mcuToolEsp8266") },
-                    new MCUTool() { Name = "RP2040        M", Description = LanguageText("mcuToolRP2040MPY") }
+                    new MCUTool() { Name = "RP2040        M", Description = LanguageText("mcuToolRP2040MPY") },
+                    new MCUTool() { Name = "LPC1768        SM", Description = LanguageText("mcuToolLPC1768SMOOTH") },
                 };
 
             ChipToolKitComboBox.ItemsSource = mcuTools;
@@ -1088,13 +1095,16 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
                 switch (selectedTool.Name)
                 {
                     case "None":
-                        McuToolsFrame.Navigate(typeof(NoneTools));
+                        McuToolsFrame.Navigate(typeof(NoneTools), null, new DrillInNavigationTransitionInfo());
                         break;
                     case "ESP8266":
-                        McuToolsFrame.Navigate(typeof(ESP8266Tools));
+                        McuToolsFrame.Navigate(typeof(ESP8266Tools), null, new DrillInNavigationTransitionInfo());
                         break;
                     case "RP2040        M":
-                        McuToolsFrame.Navigate(typeof(RP2040MPYTools));
+                        McuToolsFrame.Navigate(typeof(RP2040MPYTools), null, new DrillInNavigationTransitionInfo());
+                        break;
+                    case "LPC1768        SM":
+                        McuToolsFrame.Navigate(typeof(LPC1768FSPnPTools), null, new DrillInNavigationTransitionInfo());
                         break;
                     // 在这里添加更多的case语句来处理其他工具
                     default:
@@ -1130,5 +1140,32 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
 
         }
 
+        public DispatcherTimer _hideTimer;
+
+        private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            _hideTimer.Stop();
+            mainPage1.SerialPortToolsToggleButton.IsChecked = true;
+        }
+
+        private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            if (mainPage1.SerialPortToolsToggleButton.IsChecked == true)
+            {
+                if (_hideTimer != null && !_hideTimer.IsEnabled)
+                {
+                    _hideTimer.Start();
+                }
+            }
+        }
+
+        private void HideTimer_Tick(object sender, object e)
+        {
+            _hideTimer.Stop();
+            if (portIsConnect == 1)
+            {
+                mainPage1.SerialPortToolsToggleButton.IsChecked = false;
+            }
+        }
     }
 }

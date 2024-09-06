@@ -221,6 +221,10 @@
     <value>用于ESP8266的工具</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="mcuToolLPC1768SMOOTH" xml:space="preserve">
+    <value>用于冰沙主板的工具</value>
+    <comment>Serial Port Page text</comment>
+  </data>
   <data name="mcuToolNone" xml:space="preserve">
     <value>没有选择任何工具</value>
     <comment>Serial Port Page text</comment>
@@ -287,6 +291,10 @@
   </data>
   <data name="rxHexl" xml:space="preserve">
     <value>十六进制接收</value>
+    <comment>Serial Port Page text</comment>
+  </data>
+  <data name="serialPlotter" xml:space="preserve">
+    <value>串口绘图器</value>
     <comment>Serial Port Page text</comment>
   </data>
   <data name="serialPort" xml:space="preserve">

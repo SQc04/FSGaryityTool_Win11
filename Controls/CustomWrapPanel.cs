@@ -51,26 +51,10 @@ namespace FSGaryityTool_Win11.Controls
                 if (finalRect.Left + childWidth > finalSize.Width) // 如果子元素的宽度超过了可用宽度，换行
                 {
                     // 调整最后一行的最后一个子元素的宽度以填充剩余空间
-                    FrameworkElement feLast = lastChild as FrameworkElement; // 将 lastChild 转换为 FrameworkElement
-                    if (feLast != null && totalWidth != lastChild.DesiredSize.Width)
-                    {
-                        double minWidth = feLast.MinWidth; // 获取最小宽度
-
-                        // 计算当前行除去最后一个元素之前的元素的总宽度
-                        double previousWidth = totalWidth - lastChild.DesiredSize.Width;
-
-                        // 如果当前行的最后一个元素没有固定的宽度，就不需要调整它的宽度
-                        if (double.IsNaN(feLast.Width))
-                        {
-                            // 调整上一个子元素的宽度以填充剩余空间
-                            Rect lastChildRect = new Rect(finalRect.X - minWidth, finalRect.Y, finalSize.Width - previousWidth, lineHeight);
-                            lastChild.Arrange(lastChildRect);
-                        }
-                    }
+                    AdjustLastChildWidth(lastChild, totalWidth, finalSize.Width, lineHeight, finalRect);
 
                     finalRect.Y += lineHeight; // 更新Y坐标到下一行
                     finalRect.X = 0; // X坐标重置为0
-                    finalRect.Height = child.DesiredSize.Height; // 更新矩形的高度为当前子元素的高度
                     lineHeight = child.DesiredSize.Height; // 更新行高为当前子元素的高度
 
                     totalWidth = 0; // 重置当前行的总宽度
@@ -87,27 +71,37 @@ namespace FSGaryityTool_Win11.Controls
 
                 lastChild = child; // 更新上一个子元素为当前子元素
             }
-
+            
             // 调整最后一行的最后一个子元素的宽度以填充剩余空间
-            FrameworkElement fd = lastChild as FrameworkElement; // 将 lastChild 转换为 FrameworkElement
-            if (fd != null && totalWidth == lastChild.DesiredSize.Width)
-            {
-                double minWidth = fd.MinWidth; // 获取最小宽度
-
-                // 计算当前行除去最后一个元素之前的元素的总宽度
-                double previousWidth = totalWidth - lastChild.DesiredSize.Width;
-
-                // 如果当前行的最后一个元素没有固定的宽度，就不需要调整它的宽度
-                if (double.IsNaN(fd.Width))
-                {
-                    // 调整上一个子元素的宽度以填充剩余空间
-                    Rect lastChildRect = new Rect(finalRect.X - minWidth, finalRect.Y, finalSize.Width - previousWidth, lineHeight);
-                    lastChild.Arrange(lastChildRect);
-                }
-            }
+            AdjustLastChildWidth(lastChild, totalWidth, finalSize.Width, lineHeight, finalRect);
 
             return finalSize; // 返回最终的尺寸
         }
+
+        private void AdjustLastChildWidth(UIElement lastChild, double totalWidth, double finalWidth, double lineHeight, Rect finalRect)
+        {
+            FrameworkElement feLast = lastChild as FrameworkElement;
+            if (feLast != null && double.IsNaN(feLast.Width))
+            {
+                double minWidth = feLast.MinWidth;
+                double previousWidth = totalWidth - feLast.DesiredSize.Width;
+
+                // 判断这一行是否只有一个元素
+                if (totalWidth == feLast.DesiredSize.Width)
+                {
+                    // 如果只有一个元素，将该元素的宽度设置为控件的最右边
+                    Rect lastChildRect = new Rect(0, finalRect.Y, finalWidth, lineHeight);
+                    lastChild.Arrange(lastChildRect);
+                }
+                else
+                {
+                    // 如果有多个元素，计算起始宽度
+                    Rect lastChildRect = new Rect(finalRect.X - feLast.DesiredSize.Width, finalRect.Y, finalWidth - previousWidth, lineHeight);
+                    lastChild.Arrange(lastChildRect);
+                }
+            }
+        }
+
 
     }
 }

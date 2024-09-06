@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
 		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
 		<RootNamespace>FSGaryityTool_Win11</RootNamespace>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
@@ -9,7 +9,7 @@
 		<PublishSingleFile>false</PublishSingleFile>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>x86;x64;arm64</Platforms>
-		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
 		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
 		<UseWinUI>true</UseWinUI>
 		<EnableMsixTooling>true</EnableMsixTooling>
@@ -23,7 +23,7 @@
 		<Copyright>Copyright ©  2020-2024 FairingStudio</Copyright>
 		<Company>FairingStudio</Company>
 		<Authors>FairingStudio</Authors>
-		<Title>FSGaryityTool For Win11</Title>
+		<Title>FSGaryityTool</Title>
 		<PackageId>FSGaryityTool_Win11</PackageId>
 		<Product>FSGaryityTool For Win11</Product>
 		<Description>FSGaryityTool For Win11</Description>
@@ -39,6 +39,8 @@
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<AppxBundle>Never</AppxBundle>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+		<WindowsTargetPlatformVersion>10.0.22261.0</WindowsTargetPlatformVersion>
+		<WindowsTargetPlatformMinVersion>10.0.22261.0</WindowsTargetPlatformMinVersion>
 		<Version />
 	</PropertyGroup>
   <ItemGroup>
@@ -65,7 +67,7 @@
     <None Remove="Audio\jesper_k_.mod" />
     <None Remove="Controls\FanAUserControl.xaml" />
     <None Remove="ExtendedSplash.xaml" />
-    <None Remove="Fonts\Segoe Fluent Icons EULA.txt" />
+    <None Remove="Assets\Fonts\Segoe Fluent Icons EULA.txt" />
     <None Remove="FSPage.xaml" />
     <None Remove="MainPage1.xaml" />
     <None Remove="MainSettingsPage.xaml" />
@@ -76,12 +78,12 @@
     <None Remove="Page5.xaml" />
     <None Remove="SettingsPage.xaml" />
     <None Remove="Views\McuToolpage\ESP8266Tools.xaml" />
+    <None Remove="Views\McuToolpage\LPC1768FSPnPTools.xaml" />
     <None Remove="Views\McuToolpage\NoneTools.xaml" />
     <None Remove="Views\McuToolpage\RP2040MPYTools.xaml" />
     <None Remove="Views\Pages\CameraControlPage\CameraControlMainPage.xaml" />
     <None Remove="Views\Pages\SerialPortPage\SerialPlotterPage.xaml" />
     <None Remove="Views\Pages\SerialPortPage\SerialPortBasicInOutPage.xaml" />
-    <None Remove="Views\Pages\SerialPortPage\SerialPortCoreServicesPage.xaml" />
     <None Remove="Views\Pages\SerialPortPage\SerialPortToolsPage.xaml" />
     <None Remove="Views\Pages\TestPage\TestPage1.xaml" />
   </ItemGroup>
@@ -102,7 +104,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.CameraPreview" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.HeaderedControls" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.ImageCropper" Version="8.0.240109" />
@@ -115,18 +116,17 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.TabbedCommandBar" Version="8.1.240821" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.0.240109" />
     <PackageReference Include="MICA" Version="2.4.3" />
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240627000" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240802000" />
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="OpenCvSharp4" Version="4.10.0.20240616" />
-    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.10.0.20240616" />
     <PackageReference Include="System.IO.Ports" Version="8.0.0" />
     <PackageReference Include="System.Management" Version="8.0.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.0-preview.7.24405.7" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
     <PackageReference Include="Tommy" Version="3.1.2" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
@@ -228,9 +228,6 @@
     <Page Update="Views\Pages\CameraControlPage\CameraControlMainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\Pages\SerialPortPage\SerialPortCoreServicesPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Update="Views\Pages\TestPage\TestPage1.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -271,7 +268,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\BackgroundTest\" />
-    <Folder Include="Fonts\" />
+    <Folder Include="Assets\Fonts\" />
     <Folder Include="Views\Pages\FanControlPage\" />
     <Folder Include="Views\Pages\SettingsPage\" />
     <Folder Include="Views\Pages\MousePage\" />
@@ -313,7 +310,10 @@
   </PropertyGroup>
 	
   <PropertyGroup>
-    <VersionPrefix>0.2.46</VersionPrefix>
+    <VersionPrefix>0.3.5</VersionPrefix>
+    <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+    <PackageProjectUrl>https://github.com/SQc04/FSGaryityTool_Win11</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SQc04/FSGaryityTool_Win11</RepositoryUrl>
   </PropertyGroup>
 	
   <ItemGroup>
@@ -339,6 +339,14 @@
     <Content Update="Assets\BackgroundTest\TestBeta.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+	
+  <ItemGroup>
+    <CustomAdditionalCompileInputs Remove="Views\McuToolpage\LPC1768FSPnPTools.xaml" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <Resource Remove="Views\McuToolpage\LPC1768FSPnPTools.xaml" />
   </ItemGroup>
 	
 	

@@ -8,7 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
-    xmlns:ui="using:CommunityToolkit.WinUI"
     NavigationCacheMode="Enabled">
     <!-- Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" -->
 
@@ -83,6 +82,26 @@
                         </toolkit:SettingsCard>
                     </StackPanel>
                     <StackPanel>
+                        <toolkit:SettingsExpander x:Name="SoftBackground" Header=""
+                                                  Description="" Margin="0,3,0,3">
+                            <toolkit:SettingsExpander.HeaderIcon>
+                                <FontIcon Glyph="&#xE790;" FontSize="12" />
+                            </toolkit:SettingsExpander.HeaderIcon>
+                            <toolkit:SettingsExpander.Items>
+                                <toolkit:SettingsCard>
+                                    <Grid>
+                                        
+                                    </Grid>
+                                </toolkit:SettingsCard>
+                                <toolkit:SettingsCard>
+                                    <Grid>
+                                        
+                                    </Grid>
+                                </toolkit:SettingsCard>
+                            </toolkit:SettingsExpander.Items>
+                        </toolkit:SettingsExpander>
+                    </StackPanel>
+                    <StackPanel Visibility="Collapsed">
                         <toolkit:SettingsCard x:Name="SoftLanguage" Header="Language" 
                                               Description="Set the background of FSGravityTool." Margin="0,3,0,3">
                             <toolkit:SettingsCard.HeaderIcon>

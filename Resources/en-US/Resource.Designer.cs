@@ -295,6 +295,15 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         }
         
         /// <summary>
+        ///   查找类似 Tools for Smoothieboard 的本地化字符串。
+        /// </summary>
+        internal static string mcuToolLPC1768SMOOTH {
+            get {
+                return ResourceManager.GetString("mcuToolLPC1768SMOOTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 No tools was selected 的本地化字符串。
         /// </summary>
         internal static string mcuToolNone {
@@ -444,6 +453,15 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         internal static string rxHexl {
             get {
                 return ResourceManager.GetString("rxHexl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Serial Plotter 的本地化字符串。
+        /// </summary>
+        internal static string serialPlotter {
+            get {
+                return ResourceManager.GetString("serialPlotter", resourceCulture);
             }
         }
         

@@ -28,7 +28,7 @@
 
         <Grid Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0" Grid.RowSpan="2">
             <Image x:Name="BackgroundImage" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="UniformToFill" 
-                   Source="ms-appx:///Assets/BackgroundTest/TestAlpha.jpg" Opacity="0.5" Margin="0,0,0,0"/>
+                   Source="ms-appx:///Assets/BackgroundTest/TestAlpha.jpg" Opacity="0.0" Margin="0,0,0,0"/>
         </Grid>
 
         <Border Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0" Grid.RowSpan="2">
@@ -63,12 +63,14 @@
 
         <NavigationView x:Name="FSnv" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2" 
                         IsTitleBarAutoPaddingEnabled="False" 
-                        PaneDisplayMode="Auto" 
+                        PaneDisplayMode="Auto"
                         IsTabStop="False" 
                         IsBackEnabled="True"
                         BackRequested="NavigationView_BackRequested" 
                         SelectionChanged="NavigationView_SelectionChanged" 
                         DisplayModeChanged="NavigationView_DisplayModeChanged"
+                        PaneOpened="FSnv_PaneOpened"
+                        PaneClosed="FSnv_PaneClosed"
                         CompactModeThresholdWidth="800"
                         ExpandedModeThresholdWidth="1100"
                         Margin="0,0,0,0">
@@ -86,20 +88,22 @@
 
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Name="SerialPortI" Icon="Sort" Content="Serial Port" Tag="MainPage1" />
-                <NavigationViewItem x:Name="DownFlashI" Content="Download FLASH" Tag="Page2">
+                <NavigationViewItem x:Name="DownFlashI" Content="Download FLASH" Visibility="Collapsed" Tag="Page2">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xec59;" FontFamily="Segoe Fluent Icons"/>
+                        <FontIcon Glyph="&#xE7F1;"/>
+                        <!--&#xEC59;-->
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="KeyboardI" Icon="Keyboard" Content="Keyboard" Tag="Page3" />
-                <NavigationViewItem x:Name="MouseI" Content="Mouse" Tag="Page4">
+                <NavigationViewItem x:Name="KeyboardI" Icon="Keyboard" Content="Keyboard" Visibility="Collapsed" Tag="Page3" />
+                <NavigationViewItem x:Name="MouseI" Content="Mouse" Visibility="Collapsed" Tag="Page4">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE962;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem x:Name="FanControl" Content="FanControl" Tag="Page5" >
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE770;" />
+                        <FontIcon Glyph="&#xECAD;" />
+                        <!--&#xE770;-->
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem x:Name="CameraControl" Content="CameraControl" Tag="CameraControlMainPage" >

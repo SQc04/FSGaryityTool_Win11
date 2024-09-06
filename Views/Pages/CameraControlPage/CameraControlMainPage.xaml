@@ -18,9 +18,9 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Orientation="Vertical" CornerRadius="4">
                         <TextBlock Text="Top Camera" />
-                        <ComboBox x:Name="TopCameraSelectComboBox" Width="240" Margin="0,6,6,6" SelectionChanged="TopCameraSelectComboBox_SelectionChanged"/>
-                        <ComboBox x:Name="TopCameraExposureComboBox" Width="240" Margin="0,6,6,6" SelectionChanged="TopCameraExposureComboBox_SelectionChanged"/>
-                        <ToggleButton x:Name="TopCameraAutoExposureToggleButton" Content="Auto mode" Width="240" Margin="0,6,6,6" Checked="TopCameraAutoExposureToggleButton_Checked" Unchecked="TopCameraAutoExposureToggleButton_Unchecked"/>
+                        <ComboBox x:Name="TopCameraSelectComboBox" Width="240" Margin="0,6,6,6" />
+                        <ComboBox x:Name="TopCameraExposureComboBox" Width="240" Margin="0,6,6,6" />
+                        <ToggleButton x:Name="TopCameraAutoExposureToggleButton" Content="Auto mode" Width="240" Margin="0,6,6,6" />
                     </StackPanel>
                     <Border Grid.Column="1" MinHeight="300" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
                         <MediaPlayerElement x:Name="TopCameraMediaPlayerElement" Stretch="Uniform" AutoPlay="True"/>
@@ -34,9 +34,9 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Orientation="Vertical" CornerRadius="4">
                         <TextBlock Text="Bottom Camera" />
-                        <ComboBox x:Name="BottomCameraSelectComboBox" Width="240" Margin="0,6,6,6" SelectionChanged="BottomCameraSelectComboBox_SelectionChanged"/>
-                        <ComboBox x:Name="BottomCameraExposureComboBox" Width="240" Margin="0,6,6,6" SelectionChanged="BottomCameraExposureComboBox_SelectionChanged"/>
-                        <ToggleButton x:Name="BottomCameraAutoExposureToggleButton" Content="Auto mode" Width="240" Margin="0,6,6,6" Checked="BottomCameraAutoExposureToggleButton_Checked" Unchecked="BottomCameraAutoExposureToggleButton_Unchecked"/>
+                        <ComboBox x:Name="BottomCameraSelectComboBox" Width="240" Margin="0,6,6,6" />
+                        <ComboBox x:Name="BottomCameraExposureComboBox" Width="240" Margin="0,6,6,6" />
+                        <ToggleButton x:Name="BottomCameraAutoExposureToggleButton" Content="Auto mode" Width="240" Margin="0,6,6,6" />
                     </StackPanel>
                     <Border Grid.Column="1" MinHeight="300" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
                         <MediaPlayerElement x:Name="BottomCameraMediaPlayerElement" Stretch="Uniform" AutoPlay="True"/>

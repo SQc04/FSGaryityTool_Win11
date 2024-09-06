@@ -17,7 +17,7 @@
             <ColumnDefinition Width="0"/>
             <ColumnDefinition MinWidth="160" Width="*" />
             <ColumnDefinition MinWidth="120" MaxWidth="400" Width="250"/>
-            <ColumnDefinition Width="63"/>
+            <ColumnDefinition Width="64"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -36,7 +36,7 @@
             Title="Warning" Message="To change the connected device, you need to reconnect the serial port." />
 
         <Grid Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0">
-            <Border x:Name="BorderBackRX"  Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4" BorderBrush="{ThemeResource TextControlElevationBorderBrush}" BorderThickness="1" MinWidth="300" Margin="0,0,0,6">
+            <Border x:Name="BorderBackRX"  Background="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="6" BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}" BorderThickness="3" MinWidth="300" Margin="0,0,0,6">
                 <ListView x:Name="RXListView" 
                           BorderThickness="0" 
                           RightTapped="RXListView_RightTapped"
@@ -104,7 +104,8 @@
             <Button x:Name="CLEARButton" Click="CLEARButton_Click" 
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="6,6,12,12">
-                <FontIcon Glyph="&#xE711;" ></FontIcon>
+                <FontIcon Glyph="&#xE74D;" ></FontIcon>
+                <!--&#xE711;-->
             </Button>
         </Grid>
     </Grid>

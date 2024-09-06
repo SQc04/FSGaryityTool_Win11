@@ -13,13 +13,13 @@
     </Page.Resources>
 
 
-    <Grid>
+    <Grid PointerEntered="Grid_PointerEntered" PointerExited="Grid_PointerExited">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="48"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0">
-            <ScrollViewer Margin="0,12,0,6">
+            <ScrollViewer Margin="0,8,0,6">
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="6,0,0,0">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
@@ -30,8 +30,9 @@
                                 <ComboBoxItem Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"/>
                             </ComboBox>
                             <Button x:Name="ClearCOMCombobox" Click="ClearCOMCombobox_Click" Width="42" Height="32" Style="{StaticResource AccentButtonStyle}" Margin="-49,0,0,6">
-                                <FontIcon Glyph="&#xE74D;" FontSize="16" VerticalAlignment="Center">
-
+                                <FontIcon Glyph="&#xED62;" FontSize="20" FontWeight="ExtraLight" VerticalAlignment="Center" Margin="-1">
+                                    <!--&#xE74D;-->
+                                    <!--&#xE8E6;-->
                                 </FontIcon>
                             </Button>
 
@@ -82,6 +83,13 @@
                                 </ListView>
                             </Border>
                         </StackPanel>
+
+                        <StackPanel.ChildrenTransitions>
+                            <TransitionCollection>
+                                <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
+                                <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                            </TransitionCollection>
+                        </StackPanel.ChildrenTransitions>
                     </StackPanel>
 
                     <StackPanel>

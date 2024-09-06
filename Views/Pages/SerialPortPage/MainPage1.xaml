@@ -38,8 +38,9 @@
         <!--<TabView x:Name="SPTabView" Grid.Row="1" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" AddTabButtonClick="TabView_AddTabButtonClick" TabCloseRequested="TabView_TabCloseRequested" />-->
         <Border Grid.Row="1" Grid.RowSpan="1" Grid.Column="0" CornerRadius="0,4,0,0" 
                 Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}">
-            <ToggleButton x:Name="SerialPortToolsToggleButton" VerticalAlignment="Top" Click="SerialPortToolsToggleButton_Click" 
-              IsChecked="True" BorderThickness="0" Background="Transparent" Width="36" Height="36" Margin="6">
+            <ToggleButton x:Name="SerialPortToolsToggleButton" x:FieldModifier="public"
+                          VerticalAlignment="Top" Click="SerialPortToolsToggleButton_Click" 
+                          IsChecked="True" BorderThickness="0" Background="Transparent" Width="36" Height="36" Margin="6">
                 <FontIcon x:Name="SerialPortToolsToggleButtonFontIcon" CenterPoint="7.5,7.5,0" FontSize="15" Glyph="&#xE76C;" Rotation="0">
                     <FontIcon.RotationTransition>
                         <ScalarTransition/>
@@ -48,19 +49,40 @@
             </ToggleButton>
         </Border>
 
-        <SelectorBar x:Name="SPSelectorBar" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" 
-                     Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparentBrush}" 
-                     SelectionChanged="SPSelectorBar_SelectionChanged" Margin="0,0,0,0">
-            <SelectorBarItem x:Name="SerialPort" Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}" Text="Serial Port" Margin="6,0,6,0">
-                <FontIcon Glyph="&#xE8CB;" Margin="12,6,0,0"/>
-            </SelectorBarItem>
-            <SelectorBarItem x:Name="SerialPlotter" Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}" Text="Serial Plotter" Margin="6,0,6,0">
+        <NavigationView x:Name="SerialPortPageNavigationView" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" 
+                        PaneDisplayMode="Top" SelectionFollowsFocus="Enabled" IsBackButtonVisible="Collapsed" IsSettingsVisible="False" 
+                        SelectionChanged="SerialPortPageNavigationView_SelectionChanged">
+            <NavigationView.MenuItems>
 
-            </SelectorBarItem>
-            <SelectorBarItem x:Name="Test2" Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}" Text="Test2" Margin="6,0,6,0">
+                <NavigationViewItem x:Name="SerialPort" Margin="0,3">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Margin="0,0,2,0">
+                            <FontIcon Glyph="&#xE7EB;" Foreground="{ThemeResource SystemFillColorAttentionBrush}" CenterPoint="10,10,0" Rotation="180" FontSize="16" Margin="0,0,0,0"/>
+                            <FontIcon Glyph="&#xE7EB;" FontSize="16" Margin="-9,0,0,-2"/>
+                        </Grid>
+                        <TextBlock x:Name="SerialPortTextBlock" Text="Serial Port" Margin="6,0,0,0"/>
+                    </StackPanel>
+                </NavigationViewItem>
 
-            </SelectorBarItem>
-        </SelectorBar>
+                <NavigationViewItem x:Name="SerialPlotter" Margin="0,3">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid>
+                            <FontIcon Glyph="&#xE9D9;" Foreground="{ThemeResource SystemFillColorAttentionBrush}" FontSize="17" Margin="0,0,0,0"/>
+                            <FontIcon Glyph="&#xE950;" FontSize="20"/>
+                        </Grid>
+                        <TextBlock x:Name="SerialPlotterTextBlock" Text="Serial Plotter" Margin="6,0,0,0"/>
+                    </StackPanel>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Name="Test2" Margin="0,3">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xEA86;" Margin="0,0,0,0"/>
+                        <TextBlock x:Name="Test2TextBlock" Text="Test2" Margin="6,0,0,0"/>
+                    </StackPanel>
+                </NavigationViewItem>
+
+            </NavigationView.MenuItems>
+        </NavigationView>
 
         <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
@@ -99,7 +121,7 @@
                         </Grid>
                     </Grid>
                 </SplitView.Pane>
-                <Frame x:Name="FSSPagf" Margin="0,12,0,0">
+                <Frame x:Name="FSSPagf" Margin="0,6,0,0">
                     <Frame.ContentTransitions>
                         <TransitionCollection>
                             <NavigationThemeTransition  />

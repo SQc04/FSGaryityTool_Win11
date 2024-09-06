@@ -37,6 +37,7 @@
 
                             <Border Grid.Column="0" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
                                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE950;" FontSize="27" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12"/>
                                     <Toolkit:RadialGauge x:Name="CPUFanRpmRadialGauge" Maximum="8000" TickSpacing="500" IsInteractive="False" 
                                 ScaleWidth="8" TickWidth="0" NeedleLength="0" Margin="39"/>
                                     <Toolkit:RadialGauge x:Name="CPUFanRadialGauge" TickPadding="21" Maximum="100" TickSpacing="5" Margin="12"/>
@@ -80,6 +81,7 @@
 
                             <Border Grid.Column="0" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Margin="6">
                                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xF211;" FontSize="27" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12"/>
                                     <Toolkit:RadialGauge x:Name="GPUFanRpmRadialGauge" Maximum="6000" TickSpacing="500" IsInteractive="False" 
                                                          ScaleWidth="8" TickWidth="0" NeedleLength="0" Margin="39"/>
                                     <Toolkit:RadialGauge x:Name="GPUFanRadialGauge" TickPadding="21" Maximum="100" TickSpacing="5" Margin="12"/>

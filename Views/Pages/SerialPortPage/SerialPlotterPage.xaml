@@ -7,9 +7,57 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
+    NavigationCacheMode="Enabled"
     >
 
-    <Grid>
+    <Grid Margin="0,0,12,12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto" MinWidth="184" MaxWidth="464"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            
+        </Grid.RowDefinitions>
 
+        <Toolkit:GridSplitter Grid.Column="1" HorizontalAlignment="Left" Margin="-6.05,0,0,0"/>
+
+        <Border Grid.Column="0" Background="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="6" BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}" BorderThickness="3" Margin="0,0,6,0">
+            <Grid>
+                <ScrollView ContentOrientation="None"
+                        ZoomMode="Enabled" 
+                        HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
+
+                    <Grid Width="auto" Height="auto">
+
+                    </Grid>
+                </ScrollView>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Opacity="0.8">
+                        <FontIcon Glyph="&#xE76C;" Foreground="{ThemeResource TextFillColorTertiaryBrush}" HorizontalAlignment="Right" Margin="0,0,-6,0"/>
+                        <Border Background="{ThemeResource TextFillColorTertiaryBrush}" Height="1.5"/>
+                    </Grid>
+                    <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Opacity="0.8">
+                        <FontIcon Glyph="&#xE70E;" Foreground="{ThemeResource TextFillColorTertiaryBrush}" VerticalAlignment="Top" Margin="0,-6,0,0"/>
+                        <Border Background="{ThemeResource TextFillColorTertiaryBrush}" Width="1.5"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Border Grid.Column="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4" BorderBrush="{ThemeResource TextControlElevationBorderBrush}" BorderThickness="1" Margin="6,0,0,0">
+
+        </Border>
     </Grid>
 </Page>

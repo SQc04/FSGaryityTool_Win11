@@ -71,7 +71,17 @@ namespace FSGaryityTool_Win11
         public void LaunageSetting()
         {
             string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string packageName = Package.Current.Id.FamilyName;
+            string packageName = string.Empty;
+            try
+            {
+                packageName = Package.Current.Id.FamilyName;
+            }
+            catch (Exception ex)
+            {
+                // 处理异常，例如记录日志或显示错误消息
+                Debug.WriteLine($"获取包名时发生错误: {ex.Message}");
+            }
+
             appFolderPath = Path.Combine(localAppDataPath, "Packages", packageName, "LocalCache", "Local");
             // 获取被重定向的文件夹路径
             //ApplicationData.Current.LocalFolder.Path
