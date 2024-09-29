@@ -41,7 +41,7 @@ using System.Diagnostics;
 using System.IO;
 
 using Tommy;
-using Newtonsoft.Json;
+
 using System.Reflection.PortableExecutable;
 using Windows.ApplicationModel.Activation;
 using System.Xml.Linq;
@@ -152,6 +152,7 @@ namespace FSGaryityTool_Win11
         // 窗口的默认宽度和高度
         private const int DefaultWidth = 1840;
         private const int DefaultHeight = 960;
+        /*
         public static bool Resize(Window window, int width, int height)
         {
             try
@@ -170,7 +171,6 @@ namespace FSGaryityTool_Win11
             }
             return false;
         }
-
         private static void AppWindow_Changed(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowChangedEventArgs args)
         {
             try
@@ -240,7 +240,7 @@ namespace FSGaryityTool_Win11
             UIElement mainContent = this.Content;
 
             ///*
-            Resize(this, DefaultWidth, DefaultHeight);
+            //Resize(this, DefaultWidth, DefaultHeight);
             //*/
 
 
@@ -266,15 +266,6 @@ namespace FSGaryityTool_Win11
                 }
             };
 
-            using (StreamReader reader = File.OpenText(SettingsCoreServices.FSGravityToolsSettingsToml))
-            {
-                TomlTable settingstomlr = TOML.Parse(reader);
-                string Value = settingstomlr["FSGravitySettings"]["DefaultNavigationViewPaneOpen"];
-                defaultNavigationViewPaneOpen = System.Convert.ToBoolean(Value);
-                FSnv.IsPaneOpen = defaultNavigationViewPaneOpen;
-                Debug.WriteLine("Pane" + defaultNavigationViewPaneOpen);
-            }
-
             //page1Instance = new Page1(); // 初始化Page1实例
 
             Task.Run(() =>
@@ -287,6 +278,15 @@ namespace FSGaryityTool_Win11
                 this.DispatcherQueue.TryEnqueue(() =>
                 {
                     LaunageSetting();
+
+                    using (StreamReader reader = File.OpenText(SettingsCoreServices.FSGravityToolsSettingsToml))
+                    {
+                        TomlTable settingstomlr = TOML.Parse(reader);
+                        string Value = settingstomlr["FSGravitySettings"]["DefaultNavigationViewPaneOpen"];
+                        defaultNavigationViewPaneOpen = System.Convert.ToBoolean(Value);
+                        FSnv.IsPaneOpen = defaultNavigationViewPaneOpen;
+                        Debug.WriteLine("Pane" + defaultNavigationViewPaneOpen);
+                    }
 
                     //设置默认页面
                     using (StreamReader reader = File.OpenText(SettingsCoreServices.FSGravityToolsSettingsToml))
@@ -382,7 +382,7 @@ namespace FSGaryityTool_Win11
 
             this.Activated += (sender, e) =>
             {
-                AppWindow.Changed += AppWindow_Changed;
+                //AppWindow.Changed += AppWindow_Changed;
 
                 if (isFirstActivation)
                 {
