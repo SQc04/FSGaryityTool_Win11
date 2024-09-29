@@ -13,7 +13,26 @@
     xmlns:controls="using:FSGaryityTool_Win11.Controls">
 
     <Page.Resources>
-        <controls:PaneWidthConverter x:Key="PaneWidthConverter"/>
+
+        <ResourceDictionary>
+            <Color x:Key="SystemControlBackgroundLightColor">#90FFFFFF</Color>
+            <Color x:Key="SystemControlBackgroundDarkColor">#44252525</Color>
+            <controls:PaneWidthConverter x:Key="PaneWidthConverter"/>
+            
+            <ResourceDictionary.ThemeDictionaries>
+                <!-- 浅色模式的AcrylicBrush -->
+                <ResourceDictionary x:Key="Light">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" TintColor="#FCFCFC" TintOpacity="0.05" FallbackColor="#F9F9F9"/>
+                    <SolidColorBrush x:Key="CustomSolidColorBrush" Color="{ThemeResource SystemControlBackgroundLightColor}"/>
+                </ResourceDictionary>
+
+                <!-- 深色模式的AcrylicBrush -->
+                <ResourceDictionary x:Key="Dark">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" TintColor="#2C2C2C" TintOpacity="0.05" FallbackColor="#2C2C2C"/>
+                    <SolidColorBrush x:Key="CustomSolidColorBrush" Color="{ThemeResource SystemControlBackgroundDarkColor}"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
     </Page.Resources>
 
     <Grid>
@@ -91,7 +110,7 @@
 
             <SplitView Grid.Row="0" Grid.RowSpan="2" x:Name="SerialPortToolsSplitView" DisplayMode="CompactInline" PaneClosing="SerialPortToolsSplitView_PaneClosing" PaneOpening="SerialPortToolsSplitView_PaneOpening"
                        IsPaneOpen="{Binding ElementName=SerialPortToolsToggleButton, Path=IsChecked, Mode=TwoWay}"
-                       OpenPaneLength="304" CompactPaneLength="48" PaneBackground="{ThemeResource AcrylicInAppFillColorDefaultBrush}">
+                       OpenPaneLength="304" CompactPaneLength="48" PaneBackground="{ThemeResource CustomAcrylicBrush}">
                 <SplitView.Pane>
                     <Grid x:Name="SerialPortToolsMainGrid">
                         <Grid.ColumnDefinitions>

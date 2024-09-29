@@ -196,7 +196,7 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         }
         
         /// <summary>
-        ///   查找类似 Select the language in which FSGravityTool is displayed. 的本地化字符串。
+        ///   查找类似 Select the language in which FSGravityTool is displayed 的本地化字符串。
         /// </summary>
         internal static string DefLanguageDescription {
             get {
@@ -205,7 +205,7 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         }
         
         /// <summary>
-        ///   查找类似 Specifies the page that is displayed when FSGravityTool is launched. 的本地化字符串。
+        ///   查找类似 Specifies the page that is displayed when FSGravityTool is launched 的本地化字符串。
         /// </summary>
         internal static string defPageDescription {
             get {
@@ -502,6 +502,15 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         }
         
         /// <summary>
+        ///   查找类似 Select the translucent background effect 的本地化字符串。
+        /// </summary>
+        internal static string softTranslucentToolBackground {
+            get {
+                return ResourceManager.GetString("softTranslucentToolBackground", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 is close 的本地化字符串。
         /// </summary>
         internal static string spClose {
@@ -606,6 +615,15 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         internal static string thin {
             get {
                 return ResourceManager.GetString("thin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Set the background of FSGravityTool to be translucent 的本地化字符串。
+        /// </summary>
+        internal static string TranslucentBackgroundDescription {
+            get {
+                return ResourceManager.GetString("TranslucentBackgroundDescription", resourceCulture);
             }
         }
         

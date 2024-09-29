@@ -11,12 +11,30 @@
     NavigationCacheMode="Enabled"
     >
     <!--Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"-->
+    <Page.Resources>
+        <ResourceDictionary>
+            <Color x:Key="SystemControlBackgroundLightColor">#90FFFFFF</Color>
+            <Color x:Key="SystemControlBackgroundDarkColor">#44252525</Color>
+            <ResourceDictionary.ThemeDictionaries>
+                <!-- 浅色模式的AcrylicBrush -->
+                <ResourceDictionary x:Key="Light">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9"/>
+                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemControlBackgroundLightColor}"/>
+                </ResourceDictionary>
 
+                <!-- 深色模式的AcrylicBrush -->
+                <ResourceDictionary x:Key="Dark">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C"/>
+                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemControlBackgroundDarkColor}"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
     <Grid >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0"/>
             <ColumnDefinition MinWidth="160" Width="*" />
-            <ColumnDefinition MinWidth="120" MaxWidth="400" Width="250"/>
+            <ColumnDefinition x:Name="RxInfo" MinWidth="120" MaxWidth="{Binding RxInfoWidth}" Width="250"/>
             <ColumnDefinition Width="64"/>
         </Grid.ColumnDefinitions>
 
@@ -36,7 +54,9 @@
             Title="Warning" Message="To change the connected device, you need to reconnect the serial port." />
 
         <Grid Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0">
-            <Border x:Name="BorderBackRX"  Background="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="6" BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}" BorderThickness="3" MinWidth="300" Margin="0,0,0,6">
+            <Border x:Name="BorderBackRX"  Background="{ThemeResource CustomRxBoxSolidColorBrush}" 
+                    CornerRadius="6" BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}" BorderThickness="3" 
+                    Opacity="1" MinWidth="300" Margin="0,0,0,6">
                 <ListView x:Name="RXListView" 
                           BorderThickness="0" 
                           RightTapped="RXListView_RightTapped"
@@ -57,7 +77,7 @@
                                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind Rxstr}" HorizontalAlignment="Stretch" Height="auto" 
                                            TextWrapping="Wrap" IsTextSelectionEnabled="True" 
                                            SelectionHighlightColor="{ThemeResource AccentTextFillColorTertiaryBrush}" 
-                                           PointerCanceled="RxstrTextBlock_PointerCanceled"
+                                           PointerPressed="RxstrTextBlock_PointerPressed"
                                            Margin="0,0,10,0"/>
                             </Grid>
                         </DataTemplate>
@@ -94,7 +114,8 @@
                     Margin="12,6,6,12">
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="24" MaxHeight="45" Margin="-2">
-                        <FontIcon Glyph="&#xE724;" Margin="1"></FontIcon>
+                        <FontIcon Glyph="&#xE8B6;" Margin="1"></FontIcon>
+                        <!--&#xE724;-->
                     </Viewbox>
                 </Grid>
             </Button>

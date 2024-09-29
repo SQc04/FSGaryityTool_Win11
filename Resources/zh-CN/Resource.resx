@@ -313,6 +313,10 @@
     <value>个性化设置背景</value>
     <comment>Settings Page text</comment>
   </data>
+  <data name="softTranslucentToolBackground" xml:space="preserve">
+    <value>选择背景透明效果</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="spClose" xml:space="preserve">
     <value>已关闭</value>
     <comment>Serial Port Page text</comment>
@@ -359,6 +363,10 @@
   </data>
   <data name="thin" xml:space="preserve">
     <value>薄亚克力</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="TranslucentBackgroundDescription" xml:space="preserve">
+    <value>设置FSGravityTool的背景半透明效果</value>
     <comment>Settings Page text</comment>
   </data>
   <data name="txHexErr" xml:space="preserve">

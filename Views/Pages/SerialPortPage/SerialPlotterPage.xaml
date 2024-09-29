@@ -10,7 +10,26 @@
     xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
     NavigationCacheMode="Enabled"
     >
+    <Page.Resources>
+        <ResourceDictionary>
+            <Color x:Key="SystemControlBackgroundLightColor">#90FFFFFF</Color>
+            <Color x:Key="SystemControlBackgroundDarkColor">#44252525</Color>
+            <ResourceDictionary.ThemeDictionaries>
+                <!-- 浅色模式的AcrylicBrush -->
+                <ResourceDictionary x:Key="Light">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9"/>
+                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemControlBackgroundLightColor}"/>
+                </ResourceDictionary>
 
+                <!-- 深色模式的AcrylicBrush -->
+                <ResourceDictionary x:Key="Dark">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C"/>
+                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemControlBackgroundDarkColor}"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+    
     <Grid Margin="0,0,12,12">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -22,7 +41,7 @@
 
         <Toolkit:GridSplitter Grid.Column="1" HorizontalAlignment="Left" Margin="-6.05,0,0,0"/>
 
-        <Border Grid.Column="0" Background="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="6" BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}" BorderThickness="3" Margin="0,0,6,0">
+        <Border Grid.Column="0" Background="{ThemeResource CustomRxBoxSolidColorBrush}" CornerRadius="6" BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}" BorderThickness="3" Margin="0,0,6,0">
             <Grid>
                 <ScrollView ContentOrientation="None"
                         ZoomMode="Enabled" 

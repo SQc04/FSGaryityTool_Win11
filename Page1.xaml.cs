@@ -1056,5 +1056,22 @@ private void UpdateItemsRepeater(LinkedList<DataItem> items)
                 }
             }
         }
+
+        private void RxstrTextBlock_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            if (sender is TextBlock textBlock)
+            {
+                // 获取TextBlock的父控件（即Grid）
+                var grid = textBlock.Parent as Grid;
+                if (grid != null)
+                {
+                    // 获取Grid的DataContext（即ListView的项）
+                    var dataItem = grid.DataContext;
+                    // 设置ListView的选中项
+                    RXListView.SelectedItem = dataItem;
+                }
+            }
+        }
+
     }
 }

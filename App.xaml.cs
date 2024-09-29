@@ -17,6 +17,14 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Threading.Tasks;
+using Microsoft.UI.Composition.SystemBackdrops;
+using Microsoft.UI.Composition;
+using System.Runtime.InteropServices;
+using WinRT;
+using Microsoft.UI;
+using WinRT.Interop;
+using System.Threading;
+
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -45,6 +53,7 @@ namespace FSGaryityTool_Win11
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+
             if (m_window == null)
             {
                 m_window = new MainWindow();
@@ -60,6 +69,7 @@ namespace FSGaryityTool_Win11
             }
 
             // 确保当前窗口处于活动状态
+            Thread.Sleep(100);
             m_window.Activate();
 
         }
@@ -74,6 +84,8 @@ namespace FSGaryityTool_Win11
                 m_window.Content = mainContent;
             }
         }
+
+
 
     }
 }

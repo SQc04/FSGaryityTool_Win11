@@ -12,8 +12,15 @@
 
     <Grid>
 
-        <Border Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="{StaticResource OverlayCornerRadius}" Margin="12,12,12,12">
-            <controls:WebView2 x:Name="MyWebView2" x:FieldModifier="Public" Source="https://fairingstudio.com/" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" MinHeight="200" MinWidth="200" />
+        <Border Background="Transparent" 
+                CornerRadius="{StaticResource OverlayCornerRadius}"
+                BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}" 
+                BorderThickness="2"
+                Margin="12,12,12,12">
+            <WebView2 x:Name="MyWebView2" x:FieldModifier="Public" 
+                      Source="https://fairingstudio.com/"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                      Margin="2,0,0,0"/>
         </Border>
     </Grid>
 </Page>

@@ -178,11 +178,11 @@
     <comment>Settings Page text</comment>
   </data>
   <data name="DefLanguageDescription" xml:space="preserve">
-    <value>Select the language in which FSGravityTool is displayed.</value>
+    <value>Select the language in which FSGravityTool is displayed</value>
     <comment>Settings Page text</comment>
   </data>
   <data name="defPageDescription" xml:space="preserve">
-    <value>Specifies the page that is displayed when FSGravityTool is launched.</value>
+    <value>Specifies the page that is displayed when FSGravityTool is launched</value>
     <comment>Settings Page text</comment>
   </data>
   <data name="defStartPage" xml:space="preserve">
@@ -313,6 +313,10 @@
     <value>Personalize the background.</value>
     <comment>Settings Page text</comment>
   </data>
+  <data name="softTranslucentToolBackground" xml:space="preserve">
+    <value>Select the translucent background effect</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="spClose" xml:space="preserve">
     <value>is close</value>
     <comment>Serial Port Page text</comment>
@@ -359,6 +363,10 @@
   </data>
   <data name="thin" xml:space="preserve">
     <value>Thin</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="TranslucentBackgroundDescription" xml:space="preserve">
+    <value>Set the background of FSGravityTool to be translucent</value>
     <comment>Settings Page text</comment>
   </data>
   <data name="txHexErr" xml:space="preserve">

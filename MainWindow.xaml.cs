@@ -73,13 +73,13 @@ namespace FSGaryityTool_Win11
     public sealed partial class MainWindow : Window
     {
 
-        public static string FSSoftVersion = "0.3.5";
+        public static string FSSoftVersion = "0.3.6";
         public static string FSSoftName = "FSGravityTool Dev";
         public static int FsPage = 0;
         public static int defWindowBackGround = 0;
         public static bool defaultNavigationViewPaneOpen;
 
-        public static MainPage1 mainPage1;
+        public static MainWindow mainWindow;
 
         //public static Page1 page1Instance;
 
@@ -199,6 +199,7 @@ namespace FSGaryityTool_Win11
                 Thread.Sleep(500);  // 延时改为0.5秒
 
                 // 创建淡出动画
+                ///*
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     Storyboard storyboard = new Storyboard();
@@ -213,8 +214,9 @@ namespace FSGaryityTool_Win11
                     storyboard.Children.Add(fadeOutAnimation);
 
                     // 播放淡出动画
-                    storyboard.Begin();
+                    //storyboard.Begin();
                 });
+                //*/
 
                 Thread.Sleep(1);  // 等待淡出动画完成
 
@@ -388,9 +390,54 @@ namespace FSGaryityTool_Win11
                     DelayedInitialize(mainContent);
                     isFirstActivation = false;
                 }
+                LoadingEnd();
             };
         }
         int lastdefWindowBackGround = 0;
+
+        public static bool IsFirstLoadding = true;
+
+        public void LoadingEnd()
+        {
+            if (IsFirstLoadding) Loadingprg();
+        }
+
+        public void Loadingprg()
+        {
+            Task.Run(() =>
+            {
+                switch (FsPage)
+                {
+                    case 0: Thread.Sleep(1450);
+                        break;
+                    case 4: Thread.Sleep(100);
+                        break;
+                }
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    var fadeOutAnimation = new DoubleAnimation
+                    {
+                        To = 0,
+                        Duration = TimeSpan.FromMilliseconds(75)
+                    };
+
+                    var storyboard = new Storyboard();
+                    storyboard.Children.Add(fadeOutAnimation);
+
+                    Storyboard.SetTarget(fadeOutAnimation, FsStartImage);
+                    Storyboard.SetTargetProperty(fadeOutAnimation, "Opacity");
+
+                    storyboard.Begin();
+                });
+                Thread.Sleep(200);
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    FsStartImage.Visibility = Visibility.Collapsed;
+                    IsFirstLoadding = false;
+                });
+
+            });
+        }
 
         public void LaunageSetting()
         {
@@ -610,7 +657,7 @@ namespace FSGaryityTool_Win11
         private AppWindow GetAppWindowForCurrentWindow()
         {
             IntPtr hWnd = WindowNative.GetWindowHandle(this);
-            WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            Microsoft.UI.WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
             return AppWindow.GetFromWindowId(wndId);
         }
         private void NavigationView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)

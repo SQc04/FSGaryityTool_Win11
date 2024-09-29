@@ -24,6 +24,8 @@ using System.Reflection.PortableExecutable;
 using static System.Net.Mime.MediaTypeNames;
 using Windows.ApplicationModel;
 using System.Threading.Tasks;
+using FSGaryityTool_Win11.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -67,6 +69,10 @@ namespace FSGaryityTool_Win11
             */
 
             LaunageSetting();
+
+            SetDesktopBackgroundImage();
+            WallpaperChangeListener listener = new WallpaperChangeListener();
+            listener.WallpaperChanged += (s, e) => SetDesktopBackgroundImage();
         }
         public void LaunageSetting()
         {
@@ -101,7 +107,7 @@ namespace FSGaryityTool_Win11
 
             List<string> STARTPage = new List<string>()         //新建字符串
             {
-                Page1.LanguageText("serialPort"), Page1.LanguageText("download Flash"), Page1.LanguageText("keyboard"), Page1.LanguageText("mouse"), "FANControl"//, ""
+                Page1.LanguageText("serialPort"), Page1.LanguageText("download Flash"), Page1.LanguageText("keyboard"), Page1.LanguageText("mouse"), "FANControl", "CameraControl"//, ""
             };
             StartPageCombobox.ItemsSource = STARTPage;          //将字符串添加到选择框
                                                                 //读取TOML设置
@@ -110,6 +116,7 @@ namespace FSGaryityTool_Win11
             else if (DefaultTomlSTARTPage == 2) DefaultSTARTPage = Page1.LanguageText("keyboard");
             else if (DefaultTomlSTARTPage == 3) DefaultSTARTPage = Page1.LanguageText("mouse");
             else if (DefaultTomlSTARTPage == 4) DefaultSTARTPage = "FANControl";
+            else if (DefaultTomlSTARTPage == 5) DefaultSTARTPage = "CameraControl";
             //else if (DefaultTomlSTARTPage == 5) DefaultSTARTPage = "";
             StartPageCombobox.SelectedItem = DefaultSTARTPage;  //将TOML设置添加到选择框
 
@@ -142,8 +149,8 @@ namespace FSGaryityTool_Win11
             OpenToml.Header = Page1.LanguageText("openToml");
             OpenToml.Description = Page1.LanguageText("openTomlDescription");
 
-            SoftToolBackground.Header = Page1.LanguageText("softToolBackground");
-            SoftToolBackground.Description = Page1.LanguageText("BackgroundDescription");
+            SoftToolBackground.Header = Page1.LanguageText("softTranslucentToolBackground");
+            SoftToolBackground.Description = Page1.LanguageText("TranslucentBackgroundDescription");
 
             SoftLanguage.Header = Page1.LanguageText("DefLanguage");
             SoftLanguage.Description = Page1.LanguageText("DefLanguageDescription");
@@ -214,6 +221,7 @@ namespace FSGaryityTool_Win11
                 else if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("keyboard")) settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "2";
                 else if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("mouse")) settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "3";
                 else if ((string)StartPageCombobox.SelectedItem == "FANControl") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "4";
+                else if ((string)StartPageCombobox.SelectedItem == "CameraControl") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "5";
                 //else if ((string)StartPageCombobox.SelectedItem == "") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "5";
 
 
@@ -276,7 +284,15 @@ namespace FSGaryityTool_Win11
             mainWindow.WindowBackSetting();
         }
 
-
+        private void SetDesktopBackgroundImage()
+        {
+            string wallpaperPath = WallpaperHelper.GetWallpaperPath();
+            if (!string.IsNullOrEmpty(wallpaperPath))
+            {
+                BitmapImage bitmapImage = new BitmapImage(new Uri(wallpaperPath));
+                DesktopBackgroundImage.Source = bitmapImage;
+            }
+        }
 
         private void SoftLanguageCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

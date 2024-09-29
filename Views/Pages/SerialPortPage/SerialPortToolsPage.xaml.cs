@@ -16,6 +16,7 @@ using static System.Net.Mime.MediaTypeNames;
 using Tommy;
 using static FSGaryityTool_Win11.Page1;
 using static FSGaryityTool_Win11.Views.Pages.SerialPortPage.MainPage1;
+using static FSGaryityTool_Win11.MainWindow;
 using System.IO.Ports;
 using System.Management;
 using Microsoft.UI;
@@ -28,6 +29,7 @@ using System.Numerics;
 using System.Diagnostics;
 using FSGaryityTool_Win11.Views.McuToolpage;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Composition.SystemBackdrops;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -710,10 +712,13 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
                 page1.RXTextBox.Text = page1.RXTextBox.Text + LanguageText("overSerichSP") + "\r\n";
                 COMComboBox.SelectedItem = commme;
                 COMListview.SelectedItem = commme;
+
+                
             }
             
             Thread COMButtonIconRotation = new Thread(COMButtonIcon_Rotation);
             COMButtonIconRotation.Start();
+
         }
         private void COMButtonIcon_Rotation(object name)
         {

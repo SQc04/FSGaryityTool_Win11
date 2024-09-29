@@ -39,6 +39,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -46,7 +47,75 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Border CornerRadius="{ThemeResource ControlCornerRadius}" Background="{ThemeResource SystemFillColorAttentionBrush}" Opacity="0.7" Grid.Column="0" Grid.Row="0" Margin="0,0,3,3">
+                    <Border CornerRadius="{ThemeResource ControlCornerRadius}" Background="Transparent" 
+                            Opacity="0.8" Grid.Column="0" Grid.Row="0" Margin="0,0,3,3">
+                        <Border.BackgroundTransition>
+                            <BrushTransition />
+                        </Border.BackgroundTransition>
+                    </Border>
+                    <Border CornerRadius="{ThemeResource ControlCornerRadius}" Background="Transparent" 
+                            Opacity="0.8" Grid.Column="1" Grid.Row="0" Margin="3,0,3,3">
+                        <Border.BackgroundTransition>
+                            <BrushTransition />
+                        </Border.BackgroundTransition>
+                    </Border>
+                    <Border CornerRadius="{ThemeResource ControlCornerRadius}" Background="Transparent" 
+                            Opacity="0.8" Grid.Column="2" Grid.Row="0" Margin="3,0,3,3">
+                        <Border.BackgroundTransition>
+                            <BrushTransition />
+                        </Border.BackgroundTransition>
+                    </Border>
+                    <Border CornerRadius="{ThemeResource ControlCornerRadius}" Background="Transparent" 
+                            Opacity="0.8" Grid.Column="0" Grid.Row="1" Margin="0,3,3,3">
+                        <Border.BackgroundTransition>
+                            <BrushTransition />
+                        </Border.BackgroundTransition>
+                    </Border>
+                    <Border CornerRadius="{ThemeResource ControlCornerRadius}" Background="{ThemeResource SystemFillColorAttentionBrush}" 
+                            Opacity="0.8" Grid.Column="1" Grid.Row="1" Margin="3">
+                        <Border.BackgroundTransition>
+                            <BrushTransition />
+                        </Border.BackgroundTransition>
+                    </Border>
+                    <Border CornerRadius="{ThemeResource ControlCornerRadius}" Background="Transparent" 
+                            Opacity="0.8" Grid.Column="2" Grid.Row="1" Margin="3,3,3,3">
+                        <Border.BackgroundTransition>
+                            <BrushTransition />
+                        </Border.BackgroundTransition>
+                    </Border>
+                    <Border CornerRadius="{ThemeResource ControlCornerRadius}" Background="Transparent" 
+                            Opacity="0.8" Grid.Column="0" Grid.Row="2" Margin="0,3,3,0">
+                        <Border.BackgroundTransition>
+                            <BrushTransition />
+                        </Border.BackgroundTransition>
+                    </Border>
+                    <Border CornerRadius="{ThemeResource ControlCornerRadius}" Background="Transparent" 
+                            Opacity="0.8" Grid.Column="1" Grid.Row="2" Margin="3,3,3,0">
+                        <Border.BackgroundTransition>
+                            <BrushTransition />
+                        </Border.BackgroundTransition>
+                    </Border>
+                    <Border CornerRadius="{ThemeResource ControlCornerRadius}" Background="Transparent" 
+                            Opacity="0.8" Grid.Column="2" Grid.Row="2" Margin="3,3,3,0">
+                        <Border.BackgroundTransition>
+                            <BrushTransition />
+                        </Border.BackgroundTransition>
+                    </Border>
+
+                    <Border CornerRadius="{ThemeResource ControlCornerRadius}" Background="Transparent" 
+                            Opacity="0.8" Grid.Column="3" Grid.Row="0" Margin="3,0,0,3">
+                        <Border.BackgroundTransition>
+                            <BrushTransition />
+                        </Border.BackgroundTransition>
+                    </Border>
+                    <Border CornerRadius="{ThemeResource ControlCornerRadius}" Background="{ThemeResource SystemFillColorAttentionBrush}" 
+                            Opacity="0.8" Grid.Column="3" Grid.Row="1" Margin="3,3,0,3">
+                        <Border.BackgroundTransition>
+                            <BrushTransition />
+                        </Border.BackgroundTransition>
+                    </Border>
+                    <Border CornerRadius="{ThemeResource ControlCornerRadius}" Background="Transparent" 
+                            Opacity="0.8" Grid.Column="3" Grid.Row="2" Margin="3,3,0,0">
                         <Border.BackgroundTransition>
                             <BrushTransition />
                         </Border.BackgroundTransition>
@@ -62,22 +131,24 @@
                     <RepeatButton x:Name="FrontButton" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,0,3,3">
                         <FontIcon Glyph="&#xE70E;" />
                     </RepeatButton>
-                    <RepeatButton x:Name="RightFrontButton" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,0,0,3">
+                    <RepeatButton x:Name="RightFrontButton" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,0,3,3">
                         <FontIcon Glyph="&#xE70E;" CenterPoint="10,10,0" Rotation="45">
                             <FontIcon.RotationTransition>
                                 <ScalarTransition />
                             </FontIcon.RotationTransition>
                         </FontIcon>
                     </RepeatButton>
+                    
                     <RepeatButton x:Name="LeftButton" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,3,3,3">
                         <FontIcon Glyph="&#xE76B;" />
                     </RepeatButton>
                     <RepeatButton x:Name="CenterButton" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3">
                         <FontIcon Glyph="&#xE769;" />
                     </RepeatButton>
-                    <RepeatButton x:Name="RightButton" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,0,3">
+                    <RepeatButton x:Name="RightButton" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3">
                         <FontIcon Glyph="&#xE76C;" />
                     </RepeatButton>
+                    
                     <RepeatButton x:Name="LeftRearButton" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,3,3,0">
                         <FontIcon Glyph="&#xE70D;" CenterPoint="10,10,0" Rotation="45">
                             <FontIcon.RotationTransition>
@@ -88,8 +159,32 @@
                     <RepeatButton x:Name="RearButton" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,0">
                         <FontIcon Glyph="&#xE70D;" />
                     </RepeatButton>
-                    <RepeatButton x:Name="RightRearButton" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,0,0">
+                    <RepeatButton x:Name="RightRearButton" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,0">
                         <FontIcon Glyph="&#xE76C;" CenterPoint="10,10,0" Rotation="45">
+                            <FontIcon.RotationTransition>
+                                <ScalarTransition />
+                            </FontIcon.RotationTransition>
+                        </FontIcon>
+                    </RepeatButton>
+
+                    <RepeatButton x:Name="UpRearButton" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,0,0,3">
+                        <FontIcon Glyph="&#xE898;" CenterPoint="10,10,0" >
+                            <FontIcon.RotationTransition>
+                                <ScalarTransition />
+                            </FontIcon.RotationTransition>
+                        </FontIcon>
+                    </RepeatButton>
+
+                    <RepeatButton x:Name="UpDownCenterRearButton" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,0,3">
+                        <FontIcon Glyph="&#xE738;" CenterPoint="10,10,0" >
+                            <FontIcon.RotationTransition>
+                                <ScalarTransition />
+                            </FontIcon.RotationTransition>
+                        </FontIcon>
+                    </RepeatButton>
+
+                    <RepeatButton x:Name="DownRearButton" Grid.Column="3" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,0,0">
+                        <FontIcon Glyph="&#xE896;" CenterPoint="10,10,0" >
                             <FontIcon.RotationTransition>
                                 <ScalarTransition />
                             </FontIcon.RotationTransition>
@@ -97,7 +192,7 @@
                     </RepeatButton>
                 </Grid>
             </Border>
-
+            <!--
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="{ThemeResource ControlCornerRadius}" Margin="6,3,6,3">
                 <NavigationView HorizontalAlignment="Stretch" Width="280"
                                     PaneDisplayMode="Top" SelectionFollowsFocus="Enabled" 
@@ -122,9 +217,20 @@
                     </NavigationView.MenuItems>
                 </NavigationView>
             </Border>
+            -->
+
+            <Border Margin="6,3,6,3">
+                <Toolkit:Segmented HorizontalAlignment="Stretch" SelectedIndex="2">
+                    <Toolkit:SegmentedItem Content="0.01" FontSize="14"/>
+                    <Toolkit:SegmentedItem Content="0.1"/>
+                    <Toolkit:SegmentedItem Content="1"/>
+                    <Toolkit:SegmentedItem Content="10"/>
+                    <Toolkit:SegmentedItem Content="100"/>
+                </Toolkit:Segmented>
+            </Border>
             
             <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
-                <Slider x:Name="CustomSlider" Minimum="0" Maximum="10" 
+                <Slider x:Name="CustomSlider" Minimum="1" Maximum="10" 
                         TickPlacement="Outside" TickFrequency="2.5"
                         SnapsTo="StepValues" 
                         MinWidth="114" Margin="6,0,6,0">
@@ -137,6 +243,270 @@
                         SnapsTo="StepValues" UseLogarithmicTicks="True"
                         MinWidth="180" Margin="6,0,6,0"/>
             </StackPanel>
+
+            <Border HorizontalAlignment="Stretch" Margin="0,3,0,3">
+                <Grid Margin="6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="25"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="25"/>
+                    </Grid.RowDefinitions>
+
+
+                    <Border x:Name="DeviceMapBorder" Height="186" Grid.Column="0" Grid.Row="0" BorderBrush="{ThemeResource SystemFillColorAttentionBrush}" CornerRadius="{ThemeResource ControlCornerRadius}" BorderThickness="1.5" Margin="0,2,4,2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Border Grid.Column="0" Grid.ColumnSpan="1" Grid.Row="0" Grid.RowSpan="6" Width="1" HorizontalAlignment="Right" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                            <Border Grid.Column="1" Grid.ColumnSpan="1" Grid.Row="0" Grid.RowSpan="6" Width="1" HorizontalAlignment="Right" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                            <Border Grid.Column="2" Grid.ColumnSpan="1" Grid.Row="0" Grid.RowSpan="6" Width="1" HorizontalAlignment="Right" Background="{ThemeResource TextFillColorTertiaryBrush}" Opacity="0.7"/>
+                            <Border Grid.Column="3" Grid.ColumnSpan="1" Grid.Row="0" Grid.RowSpan="6" Width="1" HorizontalAlignment="Right" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                            <Border Grid.Column="4" Grid.ColumnSpan="1" Grid.Row="0" Grid.RowSpan="6" Width="1" HorizontalAlignment="Right" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="0" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="1" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="2" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorTertiaryBrush}" Opacity="0.7"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="3" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="4" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+
+                            <Border Grid.ColumnSpan="6" Grid.RowSpan="6" BorderBrush="{ThemeResource TextFillColorSecondaryBrush}" BorderThickness="1" Margin="8,8,8,8" Padding="70,0,0,70">
+                                <Border x:Name="CenterPront" Width="7" Height="7" HorizontalAlignment="Left" VerticalAlignment="Bottom" BorderBrush="{ThemeResource SystemFillColorAttentionBrush}" BorderThickness="1" Margin="-4">
+                                    <Grid>
+                                        <Border Width="1.5" Background="{ThemeResource SystemFillColorAttentionBrush}" Opacity="0.6" Canvas.ZIndex="10" Margin="0,-200"/>
+                                        <Border Height="1.5" Background="{ThemeResource SystemFillColorAttentionBrush}" Opacity="0.6" Canvas.ZIndex="10" Margin="-200,0"/>
+                                    </Grid>
+                                    <Border.Transitions>
+                                        <TransitionCollection>
+                                            <EntranceThemeTransition IsStaggeringEnabled="True"/>
+                                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                                        </TransitionCollection>
+                                    </Border.Transitions>
+                                </Border>
+                            </Border>
+
+                        </Grid>
+                    </Border>
+
+                    <Button Style="{StaticResource AccentButtonStyle}" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,4,0,-4">
+                        <FontIcon Glyph="&#xE70F;" FontSize="17" Margin="-10"/>
+                    </Button>
+
+                    <Toolkit:RangeSelector x:Name="XRangeSelector" Width="{x:Bind DeviceMapBorder.Width, Mode=OneWay}" Minimum="0" Maximum="300" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" VerticalAlignment="Bottom" Margin="0,0,6,-6"/>
+                    <Border Grid.Column="1" Grid.Row="0">
+                        <Toolkit:RangeSelector x:Name="YRangeSelector" Width="{x:Bind DeviceMapBorder.Height, Mode=OneWay}" Minimum="0" Maximum="300" VerticalAlignment="Center" Grid.RowSpan="1" RenderTransformOrigin="0.5,0.5" Margin="-500,0,-500,0">
+                            <Toolkit:RangeSelector.RenderTransform>
+                                <RotateTransform Angle="-90"/>
+                            </Toolkit:RangeSelector.RenderTransform>
+                        </Toolkit:RangeSelector>
+                    </Border>
+
+                </Grid>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
+                <Grid Width="72" Margin="6,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="25"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Border x:Name="DeviceUpDownMapBorder" Height="186" Grid.Column="0" Grid.Row="0" Grid.RowSpan="1" BorderBrush="{ThemeResource SystemFillColorAttentionBrush}" CornerRadius="{ThemeResource ControlCornerRadius}" BorderThickness="1.5" Margin="0,2,4,2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Border Grid.Column="2" Grid.ColumnSpan="1" Grid.Row="0" Grid.RowSpan="6" Width="1" HorizontalAlignment="Right" Background="{ThemeResource TextFillColorTertiaryBrush}" Opacity="0.7"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="0" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="1" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="2" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorTertiaryBrush}" Opacity="0.7"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="3" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="4" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+
+                            <Border Grid.ColumnSpan="6" Grid.RowSpan="6" BorderBrush="{ThemeResource TextFillColorSecondaryBrush}" BorderThickness="1" Margin="8,8,8,8" Padding="0,0,0,0">
+                                <Border x:Name="UpDownCenterPront" Width="16" Height="7" HorizontalAlignment="Center" VerticalAlignment="Center" BorderBrush="{ThemeResource SystemFillColorAttentionBrush}" BorderThickness="1" Margin="-4">
+                                    <Grid>
+                                        <Border Height="1.5" Background="{ThemeResource SystemFillColorAttentionBrush}" Opacity="0.6" Canvas.ZIndex="10" Margin="-20,0"/>
+                                    </Grid>
+                                    <Border.Transitions>
+                                        <TransitionCollection>
+                                            <EntranceThemeTransition IsStaggeringEnabled="True"/>
+                                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                                        </TransitionCollection>
+                                    </Border.Transitions>
+                                </Border>
+                            </Border>
+
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="1" Grid.Row="0">
+                        <Toolkit:RangeSelector x:Name="ZRangeSelector" Width="{x:Bind DeviceUpDownMapBorder.Height, Mode=OneWay}" Minimum="0" Maximum="300" VerticalAlignment="Center" Grid.RowSpan="1" RenderTransformOrigin="0.5,0.5" Margin="-500,0,-500,0">
+                            <Toolkit:RangeSelector.RenderTransform>
+                                <RotateTransform Angle="-90"/>
+                            </Toolkit:RangeSelector.RenderTransform>
+                        </Toolkit:RangeSelector>
+                    </Border>
+                </Grid>
+                <Grid Width="72" Margin="6,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="25"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Border x:Name="DeviceAMapBorder" Height="186" Grid.Column="0" Grid.Row="0" Grid.RowSpan="1" BorderBrush="{ThemeResource SystemFillColorAttentionBrush}" CornerRadius="{ThemeResource ControlCornerRadius}" BorderThickness="1.5" Margin="0,2,4,2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Border Grid.Column="2" Grid.ColumnSpan="1" Grid.Row="0" Grid.RowSpan="6" Width="1" HorizontalAlignment="Right" Background="{ThemeResource TextFillColorTertiaryBrush}" Opacity="0.7"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="0" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="1" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="2" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorTertiaryBrush}" Opacity="0.7"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="3" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                            <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="4" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+
+                            <Border Grid.ColumnSpan="6" Grid.RowSpan="6" BorderBrush="{ThemeResource TextFillColorSecondaryBrush}" BorderThickness="1" Margin="8,8,8,8" Padding="0,0,0,80">
+                                <Border x:Name="ACenterPront" Width="16" Height="7" HorizontalAlignment="Center" VerticalAlignment="Center" BorderBrush="{ThemeResource SystemFillColorAttentionBrush}" BorderThickness="1" Margin="-4">
+                                    <Grid>
+                                        <Border Height="1.5" Background="{ThemeResource SystemFillColorAttentionBrush}" Opacity="0.6" Canvas.ZIndex="10" Margin="-20,0"/>
+                                    </Grid>
+                                    <Border.Transitions>
+                                        <TransitionCollection>
+                                            <EntranceThemeTransition IsStaggeringEnabled="True"/>
+                                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                                        </TransitionCollection>
+                                    </Border.Transitions>
+                                </Border>
+                            </Border>
+
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="1" Grid.Row="0">
+                        <Toolkit:RangeSelector x:Name="ARangeSelector" Width="{x:Bind DeviceAMapBorder.Height, Mode=OneWay}" Minimum="0" Maximum="300" VerticalAlignment="Center" Grid.RowSpan="1" RenderTransformOrigin="0.5,0.5" Margin="-500,0,-500,0">
+                            <Toolkit:RangeSelector.RenderTransform>
+                                <RotateTransform Angle="-90"/>
+                            </Toolkit:RangeSelector.RenderTransform>
+                        </Toolkit:RangeSelector>
+                    </Border>
+                </Grid>
+                <Grid Width="72" Margin="6,0,0,0">
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="25"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Border x:Name="DeviceBMapBorder" Height="186" Grid.Column="0" Grid.Row="0" Grid.RowSpan="1" BorderBrush="{ThemeResource SystemFillColorAttentionBrush}" CornerRadius="{ThemeResource ControlCornerRadius}" BorderThickness="1.5" Margin="0,2,4,2">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <Border Grid.Column="2" Grid.ColumnSpan="1" Grid.Row="0" Grid.RowSpan="6" Width="1" HorizontalAlignment="Right" Background="{ThemeResource TextFillColorTertiaryBrush}" Opacity="0.7"/>
+                                <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="0" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                                <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="1" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                                <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="2" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorTertiaryBrush}" Opacity="0.7"/>
+                                <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="3" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+                                <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="4" Grid.RowSpan="1" Height="1" VerticalAlignment="Bottom" Background="{ThemeResource TextFillColorDisabledBrush}" Opacity="0.5"/>
+
+                                
+
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Column="1" Grid.Row="0">
+                            <Toolkit:RangeSelector x:Name="BRangeSelector" Width="{x:Bind DeviceBMapBorder.Height, Mode=OneWay}" Minimum="0" Maximum="300" VerticalAlignment="Center" Grid.RowSpan="1" RenderTransformOrigin="0.5,0.5" Margin="-500,0,-500,0">
+                                <Toolkit:RangeSelector.RenderTransform>
+                                    <RotateTransform Angle="-90"/>
+                                </Toolkit:RangeSelector.RenderTransform>
+                            </Toolkit:RangeSelector>
+                        </Border>
+                    </Grid>
+                    
+                    <Border BorderBrush="{ThemeResource TextFillColorSecondaryBrush}" BorderThickness="1" Margin="9,12,37,12" Padding="0,40,0,0">
+                        <Border x:Name="BCenterPront" Width="16" Height="7" HorizontalAlignment="Center" VerticalAlignment="Center" BorderBrush="{ThemeResource SystemFillColorAttentionBrush}" BorderThickness="1" Margin="-4">
+                            <Grid>
+                                <Border Height="1.5" Background="{ThemeResource SystemFillColorAttentionBrush}" Opacity="0.6" Canvas.ZIndex="10" Margin="-12,0"/>
+                            </Grid>
+                            <Border.Transitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition IsStaggeringEnabled="True"/>
+                                    <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                                </TransitionCollection>
+                            </Border.Transitions>
+                        </Border>
+                    </Border>
+                </Grid>
+                
+            </StackPanel>
             
             <Border HorizontalAlignment="Stretch" Margin="0,3,0,3">
                 <Grid Margin="6,0,6,0">
@@ -148,9 +518,41 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <NumberBox x:Name="RangeSelectorMiniumNumberBox" SpinButtonPlacementMode="Inline" Value="0" ValueChanged="RangeSelectorMiniumNumberBox_ValueChanged" Grid.Column="0" Grid.Row="0" Margin="0,0,3,0"/>
-                    <NumberBox x:Name="RangeSelectorMaxiumNumberBox" SpinButtonPlacementMode="Inline" Value="300" ValueChanged="RangeSelectorMaxiumNumberBox_ValueChanged" Grid.Column="1" Grid.Row="0" Margin="3,0,0,0"/>
-                    <Toolkit:RangeSelector Minimum="{x:Bind RangeSelectorMiniumNumberBox.Value}" Maximum="{x:Bind RangeSelectorMaxiumNumberBox.Value}" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
+                    <NumberBox x:Name="XRangeSelectorMiniumNumberBox" SpinButtonPlacementMode="Compact" Value="0" ValueChanged="XRangeSelectorMiniumNumberBox_ValueChanged" Grid.Column="0" Grid.Row="0" Margin="0,0,3,0"/>
+                    <NumberBox x:Name="XRangeSelectorMaxiumNumberBox" SpinButtonPlacementMode="Compact" Value="300" ValueChanged="XRangeSelectorMaxiumNumberBox_ValueChanged" Grid.Column="1" Grid.Row="0" Margin="3,0,0,0"/>
+                    
+                </Grid>
+            </Border>
+
+            <Border HorizontalAlignment="Stretch" Margin="0,3,0,3">
+                <Grid Margin="6,0,6,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <NumberBox x:Name="YRangeSelectorMiniumNumberBox" SpinButtonPlacementMode="Inline" Value="0" ValueChanged="YRangeSelectorMiniumNumberBox_ValueChanged" Grid.Column="0" Grid.Row="0" Margin="0,0,3,0"/>
+                    <NumberBox x:Name="YRangeSelectorMaxiumNumberBox" SpinButtonPlacementMode="Inline" Value="300" ValueChanged="YRangeSelectorMaxiumNumberBox_ValueChanged" Grid.Column="1" Grid.Row="0" Margin="3,0,0,0"/>
+                    
+                </Grid>
+            </Border>
+
+            <Border HorizontalAlignment="Stretch" Margin="0,3,0,3">
+                <Grid Margin="6,0,6,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <NumberBox x:Name="ZRangeSelectorMiniumNumberBox" SpinButtonPlacementMode="Inline" Value="0" ValueChanged="ZRangeSelectorMiniumNumberBox_ValueChanged" Grid.Column="0" Grid.Row="0" Margin="0,0,3,0"/>
+                    <NumberBox x:Name="ZRangeSelectorMaxiumNumberBox" SpinButtonPlacementMode="Inline" Value="300" ValueChanged="ZRangeSelectorMaxiumNumberBox_ValueChanged" Grid.Column="1" Grid.Row="0" Margin="3,0,0,0"/>
+                    <Toolkit:RangeSelector Minimum="{x:Bind ZRangeSelectorMiniumNumberBox.Value}" Maximum="{x:Bind ZRangeSelectorMaxiumNumberBox.Value}" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
                 </Grid>
             </Border>
         </StackPanel>

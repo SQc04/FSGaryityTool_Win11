@@ -502,6 +502,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         }
         
         /// <summary>
+        ///   查找类似 选择背景透明效果 的本地化字符串。
+        /// </summary>
+        internal static string softTranslucentToolBackground {
+            get {
+                return ResourceManager.GetString("softTranslucentToolBackground", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 已关闭 的本地化字符串。
         /// </summary>
         internal static string spClose {
@@ -606,6 +615,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         internal static string thin {
             get {
                 return ResourceManager.GetString("thin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 设置FSGravityTool的背景半透明效果 的本地化字符串。
+        /// </summary>
+        internal static string TranslucentBackgroundDescription {
+            get {
+                return ResourceManager.GetString("TranslucentBackgroundDescription", resourceCulture);
             }
         }
         

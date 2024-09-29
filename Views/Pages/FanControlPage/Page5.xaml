@@ -15,8 +15,10 @@
     <Grid>
         <ScrollViewer Margin="60,0,0,0">
             <StackPanel VerticalAlignment="Top" Orientation="Vertical" Margin="0,0,60,0">
-                <StackPanel>
-                    <StackPanel Margin="0,48,0,0"/>
+
+                <StackPanel Margin="0,48,0,0"/>
+                
+                <StackPanel Visibility="Collapsed">
                     <StackPanel x:Name="FanControlStackPanel" VerticalAlignment="Top" Orientation="Vertical" Margin="0">
                         <FsControl:FanAUserControl/>
                     </StackPanel>
@@ -124,12 +126,12 @@
                     <StackPanel Margin="0,48,0,0"/>
                     <TextBlock Text="" Margin="0,12,0,0"/>
                     <TextBlock  Text="EcControlTest" Margin="0"/>
-                    <Toolkit:SettingsExpander Header="EcControlTest" Margin="0,2,0,3">
+                    <Toolkit:SettingsExpander Header="EcControlTest" IsExpanded="True" Margin="0,2,0,3">
                         <Toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon Glyph="&#xE8CB;" FontSize="12" />
                         </Toolkit:SettingsExpander.HeaderIcon>
                         <Toolkit:SettingsExpander.Items>
-                            <Toolkit:SettingsCard>
+                            <Toolkit:SettingsCard Header="Test">
                                 <Toolkit:SettingsCard.HeaderIcon>
                                     <FontIcon Glyph="&#xE946;"/>
                                 </Toolkit:SettingsCard.HeaderIcon>
@@ -137,7 +139,7 @@
                                     <Button x:Name="ClevoGetFaninfo" Click="ClevoGetFaninfo_Click" Content="GetFaninfo" IsEnabled="False" Width="150" HorizontalAlignment="Right" Margin="6"></Button>
                                 </StackPanel>
                             </Toolkit:SettingsCard>
-                            <Toolkit:SettingsCard>
+                            <Toolkit:SettingsCard Header="Test">
                                 <Toolkit:SettingsCard.HeaderIcon>
                                     <FontIcon Glyph="&#xF167;"/>
                                 </Toolkit:SettingsCard.HeaderIcon>
@@ -168,11 +170,14 @@
                     </StackPanel.ChildrenTransitions>
                 </StackPanel>
 
-                <StackPanel>
-                    <StackPanel Margin="0,48,0,0"/>
+                <StackPanel Margin="0,48,0,0"/>
+                
+                <StackPanel Visibility="Visible">
 
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="6">
-
+                        <Toolkit:ColorPicker IsAlphaEnabled="True">
+                            
+                        </Toolkit:ColorPicker>
                     </StackPanel>
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="6">
                         <Border CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" Width="324" Height="224" Margin="6">

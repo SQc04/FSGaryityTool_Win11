@@ -81,7 +81,8 @@
                 <Thickness x:Key="NavigationViewContentGridBorderThickness">1,1,0,0</Thickness>
                 <!-- This is the rounded corner on the Top left of the L Pattern -->
                 <CornerRadius x:Key="NavigationViewContentGridCornerRadius">8,0,0,0</CornerRadius>
-
+                
+                
                 <!--StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="AcrylicBackgroundFillColorBaseBrush"/>-->
                 <!--<StaticResource x:Key="NavigationViewExpandedPaneBackground" ResourceKey="AcrylicBackgroundFillColorBaseBrush"/>-->
             </NavigationView.Resources>
@@ -106,7 +107,7 @@
                         <!--&#xE770;-->
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="CameraControl" Content="CameraControl" Tag="CameraControlMainPage" >
+                <NavigationViewItem x:Name="CameraControl" Content="CameraControl" Visibility="Collapsed" Tag="CameraControlMainPage" >
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE722;" />
                     </NavigationViewItem.Icon>
@@ -128,6 +129,10 @@
                 <Frame x:Name="FSnvf" Margin="0,0,0,0" />
             </Grid>
         </NavigationView>
+
+        <Grid x:Name="FsStartImage" Grid.ColumnSpan="4" Grid.RowSpan="2" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Canvas.ZIndex="10">
+            <Image Source="ms-appx:///Assets/SplashScreen.scale-400.png" />
+        </Grid>
 
     </Grid>
 

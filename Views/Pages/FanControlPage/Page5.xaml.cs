@@ -191,7 +191,7 @@ namespace FSGaryityTool_Win11.Views.Pages.FanControlPage
         {
             serverTimeout++;
             serverTimeoutInfo++;
-            if (serverTimeout > 5)
+            if (serverTimeout > 3)
             {
                 foreach (var process in processes)
                 {

@@ -169,7 +169,7 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             SerialPortToolsToggleButtonFontIconRotation.Start();
             if (SerialPortToolsSplitView.DisplayMode == SplitViewDisplayMode.CompactOverlay)
             {
-                SerialPortToolsSplitView.PaneBackground = Application.Current.Resources["AcrylicBackgroundFillColorDefaultBrush"] as AcrylicBrush;
+                SerialPortToolsSplitView.PaneBackground = this.Resources["CustomAcrylicBrush"] as AcrylicBrush;
             }
             if (SerialPortToolsSplitView.DisplayMode == SplitViewDisplayMode.CompactInline)
             {
