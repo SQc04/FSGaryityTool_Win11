@@ -1,28 +1,21 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace FSGaryityTool_Win11.Controls
+namespace FSGaryityTool_Win11.Controls;
+
+public class PaneWidthConverter : IValueConverter
 {
-    public class PaneWidthConverter : IValueConverter
+    public object Convert(object value, Type targetType, object parameter, string language)
     {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            var splitView = (SplitView)value;
-            var width = splitView.IsPaneOpen ? splitView.OpenPaneLength : splitView.CompactPaneLength;
-            System.Diagnostics.Debug.WriteLine($"IsPaneOpen: {splitView.IsPaneOpen}, Width: {width}");
-            return width;
-        }
+        var splitView = (SplitView)value;
+        var width = splitView.IsPaneOpen ? splitView.OpenPaneLength : splitView.CompactPaneLength;
+        System.Diagnostics.Debug.WriteLine($"IsPaneOpen: {splitView.IsPaneOpen}, Width: {width}");
+        return width;
+    }
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
-
-
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
     }
 }

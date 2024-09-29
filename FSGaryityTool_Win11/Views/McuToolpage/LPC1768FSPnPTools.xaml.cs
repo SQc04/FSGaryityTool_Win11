@@ -1,90 +1,73 @@
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+namespace FSGaryityTool_Win11.Views.McuToolpage;
 
-namespace FSGaryityTool_Win11.Views.McuToolpage
+public sealed partial class Lpc1768FsPnPTools : Page
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class LPC1768FSPnPTools : Page
+    public Lpc1768FsPnPTools()
     {
-        public LPC1768FSPnPTools()
+        InitializeComponent();
+        CustomSlider.ValueChanged += CustomSlider_ValueChanged;
+    }
+
+    private void CustomSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+    {
+    }
+
+    public double XMinNum { get; set; }
+
+    public double XMaxNum { get; set; }= 300;
+
+    public double YMinNum { get; set; } = 0;
+
+    public double YMaxNum { get; set; } = 300;
+
+    public double ZMinNum { get; set; } = 0;
+
+    public double ZMaxNum { get; set; } = 30;
+
+    private void XRangeSelectorMinimumNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+    {
+        if (!double.IsNaN(XRangeSelectorMinimumNumberBox.Value))
         {
-            this.InitializeComponent();
-            CustomSlider.ValueChanged += CustomSlider_ValueChanged;
+            XMinNum = XRangeSelectorMinimumNumberBox.Value;
         }
-        private void CustomSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        else
         {
-
+            XRangeSelectorMinimumNumberBox.Value = XMinNum;
         }
+        if (XRangeSelector is not null)
+            XRangeSelector.Minimum = XMinNum;
+    }
 
-        public double xMinNum = 0;
-        public double xMaxNum = 300;
-        public double yMinNum = 0;
-        public double yMaxNum = 300;
-        public double zMinNum = 0;
-        public double zMaxNum = 30;
-
-        private void XRangeSelectorMiniumNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+    private void XRangeSelectorMaximumNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+    {
+        if (!double.IsNaN(XRangeSelectorMaximumNumberBox.Value))
         {
-            if (!double.IsNaN(XRangeSelectorMiniumNumberBox.Value))
-            {
-                xMinNum = XRangeSelectorMiniumNumberBox.Value;
-            }
-            else
-            {
-                XRangeSelectorMiniumNumberBox.Value = xMinNum;
-            }
-            if (XRangeSelector != null) XRangeSelector.Minimum = xMinNum;
+            XMaxNum = XRangeSelectorMaximumNumberBox.Value;
         }
-
-        private void XRangeSelectorMaxiumNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+        else
         {
-            if (!double.IsNaN(XRangeSelectorMaxiumNumberBox.Value))
-            {
-                xMaxNum = XRangeSelectorMaxiumNumberBox.Value;
-            }
-            else
-            {
-                XRangeSelectorMaxiumNumberBox.Value = xMaxNum;
-            }
-            if (XRangeSelector != null) XRangeSelector.Maximum = xMaxNum;
+            XRangeSelectorMaximumNumberBox.Value = XMaxNum;
         }
+        if (XRangeSelector is not null)
+            XRangeSelector.Maximum = XMaxNum;
+    }
 
-        private void YRangeSelectorMiniumNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
-        {
+    private void YRangeSelectorMinimumNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+    {
+    }
 
-        }
+    private void YRangeSelectorMaximumNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+    {
+    }
 
-        private void YRangeSelectorMaxiumNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
-        {
+    private void ZRangeSelectorMinimumNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+    {
+    }
 
-        }
-
-        private void ZRangeSelectorMiniumNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
-        {
-
-        }
-
-        private void ZRangeSelectorMaxiumNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
-        {
-
-        }
+    private void ZRangeSelectorMaximumNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+    {
     }
 }

@@ -1,88 +1,72 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+namespace FSGaryityTool_Win11.Controls;
 
-namespace FSGaryityTool_Win11.Controls
+public sealed partial class FanAUserControl : UserControl
 {
-    public sealed partial class FanAUserControl : UserControl
+    public FanAUserControl()
     {
-        public FanAUserControl()
-        {
-            this.InitializeComponent();
+        InitializeComponent();
 
-            TempText.Text = "N/A¡æ";
-            FanName = "N/A FAN";
+        TempText.Text = "N/Aâ„ƒ";
+        FanName = "N/A FAN";
+    }
+
+    // å…¬å…±å±æ€§
+    public string FanName
+    {
+        get => (string)GetValue(FanNameProperty);
+        set
+        {
+            SetValue(FanNameProperty, value);
+            FanNameTextBlock.Text = value;  // æ›´æ–°TextBlockçš„Textå±æ€§
         }
+    }
 
-        // ¹«¹²ÊôĞÔ
-        public string FanName
+    // ä½¿ç”¨DependencyPropertyä½œä¸ºåå¤‡å­˜å‚¨å­—æ®µ
+    public static readonly DependencyProperty FanNameProperty =
+        DependencyProperty.Register(nameof(FanName), typeof(string), typeof(FanAUserControl), new("N/A FAN"));
+
+    public double FanRpmMaximum
+    {
+        get => (double)GetValue(FanRpmMaximumProperty);
+        set
         {
-            get { return (string)GetValue(FanNameProperty); }
-            set
-            {
-                SetValue(FanNameProperty, value);
-                FanNameTextblock.Text = value;  // ¸üĞÂTextBlockµÄTextÊôĞÔ
-            }
+            SetValue(FanRpmMaximumProperty, value);
+            FanRpmRadialGauge.Maximum = value;  // æ›´æ–°RadialGaugeçš„Maximumå±æ€§
         }
+    }
 
-        // Ê¹ÓÃDependencyProperty×÷Îªºó±¸´æ´¢×Ö¶Î
-        public static readonly DependencyProperty FanNameProperty =
-            DependencyProperty.Register("FanName", typeof(string), typeof(FanAUserControl), new PropertyMetadata("N/A FAN"));
+    // ä½¿ç”¨DependencyPropertyä½œä¸ºåå¤‡å­˜å‚¨å­—æ®µ
+    public static readonly DependencyProperty FanRpmMaximumProperty =
+        DependencyProperty.Register(nameof(FanRpmMaximum), typeof(double), typeof(FanAUserControl), new(8000.0));
 
-        public double FanRpmMaximum
+    // å…¬å…±æ–¹æ³•
+    public void SetFanRpm(int rpm)
+    {
+        // è®¾ç½®é£æ‰‡è½¬é€Ÿ
+        FanRpmRadialGauge.Value = rpm;
+    }
+
+    public void SetFanControlPercentage(double percentage)
+    {
+        // è®¾ç½®é£æ‰‡æ§åˆ¶ç™¾åˆ†æ¯”
+        FanRadialGauge.Value = percentage;
+    }
+
+    public void SetTemperature(int? temperature)
+    {
+        if (temperature.HasValue)
         {
-            get { return (double)GetValue(FanRpmMaximumProperty); }
-            set
-            {
-                SetValue(FanRpmMaximumProperty, value);
-                FanRpmRadialGauge.Maximum = value;  // ¸üĞÂRadialGaugeµÄMaximumÊôĞÔ
-            }
+            // å¦‚æœè·å–åˆ°äº†æ¸©åº¦ï¼Œè®¾ç½®æ¸©åº¦
+            Temp.Value = temperature.Value;
+            TempText.Text = temperature.Value + "â„ƒ";
         }
-
-        // Ê¹ÓÃDependencyProperty×÷Îªºó±¸´æ´¢×Ö¶Î
-        public static readonly DependencyProperty FanRpmMaximumProperty =
-            DependencyProperty.Register("FanRpmMaximum", typeof(double), typeof(FanAUserControl), new PropertyMetadata(8000.0));
-
-        // ¹«¹²·½·¨
-        public void SetFanRpm(int rpm)
+        else
         {
-            // ÉèÖÃ·çÉÈ×ªËÙ
-            FanRpmRadialGauge.Value = rpm;
-        }
-
-        public void SetFanControlPercentage(double percentage)
-        {
-            // ÉèÖÃ·çÉÈ¿ØÖÆ°Ù·Ö±È
-            FanRadialGauge.Value = percentage;
-        }
-
-        public void SetTemperature(int? temperature)
-        {
-            if (temperature.HasValue)
-            {
-                // Èç¹û»ñÈ¡µ½ÁËÎÂ¶È£¬ÉèÖÃÎÂ¶È
-                Temp.Value = temperature.Value;
-                TempText.Text = temperature.Value.ToString() + "¡æ";
-            }
-            else
-            {
-                // Èç¹ûÃ»ÓĞ»ñÈ¡µ½ÎÂ¶È£¬ÉèÖÃÎª"N/A¡æ"
-                TempText.Text = "N/A¡æ";
-            }
+            // å¦‚æœæ²¡æœ‰è·å–åˆ°æ¸©åº¦ï¼Œè®¾ç½®ä¸º"N/Aâ„ƒ"
+            TempText.Text = "N/Aâ„ƒ";
         }
     }
 }

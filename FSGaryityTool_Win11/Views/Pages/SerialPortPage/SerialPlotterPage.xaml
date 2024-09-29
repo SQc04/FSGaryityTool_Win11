@@ -1,82 +1,119 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="FSGaryityTool_Win11.Views.Pages.SerialPortPage.SerialPlotterPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:FSGaryityTool_Win11.Views.Pages.SerialPortPage"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FSGaryityTool_Win11.Views.Pages.SerialPortPage"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
+    xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
     NavigationCacheMode="Enabled"
-    >
+    mc:Ignorable="d">
     <Page.Resources>
         <ResourceDictionary>
             <Color x:Key="SystemControlBackgroundLightColor">#90FFFFFF</Color>
             <Color x:Key="SystemControlBackgroundDarkColor">#44252525</Color>
             <ResourceDictionary.ThemeDictionaries>
-                <!-- 浅色模式的AcrylicBrush -->
+                <!--  浅色模式的AcrylicBrush  -->
                 <ResourceDictionary x:Key="Light">
-                    <AcrylicBrush x:Key="CustomAcrylicBrush" TintColor="#FCFCFC" TintOpacity="0.0" FallbackColor="#F9F9F9"/>
-                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemControlBackgroundLightColor}"/>
+                    <AcrylicBrush
+                        x:Key="CustomAcrylicBrush"
+                        FallbackColor="#F9F9F9"
+                        TintColor="#FCFCFC"
+                        TintOpacity="0.0" />
+                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemControlBackgroundLightColor}" />
                 </ResourceDictionary>
 
-                <!-- 深色模式的AcrylicBrush -->
+                <!--  深色模式的AcrylicBrush  -->
                 <ResourceDictionary x:Key="Dark">
-                    <AcrylicBrush x:Key="CustomAcrylicBrush" TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C"/>
-                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemControlBackgroundDarkColor}"/>
+                    <AcrylicBrush
+                        x:Key="CustomAcrylicBrush"
+                        FallbackColor="#2C2C2C"
+                        TintColor="#2C2C2C"
+                        TintOpacity="0.15" />
+                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemControlBackgroundDarkColor}" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
     </Page.Resources>
-    
+
     <Grid Margin="0,0,12,12">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="auto" MinWidth="184" MaxWidth="464"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition
+                Width="auto"
+                MinWidth="184"
+                MaxWidth="464" />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            
-        </Grid.RowDefinitions>
+        <Grid.RowDefinitions />
 
-        <Toolkit:GridSplitter Grid.Column="1" HorizontalAlignment="Left" Margin="-6.05,0,0,0"/>
+        <toolkit:GridSplitter
+            Grid.Column="1"
+            Margin="-6.05,0,0,0"
+            HorizontalAlignment="Left" />
 
-        <Border Grid.Column="0" Background="{ThemeResource CustomRxBoxSolidColorBrush}" CornerRadius="6" BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}" BorderThickness="3" Margin="0,0,6,0">
+        <Border
+            Grid.Column="0"
+            Margin="0,0,6,0"
+            Background="{ThemeResource CustomRxBoxSolidColorBrush}"
+            BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}"
+            BorderThickness="3"
+            CornerRadius="6">
             <Grid>
-                <ScrollView ContentOrientation="None"
-                        ZoomMode="Enabled" 
-                        HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Auto"
-                        VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
+                <ScrollView
+                    ContentOrientation="None"
+                    HorizontalScrollBarVisibility="Auto"
+                    HorizontalScrollMode="Auto"
+                    VerticalScrollBarVisibility="Auto"
+                    VerticalScrollMode="Auto"
+                    ZoomMode="Enabled">
 
-                    <Grid Width="auto" Height="auto">
-
-                    </Grid>
+                    <Grid Width="auto" Height="auto" />
                 </ScrollView>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
-                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition />
-                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <Grid Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Opacity="0.8">
-                        <FontIcon Glyph="&#xE76C;" Foreground="{ThemeResource TextFillColorTertiaryBrush}" HorizontalAlignment="Right" Margin="0,0,-6,0"/>
-                        <Border Background="{ThemeResource TextFillColorTertiaryBrush}" Height="1.5"/>
+                    <Grid
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="3"
+                        Opacity="0.8">
+                        <FontIcon
+                            Margin="0,0,-6,0"
+                            HorizontalAlignment="Right"
+                            Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                            Glyph="&#xE76C;" />
+                        <Border Height="1.5" Background="{ThemeResource TextFillColorTertiaryBrush}" />
                     </Grid>
-                    <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Opacity="0.8">
-                        <FontIcon Glyph="&#xE70E;" Foreground="{ThemeResource TextFillColorTertiaryBrush}" VerticalAlignment="Top" Margin="0,-6,0,0"/>
-                        <Border Background="{ThemeResource TextFillColorTertiaryBrush}" Width="1.5"/>
+                    <Grid
+                        Grid.Row="0"
+                        Grid.RowSpan="3"
+                        Grid.Column="1"
+                        Opacity="0.8">
+                        <FontIcon
+                            Margin="0,-6,0,0"
+                            VerticalAlignment="Top"
+                            Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                            Glyph="&#xE70E;" />
+                        <Border Width="1.5" Background="{ThemeResource TextFillColorTertiaryBrush}" />
                     </Grid>
                 </Grid>
             </Grid>
         </Border>
 
-        <Border Grid.Column="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4" BorderBrush="{ThemeResource TextControlElevationBorderBrush}" BorderThickness="1" Margin="6,0,0,0">
-
-        </Border>
+        <Border
+            Grid.Column="1"
+            Margin="6,0,0,0"
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource TextControlElevationBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="4" />
     </Grid>
 </Page>

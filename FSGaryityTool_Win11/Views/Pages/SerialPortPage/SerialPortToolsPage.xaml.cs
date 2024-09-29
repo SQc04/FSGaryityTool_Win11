@@ -2,1175 +2,1076 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using static System.Net.Mime.MediaTypeNames;
 using Tommy;
 using static FSGaryityTool_Win11.Page1;
 using static FSGaryityTool_Win11.Views.Pages.SerialPortPage.MainPage1;
-using static FSGaryityTool_Win11.MainWindow;
 using System.IO.Ports;
 using System.Management;
-using Microsoft.UI;
 using Application = Microsoft.UI.Xaml.Application;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Text;
 using FSGaryityTool_Win11.McuToolpage;
-using System.Numerics;
 using System.Diagnostics;
 using FSGaryityTool_Win11.Views.McuToolpage;
 using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.UI.Composition.SystemBackdrops;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage;
 
-namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
+public sealed partial class SerialPortToolsPage : Page
 {
+    public static int GetPortInfo { get; set; }
+
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// Con
     /// </summary>
-    public sealed partial class SerialPortToolsPage : Page
+    public static int PortIsConnect { get; set; }
+
+    public static string ConCom { get; set; } = "";
+
+    /// <summary>
+    /// TXHEX
+    /// </summary>
+    public static int TxHex { get; set; }
+
+    /// <summary>
+    /// RXHEX
+    /// </summary>
+    public static int RxHex { get; set; }
+
+    /// <summary>
+    /// FTR
+    /// </summary>
+    public static int Dtr { get; set; }
+
+    /// <summary>
+    /// RTS
+    /// </summary>
+    public static int Rts { get; set; }
+
+    /// <summary>
+    /// ShowTime
+    /// </summary>
+    public static int ShTime { get; set; }
+
+    /// <summary>
+    /// AUTOScroll
+    /// </summary>
+    public static int AutoTr { get; set; }
+
+    public static int AutoSaveSet { get; set; }
+
+    public static int AutoSerCom { get; set; }
+
+    public static int AutoConnect { get; set; }
+
+    public static int TxNewLine { get; set; }
+
+    /// <summary>
+    /// ÂÆö‰πâÂ≠óÁ¨¶‰∏≤Êï∞ÁªÑÔºåÊï∞ÁªÑÂêç‰∏∫ <see cref="ArryPort"/>
+    /// </summary>
+    public static string[] ArryPort { get; set; }
+
+    public static int Baudrate { get; set; }
+
+    public Timer Timer { get; set; }
+
+    public Timer TimerSerialPort { get; set; }
+
+    private bool _isLoaded;
+
+    public class ParityOption
     {
-        public static int getPortInfo = 0;
-        public static int portIsConnect = 0;//Con
-        public static string conCom = "";
-        public static int txHex = 0; //TXHEX
-        public static int rxHex = 0; //RXHEX
-        public static int dtr = 0;//FTR
-        public static int rts = 0;//RTS
-        public static int shtime = 0;//ShowTime
-        public static int autotr = 0;//AUTOScroll
-        public static int autosaveset;
-        public static int autosercom;
-        public static int autoconnect;
-        public static int txnewline = 0;
+        public string DisplayText { get; set; }
 
-        public static string[] ArryPort; //∂®“Â◊÷∑˚¥Æ ˝◊È£¨ ˝◊È√˚Œ™ ArryPort
+        public string Value { get; set; }
+    }
+    public class StopBitsOption
+    {
+        public string DisplayText { get; set; }
 
-        public static int baudrate = 0;
+        public string Value { get; set; }
+    }
+    public class McuTool
+    {
+        public string Name { get; set; }
 
-        public System.Threading.Timer timer;
-        public System.Threading.Timer timerSerialPort;
+        public string Description { get; set; }
+    }
 
-        private bool _isLoaded;
+    public static SerialPortToolsPage Current { get; private set; }
 
-        public class ParityOption
+    public SerialPortToolsPage()
+    {
+        InitializeComponent();
+        Current = this;
+        Loaded += SerialPortToolsPage_Loaded;
+
+        HideTimer = new() { Interval = TimeSpan.FromMilliseconds(750) };
+        HideTimer.Tick += HideTimer_Tick;
+    }
+
+    private void FsBorderIsChecked(int isChecked, Border border, TextBlock textBlock)
+    {
+        var foregroundColor = (SolidColorBrush)Application.Current.Resources["TextFillColorPrimaryBrush"];
+        var backgroundColor = (SolidColorBrush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
+        var foreCheckColor = (SolidColorBrush)Application.Current.Resources["TextOnAccentFillColorPrimaryBrush"];
+        var darkAccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
+        var lightAccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
+        var theme = Application.Current.RequestedTheme;
+
+        if (isChecked is 1)
         {
-            public string DisplayText { get; set; }
-            public string Value { get; set; }
-        }
-        public class StopBitsOption
-        {
-            public string DisplayText { get; set; }
-            public string Value { get; set; }
-        }
-        public class MCUTool
-        {
-            public string Name { get; set; }
-            public string Description { get; set; }
-        }
-
-        public static SerialPortToolsPage serialPortToolsPage;
-        public SerialPortToolsPage()
-        {
-            this.InitializeComponent();
-            serialPortToolsPage = this;
-            this.Loaded += SerialPortToolsPage_Loaded;
-
-            _hideTimer = new DispatcherTimer();
-            _hideTimer.Interval = TimeSpan.FromMilliseconds(750);
-            _hideTimer.Tick += HideTimer_Tick;
-
-        }
-        private void FsBorderIsChecked(int isChecked, Border border, TextBlock textBlock)
-        {
-            var foregroundColor = (SolidColorBrush)Application.Current.Resources["TextFillColorPrimaryBrush"];
-            var backgroundColor = (SolidColorBrush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
-            var foreCheckColor = (SolidColorBrush)Application.Current.Resources["TextOnAccentFillColorPrimaryBrush"];
-            var darkaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
-            var ligtaccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
-            var theme = Application.Current.RequestedTheme;
-
-            if (isChecked == 1)
+            border.Background = theme switch
             {
-                if (theme == ApplicationTheme.Dark)
-                {
-                    // µ±«∞¥¶”⁄…Ó…´ƒ£ Ω
-                    border.Background = new SolidColorBrush(darkaccentColor);
-                }
-                else if (theme == ApplicationTheme.Light)
-                {
-                    // µ±«∞¥¶”⁄«≥…´ƒ£ Ω
-                    border.Background = new SolidColorBrush(ligtaccentColor);
-                }
-                textBlock.Foreground = foreCheckColor;
-            }
-            else
-            {
-                border.Background = backgroundColor;
-                textBlock.Foreground = foregroundColor;
-            }
+                ApplicationTheme.Dark => new SolidColorBrush(darkAccentColor),
+                ApplicationTheme.Light => new SolidColorBrush(lightAccentColor),
+                _ => border.Background
+            };
+            textBlock.Foreground = foreCheckColor;
         }
-        private T TomlGetValueOrDefault<T>(TomlTable table, string menu, string name, T defaultValue)
+        else
         {
-            if (table[menu][name] != "Tommy.TomlLazy")
-            {
-                var value = table[menu][name].AsString.Value;
-                return (T)Convert.ChangeType(value, typeof(T));
-            }
-            else
-            {
-                return defaultValue;
-            }
+            border.Background = backgroundColor;
+            textBlock.Foreground = foregroundColor;
         }
-        private void ToggleButtonIsChecked(int isChecked, ToggleButton toggleButton)
+    }
+    private T TomlGetValueOrDefault<T>(TomlTable table, string menu, string name, T defaultValue)
+    {
+        if (table[menu][name] != "Tommy.TomlLazy")
         {
-            if (isChecked == 1)
-            {
-                toggleButton.IsChecked = true;
-            }
-            else
-            {
-                toggleButton.IsChecked = false;
-            }
+            var value = table[menu][name].AsString.Value;
+            return (T)Convert.ChangeType(value, typeof(T));
         }
-        private void SerialPortToolsPage_Loaded(object sender, RoutedEventArgs e)
+        else
         {
-            if (!_isLoaded)
-            {
-                _isLoaded = true;
-
-                string DefaultBAUD;
-                string DefaultPart;
-                string DefaultSTOP;
-                int DefaultDATA;
-                string DefaultEncoding;
-
-                using (StreamReader reader = File.OpenText(Page1.FSSetToml))
-                {
-                    TomlTable SPsettingstomlr = TOML.Parse(reader);             //∂¡»°TOML
-                                                                                //Debug.WriteLine("Print:" + SPsettingstomlr["FSGravitySettings"]["DefaultNvPage"]);
-                                                                                //NvPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
-                    string spSettings = "SerialPortSettings";
-                    //ºÏ≤È…Ë÷√ «∑ÒŒ™NULL
-                    DefaultBAUD = TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultBAUD", "115200");
-                    DefaultPart = TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultParity", "None");
-                    DefaultSTOP = TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultSTOP", "One");
-                    DefaultDATA = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultDATA", "8"));
-                    DefaultEncoding = TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultEncoding", "utf-8");
-
-                    txHex = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultTXHEX", "0"));
-                    rxHex = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultRXHEX", "0"));
-                    dtr = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultDTR", "1"));
-                    rts = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultRTS", "0"));
-                    shtime = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultSTime", "0"));
-                    autotr = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultAUTOSco", "1"));
-                    autosaveset = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "AutoDaveSet", "1"));
-                    autosercom = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "AutoSerichCom", "1"));
-                    autoconnect = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "AutoConnect", "1"));
-                    txnewline = int.Parse(TomlGetValueOrDefault(SPsettingstomlr, spSettings, "DefaultTXNewLine", "0"));
-
-                    /*
-                    ["DefaultBAUD"] = "115200",
-                    ["DefaultParity"] = "None",
-                    ["DefaultSTOP"] = "One",
-                    ["DefaultDATA"] = "8",
-                    ["DefaultRXHEX"] = "0",
-                    ["DefaultTXHEX"] = "0",
-                    ["DefaultDTR"] = "1",
-                    ["DefaultRTS"] = "0",
-                    ["DefaultSTime"] = "0",
-                    ["DefaultAUTOSco"] = "1",
-                    */
-                }
-                LaunageSetting();
-                // ‘⁄ƒ„µƒ¥˙¬Î∫ÛÃ®£¨∂®“Â“ª∏ˆList<string>◊˜Œ™ ˝æ›‘¥
-                List<string> BaudRates = new List<string>()
-                {
-                    "75", "110", "134", "150", "300", "600", "1200", "1800", "2400", "4800", "7200", "9600", "14400", "19200", "38400", "57600", "74880","115200", "128000", "230400", "250000", "500000", "1000000", "2000000"
-                };
-                // Ω´ComboBoxµƒItemsSource Ù–‘∞Û∂®µΩ’‚∏ˆ ˝æ›‘¥
-                BANDComboBox.ItemsSource = BaudRates;
-                // …Ë÷√ƒ¨»œ—°œÓ
-                BANDComboBox.SelectedItem = DefaultBAUD; // Ω´"9600"…Ë÷√Œ™ƒ¨»œ—°œÓ
-
-                List<ParityOption> ParRates = new List<ParityOption>()
-                {
-                    new ParityOption { DisplayText = LanguageText("parityNone"), Value = "None" },
-                    new ParityOption { DisplayText = LanguageText("parityOdd"), Value = "Odd" },
-                    new ParityOption { DisplayText = LanguageText("parityEven"), Value = "Even" },
-                    new ParityOption { DisplayText = LanguageText("parityMark"), Value = "Mark" },
-                    new ParityOption { DisplayText = LanguageText("paritySpace"), Value = "Space" }
-                };
-                PARComboBox.ItemsSource = ParRates;
-                PARComboBox.DisplayMemberPath = "DisplayText";
-                PARComboBox.SelectedValuePath = "Value";
-                PARComboBox.SelectedValue = DefaultPart;
-
-                List<StopBitsOption> StopRates = new List<StopBitsOption>()
-                {
-                    //new StopBitsOption { DisplayText = LanguageText("stopNone"), Value = "None" },
-                    new StopBitsOption { DisplayText = LanguageText("stopOne"), Value = "One" },
-                    new StopBitsOption { DisplayText = LanguageText("stopOnePointFive"), Value = "OnePointFive" },
-                    new StopBitsOption { DisplayText = LanguageText("stopTwo"), Value = "Two" }
-                };
-                STOPComboBox.ItemsSource = StopRates;
-                STOPComboBox.DisplayMemberPath = "DisplayText";
-                STOPComboBox.SelectedValuePath = "Value";
-                STOPComboBox.SelectedValue = DefaultSTOP;
-
-                for (int j = 5; j < 9; ++j)
-                {
-                    DATAComboBox.Items.Add(j);
-                }
-                DATAComboBox.SelectedItem = DefaultDATA;
-                DATANumberBox.Value = DefaultDATA;
-
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-                EncodingInfo[] encodings = Encoding.GetEncodings();
-                // ¥¥Ω®“ª∏ˆ List<string> ¿¥¥Ê¥¢±‡¬Î√˚≥∆
-                List<string> Encodings = new List<string>() 
-                {
-                    "gb2312",
-                };
-                // Ω´±‡¬Î√˚≥∆ÃÌº”µΩ List<string> ÷–
-                foreach (EncodingInfo encodingInfo in encodings)
-                {
-                    Encodings.Add(encodingInfo.Name);
-                }
-
-                EncodingComboBox.ItemsSource = Encodings;
-                EncodingComboBox.SelectedItem = DefaultEncoding;
-
-                COMButton_Click(this, new RoutedEventArgs());
-
-                ToggleButtonIsChecked(rxHex, RXHEXButton);
-                ToggleButtonIsChecked(txHex, TXHEXButton);
-
-                ToggleButtonIsChecked(dtr, DTRButton);
-                if (dtr == 1)
-                {
-                    CommonRes._serialPort.DtrEnable = true;
-                }
-                else
-                {
-                    CommonRes._serialPort.DtrEnable = false;
-                }
-
-                ToggleButtonIsChecked(rts, RTSButton);
-                if (rts == 1)
-                {
-                    CommonRes._serialPort.RtsEnable = true;
-                }
-                else
-                {
-                    CommonRes._serialPort.RtsEnable = false;
-                }
-
-                ToggleButtonIsChecked(shtime, ShowTimeButton);
-                ToggleButtonIsChecked(autotr, AUTOScrollButton);
-
-                //BorderBackRX.Background = backgroundColor;
-
-                ToggleButtonIsChecked(autosaveset, SaveSetButton);
-                ToggleButtonIsChecked(autoconnect, AutoConnectButton);
-                ToggleButtonIsChecked(txnewline, TXNewLineButton);
-
-                ToggleButtonIsChecked(autosercom, AutoComButton);
-                if (autosercom == 1)
-                {
-                    timerSerialPort = new System.Threading.Timer(TimerSerialPortTick, null, 0, 1500);
-                    AutoSerchComProgressRing.IsActive = true;
-                }
-                else AutoSerchComProgressRing.IsActive = false;
-
-                ToggleButtonIsChecked(autoconnect, AutoConnectButton);
-                //ToggleButtonIsChecked();
-
-                //EncodingTest();
-            }
-
+            return defaultValue;
         }
-
-        public void EncodingTest()
+    }
+    private void ToggleButtonIsChecked(int isChecked, ToggleButton toggleButton)
+    {
+        toggleButton.IsChecked = isChecked is 1;
+    }
+    private void SerialPortToolsPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (!_isLoaded)
         {
-            // Print the header.
-            Debug.Write("CodePage identifier and name     ");
-            Debug.Write("BrDisp   BrSave   ");
-            Debug.Write("MNDisp   MNSave   ");
-            Debug.WriteLine("1-Byte   ReadOnly ");
+            _isLoaded = true;
 
-            // For every encoding, get the property values.
-            foreach (EncodingInfo ei in Encoding.GetEncodings())
+            string defaultBaud;
+            string defaultPart;
+            string defaultStop;
+            int defaultData;
+            string defaultEncoding;
+
+            using (var reader = File.OpenText(FsSetToml))
             {
-                Encoding e = ei.GetEncoding();
+                var sPsettingstomlr = TOML.Parse(reader);             //ËØªÂèñTOML
+                //Debug.WriteLine("Print:" + SPsettingstomlr["FSGravitySettings"]["DefaultNvPage"]);
+                //NvPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
+                var spSettings = "SerialPortSettings";
+                //Ê£ÄÊü•ËÆæÁΩÆÊòØÂê¶‰∏∫NULL
+                defaultBaud = TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultBAUD", "115200");
+                defaultPart = TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultParity", "None");
+                defaultStop = TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultSTOP", "One");
+                defaultData = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultDATA", "8"));
+                defaultEncoding = TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultEncoding", "utf-8");
 
-                Debug.Write(string.Format("{0,-6} {1,-25} ", ei.CodePage, ei.Name));
-                Debug.Write(string.Format("{0,-8} {1,-8} ", e.IsBrowserDisplay, e.IsBrowserSave));
-                Debug.Write(string.Format("{0,-8} {1,-8} ", e.IsMailNewsDisplay, e.IsMailNewsSave));
-                Debug.WriteLine(string.Format("{0,-8} {1,-8} ", e.IsSingleByte, e.IsReadOnly));
+                TxHex = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultTXHEX", "0"));
+                RxHex = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultRXHEX", "0"));
+                Dtr = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultDTR", "1"));
+                Rts = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultRTS", "0"));
+                ShTime = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultSTime", "0"));
+                AutoTr = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultAUTOSco", "1"));
+                AutoSaveSet = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "AutoDaveSet", "1"));
+                AutoSerCom = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "AutoSerichCom", "1"));
+                AutoConnect = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "AutoConnect", "1"));
+                TxNewLine = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultTXNewLine", "0"));
+
+                /*
+                ["DefaultBAUD"] = "115200",
+                ["DefaultParity"] = "None",
+                ["DefaultSTOP"] = "One",
+                ["DefaultDATA"] = "8",
+                ["DefaultRXHEX"] = "0",
+                ["DefaultTXHEX"] = "0",
+                ["DefaultDTR"] = "1",
+                ["DefaultRTS"] = "0",
+                ["DefaultSTime"] = "0",
+                ["DefaultAUTOSco"] = "1",
+                */
             }
-        }
+            LanguageSetting();
+            // Âú®‰Ω†ÁöÑ‰ª£Á†ÅÂêéÂè∞ÔºåÂÆö‰πâ‰∏Ä‰∏™List<string>‰Ωú‰∏∫Êï∞ÊçÆÊ∫ê
+            var baudRates = new List<string>
+            {
+                "75", "110", "134", "150", "300", "600", "1200", "1800", "2400", "4800", "7200", "9600", "14400", "19200", "38400", "57600", "74880","115200", "128000", "230400", "250000", "500000", "1000000", "2000000"
+            };
+            // Â∞ÜComboBoxÁöÑItemsSourceÂ±ûÊÄßÁªëÂÆöÂà∞Ëøô‰∏™Êï∞ÊçÆÊ∫ê
+            BandComboBox.ItemsSource = baudRates;
+            // ËÆæÁΩÆÈªòËÆ§ÈÄâÈ°π
+            BandComboBox.SelectedItem = defaultBaud; // Â∞Ü"9600"ËÆæÁΩÆ‰∏∫ÈªòËÆ§ÈÄâÈ°π
 
-        public void LaunageSetting()
+            var parRates = new List<ParityOption>
+            {
+                new() { DisplayText = LanguageText("parityNone"), Value = "None" },
+                new() { DisplayText = LanguageText("parityOdd"), Value = "Odd" },
+                new() { DisplayText = LanguageText("parityEven"), Value = "Even" },
+                new() { DisplayText = LanguageText("parityMark"), Value = "Mark" },
+                new() { DisplayText = LanguageText("paritySpace"), Value = "Space" }
+            };
+            ParComboBox.ItemsSource = parRates;
+            ParComboBox.DisplayMemberPath = "DisplayText";
+            ParComboBox.SelectedValuePath = "Value";
+            ParComboBox.SelectedValue = defaultPart;
+
+            var stopRates = new List<StopBitsOption>
+            {
+                //new StopBitsOption { DisplayText = LanguageText("stopNone"), Value = "None" },
+                new() { DisplayText = LanguageText("stopOne"), Value = "One" },
+                new() { DisplayText = LanguageText("stopOnePointFive"), Value = "OnePointFive" },
+                new() { DisplayText = LanguageText("stopTwo"), Value = "Two" }
+            };
+            StopComboBox.ItemsSource = stopRates;
+            StopComboBox.DisplayMemberPath = "DisplayText";
+            StopComboBox.SelectedValuePath = "Value";
+            StopComboBox.SelectedValue = defaultStop;
+
+            for (var j = 5; j < 9; ++j)
+            {
+                DataComboBox.Items.Add(j);
+            }
+            DataComboBox.SelectedItem = defaultData;
+            DataNumberBox.Value = defaultData;
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            // ÂàõÂª∫‰∏Ä‰∏™ List<string> Êù•Â≠òÂÇ®ÁºñÁ†ÅÂêçÁß∞
+            var encodings = new List<string> { "gb2312" };
+
+            // Â∞ÜÁºñÁ†ÅÂêçÁß∞Ê∑ªÂä†Âà∞ List<string> ‰∏≠
+            encodings.AddRange(Encoding.GetEncodings().Select(encodingInfo => encodingInfo.Name));
+
+            EncodingComboBox.ItemsSource = encodings;
+            EncodingComboBox.SelectedItem = defaultEncoding;
+
+            COMButton_Click(this, new());
+
+            ToggleButtonIsChecked(RxHex, RxhexButton);
+            ToggleButtonIsChecked(TxHex, TxhexButton);
+
+            ToggleButtonIsChecked(Dtr, DtrButton);
+            CommonRes.SerialPort.DtrEnable = Dtr is 1;
+
+            ToggleButtonIsChecked(Rts, RtsButton);
+            CommonRes.SerialPort.RtsEnable = Rts is 1;
+
+            ToggleButtonIsChecked(ShTime, ShowTimeButton);
+            ToggleButtonIsChecked(AutoTr, AutoScrollButton);
+
+            //BorderBackRX.Background = backgroundColor;
+
+            ToggleButtonIsChecked(AutoSaveSet, SaveSetButton);
+            ToggleButtonIsChecked(AutoConnect, AutoConnectButton);
+            ToggleButtonIsChecked(TxNewLine, TxNewLineButton);
+
+            ToggleButtonIsChecked(AutoSerCom, AutoComButton);
+            if (AutoSerCom is 1)
+            {
+                TimerSerialPort = new(TimerSerialPortTick, null, 0, 1500);
+                AutoSerchComProgressRing.IsActive = true;
+            }
+            else AutoSerchComProgressRing.IsActive = false;
+
+            ToggleButtonIsChecked(AutoConnect, AutoConnectButton);
+            //ToggleButtonIsChecked();
+
+            //EncodingTest();
+        }
+    }
+
+    public void EncodingTest()
+    {
+        // Print the header.
+        Debug.Write("CodePage identifier and name     ");
+        Debug.Write("BrDisp   BrSave   ");
+        Debug.Write("MNDisp   MNSave   ");
+        Debug.WriteLine("1-Byte   ReadOnly ");
+
+        // For every encoding, get the property values.
+        foreach (var ei in Encoding.GetEncodings())
         {
-            BaudTextBlock.Text = LanguageText("baudRatel");
-            PartTextBlock.Text = LanguageText("parityl");
-            StopTextBlock.Text = LanguageText("stopBits");
-            DataTextBlock.Text = LanguageText("dataBits");
-            EncodingTextBlock.Text = LanguageText("encoding");
-            RXHEXButton.Content = LanguageText("rxHexl");
-            TXHEXButton.Content = LanguageText("txHexl");
-            TXNewLineButton.Content = LanguageText("txNewLinel");
-            SaveSetButton.Content = LanguageText("autoSaveSetl");
-            AUTOScrollButton.Content = LanguageText("autoScrolll");
-            AutoComButton.Content = LanguageText("autoSerichComl");
-            AutoConnectButton.Content = LanguageText("autoConnectl");
+            var e = ei.GetEncoding();
+
+            Debug.Write($"{ei.CodePage,-6} {ei.Name,-25} ");
+            Debug.Write($"{e.IsBrowserDisplay,-8} {e.IsBrowserSave,-8} ");
+            Debug.Write($"{e.IsMailNewsDisplay,-8} {e.IsMailNewsSave,-8} ");
+            Debug.WriteLine($"{e.IsSingleByte,-8} {e.IsReadOnly,-8} ");
+        }
+    }
+
+    public void LanguageSetting()
+    {
+        BaudTextBlock.Text = LanguageText("baudRatel");
+        PartTextBlock.Text = LanguageText("parityl");
+        StopTextBlock.Text = LanguageText("stopBits");
+        DataTextBlock.Text = LanguageText("dataBits");
+        EncodingTextBlock.Text = LanguageText("encoding");
+        RxhexButton.Content = LanguageText("rxHexl");
+        TxhexButton.Content = LanguageText("txHexl");
+        TxNewLineButton.Content = LanguageText("txNewLinel");
+        SaveSetButton.Content = LanguageText("autoSaveSetl");
+        AutoScrollButton.Content = LanguageText("autoScrolll");
+        AutoComButton.Content = LanguageText("autoSerichComl");
+        AutoConnectButton.Content = LanguageText("autoConnectl");
             
-            //COMRstInfoBar.Message = LanguageText("comRstInfoBar");
+        //COMRstInfoBar.Message = LanguageText("comRstInfoBar");
 
-            List<MCUTool> mcuTools = new List<MCUTool>()
-                {
-                    new MCUTool() { Name = "None", Description = LanguageText("mcuToolNone") },
-                    new MCUTool() { Name = "ESP8266", Description = LanguageText("mcuToolEsp8266") },
-                    new MCUTool() { Name = "RP2040        M", Description = LanguageText("mcuToolRP2040MPY") },
-                    new MCUTool() { Name = "LPC1768        SM", Description = LanguageText("mcuToolLPC1768SMOOTH") },
-                };
-
-            ChipToolKitComboBox.ItemsSource = mcuTools;
-            ChipToolKitComboBox.SelectedItem = mcuTools[1];
-        }
-        public void TimerTick(Object stateInfo)
+        var mcuTools = new List<McuTool>
         {
+            new() { Name = "None", Description = LanguageText("mcuToolNone") },
+            new() { Name = "ESP8266", Description = LanguageText("mcuToolEsp8266") },
+            new() { Name = "RP2040        M", Description = LanguageText("mcuToolRP2040MPY") },
+            new() { Name = "LPC1768        SM", Description = LanguageText("mcuToolLPC1768SMOOTH") },
+        };
+
+        ChipToolKitComboBox.ItemsSource = mcuTools;
+        ChipToolKitComboBox.SelectedItem = mcuTools[1];
+    }
+    public void TimerTick(object stateInfo)
+    {
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            //RXDATA_ClickAsync(null, null);
+            Page1.Current.CurrentTime = DateTime.Now;     //Ëé∑ÂèñÂΩìÂâçÊó∂Èó¥
+
+            if (RunT is 0) RunPbt += 2;
+
+            else RunPbt -= 2;
+
+            RunTProgressBar.Value = RunPbt;
+            RunT = RunPbt switch
+            {
+                100 => 1,
+                0 => 0,
+                _ => RunT
+            };
+
+            if (CommonRes.SerialPort.IsOpen)
+            {
+                FsBorderIsChecked(CommonRes.SerialPort.DsrHolding ? 1 : 0, DsrBorder, DsrTextBlock);
+
+                FsBorderIsChecked(CommonRes.SerialPort.CtsHolding ? 1 : 0, CtsBorder, CtsTextBlock);
+
+                FsBorderIsChecked(CommonRes.SerialPort.CDHolding ? 1 : 0, CdhBorder, CdhTextBlock);
+            }
+        });
+    }
+        
+    private void PinChanged(object sender, SerialPinChangedEventArgs e)
+    {
+        if (e.EventType == SerialPinChange.Ring)
+        {
+            var ri = 0;
+            // RI ‰ø°Âè∑‰ΩøËÉΩ
+            // RI ‰ø°Âè∑Êú™‰ΩøËÉΩ
+            ri = ri is 0 ? 1 : 0;
+
+            FsBorderIsChecked(ri, RiBorder, RiTextBlock);
+        }
+    }
+
+    public class SerialPortInfo
+    {
+        public string Name { get; protected set; }
+
+        public string Description { get; protected set; }
+
+        public string Manufacturer { get; protected set; }
+
+        private static Dictionary<string, SerialPortInfo> _portInfoDictionary = new();
+
+        static SerialPortInfo()
+        {
+            // Âú®Â∫îÁî®Á®ãÂ∫èÂêØÂä®Êó∂Ëé∑ÂèñÊâÄÊúâ‰∏≤Âè£ÁöÑËÆæÂ§áÊèèËø∞
+            RefreshPortInfo();
+            GetPortInfo = 1;
+        }
+
+        public static void RefreshPortInfo(string portName = null)
+        {
+            var queryString = "SELECT * FROM Win32_PnPEntity";
+            if (portName is not null)
+            {
+                queryString += $" WHERE Name LIKE '%{portName}%'";
+            }
+
+            using var searcher = new ManagementObjectSearcher(queryString);
+            var hardInfos = searcher.Get();
+            foreach (var hardInfo in hardInfos)
+            {
+                if (hardInfo.Properties["Name"].Value is not null &&
+                    hardInfo.Properties["Name"].Value.ToString().Contains("COM"))
+                {
+                    var temp = new SerialPortInfo();
+                    var s = hardInfo.Properties["Name"].Value.ToString();
+                    var p = s.IndexOf('(');
+                    temp.Description = s[..p];
+                    temp.Name = s.Substring(p + 1, s.Length - p - 2);
+                    temp.Manufacturer = hardInfo.Properties[nameof(Manufacturer)].Value.ToString();
+                    _portInfoDictionary[temp.Name] = temp;
+                }
+            }
+        }
+
+        public static SerialPortInfo GetPort(string portName)
+        {
+            if (!_portInfoDictionary.ContainsKey(portName))
+            {
+                // Â¶ÇÊûúÂ≠óÂÖ∏‰∏≠Ê≤°ÊúâÊåáÂÆöÁöÑ‰∏≤Âè£ÂêçÁß∞ÔºåÂà∑Êñ∞‰∏≤Âè£‰ø°ÊÅØ
+                RefreshPortInfo(portName);
+            }
+
+            return _portInfoDictionary.GetValueOrDefault(portName);  // Â¶ÇÊûúÊ≤°ÊúâÊâæÂà∞ÂåπÈÖçÁöÑ‰∏≤Âè£ÔºåËøîÂõûnull
+        }
+    }
+
+    public void TimerSerialPortTick(object stateInfo)       //‰∏≤Âè£ÁÉ≠ÊèíÊãîÊ£ÄÊµã
+    {
+        if (GetPortInfo is 0) return;
+        var nowPort = SerialPort.GetPortNames(); // Ëé∑ÂèñÂΩìÂâçÊâÄÊúâÂèØÁî®ÁöÑ‰∏≤Âè£ÂêçÁß∞
+        nowPort = new HashSet<string>(nowPort).ToArray(); // ÁßªÈô§ÂèØËÉΩÁöÑÈáçÂ§çÈ°π
+
+        var lastPort = ArryPort ?? nowPort; // Ëé∑Âèñ‰∏ä‰∏ÄÊ¨°Ê£ÄÊµãÂà∞ÁöÑ‰∏≤Âè£ÂêçÁß∞ÔºåÂ¶ÇÊûúÊ≤°ÊúâÂàô‰ΩøÁî®ÂΩìÂâç‰∏≤Âè£ÂêçÁß∞
+        ArryPort = nowPort; // Êõ¥Êñ∞‰∏ä‰∏ÄÊ¨°Ê£ÄÊµãÂà∞ÁöÑ‰∏≤Âè£ÂêçÁß∞
+
+        var lastPortSet = new HashSet<string>(lastPort); // ÂàõÂª∫‰∏Ä‰∏™ÂåÖÂê´‰∏ä‰∏ÄÊ¨°‰∏≤Âè£ÂêçÁß∞ÁöÑHashSet
+        var nowPortSet = new HashSet<string>(nowPort); // ÂàõÂª∫‰∏Ä‰∏™ÂåÖÂê´ÂΩìÂâç‰∏≤Âè£ÂêçÁß∞ÁöÑHashSet
+
+        var insertedPorts = nowPortSet.Except(lastPortSet).ToArray(); // ÊâæÂá∫Êñ∞ÊèíÂÖ•ÁöÑ‰∏≤Âè£
+        var removedPorts = lastPortSet.Except(nowPortSet).ToArray(); // ÊâæÂá∫Ë¢´ÊãîÂá∫ÁöÑ‰∏≤Âè£
+
+        if (insertedPorts.Length > 0 || removedPorts.Length > 0) // Â¶ÇÊûúÊúâÊñ∞ÊèíÂÖ•ÁöÑ‰∏≤Âè£ÊàñËÄÖÊúâ‰∏≤Âè£Ë¢´ÊãîÂá∫
+        {
+            DispatcherQueue.TryEnqueue(() => // Âú®UIÁ∫øÁ®ã‰∏≠ÊâßË°å‰ª•‰∏ãÊìç‰Ωú
+            {
+                var selectedPort = (string)ComComboBox.SelectedItem; // Ëé∑ÂèñÂΩìÂâçÈÄâ‰∏≠ÁöÑ‰∏≤Âè£
+
+                foreach (var port in insertedPorts) // ÈÅçÂéÜÊâÄÊúâÊñ∞ÊèíÂÖ•ÁöÑ‰∏≤Âè£
+                {
+                    var info = SerialPortInfo.GetPort(port); // Ëé∑Âèñ‰∏≤Âè£ÁöÑ‰ø°ÊÅØ
+                    Page1.Current.RxTextBox.Text += $"{port}{LanguageText("spPlogin")}\r\n"; // Êõ¥Êñ∞ÊñáÊú¨Ê°ÜÁöÑÂÜÖÂÆπ
+
+                }
+
+                foreach (var port in removedPorts) // ÈÅçÂéÜÊâÄÊúâË¢´ÊãîÂá∫ÁöÑ‰∏≤Âè£
+                {
+                    Page1.Current.RxTextBox.Text += $"{port}{LanguageText("spPullout")}\r\n"; // Êõ¥Êñ∞ÊñáÊú¨Ê°ÜÁöÑÂÜÖÂÆπ
+                    if (PortIsConnect is 1 && port == selectedPort) // Â¶ÇÊûúÂΩìÂâçËøûÊé•ÁöÑ‰∏≤Âè£Ë¢´ÊãîÂá∫ÔºåÂàôÊñ≠ÂºÄËøûÊé•
+                    {
+                        MainPage1.Current.SerialPortConnectToggleButton_Click(null, null);
+                    }
+                }
+
+                ComComboBox.Items.Clear(); // Ê∏ÖÁ©∫ÁªÑÂêàÊ°ÜÁöÑÂÜÖÂÆπ
+                ComListview.Items.Clear(); // Ê∏ÖÁ©∫ÂàóË°®ËßÜÂõæÁöÑÂÜÖÂÆπ
+
+                foreach (var port in nowPort) // ÈÅçÂéÜÂΩìÂâçÊâÄÊúâÂèØÁî®ÁöÑ‰∏≤Âè£
+                {
+                    ComComboBox.Items.Add(port); // Â∞Ü‰∏≤Âè£ÂêçÁß∞Ê∑ªÂä†Âà∞ÁªÑÂêàÊ°Ü‰∏≠
+                    ComListview.Items.Add(port); // Â∞Ü‰∏≤Âè£ÂêçÁß∞Ê∑ªÂä†Âà∞ÂàóË°®ËßÜÂõæ‰∏≠
+                }
+
+                ComComboBox.SelectedItem = selectedPort; // Â∞Ü‰πãÂâçÈÄâ‰∏≠ÁöÑ‰∏≤Âè£ÈáçÊñ∞ÈÄâ‰∏≠
+                ComListview.SelectedItem = selectedPort; // Â∞Ü‰πãÂâçÈÄâ‰∏≠ÁöÑ‰∏≤Âè£ÈáçÊñ∞ÈÄâ‰∏≠
+
+                if (PortIsConnect is 0 && ComComboBox.SelectedItem is null && insertedPorts.Length > 0) // Â¶ÇÊûúÊ≤°ÊúâÈÄâ‰∏≠ÁöÑ‰∏≤Âè£ÔºåÂπ∂‰∏îÊúâÊñ∞ÊèíÂÖ•ÁöÑ‰∏≤Âè£
+                {
+                    ComComboBox.SelectedItem = insertedPorts[0]; // ÈÄâ‰∏≠Êñ∞ÊèíÂÖ•ÁöÑ‰∏≤Âè£
+                    ComListview.SelectedItem = insertedPorts[0]; // ÈÄâ‰∏≠Êñ∞ÊèíÂÖ•ÁöÑ‰∏≤Âè£
+                    if (AutoConnectButton.IsChecked == true) // Â¶ÇÊûúËÆæÁΩÆ‰∫ÜËá™Âä®ËøûÊé•ÔºåÂàôÂ∞ùËØïËøûÊé•Êñ∞ÊèíÂÖ•ÁöÑ‰∏≤Âè£
+                    {
+                        MainPage1.Current.SerialPortConnectToggleButton_Click(null, null);
+                    }
+                }
+            });
+        }
+    }
+    /*
+    public void TimerSerialPortTick(Object stateInfo)       //‰∏≤Âè£ÁÉ≠ÊèíÊãîÊ£ÄÊµã
+    {
+        int InOut = 0;
+        int i = 0;
+        int j = 0;
+        string[] LastPort = ArryPort;
+        string[] NowPort = SerialPort.GetPortNames();
+        string InOutCom;
+        string commne = "";
+
+        if (LastPort is null)
+        {
+            LastPort = SerialPort.GetPortNames();
+        }
+        if (Enumerable.SequenceEqual(LastPort, NowPort) == false || ArryPort is null)
+        {
+            if (LastPort.Length < NowPort.Length)
+            {
+                InOut = 1;
+                for (j = 0; j < NowPort.Length; j++)         //ÈÅçÂéÜÊèíÂÖ•ÁöÑËÆæÂ§á
+                {
+                    Debug.WriteLine("SER J " + j);
+                    for (i = 0; i < LastPort.Length; i++)
+                    {
+                        if (NowPort[j] == LastPort[i])
+                        {
+                            Debug.WriteLine("SER I " + i);
+                            break;
+                        }
+                    }
+                    Debug.WriteLine("Now" + i);
+                }
+                Debug.WriteLine("=" + i);
+            }
+            else if (LastPort.Length > NowPort.Length)
+            {
+                InOut = 0;
+                for (i = 0; i < LastPort.Length; i++)       //ÈÅçÂéÜÊãîÂá∫ÁöÑËÆæÂ§á
+                {
+                    for (j = 0; j < NowPort.Length; j++)
+                    {
+                        if (LastPort[i] == NowPort[j])
+                        {
+                            break;
+                        }
+                    }
+                }
+                Debug.WriteLine("Last" + j);
+            }
+            Debug.WriteLine("INOUT" + InOut);
+
+            if (InOut is 1)
+            {
+                InOutCom = NowPort[i];
+            }
+            else
+            {
+                InOutCom = LastPort[j];
+            }
             DispatcherQueue.TryEnqueue(() =>
             {
-                //RXDATA_ClickAsync(null, null);
-                page1.current_time = System.DateTime.Now;     //ªÒ»°µ±«∞ ±º‰
-
-                if (RunT == 0) RunPBT += 2;
-
-                else RunPBT -= 2;
-
-                RunTProgressBar.Value = RunPBT;
-                if (RunPBT == 100)
+                if (COMComboBox.SelectedItem is not null)
                 {
-                    RunT = 1;
+                    commne = (string)COMComboBox.SelectedItem;
                 }
-                else if (RunPBT == 0)
+                if (InOut != 0)
                 {
-                    RunT = 0;
-                }
+                    string commme = (string)COMComboBox.SelectedItem;
+                    SerialPortInfo info = SerialPortInfo.GetPort(InOutCom);
+                    RXTextBox.Text = RXTextBox.Text + InOutCom + ": " + info.Description + " " + LanguageText("spPlogin") + "\r\n";
+                    COMComboBox.Items.Clear();
+                    COMListview.Items.Clear();
+                    //COMListview.ItemsSource = null;
+                    //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
+                    ArryPort = SerialPort.GetPortNames();
 
-
-                if (CommonRes._serialPort.IsOpen == true)
-                {
-                    if (CommonRes._serialPort.DsrHolding == true)
+                    for (int k = 0; k < NowPort.Length; k++)
                     {
-                        FsBorderIsChecked(1, DSRBorder, DSRTextBlock);
+                        //string portDescription = ports.Find(p => p.Name == ArryPort[k])?.Description;  // Êü•ÊâæÂØπÂ∫î‰∏≤Âè£ÁöÑËÆæÂ§áÊèèËø∞
+
+                        COMComboBox.Items.Add(ArryPort[k]);                           //Â∞ÜÊâÄÊúâÁöÑÂèØÁî®‰∏≤Âè£Âè∑Ê∑ªÂä†Âà∞Á´ØÂè£ÂØπÂ∫îÁöÑÁªÑÂêàÊ°Ü‰∏≠
+                        COMListview.Items.Add(ArryPort[k]);
                     }
-                    else
+                    COMComboBox.SelectedItem = commme;
+                    COMListview.SelectedItem = commne;
+                    if (portIsConnect is 0)
                     {
-                        FsBorderIsChecked(0, DSRBorder, DSRTextBlock);
-                    }
-                    if (CommonRes._serialPort.CtsHolding == true)
-                    {
-                        FsBorderIsChecked(1, CTSBorder, CTSTextBlock);
-                    }
-                    else
-                    {
-                        FsBorderIsChecked(0, CTSBorder, CTSTextBlock);
-                    }
-                    if (CommonRes._serialPort.CDHolding == true)
-                    {
-                        FsBorderIsChecked(1, CDHBorder, CDHTextBlock);
-                    }
-                    else
-                    {
-                        FsBorderIsChecked(0, CDHBorder, CDHTextBlock);
-                    }
-                }
-
-            });
-
-        }
-        
-        private void PinChanged(object sender, SerialPinChangedEventArgs e)
-        {
-            if (e.EventType == System.IO.Ports.SerialPinChange.Ring)
-            {
-                int RI = 0;
-                if (RI == 0)
-                {
-                    // RI –≈∫≈ πƒ‹
-                    RI = 1;
-                    FsBorderIsChecked(RI, RIBorder, RITextBlock);
-
-                }
-                else
-                {
-                    // RI –≈∫≈Œ¥ πƒ‹
-                    RI = 0;
-                    FsBorderIsChecked(RI, RIBorder, RITextBlock);
-
-                }
-            }
-        }
-
-        public class SerialPortInfo
-        {
-            public string Name { get; protected set; }
-            public string Description { get; protected set; }
-            public string Manufacturer { get; protected set; }
-
-            private static Dictionary<string, SerialPortInfo> portInfoDictionary = new Dictionary<string, SerialPortInfo>();
-
-            static SerialPortInfo()
-            {
-                // ‘⁄”¶”√≥Ã–Ú∆Ù∂Ø ±ªÒ»°À˘”–¥Æø⁄µƒ…Ë±∏√Ë ˆ
-                RefreshPortInfo();
-                getPortInfo = 1;
-            }
-
-            public static void RefreshPortInfo(string portName = null)
-            {
-                string queryString = "SELECT * FROM Win32_PnPEntity";
-                if (portName != null)
-                {
-                    queryString += $" WHERE Name LIKE '%{portName}%'";
-                }
-
-                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(queryString))
-                {
-                    var hardInfos = searcher.Get();
-                    foreach (var hardInfo in hardInfos)
-                    {
-                        if ((hardInfo.Properties["Name"].Value != null) &&
-                            (hardInfo.Properties["Name"].Value.ToString().Contains("COM")))
+                        if (COMComboBox.SelectedItem is null)
                         {
-                            SerialPortInfo temp = new SerialPortInfo();
-                            string s = hardInfo.Properties["Name"].Value.ToString();
-                            int p = s.IndexOf('(');
-                            temp.Description = s.Substring(0, p);
-                            temp.Name = s.Substring(p + 1, s.Length - p - 2);
-                            temp.Manufacturer = hardInfo.Properties["Manufacturer"].Value.ToString();
-                            portInfoDictionary[temp.Name] = temp;
-                        }
-                    }
-                }
-            }
-
-            public static SerialPortInfo GetPort(string portName)
-            {
-                if (!portInfoDictionary.ContainsKey(portName))
-                {
-                    // »Áπ˚◊÷µ‰÷–√ª”–÷∏∂®µƒ¥Æø⁄√˚≥∆£¨À¢–¬¥Æø⁄–≈œ¢
-                    RefreshPortInfo(portName);
-                }
-
-                if (portInfoDictionary.ContainsKey(portName))
-                {
-                    return portInfoDictionary[portName];
-                }
-
-                return null;  // »Áπ˚√ª”–’“µΩ∆•≈‰µƒ¥Æø⁄£¨∑µªÿnull
-            }
-        }
-
-        public void TimerSerialPortTick(Object stateInfo)       //¥Æø⁄»»≤Â∞ŒºÏ≤‚
-        {
-            if (getPortInfo == 0) return;
-            string[] NowPort = SerialPort.GetPortNames(); // ªÒ»°µ±«∞À˘”–ø…”√µƒ¥Æø⁄√˚≥∆
-            NowPort = new HashSet<string>(NowPort).ToArray(); // “∆≥˝ø…ƒ‹µƒ÷ÿ∏¥œÓ
-
-            string[] LastPort = ArryPort ?? NowPort; // ªÒ»°…œ“ª¥ŒºÏ≤‚µΩµƒ¥Æø⁄√˚≥∆£¨»Áπ˚√ª”–‘Ú π”√µ±«∞¥Æø⁄√˚≥∆
-            ArryPort = NowPort; // ∏¸–¬…œ“ª¥ŒºÏ≤‚µΩµƒ¥Æø⁄√˚≥∆
-
-            var lastPortSet = new HashSet<string>(LastPort); // ¥¥Ω®“ª∏ˆ∞¸∫¨…œ“ª¥Œ¥Æø⁄√˚≥∆µƒHashSet
-            var nowPortSet = new HashSet<string>(NowPort); // ¥¥Ω®“ª∏ˆ∞¸∫¨µ±«∞¥Æø⁄√˚≥∆µƒHashSet
-
-            var insertedPorts = nowPortSet.Except(lastPortSet).ToArray(); // ’“≥ˆ–¬≤Â»Îµƒ¥Æø⁄
-            var removedPorts = lastPortSet.Except(nowPortSet).ToArray(); // ’“≥ˆ±ª∞Œ≥ˆµƒ¥Æø⁄
-
-            if (insertedPorts.Length > 0 || removedPorts.Length > 0) // »Áπ˚”––¬≤Â»Îµƒ¥Æø⁄ªÚ’ﬂ”–¥Æø⁄±ª∞Œ≥ˆ
-            {
-                DispatcherQueue.TryEnqueue(() => // ‘⁄UIœﬂ≥Ã÷–÷¥––“‘œ¬≤Ÿ◊˜
-                {
-                    string selectedPort = (string)COMComboBox.SelectedItem; // ªÒ»°µ±«∞—°÷–µƒ¥Æø⁄
-
-                    foreach (var port in insertedPorts) // ±È¿˙À˘”––¬≤Â»Îµƒ¥Æø⁄
-                    {
-                        SerialPortInfo info = SerialPortInfo.GetPort(port); // ªÒ»°¥Æø⁄µƒ–≈œ¢
-                        page1.RXTextBox.Text += $"{port}{LanguageText("spPlogin")}\r\n"; // ∏¸–¬Œƒ±æøÚµƒƒ⁄»›
-
-                    }
-
-                    foreach (var port in removedPorts) // ±È¿˙À˘”–±ª∞Œ≥ˆµƒ¥Æø⁄
-                    {
-                        page1.RXTextBox.Text += $"{port}{LanguageText("spPullout")}\r\n"; // ∏¸–¬Œƒ±æøÚµƒƒ⁄»›
-                        if (portIsConnect == 1 && port == selectedPort) // »Áπ˚µ±«∞¡¨Ω”µƒ¥Æø⁄±ª∞Œ≥ˆ£¨‘Ú∂œø™¡¨Ω”
-                        {
-                            mainPage1.SerialPortConnectToggleButton_Click(null, null);
-                        }
-                    }
-
-                    COMComboBox.Items.Clear(); // «Âø’◊È∫œøÚµƒƒ⁄»›
-                    COMListview.Items.Clear(); // «Âø’¡–±Ì ”Õºµƒƒ⁄»›
-
-                    foreach (var port in NowPort) // ±È¿˙µ±«∞À˘”–ø…”√µƒ¥Æø⁄
-                    {
-                        COMComboBox.Items.Add(port); // Ω´¥Æø⁄√˚≥∆ÃÌº”µΩ◊È∫œøÚ÷–
-                        COMListview.Items.Add(port); // Ω´¥Æø⁄√˚≥∆ÃÌº”µΩ¡–±Ì ”Õº÷–
-                    }
-
-                    COMComboBox.SelectedItem = selectedPort; // Ω´÷Æ«∞—°÷–µƒ¥Æø⁄÷ÿ–¬—°÷–
-                    COMListview.SelectedItem = selectedPort; // Ω´÷Æ«∞—°÷–µƒ¥Æø⁄÷ÿ–¬—°÷–
-
-                    if (portIsConnect == 0 && COMComboBox.SelectedItem == null && insertedPorts.Length > 0) // »Áπ˚√ª”–—°÷–µƒ¥Æø⁄£¨≤¢«“”––¬≤Â»Îµƒ¥Æø⁄
-                    {
-                        COMComboBox.SelectedItem = insertedPorts[0]; // —°÷––¬≤Â»Îµƒ¥Æø⁄
-                        COMListview.SelectedItem = insertedPorts[0]; // —°÷––¬≤Â»Îµƒ¥Æø⁄
-                        if (AutoConnectButton.IsChecked == true) // »Áπ˚…Ë÷√¡À◊‘∂Ø¡¨Ω”£¨‘Ú≥¢ ‘¡¨Ω”–¬≤Â»Îµƒ¥Æø⁄
-                        {
-                            mainPage1.SerialPortConnectToggleButton_Click(null, null);
-                        }
-                    }
-                });
-            }
-        }
-        /*
-        public void TimerSerialPortTick(Object stateInfo)       //¥Æø⁄»»≤Â∞ŒºÏ≤‚
-        {
-            int InOut = 0;
-            int i = 0;
-            int j = 0;
-            string[] LastPort = ArryPort;
-            string[] NowPort = SerialPort.GetPortNames();
-            string InOutCom;
-            string commne = "";
-
-            if (LastPort == null)
-            {
-                LastPort = SerialPort.GetPortNames();
-            }
-            if (Enumerable.SequenceEqual(LastPort, NowPort) == false || ArryPort == null)
-            {
-                if (LastPort.Length < NowPort.Length)
-                {
-                    InOut = 1;
-                    for (j = 0; j < NowPort.Length; j++)         //±È¿˙≤Â»Îµƒ…Ë±∏
-                    {
-                        Debug.WriteLine("SER J " + j);
-                        for (i = 0; i < LastPort.Length; i++)
-                        {
-                            if (NowPort[j] == LastPort[i])
-                            {
-                                Debug.WriteLine("SER I " + i);
-                                break;
-                            }
-                        }
-                        Debug.WriteLine("Now" + i);
-                    }
-                    Debug.WriteLine("=" + i);
-                }
-                else if (LastPort.Length > NowPort.Length)
-                {
-                    InOut = 0;
-                    for (i = 0; i < LastPort.Length; i++)       //±È¿˙∞Œ≥ˆµƒ…Ë±∏
-                    {
-                        for (j = 0; j < NowPort.Length; j++)
-                        {
-                            if (LastPort[i] == NowPort[j])
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    Debug.WriteLine("Last" + j);
-                }
-                Debug.WriteLine("INOUT" + InOut);
-
-
-                if (InOut == 1)
-                {
-                    InOutCom = NowPort[i];
-                }
-                else
-                {
-                    InOutCom = LastPort[j];
-                }
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    if (COMComboBox.SelectedItem != null)
-                    {
-                        commne = (string)COMComboBox.SelectedItem;
-                    }
-                    if (InOut != 0)
-                    {
-                        string commme = (string)COMComboBox.SelectedItem;
-                        SerialPortInfo info = SerialPortInfo.GetPort(InOutCom);
-                        RXTextBox.Text = RXTextBox.Text + InOutCom + ": " + info.Description + " " + LanguageText("spPlogin") + "\r\n";
-                        COMComboBox.Items.Clear();
-                        COMListview.Items.Clear();
-                        //COMListview.ItemsSource = null;
-                        //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
-                        ArryPort = SerialPort.GetPortNames();
-                        
-                        for (int k = 0; k < NowPort.Length; k++)
-                        {
-                            //string portDescription = ports.Find(p => p.Name == ArryPort[k])?.Description;  // ≤È’“∂‘”¶¥Æø⁄µƒ…Ë±∏√Ë ˆ
-                            
-                            COMComboBox.Items.Add(ArryPort[k]);                           //Ω´À˘”–µƒø…”√¥Æø⁄∫≈ÃÌº”µΩ∂Àø⁄∂‘”¶µƒ◊È∫œøÚ÷–
-                            COMListview.Items.Add(ArryPort[k]);
-                        }
-                        COMComboBox.SelectedItem = commme;
-                        COMListview.SelectedItem = commne;
-                        if (portIsConnect == 0)
-                        {
-                            if (COMComboBox.SelectedItem == null)
-                            {
-                                COMComboBox.SelectedItem = InOutCom;
-                                COMListview.SelectedItem = InOutCom;
-                                if (AutoConnectButton.IsChecked == true)
-                                {
-                                    CONTButton_Click(null, null);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        RXTextBox.Text = RXTextBox.Text + InOutCom + LanguageText("spPullout") + "\r\n";
-                        if (portIsConnect == 1)                                                   //◊‘∂Ø∂œø™“—∞Œ≥ˆµƒ…Ë±∏¥Æø⁄¡¨Ω”
-                        {
-                            if (InOutCom == (string)COMComboBox.SelectedItem)
+                            COMComboBox.SelectedItem = InOutCom;
+                            COMListview.SelectedItem = InOutCom;
+                            if (AutoConnectButton.IsChecked == true)
                             {
                                 CONTButton_Click(null, null);
                             }
                         }
-
-                        COMComboBox.Items.Clear();
-                        COMListview.Items.Clear();
-                        //COMListview.ItemsSource = null;
-                        //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
-                        ArryPort = SerialPort.GetPortNames();
-                        for (int k = 0; k < NowPort.Length; k++)
+                    }
+                }
+                else
+                {
+                    RXTextBox.Text = RXTextBox.Text + InOutCom + LanguageText("spPullout") + "\r\n";
+                    if (portIsConnect is 1)                                                   //Ëá™Âä®Êñ≠ÂºÄÂ∑≤ÊãîÂá∫ÁöÑËÆæÂ§á‰∏≤Âè£ËøûÊé•
+                    {
+                        if (InOutCom == (string)COMComboBox.SelectedItem)
                         {
-                            COMComboBox.Items.Add(ArryPort[k]);                           //Ω´À˘”–µƒø…”√¥Æø⁄∫≈ÃÌº”µΩ∂Àø⁄∂‘”¶µƒ◊È∫œøÚ÷–
-                            COMListview.Items.Add(ArryPort[k]);
+                            CONTButton_Click(null, null);
                         }
-                        COMComboBox.SelectedItem = commne;
-                        COMListview.SelectedItem = commne;
                     }
-                });
-            }
-        }
-        */
-        private async void COMButton_Click(object sender, RoutedEventArgs e)
-        {
-            //COMButton.Content = "Clicked";
-            await SearchAndAddSerialToComboBoxAsync(CommonRes._serialPort, COMComboBox);           //…®√Ë≤¢Ω´¥Æø⁄ÃÌº”÷¡œ¬¿≠¡–±Ì
 
-            async Task SearchAndAddSerialToComboBoxAsync(SerialPort MyPort, ComboBox MyBox)
-            {
-                page1.RXTextBox.Text = page1.RXTextBox.Text + LanguageText("startSerichSP") + "\r\n";
-                string commme = (string)COMComboBox.SelectedItem;           //º«“‰¥Æø⁄√˚
-                ArryPort = SerialPort.GetPortNames();                       //SerialPort.GetPortNames()∫Ø ˝π¶ƒ‹Œ™ªÒ»°º∆À„ª˙À˘”–ø…”√¥Æø⁄£¨“‘◊÷∑˚¥Æ ˝◊È–Œ Ω ‰≥ˆ
-                ArryPort = new HashSet<string>(ArryPort).ToArray(); // “∆≥˝ø…ƒ‹µƒ÷ÿ∏¥œÓ
-                string scom = String.Join("\r\n", ArryPort);
-                //RXTextBox.Text = RXTextBox.Text + scom + "\r\n";
-                MyBox.Items.Clear();                                        //«Â≥˝µ±«∞◊È∫œøÚœ¬¿≠≤Àµ•ƒ⁄»›
-                COMListview.Items.Clear();
-                //COMListview.ItemsSource = null;
-                //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
-
-                for (int i = 0; i < ArryPort.Length; i++)
-                {
-                    MyBox.Items.Add(ArryPort[i]);                           //Ω´À˘”–µƒø…”√¥Æø⁄∫≈ÃÌº”µΩ∂Àø⁄∂‘”¶µƒ◊È∫œøÚ÷–
-                    COMListview.Items.Add(ArryPort[i]/* + (portDescription != null ? " | " + portDescription : "")*/);
-                    SerialPortInfo info = await Task.Run(() => SerialPortInfo.GetPort(ArryPort[i]));
-                    if (info != null)
+                    COMComboBox.Items.Clear();
+                    COMListview.Items.Clear();
+                    //COMListview.ItemsSource = null;
+                    //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
+                    ArryPort = SerialPort.GetPortNames();
+                    for (int k = 0; k < NowPort.Length; k++)
                     {
-                        page1.RXTextBox.Text += ArryPort[i] + ": " + info.Description + "\r\n";
+                        COMComboBox.Items.Add(ArryPort[k]);                           //Â∞ÜÊâÄÊúâÁöÑÂèØÁî®‰∏≤Âè£Âè∑Ê∑ªÂä†Âà∞Á´ØÂè£ÂØπÂ∫îÁöÑÁªÑÂêàÊ°Ü‰∏≠
+                        COMListview.Items.Add(ArryPort[k]);
                     }
-                    else
-                    {
-                        page1.RXTextBox.Text += ArryPort[i] + "\r\n";
-                    }
-                    //RXTextBox.Text += ArryPort[i] + "\r\n" + GetPortDescription(ArryPort[i]) + "\r\n";
+                    COMComboBox.SelectedItem = commne;
+                    COMListview.SelectedItem = commne;
                 }
-                //MyBox.Items.Add("COM0");
-                page1.RXTextBox.Text = page1.RXTextBox.Text + LanguageText("overSerichSP") + "\r\n";
-                COMComboBox.SelectedItem = commme;
-                COMListview.SelectedItem = commme;
-
-                
-            }
-            
-            Thread COMButtonIconRotation = new Thread(COMButtonIcon_Rotation);
-            COMButtonIconRotation.Start();
-
-        }
-        private void COMButtonIcon_Rotation(object name)
-        {
-            DispatcherQueue.TryEnqueue(() =>
-            {
-                COMButtonIcon.Rotation = -60;
-                COMButtonIconScalar.Duration = TimeSpan.FromMilliseconds(250);
             });
-            Thread.Sleep(300);
-            DispatcherQueue.TryEnqueue(() =>
-            {
-                COMButtonIcon.Rotation = 420;
-            });
-            Thread.Sleep(250);
-            DispatcherQueue.TryEnqueue(() =>
-            {
-                COMButtonIconScalar.Duration = TimeSpan.FromMilliseconds(0);
-                COMButtonIcon.Rotation = 60;
-                COMButtonIconScalar.Duration = TimeSpan.FromMilliseconds(250);
-            });
-            Thread.Sleep(60);
-            DispatcherQueue.TryEnqueue(() =>
-            {
-                COMButtonIcon.Rotation = 0;
-            });
-
-
         }
+    }
+    */
+    private async void COMButton_Click(object sender, RoutedEventArgs e)
+    {
+        //COMButton.Content = "Clicked";
+        await SearchAndAddSerialToComboBoxAsync(CommonRes.SerialPort, ComComboBox);           //Êâ´ÊèèÂπ∂Â∞Ü‰∏≤Âè£Ê∑ªÂä†Ëá≥‰∏ãÊãâÂàóË°®
 
-
-        public void SerialPortConnect()
+        async Task SearchAndAddSerialToComboBoxAsync(SerialPort myPort, ComboBox myBox)
         {
-            conCom = (string)COMComboBox.SelectedItem;
+            Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + LanguageText("startSerichSP") + "\r\n";
+            var comMem = (string)ComComboBox.SelectedItem;           //ËÆ∞ÂøÜ‰∏≤Âè£Âêç
+            ArryPort = SerialPort.GetPortNames();                       //SerialPort.GetPortNames()ÂáΩÊï∞ÂäüËÉΩ‰∏∫Ëé∑ÂèñËÆ°ÁÆóÊú∫ÊâÄÊúâÂèØÁî®‰∏≤Âè£Ôºå‰ª•Â≠óÁ¨¶‰∏≤Êï∞ÁªÑÂΩ¢ÂºèËæìÂá∫
+            ArryPort = new HashSet<string>(ArryPort).ToArray(); // ÁßªÈô§ÂèØËÉΩÁöÑÈáçÂ§çÈ°π
+            var scom = string.Join("\r\n", ArryPort);
+            //RXTextBox.Text = RXTextBox.Text + scom + "\r\n";
+            myBox.Items.Clear();                                        //Ê∏ÖÈô§ÂΩìÂâçÁªÑÂêàÊ°Ü‰∏ãÊãâËèúÂçïÂÜÖÂÆπ
+            ComListview.Items.Clear();
+            //COMListview.ItemsSource = null;
+            //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
 
-            string portName = (string)COMComboBox.SelectedItem;
-            int bandRate = Convert.ToInt32(BANDComboBox.SelectedItem);
-            string parity = ((ParityOption)PARComboBox.SelectedItem).Value;
-            string stopBits = ((StopBitsOption)STOPComboBox.SelectedItem).Value;
-            int dataBits = Convert.ToInt32(DATAComboBox.SelectedItem);
-            string encoding = (string)EncodingComboBox.SelectedItem;
-
-            page1.SerialPortConnrct(portName, bandRate, parity, stopBits, dataBits, 1500, encoding);
-
-            page1.RXTextBox.Text = page1.RXTextBox.Text + "BaudRate = " + Convert.ToInt32(BANDComboBox.SelectedItem) + "\r\n";
-            page1.RXTextBox.Text = page1.RXTextBox.Text + "Parity = " + (Parity)Enum.Parse(typeof(Parity), ((ParityOption)PARComboBox.SelectedItem).Value) + "\r\n";
-            page1.RXTextBox.Text = page1.RXTextBox.Text + "StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), ((StopBitsOption)STOPComboBox.SelectedItem).Value) + "\r\n";
-            page1.RXTextBox.Text = page1.RXTextBox.Text + "DataBits = " + Convert.ToInt32(DATAComboBox.SelectedItem) + "\r\n";
-            page1.RXTextBox.Text = page1.RXTextBox.Text + "Encoding = " + (string)EncodingComboBox.SelectedItem + "\r\n";
-            page1.RXTextBox.Text = page1.RXTextBox.Text + LanguageText("serialPortl") + " " + COMComboBox.SelectedItem + LanguageText("spConnect") + "\r\n";
-
-            timer = new System.Threading.Timer(TimerTick, null, 0, 250); // √ø√Î¥•∑¢8¥Œ
-
-            portIsConnect = 1;
-
-        }
-
-        public void SerialPortConnectcatch()
-        {
-            page1.RXTextBox.Text = page1.RXTextBox.Text + LanguageText("openSPErr") + "\r\n";
-            //MessageBox.Show("¥Úø™¥Æø⁄ ß∞‹£¨«ÎºÏ≤Èœ‡πÿ…Ë÷√", "¥ÌŒÛ");
-
-            portIsConnect = 0;
-            //CONTButton.Content = "CONNECT";
-        }
-        public void SerialPortClose()
-        {
-            CommonRes._serialPort.Close();                                                                              //πÿ±’¥Æø⁄
-            page1.RXTextBox.Text = page1.RXTextBox.Text + "\n" + LanguageText("serialPortl") + " " + COMComboBox.SelectedItem + LanguageText("spClose") + "\r\n";
-        }
-        public void SerialPortDisconnect()
-        {
-            portIsConnect = 0;
-            timer.Dispose();
-        }
-
-        private void COMComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            string ComIs;
-            ComIs = (string)COMComboBox.SelectedItem;
-            COMListview.SelectedItem = ComIs;
-            if (portIsConnect == 1)
+            foreach (var t in ArryPort)
             {
-                if (conCom != ComIs)
-                    page1.COMRstInfoBar.IsOpen = true;
-                else
-                    page1.COMRstInfoBar.IsOpen = false;
-            }
-        }
-        private void ClearCOMCombobox_Click(object sender, RoutedEventArgs e)
-        {
-            COMComboBox.SelectedItem = null;
-            COMListview.SelectedItem = null;
-        }
-
-        private void ComboboxSaveSetting(string menuName, string name, string settingItem)
-        {
-            using (StreamReader reader = File.OpenText(FSSetToml))                    //¥Úø™TOMLŒƒº˛
-            {
-                settingstomlr = TOML.Parse(reader);
-
-                settingstomlr[menuName][name] = settingItem;
-            }
-
-            using (StreamWriter writer = File.CreateText(FSSetToml))                  //Ω´…Ë÷√–¥»ÎTOMLŒƒº˛
-            {
-                settingstomlr.WriteTo(writer);
-                writer.Flush();
-            }
-        }
-
-        private void AutoComButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (autosercom == 0)
-            {
-                timerSerialPort = new System.Threading.Timer(TimerSerialPortTick, null, 0, 1500);
-                AutoSerchComProgressRing.IsActive = true;
-                autosercom = 1;
-            }
-            else
-            {
-                timerSerialPort.Dispose();
-                AutoSerchComProgressRing.IsActive = false;
-                autosercom = 0;
-            }
-            if (autosaveset == 1)
-            {
-                ComboboxSaveSetting("SerialPortSettings", "AutoSerichCom", Convert.ToString(autosercom));
-            }
-        }
-        private void AutoConnectButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (autoconnect == 0)
-            {
-                autoconnect = 1;
-            }
-            else
-            {
-                autoconnect = 0;
-            }
-            if (autosaveset == 1)
-            {
-                ComboboxSaveSetting("SerialPortSettings", "AutoConnect", Convert.ToString(autoconnect));
-            }
-        }
-        private void COMListview_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            string ComIs;
-            ComIs = (string)COMListview.SelectedItem;
-            COMComboBox.SelectedItem = ComIs;
-
-        }
-        private void BANDComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // ºÏ≤È ‰»Îµƒ «∑ÒŒ™ ˝◊÷
-            if (!int.TryParse((string)BANDComboBox.SelectedItem, out int baudRate) || baudRate == 0)
-            {
-                // »Áπ˚ ‰»Îµƒ≤ª « ˝◊÷£¨ π”√…Ë÷√Œƒº˛÷–µƒ ˝◊÷∏≤∏«À¸
-                using (StreamReader reader = File.OpenText(FSSetToml))                    //¥Úø™TOMLŒƒº˛
+                myBox.Items.Add(t);                           //Â∞ÜÊâÄÊúâÁöÑÂèØÁî®‰∏≤Âè£Âè∑Ê∑ªÂä†Âà∞Á´ØÂè£ÂØπÂ∫îÁöÑÁªÑÂêàÊ°Ü‰∏≠
+                ComListview.Items.Add(t/* + (portDescription is not null ? " | " + portDescription : "")*/);
+                var info = await Task.Run(() => SerialPortInfo.GetPort(t));
+                if (info is not null)
                 {
-                    settingstomlr = TOML.Parse(reader);
-                    BANDComboBox.SelectedItem = ((Tommy.TomlString)settingstomlr["SerialPortSettings"]["DefaultBAUD"]).Value;
-                }
-            }
-            else
-            {
-                if (autosaveset == 1)
-                {
-                    ComboboxSaveSetting("SerialPortSettings", "DefaultBAUD", (string)BANDComboBox.SelectedItem);
-                }
-                if (portIsConnect == 1)
-                {
-                    CommonRes._serialPort.BaudRate = Convert.ToInt32(BANDComboBox.SelectedItem);
-                    page1.RXTextBox.Text = page1.RXTextBox.Text + "BaudRate = " + Convert.ToInt32(BANDComboBox.SelectedItem) + "\r\n";
-                }
-                baudrate = Convert.ToInt32(BANDComboBox.SelectedItem);
-            }
-            if (Convert.ToInt32(BANDComboBox.SelectedItem) <= 7200)
-            {
-                BaudrateIcon.Glyph = "\uEC48";
-            }
-            else if (Convert.ToInt32(BANDComboBox.SelectedItem) > 7200 && Convert.ToInt32(BANDComboBox.SelectedItem) < 128000)
-            {
-                BaudrateIcon.Glyph = "\uEC49";
-            }
-            else
-            {
-                BaudrateIcon.Glyph = "\uEC4A";
-            }
-        }
-
-        private void PARComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (autosaveset == 1)
-            {
-                ComboboxSaveSetting("SerialPortSettings", "DefaultParity", ((ParityOption)PARComboBox.SelectedItem).Value);
-            }
-            if (portIsConnect == 1)
-            {
-                CommonRes._serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), ((ParityOption)PARComboBox.SelectedItem).Value);
-                page1.RXTextBox.Text = page1.RXTextBox.Text + "Parity = " + (Parity)Enum.Parse(typeof(Parity), ((ParityOption)PARComboBox.SelectedItem).Value) + "\r\n";
-            }
-        }
-        private void STOPComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (autosaveset == 1)
-            {
-                ComboboxSaveSetting("SerialPortSettings", "DefaultSTOP", ((StopBitsOption)STOPComboBox.SelectedItem).Value);
-            }
-            if (portIsConnect == 1)
-            {
-                CommonRes._serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), ((StopBitsOption)STOPComboBox.SelectedItem).Value);
-                page1.RXTextBox.Text = page1.RXTextBox.Text + "StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), ((StopBitsOption)STOPComboBox.SelectedItem).Value) + "\r\n";
-            }
-            if (STOPComboBox.SelectedItem is StopBitsOption selectedOption)
-            {
-                if (float.TryParse(selectedOption.DisplayText, out float stopBits))
-                {
-                    StopBorder.Scale = new Vector3(stopBits, 1, 1);
+                    Page1.Current.RxTextBox.Text += t + ": " + info.Description + "\r\n";
                 }
                 else
                 {
-                    // ¥¶¿ÌΩ‚Œˆ ß∞‹µƒ«Èøˆ
-                    StopBorder.Scale = new Vector3(1, 1, 1);
+                    Page1.Current.RxTextBox.Text += t + "\r\n";
                 }
+                //RXTextBox.Text += t + "\r\n" + GetPortDescription(t) + "\r\n";
             }
+            //MyBox.Items.Add("COM0");
+            Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + LanguageText("overSerichSP") + "\r\n";
+            ComComboBox.SelectedItem = comMem;
+            ComListview.SelectedItem = comMem;
         }
-        private void DATAComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (autosaveset == 1)
-            {
-                ComboboxSaveSetting("SerialPortSettings", "DefaultDATA", Convert.ToString(DATAComboBox.SelectedItem));
-            }
-            if (portIsConnect == 1)
-            {
-                CommonRes._serialPort.DataBits = Convert.ToInt32(DATAComboBox.SelectedItem);
-                page1.RXTextBox.Text = page1.RXTextBox.Text + "DataBits = " + Convert.ToInt32(DATAComboBox.SelectedItem) + "\r\n";
-            }
-            DatainfoBadge.Value = Convert.ToInt32(DATAComboBox.SelectedItem);
-        }
-
-        private void EncodingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (autosaveset == 1)
-            {
-                ComboboxSaveSetting("SerialPortSettings", "DefaultEncoding", (string)EncodingComboBox.SelectedItem);
-            }
-            if (portIsConnect == 1)
-            {
-                CommonRes._serialPort.Encoding = Encoding.GetEncoding((string)EncodingComboBox.SelectedItem);
-                page1.RXTextBox.Text = page1.RXTextBox.Text + "Encoding = " + (string)EncodingComboBox.SelectedItem + "\r\n";
-            }
-        }
-
-        private void RXHEXButton_Click(object sender, RoutedEventArgs e)    //Ω” ’“‘ Æ¡˘Ω¯÷∆ ˝œ‘ æ
-        {
-            if (rxHex == 0)
-            {
-                rxHex = 1;
-                RXHEXButton.IsChecked = true;
-            }
-            else
-            {
-                rxHex = 0;
-                RXHEXButton.IsChecked = false;
-            }
-            if (autosaveset == 1)
-            {
-                ComboboxSaveSetting("SerialPortSettings", "DefaultRXHEX", Convert.ToString(rxHex));
-            }
-        }
-
-        private void TXHEXButton_Click(object sender, RoutedEventArgs e)    //∑¢ÀÕ“‘ Æ¡˘Ω¯÷∆ ˝œ‘ æ
-        {
-
-            if (txHex == 0)
-            {
-                txHex = 1;
-                TXHEXButton.IsChecked = true;
-            }
-            else
-            {
-                txHex = 0;
-                TXHEXButton.IsChecked = false;
-            }
-            if (autosaveset == 1)
-            {
-                ComboboxSaveSetting("SerialPortSettings", "DefaultTXHEX", Convert.ToString(txHex));
-            }
-        }
-        private void DTRButton_Click(object sender, RoutedEventArgs e)      //DTR–≈∫≈ πƒ‹
-        {
-            //FsButtonChecked(dtr, DTRButton);
-
-            if (dtr == 0)
-            {
-                CommonRes._serialPort.DtrEnable = true;
-                dtr = 1;
-            }
-            else
-            {
-                CommonRes._serialPort.DtrEnable = false;
-                dtr = 0;
-            }
-            if (autosaveset == 1)
-            {
-                ComboboxSaveSetting("SerialPortSettings", "DefaultDTR", Convert.ToString(dtr));
-            }
-        }
-        private void RTSButton_Click(object sender, RoutedEventArgs e)      //RTS–≈∫≈ πƒ‹
-        {
-            //FsButtonChecked(rts, RTSButton);
-
-            if (rts == 0)
-            {
-                CommonRes._serialPort.RtsEnable = true;
-                rts = 1;
-            }
-            else
-            {
-                CommonRes._serialPort.RtsEnable = false;
-                rts = 0;
-            }
-            if (autosaveset == 1)
-            {
-                ComboboxSaveSetting("SerialPortSettings", "DefaultRTS", Convert.ToString(rts));
-            }
-        }
-        private void TXNewLineButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (txnewline == 0)
-            {
-                txnewline = 1;
-            }
-            else
-            {
-                txnewline = 0;
-            }
-            if (autosaveset == 1)
-            {
-                ComboboxSaveSetting("SerialPortSettings", "DefaultTXNewLine", Convert.ToString(txnewline));
-            }
-        }
-        private void SaveSetButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (autosaveset == 0)
-            {
-                autosaveset = 1;
-            }
-            else
-            {
-                autosaveset = 0;
-            }
-            ComboboxSaveSetting("SerialPortSettings", "AutoDaveSet", Convert.ToString(autosaveset));
-        }
-        private void AUTOScrollButton_Click(object sender, RoutedEventArgs e)
-        {
-            //FsButtonChecked(autotr, AUTOScrollButton);
-
-            if (autotr == 0)
-            {
-                autotr = 1;
-            }
-            else
-            {
-                autotr = 0;
-            }
-            if (autosaveset == 1)
-            {
-                ComboboxSaveSetting("SerialPortSettings", "DefaultAUTOSco", Convert.ToString(autotr));
-            }
-        }
-        private void ChipToolKitComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-            MCUTool selectedTool = (MCUTool)ChipToolKitComboBox.SelectedItem;
-
-            if (selectedTool != null)
-            {
-                switch (selectedTool.Name)
-                {
-                    case "None":
-                        McuToolsFrame.Navigate(typeof(NoneTools), null, new DrillInNavigationTransitionInfo());
-                        break;
-                    case "ESP8266":
-                        McuToolsFrame.Navigate(typeof(ESP8266Tools), null, new DrillInNavigationTransitionInfo());
-                        break;
-                    case "RP2040        M":
-                        McuToolsFrame.Navigate(typeof(RP2040MPYTools), null, new DrillInNavigationTransitionInfo());
-                        break;
-                    case "LPC1768        SM":
-                        McuToolsFrame.Navigate(typeof(LPC1768FSPnPTools), null, new DrillInNavigationTransitionInfo());
-                        break;
-                    // ‘⁄’‚¿ÔÃÌº”∏¸∂‡µƒcase”Ôæ‰¿¥¥¶¿Ì∆‰À˚π§æﬂ
-                    default:
-                        break;
-                }
-            }
-        }
-
-        private void RXDataButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-        private Task RXDATA_ClickAsync(object sender, RoutedEventArgs e)
-        {
-            // ‘⁄’‚¿ÔÃÌº”ƒ„µƒ“Ï≤Ω¥˙¬Î
-            // ¿˝»Á£∫await SomeAsyncMethod();
             
-            //RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";
-            //Timesr = current_time.ToString("HH:mm:ss");
+        var comButtonIconRotation = new Thread(COMButtonIcon_Rotation);
+        comButtonIconRotation.Start();
+    }
 
-
-
-            //rxpstr = System.Text.Encoding.UTF8.GetString(datapwate);
-            //rxpstr = datapwate.ToString();                          //Ω´ª∫≥Â«¯∏≥÷µµΩ ‰≥ˆ
-            //page1.RXTextBox.Text = page1.RXTextBox.Text + rxpstr + "";          // ‰≥ˆΩ” ’µƒ ˝æ›
-            //datapwate.Clear();                                      //«Âø’ª∫≥Â«¯
-
-            return Task.CompletedTask;
-        }
-
-        private void ShowTimeButton_Click(object sender, RoutedEventArgs e)
+    private void COMButtonIcon_Rotation(object name)
+    {
+        DispatcherQueue.TryEnqueue(() =>
         {
-
-        }
-
-        public DispatcherTimer _hideTimer;
-
-        private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
+            ComButtonIcon.Rotation = -60;
+            ComButtonIconScalar.Duration = TimeSpan.FromMilliseconds(250);
+        });
+        Thread.Sleep(300);
+        DispatcherQueue.TryEnqueue(() =>
         {
-            _hideTimer.Stop();
-            mainPage1.SerialPortToolsToggleButton.IsChecked = true;
-        }
-
-        private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
+            ComButtonIcon.Rotation = 420;
+        });
+        Thread.Sleep(250);
+        DispatcherQueue.TryEnqueue(() =>
         {
-            if (mainPage1.SerialPortToolsToggleButton.IsChecked == true)
+            ComButtonIconScalar.Duration = TimeSpan.FromMilliseconds(0);
+            ComButtonIcon.Rotation = 60;
+            ComButtonIconScalar.Duration = TimeSpan.FromMilliseconds(250);
+        });
+        Thread.Sleep(60);
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            ComButtonIcon.Rotation = 0;
+        });
+    }
+
+    public void SerialPortConnect()
+    {
+        ConCom = (string)ComComboBox.SelectedItem;
+
+        var portName = (string)ComComboBox.SelectedItem;
+        var bandRate = Convert.ToInt32(BandComboBox.SelectedItem);
+        var parity = ((ParityOption)ParComboBox.SelectedItem).Value;
+        var stopBits = ((StopBitsOption)StopComboBox.SelectedItem).Value;
+        var dataBits = Convert.ToInt32(DataComboBox.SelectedItem);
+        var encoding = (string)EncodingComboBox.SelectedItem;
+
+        Page1.Current.SerialPortConnect(portName, bandRate, parity, stopBits, dataBits, 1500, encoding);
+
+        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "BaudRate = " + Convert.ToInt32(BandComboBox.SelectedItem) + "\r\n";
+        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "Parity = " + (Parity)Enum.Parse(typeof(Parity), ((ParityOption)ParComboBox.SelectedItem).Value) + "\r\n";
+        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), ((StopBitsOption)StopComboBox.SelectedItem).Value) + "\r\n";
+        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "DataBits = " + Convert.ToInt32(DataComboBox.SelectedItem) + "\r\n";
+        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "Encoding = " + (string)EncodingComboBox.SelectedItem + "\r\n";
+        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + LanguageText("serialPortl") + " " + ComComboBox.SelectedItem + LanguageText("spConnect") + "\r\n";
+
+        Timer = new(TimerTick, null, 0, 250); // ÊØèÁßíËß¶Âèë8Ê¨°
+
+        PortIsConnect = 1;
+    }
+
+    public void SerialPortConnectCatch()
+    {
+        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + LanguageText("openSPErr") + "\r\n";
+        //MessageBox.Show("ÊâìÂºÄ‰∏≤Âè£Â§±Ë¥•ÔºåËØ∑Ê£ÄÊü•Áõ∏ÂÖ≥ËÆæÁΩÆ", "ÈîôËØØ");
+
+        PortIsConnect = 0;
+        //CONTButton.Content = "CONNECT";
+    }
+    public void SerialPortClose()
+    {
+        CommonRes.SerialPort.Close();                                                                              //ÂÖ≥Èó≠‰∏≤Âè£
+        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "\n" + LanguageText("serialPortl") + " " + ComComboBox.SelectedItem + LanguageText("spClose") + "\r\n";
+    }
+    public void SerialPortDisconnect()
+    {
+        PortIsConnect = 0;
+        Timer.Dispose();
+    }
+
+    private void COMComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var comIs = (string)ComComboBox.SelectedItem;
+        ComListview.SelectedItem = comIs;
+        if (PortIsConnect is 1)
+        {
+            if (ConCom != comIs)
+                Page1.Current.ComRstInfoBar.IsOpen = true;
+            else
+                Page1.Current.ComRstInfoBar.IsOpen = false;
+        }
+    }
+    private void ClearCOMCombobox_Click(object sender, RoutedEventArgs e)
+    {
+        ComComboBox.SelectedItem = null;
+        ComListview.SelectedItem = null;
+    }
+
+    private void ComboboxSaveSetting(string menuName, string name, string settingItem)
+    {
+        //ÊâìÂºÄTOMLÊñá‰ª∂
+        using var reader = File.OpenText(FsSetToml);
+        SettingsTomlr = TOML.Parse(reader);
+        SettingsTomlr[menuName][name] = settingItem;
+
+        //Â∞ÜËÆæÁΩÆÂÜôÂÖ•TOMLÊñá‰ª∂
+        using var writer = File.CreateText(FsSetToml);
+        SettingsTomlr.WriteTo(writer);
+        writer.Flush();
+    }
+
+    private void AutoComButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (AutoSerCom is 0)
+        {
+            TimerSerialPort = new(TimerSerialPortTick, null, 0, 1500);
+            AutoSerchComProgressRing.IsActive = true;
+            AutoSerCom = 1;
+        }
+        else
+        {
+            TimerSerialPort.Dispose();
+            AutoSerchComProgressRing.IsActive = false;
+            AutoSerCom = 0;
+        }
+        if (AutoSaveSet is 1)
+        {
+            ComboboxSaveSetting("SerialPortSettings", "AutoSerichCom", Convert.ToString(AutoSerCom));
+        }
+    }
+    private void AutoConnectButton_Click(object sender, RoutedEventArgs e)
+    {
+        AutoConnect = AutoConnect is 0 ? 1 : 0;
+        if (AutoSaveSet is 1)
+        {
+            ComboboxSaveSetting("SerialPortSettings", "AutoConnect", Convert.ToString(AutoConnect));
+        }
+    }
+    private void COMListview_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var comIs = (string)ComListview.SelectedItem;
+        ComComboBox.SelectedItem = comIs;
+    }
+    private void BANDComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        // Ê£ÄÊü•ËæìÂÖ•ÁöÑÊòØÂê¶‰∏∫Êï∞Â≠ó
+        if (!int.TryParse((string)BandComboBox.SelectedItem, out var baudRate) || baudRate is 0)
+        {
+            // Â¶ÇÊûúËæìÂÖ•ÁöÑ‰∏çÊòØÊï∞Â≠óÔºå‰ΩøÁî®ËÆæÁΩÆÊñá‰ª∂‰∏≠ÁöÑÊï∞Â≠óË¶ÜÁõñÂÆÉ
+            using var reader = File.OpenText(FsSetToml);
+            SettingsTomlr = TOML.Parse(reader);
+            BandComboBox.SelectedItem = ((TomlString)SettingsTomlr["SerialPortSettings"]["DefaultBAUD"]).Value;
+        }
+        else
+        {
+            if (AutoSaveSet is 1)
             {
-                if (_hideTimer != null && !_hideTimer.IsEnabled)
-                {
-                    _hideTimer.Start();
-                }
+                ComboboxSaveSetting("SerialPortSettings", "DefaultBAUD", (string)BandComboBox.SelectedItem);
+            }
+            if (PortIsConnect is 1)
+            {
+                CommonRes.SerialPort.BaudRate = Convert.ToInt32(BandComboBox.SelectedItem);
+                Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "BaudRate = " + Convert.ToInt32(BandComboBox.SelectedItem) + "\r\n";
+            }
+            Baudrate = Convert.ToInt32(BandComboBox.SelectedItem);
+        }
+
+        BaudrateIcon.Glyph = Convert.ToInt32(BandComboBox.SelectedItem) switch
+        {
+            <= 7200 => "\uEC48",
+            > 7200 and < 128000 => "\uEC49",
+            _ => "\uEC4A"
+        };
+    }
+
+    private void PARComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (AutoSaveSet is 1)
+        {
+            ComboboxSaveSetting("SerialPortSettings", "DefaultParity", ((ParityOption)ParComboBox.SelectedItem).Value);
+        }
+        if (PortIsConnect is 1)
+        {
+            CommonRes.SerialPort.Parity = (Parity)Enum.Parse(typeof(Parity), ((ParityOption)ParComboBox.SelectedItem).Value);
+            Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "Parity = " + (Parity)Enum.Parse(typeof(Parity), ((ParityOption)ParComboBox.SelectedItem).Value) + "\r\n";
+        }
+    }
+    private void STOPComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (AutoSaveSet is 1)
+        {
+            ComboboxSaveSetting("SerialPortSettings", "DefaultSTOP", ((StopBitsOption)StopComboBox.SelectedItem).Value);
+        }
+        if (PortIsConnect is 1)
+        {
+            CommonRes.SerialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), ((StopBitsOption)StopComboBox.SelectedItem).Value);
+            Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), ((StopBitsOption)StopComboBox.SelectedItem).Value) + "\r\n";
+        }
+        if (StopComboBox.SelectedItem is StopBitsOption selectedOption)
+        {
+            if (float.TryParse(selectedOption.DisplayText, out var stopBits))
+            {
+                StopBorder.Scale = new(stopBits, 1, 1);
+            }
+            else
+            {
+                // Â§ÑÁêÜËß£ÊûêÂ§±Ë¥•ÁöÑÊÉÖÂÜµ
+                StopBorder.Scale = new(1, 1, 1);
             }
         }
-
-        private void HideTimer_Tick(object sender, object e)
+    }
+    private void DATAComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (AutoSaveSet is 1)
         {
-            _hideTimer.Stop();
-            if (portIsConnect == 1)
+            ComboboxSaveSetting("SerialPortSettings", "DefaultDATA", Convert.ToString(DataComboBox.SelectedItem));
+        }
+        if (PortIsConnect is 1)
+        {
+            CommonRes.SerialPort.DataBits = Convert.ToInt32(DataComboBox.SelectedItem);
+            Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "DataBits = " + Convert.ToInt32(DataComboBox.SelectedItem) + "\r\n";
+        }
+        DatainfoBadge.Value = Convert.ToInt32(DataComboBox.SelectedItem);
+    }
+
+    private void EncodingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (AutoSaveSet is 1)
+        {
+            ComboboxSaveSetting("SerialPortSettings", "DefaultEncoding", (string)EncodingComboBox.SelectedItem);
+        }
+        if (PortIsConnect is 1)
+        {
+            CommonRes.SerialPort.Encoding = Encoding.GetEncoding((string)EncodingComboBox.SelectedItem);
+            Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "Encoding = " + (string)EncodingComboBox.SelectedItem + "\r\n";
+        }
+    }
+
+    private void RXHEXButton_Click(object sender, RoutedEventArgs e)    //Êé•Êî∂‰ª•ÂçÅÂÖ≠ËøõÂà∂Êï∞ÊòæÁ§∫
+    {
+        if (RxHex is 0)
+        {
+            RxHex = 1;
+            RxhexButton.IsChecked = true;
+        }
+        else
+        {
+            RxHex = 0;
+            RxhexButton.IsChecked = false;
+        }
+        if (AutoSaveSet is 1)
+        {
+            ComboboxSaveSetting("SerialPortSettings", "DefaultRXHEX", Convert.ToString(RxHex));
+        }
+    }
+
+    private void TXHEXButton_Click(object sender, RoutedEventArgs e)    //ÂèëÈÄÅ‰ª•ÂçÅÂÖ≠ËøõÂà∂Êï∞ÊòæÁ§∫
+    {
+
+        if (TxHex is 0)
+        {
+            TxHex = 1;
+            TxhexButton.IsChecked = true;
+        }
+        else
+        {
+            TxHex = 0;
+            TxhexButton.IsChecked = false;
+        }
+        if (AutoSaveSet is 1)
+        {
+            ComboboxSaveSetting("SerialPortSettings", "DefaultTXHEX", Convert.ToString(TxHex));
+        }
+    }
+    private void DTRButton_Click(object sender, RoutedEventArgs e)      //DTR‰ø°Âè∑‰ΩøËÉΩ
+    {
+        //FsButtonChecked(dtr, DTRButton);
+
+        if (Dtr is 0)
+        {
+            CommonRes.SerialPort.DtrEnable = true;
+            Dtr = 1;
+        }
+        else
+        {
+            CommonRes.SerialPort.DtrEnable = false;
+            Dtr = 0;
+        }
+        if (AutoSaveSet is 1)
+        {
+            ComboboxSaveSetting("SerialPortSettings", "DefaultDTR", Convert.ToString(Dtr));
+        }
+    }
+    private void RTSButton_Click(object sender, RoutedEventArgs e)      //RTS‰ø°Âè∑‰ΩøËÉΩ
+    {
+        //FsButtonChecked(rts, RTSButton);
+
+        if (Rts is 0)
+        {
+            CommonRes.SerialPort.RtsEnable = true;
+            Rts = 1;
+        }
+        else
+        {
+            CommonRes.SerialPort.RtsEnable = false;
+            Rts = 0;
+        }
+        if (AutoSaveSet is 1)
+        {
+            ComboboxSaveSetting("SerialPortSettings", "DefaultRTS", Convert.ToString(Rts));
+        }
+    }
+    private void TXNewLineButton_Click(object sender, RoutedEventArgs e)
+    {
+        TxNewLine = TxNewLine is 0 ? 1 : 0;
+        if (AutoSaveSet is 1)
+        {
+            ComboboxSaveSetting("SerialPortSettings", "DefaultTXNewLine", Convert.ToString(TxNewLine));
+        }
+    }
+    private void SaveSetButton_Click(object sender, RoutedEventArgs e)
+    {
+        AutoSaveSet = AutoSaveSet is 0 ? 1 : 0;
+        ComboboxSaveSetting("SerialPortSettings", "AutoDaveSet", Convert.ToString(AutoSaveSet));
+    }
+    private void AUTOScrollButton_Click(object sender, RoutedEventArgs e)
+    {
+        //FsButtonChecked(autotr, AUTOScrollButton);
+
+        AutoTr = AutoTr is 0 ? 1 : 0;
+        if (AutoSaveSet is 1)
+        {
+            ComboboxSaveSetting("SerialPortSettings", "DefaultAUTOSco", Convert.ToString(AutoTr));
+        }
+    }
+    private void ChipToolKitComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+
+        var selectedTool = (McuTool)ChipToolKitComboBox.SelectedItem;
+
+        if (selectedTool is not null)
+        {
+            switch (selectedTool.Name)
             {
-                mainPage1.SerialPortToolsToggleButton.IsChecked = false;
+                case "None":
+                    McuToolsFrame.Navigate(typeof(NoneTools), null, new DrillInNavigationTransitionInfo());
+                    break;
+                case "ESP8266":
+                    McuToolsFrame.Navigate(typeof(ESP8266Tools), null, new DrillInNavigationTransitionInfo());
+                    break;
+                case "RP2040        M":
+                    McuToolsFrame.Navigate(typeof(RP2040MPYTools), null, new DrillInNavigationTransitionInfo());
+                    break;
+                case "LPC1768        SM":
+                    McuToolsFrame.Navigate(typeof(Lpc1768FsPnPTools), null, new DrillInNavigationTransitionInfo());
+                    break;
+                // Âú®ËøôÈáåÊ∑ªÂä†Êõ¥Â§öÁöÑcaseËØ≠Âè•Êù•Â§ÑÁêÜÂÖ∂‰ªñÂ∑•ÂÖ∑
+                default:
+                    break;
             }
+        }
+    }
+
+    private void RXDataButton_Click(object sender, RoutedEventArgs e)
+    {
+    }
+    private Task RXDATA_ClickAsync(object sender, RoutedEventArgs e)
+    {
+        // Âú®ËøôÈáåÊ∑ªÂä†‰Ω†ÁöÑÂºÇÊ≠•‰ª£Á†Å
+        // ‰æãÂ¶ÇÔºöawait SomeAsyncMethod();
+            
+        //RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";
+        //Timesr = current_time.ToString("HH:mm:ss");
+
+        //rxpstr = System.Text.Encoding.UTF8.GetString(datapwate);
+        //rxpstr = datapwate.ToString();                          //Â∞ÜÁºìÂÜ≤Âå∫ËµãÂÄºÂà∞ËæìÂá∫
+        //page1.RXTextBox.Text = page1.RXTextBox.Text + rxpstr + "";          //ËæìÂá∫Êé•Êî∂ÁöÑÊï∞ÊçÆ
+        //datapwate.Clear();                                      //Ê∏ÖÁ©∫ÁºìÂÜ≤Âå∫
+
+        return Task.CompletedTask;
+    }
+
+    private void ShowTimeButton_Click(object sender, RoutedEventArgs e)
+    {
+    }
+
+    public DispatcherTimer HideTimer { get; }
+
+    private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        HideTimer.Stop();
+        MainPage1.Current.SerialPortToolsToggleButton.IsChecked = true;
+    }
+
+    private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        if (MainPage1.Current.SerialPortToolsToggleButton.IsChecked == true)
+        {
+            if (HideTimer is not null && !HideTimer.IsEnabled)
+            {
+                HideTimer.Start();
+            }
+        }
+    }
+
+    private void HideTimer_Tick(object sender, object e)
+    {
+        HideTimer.Stop();
+        if (PortIsConnect is 1)
+        {
+            MainPage1.Current.SerialPortToolsToggleButton.IsChecked = false;
         }
     }
 }

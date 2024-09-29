@@ -3,105 +3,99 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using Windows.Foundation;
 
-namespace FSGaryityTool_Win11.Controls
+namespace FSGaryityTool_Win11.Controls;
+
+public class CustomWrapPanel : Panel
 {
-    public class CustomWrapPanel : Panel
+    protected override Size MeasureOverride(Size availableSize)
     {
-        protected override Size MeasureOverride(Size availableSize)
+        var totalSize = new Size(); // æ€»çš„å°ºå¯¸
+        double lineHeight = 0; // å½“å‰è¡Œçš„é«˜åº¦
+
+        foreach (var child in Children) // éå†æ‰€æœ‰å­å…ƒç´ 
         {
-            Size totalSize = new Size(); // ×ÜµÄ³ß´ç
-            double lineHeight = 0; // µ±Ç°ĞĞµÄ¸ß¶È
+            child.Measure(availableSize); // æµ‹é‡å­å…ƒç´ çš„å°ºå¯¸
+            var feChild = child as FrameworkElement; // å°† child è½¬æ¢ä¸º FrameworkElement
+            var childWidth = double.IsNaN(feChild.Width) ? feChild.MinWidth : feChild.Width; // å¦‚æœå­å…ƒç´ æœ‰å›ºå®šçš„å®½åº¦ï¼Œåˆ™ä½¿ç”¨ Widthï¼Œå¦åˆ™ä½¿ç”¨ MinWidth
 
-            foreach (UIElement child in Children) // ±éÀúËùÓĞ×ÓÔªËØ
+            if (totalSize.Width + childWidth > availableSize.Width) // å¦‚æœå­å…ƒç´ çš„å®½åº¦è¶…è¿‡äº†å¯ç”¨å®½åº¦ï¼Œæ¢è¡Œ
             {
-                child.Measure(availableSize); // ²âÁ¿×ÓÔªËØµÄ³ß´ç
-                FrameworkElement feChild = child as FrameworkElement; // ½« child ×ª»»Îª FrameworkElement
-                double childWidth = double.IsNaN(feChild.Width) ? feChild.MinWidth : feChild.Width; // Èç¹û×ÓÔªËØÓĞ¹Ì¶¨µÄ¿í¶È£¬ÔòÊ¹ÓÃ Width£¬·ñÔòÊ¹ÓÃ MinWidth
-
-                if (totalSize.Width + childWidth > availableSize.Width) // Èç¹û×ÓÔªËØµÄ¿í¶È³¬¹ıÁË¿ÉÓÃ¿í¶È£¬»»ĞĞ
-                {
-                    totalSize.Width = 0; // ÖØÖÃ×Ü¿í¶ÈÎª0
-                    totalSize.Height += lineHeight; // Ôö¼Ó×Ü¸ß¶È
-                }
-
-                lineHeight = Math.Max(lineHeight, feChild.Height); // ĞĞ¸ßÎªµ±Ç°ĞĞËùÓĞ×ÓÔªËØÖĞ×î´óµÄ¸ß¶È
-                totalSize.Width += childWidth; // Ôö¼Ó×Ü¿í¶È
+                totalSize.Width = 0; // é‡ç½®æ€»å®½åº¦ä¸º0
+                totalSize.Height += lineHeight; // å¢åŠ æ€»é«˜åº¦
             }
 
-
-            totalSize.Height += lineHeight; // Ìí¼Ó×îºóÒ»ĞĞµÄ¸ß¶È
-
-            return totalSize; // ·µ»Ø×ÜµÄ³ß´ç
+            lineHeight = Math.Max(lineHeight, feChild.Height); // è¡Œé«˜ä¸ºå½“å‰è¡Œæ‰€æœ‰å­å…ƒç´ ä¸­æœ€å¤§çš„é«˜åº¦
+            totalSize.Width += childWidth; // å¢åŠ æ€»å®½åº¦
         }
 
+        totalSize.Height += lineHeight; // æ·»åŠ æœ€åä¸€è¡Œçš„é«˜åº¦
 
-        protected override Size ArrangeOverride(Size finalSize)
+        return totalSize; // è¿”å›æ€»çš„å°ºå¯¸
+    }
+
+    protected override Size ArrangeOverride(Size finalSize)
+    {
+        var finalRect = new Rect(); // æœ€ç»ˆçš„å¸ƒå±€çŸ©å½¢
+        double lineHeight = 0; // å½“å‰è¡Œçš„é«˜åº¦
+        UIElement lastChild = null; // ä¸Šä¸€ä¸ªå­å…ƒç´ 
+
+        double totalWidth = 0; // ç”¨äºç´¯åŠ å½“å‰è¡Œçš„æ€»å®½åº¦
+
+        foreach (var child in Children) // éå†æ‰€æœ‰å­å…ƒç´ 
         {
-            Rect finalRect = new Rect(); // ×îÖÕµÄ²¼¾Ö¾ØĞÎ
-            double lineHeight = 0; // µ±Ç°ĞĞµÄ¸ß¶È
-            UIElement lastChild = null; // ÉÏÒ»¸ö×ÓÔªËØ
+            var feChild = child as FrameworkElement; // å°† child è½¬æ¢ä¸º FrameworkElement
+            var childWidth = double.IsNaN(feChild.Width) ? feChild.MinWidth : feChild.Width; // å¦‚æœå­å…ƒç´ æœ‰å›ºå®šçš„å®½åº¦ï¼Œåˆ™ä½¿ç”¨ Widthï¼Œå¦åˆ™ä½¿ç”¨ MinWidth
 
-            double totalWidth = 0; // ÓÃÓÚÀÛ¼Óµ±Ç°ĞĞµÄ×Ü¿í¶È
-
-            foreach (UIElement child in Children) // ±éÀúËùÓĞ×ÓÔªËØ
+            if (finalRect.Left + childWidth > finalSize.Width) // å¦‚æœå­å…ƒç´ çš„å®½åº¦è¶…è¿‡äº†å¯ç”¨å®½åº¦ï¼Œæ¢è¡Œ
             {
-                FrameworkElement feChild = child as FrameworkElement; // ½« child ×ª»»Îª FrameworkElement
-                double childWidth = double.IsNaN(feChild.Width) ? feChild.MinWidth : feChild.Width; // Èç¹û×ÓÔªËØÓĞ¹Ì¶¨µÄ¿í¶È£¬ÔòÊ¹ÓÃ Width£¬·ñÔòÊ¹ÓÃ MinWidth
+                // è°ƒæ•´æœ€åä¸€è¡Œçš„æœ€åä¸€ä¸ªå­å…ƒç´ çš„å®½åº¦ä»¥å¡«å……å‰©ä½™ç©ºé—´
+                AdjustLastChildWidth(lastChild, totalWidth, finalSize.Width, lineHeight, finalRect);
 
-                if (finalRect.Left + childWidth > finalSize.Width) // Èç¹û×ÓÔªËØµÄ¿í¶È³¬¹ıÁË¿ÉÓÃ¿í¶È£¬»»ĞĞ
-                {
-                    // µ÷Õû×îºóÒ»ĞĞµÄ×îºóÒ»¸ö×ÓÔªËØµÄ¿í¶ÈÒÔÌî³äÊ£Óà¿Õ¼ä
-                    AdjustLastChildWidth(lastChild, totalWidth, finalSize.Width, lineHeight, finalRect);
+                finalRect.Y += lineHeight; // æ›´æ–°Yåæ ‡åˆ°ä¸‹ä¸€è¡Œ
+                finalRect.X = 0; // Xåæ ‡é‡ç½®ä¸º0
+                lineHeight = child.DesiredSize.Height; // æ›´æ–°è¡Œé«˜ä¸ºå½“å‰å­å…ƒç´ çš„é«˜åº¦
 
-                    finalRect.Y += lineHeight; // ¸üĞÂY×ø±êµ½ÏÂÒ»ĞĞ
-                    finalRect.X = 0; // X×ø±êÖØÖÃÎª0
-                    lineHeight = child.DesiredSize.Height; // ¸üĞÂĞĞ¸ßÎªµ±Ç°×ÓÔªËØµÄ¸ß¶È
-
-                    totalWidth = 0; // ÖØÖÃµ±Ç°ĞĞµÄ×Ü¿í¶È
-                }
-
-                lineHeight = Math.Max(lineHeight, child.DesiredSize.Height); // ĞĞ¸ßÎªµ±Ç°ĞĞËùÓĞ×ÓÔªËØÖĞ×î´óµÄ¸ß¶È
-                finalRect.Width = childWidth; // ¾ØĞÎµÄ¿í¶ÈÎªµ±Ç°×ÓÔªËØµÄ¿í¶È
-                finalRect.Height = child.DesiredSize.Height; // ¾ØĞÎµÄ¸ß¶ÈÎªµ±Ç°×ÓÔªËØµÄ¸ß¶È
-
-                child.Arrange(finalRect); // °²ÅÅ×ÓÔªËØÔÚ¾ØĞÎÄÚ
-                finalRect.X += finalRect.Width; // ¸üĞÂX×ø±êµ½ÏÂÒ»¸ö×ÓÔªËØµÄÎ»ÖÃ
-
-                totalWidth += childWidth; // ÀÛ¼Óµ±Ç°ĞĞµÄ×Ü¿í¶È
-
-                lastChild = child; // ¸üĞÂÉÏÒ»¸ö×ÓÔªËØÎªµ±Ç°×ÓÔªËØ
+                totalWidth = 0; // é‡ç½®å½“å‰è¡Œçš„æ€»å®½åº¦
             }
+
+            lineHeight = Math.Max(lineHeight, child.DesiredSize.Height); // è¡Œé«˜ä¸ºå½“å‰è¡Œæ‰€æœ‰å­å…ƒç´ ä¸­æœ€å¤§çš„é«˜åº¦
+            finalRect.Width = childWidth; // çŸ©å½¢çš„å®½åº¦ä¸ºå½“å‰å­å…ƒç´ çš„å®½åº¦
+            finalRect.Height = child.DesiredSize.Height; // çŸ©å½¢çš„é«˜åº¦ä¸ºå½“å‰å­å…ƒç´ çš„é«˜åº¦
+
+            child.Arrange(finalRect); // å®‰æ’å­å…ƒç´ åœ¨çŸ©å½¢å†…
+            finalRect.X += finalRect.Width; // æ›´æ–°Xåæ ‡åˆ°ä¸‹ä¸€ä¸ªå­å…ƒç´ çš„ä½ç½®
+
+            totalWidth += childWidth; // ç´¯åŠ å½“å‰è¡Œçš„æ€»å®½åº¦
+
+            lastChild = child; // æ›´æ–°ä¸Šä¸€ä¸ªå­å…ƒç´ ä¸ºå½“å‰å­å…ƒç´ 
+        }
             
-            // µ÷Õû×îºóÒ»ĞĞµÄ×îºóÒ»¸ö×ÓÔªËØµÄ¿í¶ÈÒÔÌî³äÊ£Óà¿Õ¼ä
-            AdjustLastChildWidth(lastChild, totalWidth, finalSize.Width, lineHeight, finalRect);
+        // è°ƒæ•´æœ€åä¸€è¡Œçš„æœ€åä¸€ä¸ªå­å…ƒç´ çš„å®½åº¦ä»¥å¡«å……å‰©ä½™ç©ºé—´
+        AdjustLastChildWidth(lastChild, totalWidth, finalSize.Width, lineHeight, finalRect);
 
-            return finalSize; // ·µ»Ø×îÖÕµÄ³ß´ç
-        }
+        return finalSize; // è¿”å›æœ€ç»ˆçš„å°ºå¯¸
+    }
 
-        private void AdjustLastChildWidth(UIElement lastChild, double totalWidth, double finalWidth, double lineHeight, Rect finalRect)
+    private void AdjustLastChildWidth(UIElement lastChild, double totalWidth, double finalWidth, double lineHeight, Rect finalRect)
+    {
+        if (lastChild is FrameworkElement { Width: double.NaN } feLast)
         {
-            FrameworkElement feLast = lastChild as FrameworkElement;
-            if (feLast != null && double.IsNaN(feLast.Width))
-            {
-                double minWidth = feLast.MinWidth;
-                double previousWidth = totalWidth - feLast.DesiredSize.Width;
+            var minWidth = feLast.MinWidth;
+            var previousWidth = totalWidth - feLast.DesiredSize.Width;
 
-                // ÅĞ¶ÏÕâÒ»ĞĞÊÇ·ñÖ»ÓĞÒ»¸öÔªËØ
-                if (totalWidth == feLast.DesiredSize.Width)
-                {
-                    // Èç¹ûÖ»ÓĞÒ»¸öÔªËØ£¬½«¸ÃÔªËØµÄ¿í¶ÈÉèÖÃÎª¿Ø¼şµÄ×îÓÒ±ß
-                    Rect lastChildRect = new Rect(0, finalRect.Y, finalWidth, lineHeight);
-                    lastChild.Arrange(lastChildRect);
-                }
-                else
-                {
-                    // Èç¹ûÓĞ¶à¸öÔªËØ£¬¼ÆËãÆğÊ¼¿í¶È
-                    Rect lastChildRect = new Rect(finalRect.X - feLast.DesiredSize.Width, finalRect.Y, finalWidth - previousWidth, lineHeight);
-                    lastChild.Arrange(lastChildRect);
-                }
+            // åˆ¤æ–­è¿™ä¸€è¡Œæ˜¯å¦åªæœ‰ä¸€ä¸ªå…ƒç´ 
+            if (totalWidth == feLast.DesiredSize.Width)
+            {
+                // å¦‚æœåªæœ‰ä¸€ä¸ªå…ƒç´ ï¼Œå°†è¯¥å…ƒç´ çš„å®½åº¦è®¾ç½®ä¸ºæ§ä»¶çš„æœ€å³è¾¹
+                var lastChildRect = new Rect(0, finalRect.Y, finalWidth, lineHeight);
+                lastChild.Arrange(lastChildRect);
+            }
+            else
+            {
+                // å¦‚æœæœ‰å¤šä¸ªå…ƒç´ ï¼Œè®¡ç®—èµ·å§‹å®½åº¦
+                var lastChildRect = new Rect(finalRect.X - feLast.DesiredSize.Width, finalRect.Y, finalWidth - previousWidth, lineHeight);
+                lastChild.Arrange(lastChildRect);
             }
         }
-
-
     }
 }

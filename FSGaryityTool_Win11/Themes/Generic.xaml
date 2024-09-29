@@ -3,37 +3,39 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:FSGaryityTool_Win11">
 
-    <Style TargetType="local2:CustomWrapPanel" xmlns:local2="using:FSGaryityTool_Win11.Controls">
+    <!--<Style xmlns:local2="using:FSGaryityTool_Win11.Controls" TargetType="local2:CustomWrapPanel">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local2:CustomWrapPanel">
                     <Border
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-                    </Border>
+                        BorderThickness="{TemplateBinding BorderThickness}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style TargetType="local2:CustomTextBox" xmlns:local2="using:FSGaryityTool_Win11.Controls">
+    <Style xmlns:local2="using:FSGaryityTool_Win11.Controls" TargetType="local2:CustomTextBox">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local2:CustomTextBox">
-                    <Border CornerRadius="{StaticResource ControlCornerRadius}"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <ScrollViewer x:Name="ScrollViewer"
-                          HorizontalScrollBarVisibility="Auto"
-                          VerticalScrollBarVisibility="Auto">
-                            <TextBox x:Name="ContentElement"
-                         Text="{TemplateBinding Text}"
-                         AcceptsReturn="True"
-                         TextWrapping="Wrap"
-                         Background="Transparent"
-                         BorderThickness="0" />
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{StaticResource ControlCornerRadius}">
+                        <ScrollViewer
+                            x:Name="ScrollViewer"
+                            HorizontalScrollBarVisibility="Auto"
+                            VerticalScrollBarVisibility="Auto">
+                            <TextBox
+                                x:Name="ContentElement"
+                                AcceptsReturn="True"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Text="{TemplateBinding Text}"
+                                TextWrapping="Wrap" />
                         </ScrollViewer>
                     </Border>
                 </ControlTemplate>
@@ -41,18 +43,16 @@
         </Setter>
     </Style>
 
-
-    <Style TargetType="local2:LogarithmicSlider" xmlns:local2="using:FSGaryityTool_Win11.Controls">
+    <Style xmlns:local2="using:FSGaryityTool_Win11.Controls" TargetType="local2:LogarithmicSlider">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local2:LogarithmicSlider">
                     <Border
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-                    </Border>
+                        BorderThickness="{TemplateBinding BorderThickness}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 </ResourceDictionary>

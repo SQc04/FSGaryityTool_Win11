@@ -1,37 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using NAudio.Wave;
-using System.IO;
 
-namespace FSGaryityTool_Win11.Controls
+namespace FSGaryityTool_Win11.Controls;
+
+public class Player
 {
-    public class Player
+    private IWavePlayer _waveOutDevice;
+    private WaveStream _mainOutputStream;
+
+    public void PlayModFile(string modFilePath)
     {
-        private IWavePlayer _waveOutDevice;
-        private WaveStream _mainOutputStream;
+        _waveOutDevice = new WaveOut();
+        _mainOutputStream = CreateInputStream(modFilePath);
+        _waveOutDevice.Init(_mainOutputStream);
+        _waveOutDevice.Play();
+    }
 
-        public void PlayModFile(string modFilePath)
+    private WaveStream CreateInputStream(string fileName)
+    {
+        WaveStream readerStream = new WaveFileReader(fileName);
+        if (readerStream.WaveFormat.Encoding is not WaveFormatEncoding.Pcm)
         {
-            _waveOutDevice = new WaveOut();
-            _mainOutputStream = CreateInputStream(modFilePath);
-            _waveOutDevice.Init(_mainOutputStream);
-            _waveOutDevice.Play();
+            readerStream = WaveFormatConversionStream.CreatePcmStream(readerStream);
+            readerStream = new BlockAlignReductionStream(readerStream);
         }
 
-        private WaveStream CreateInputStream(string fileName)
-        {
-            WaveStream readerStream = new WaveFileReader(fileName);
-            if (readerStream.WaveFormat.Encoding != WaveFormatEncoding.Pcm)
-            {
-                readerStream = WaveFormatConversionStream.CreatePcmStream(readerStream);
-                readerStream = new BlockAlignReductionStream(readerStream);
-            }
-
-            return readerStream;
-        }
+        return readerStream;
     }
 }

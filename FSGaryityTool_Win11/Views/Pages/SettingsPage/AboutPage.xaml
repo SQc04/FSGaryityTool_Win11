@@ -1,88 +1,130 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="FSGaryityTool_Win11.AboutPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:FSGaryityTool_Win11"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FSGaryityTool_Win11"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
     xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
-    NavigationCacheMode="Enabled">
-    <!-- Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" -->
+    NavigationCacheMode="Enabled"
+    mc:Ignorable="d">
+    <!--  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"  -->
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="60"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="60" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="60" />
         </Grid.ColumnDefinitions>
-        
-        <ScrollViewer Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" >
+
+        <ScrollViewer
+            Grid.Row="0"
+            Grid.Column="1"
+            Grid.ColumnSpan="2">
             <StackPanel Margin="0,0,60,0">
                 <StackPanel.Resources>
                     <Style TargetType="Expander">
-                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     </Style>
                 </StackPanel.Resources>
 
                 <StackPanel>
-                    <Border x:Name="CDHBorder" CornerRadius="4" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" HorizontalAlignment="Left" Height="300" Width="400" Margin="0,6">
-                        <Image Stretch="UniformToFill" HorizontalAlignment="Center" Source="ms-appx:///Assets/FSBLUE12K.png" />
+                    <Border
+                        x:Name="CdhBorder"
+                        Width="400"
+                        Height="300"
+                        Margin="0,6"
+                        HorizontalAlignment="Left"
+                        Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                        CornerRadius="4">
+                        <Image
+                            HorizontalAlignment="Center"
+                            Source="ms-appx:///Assets/FSBLUE12K.png"
+                            Stretch="UniformToFill" />
                     </Border>
-                    
+
                     <StackPanel.Transitions>
                         <TransitionCollection>
                             <RepositionThemeTransition />
                         </TransitionCollection>
                     </StackPanel.Transitions>
                 </StackPanel>
-                
-                
-                <StackPanel>
-                    <TextBlock Text="" Margin="0,12,0,0"/>
-                    <TextBlock Text="About" Margin="0"/>
 
-                    <toolkit:SettingsExpander Header="FSGravity For Windows 11" Description="© 2019 - 2024 FairingStudio" Margin="0,2,0,3" IsExpanded="False" >
+                <StackPanel>
+                    <TextBlock Margin="0,12,0,0" Text="" />
+                    <TextBlock Margin="0" Text="About" />
+
+                    <toolkit:SettingsExpander
+                        Margin="0,2,0,3"
+                        Description="© 2019 - 2024 FairingStudio"
+                        Header="FSGravity For Windows 11"
+                        IsExpanded="False">
                         <toolkit:SettingsExpander.HeaderIcon>
-                            <BitmapIcon UriSource="ms-appx:///Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png" ShowAsMonochrome="False"/>
+                            <BitmapIcon ShowAsMonochrome="False" UriSource="ms-appx:///Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png" />
                         </toolkit:SettingsExpander.HeaderIcon>
 
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <TextBlock Text="Version : " HorizontalTextAlignment="Right"/>
-                            <TextBlock Text="{x:Bind local:MainWindow.FSSoftVersion}" HorizontalTextAlignment="Right"/>
+                        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                            <TextBlock HorizontalTextAlignment="Right" Text="Version : " />
+                            <TextBlock HorizontalTextAlignment="Right" Text="{x:Bind local:MainWindow.FSSoftVersion}" />
                         </StackPanel>
 
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard ContentAlignment="Left">
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="Dependencies &amp; References" FontSize="14" FontWeight="Thin" HorizontalAlignment="Left" Margin="0,3,10,1"/>
-                                    <HyperlinkButton Content="Windows App SDK" NavigateUri="https://aka.ms/windowsappsdk" HorizontalAlignment="Left" Margin="-12,0,0,0"/>
-                                    <HyperlinkButton Content="Windows UI Library" NavigateUri="https://aka.ms/winui" HorizontalAlignment="Left" Margin="-12,0,0,0"/>
-                                    <HyperlinkButton Content="Windows Community Toolkit" NavigateUri="https://github.com/CommunityToolkit/Windows" HorizontalAlignment="Left" Margin="-12,0,0,0"/>
-                                    <HyperlinkButton Content="Tommy" NavigateUri="https://github.com/dezhidki/Tommy" HorizontalAlignment="Left" Margin="-12,0,0,0"/>
-                                    
+                                    <TextBlock
+                                        Margin="0,3,10,1"
+                                        HorizontalAlignment="Left"
+                                        FontSize="14"
+                                        FontWeight="Thin"
+                                        Text="Dependencies &amp; References" />
+                                    <HyperlinkButton
+                                        Margin="-12,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        Content="Windows App SDK"
+                                        NavigateUri="https://aka.ms/windowsappsdk" />
+                                    <HyperlinkButton
+                                        Margin="-12,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        Content="Windows UI Library"
+                                        NavigateUri="https://aka.ms/winui" />
+                                    <HyperlinkButton
+                                        Margin="-12,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        Content="Windows Community Toolkit"
+                                        NavigateUri="https://github.com/CommunityToolkit/Windows" />
+                                    <HyperlinkButton
+                                        Margin="-12,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        Content="Tommy"
+                                        NavigateUri="https://github.com/dezhidki/Tommy" />
+
                                     <StackPanel.ChildrenTransitions>
                                         <TransitionCollection>
-                                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
-                                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                                            <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="True" />
+                                            <RepositionThemeTransition IsStaggeringEnabled="False" />
                                         </TransitionCollection>
                                     </StackPanel.ChildrenTransitions>
                                 </StackPanel>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock TextWrapping="Wrap" Text="THIS CODE AND INFORMATION IS PROVIDED ‘AS IS’ WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE." Margin="0,0,0,0"/>
-                                    <HyperlinkButton Content="License &amp; Source" NavigateUri="https://github.com/SQc04/FSGaryityTool_Win11/blob/master/LICENSE.txt" Margin="-12,0,0,0"/>
-                                    
+                                    <TextBlock
+                                        Margin="0,0,0,0"
+                                        Text="THIS CODE AND INFORMATION IS PROVIDED ‘AS IS’ WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
+                                        TextWrapping="Wrap" />
+                                    <HyperlinkButton
+                                        Margin="-12,0,0,0"
+                                        Content="License &amp; Source"
+                                        NavigateUri="https://github.com/SQc04/FSGaryityTool_Win11/blob/master/LICENSE.txt" />
+
                                     <StackPanel.ChildrenTransitions>
                                         <TransitionCollection>
-                                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
-                                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                                            <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="True" />
+                                            <RepositionThemeTransition IsStaggeringEnabled="False" />
                                         </TransitionCollection>
                                     </StackPanel.ChildrenTransitions>
                                 </StackPanel>
@@ -90,61 +132,183 @@
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
 
-                    <toolkit:SettingsExpander Header="FairingStudio" Description="List of Producers / Special Thanks" Margin="0,2,0,3" IsExpanded="True">
+                    <toolkit:SettingsExpander
+                        Margin="0,2,0,3"
+                        Description="List of Producers / Special Thanks"
+                        Header="FairingStudio"
+                        IsExpanded="True">
                         <toolkit:SettingsExpander.HeaderIcon>
-                            <BitmapIcon UriSource="ms-appx:///Assets/FS2022.png" ShowAsMonochrome="False"/>
+                            <BitmapIcon ShowAsMonochrome="False" UriSource="ms-appx:///Assets/FS2022.png" />
                         </toolkit:SettingsExpander.HeaderIcon>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard ContentAlignment="Left">
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="Production / Visual Design" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
-                                    <TextBlock Text="WillowKoishi" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-                                    <TextBlock Text="Programming Director / UI Layout Design" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
-                                    <TextBlock Text="SQc04" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-                                    <TextBlock Text="AI Programming Assistant / Consultant" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
-                                    <TextBlock Text="Copliot" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-                                    <TextBlock Text="Payload" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
-                                    <TextBlock Text="Asumoyz" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-                                    <TextBlock Text="Software Framework" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
-                                    <TextBlock Text="ㅤㅤㅤㅤ" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <TextBlock Text="都" CenterPoint="8,10,0" Rotation="0"  FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-                                        <TextBlock Text="筑" CenterPoint="8,11,0" Rotation="90"  FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,1,1"/>
-                                        <TextBlock Text="は" CenterPoint="8,11,0" Rotation="180"  FontWeight="Medium" HorizontalAlignment="Right" Margin="1,1,0,1"/>
-                                        <TextBlock Text="る" CenterPoint="7,11,0" Rotation="0"  FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,-1,1"/>
-                                        <TextBlock Text="か" CenterPoint="8,11,0" Rotation="90"  FontWeight="Medium" HorizontalAlignment="Right" Margin="-2,1,0,1"/>
+                                    <TextBlock
+                                        Margin="0,6,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontSize="14"
+                                        FontWeight="Thin"
+                                        Text="Production / Visual Design" />
+                                    <TextBlock
+                                        Margin="0,1,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="Medium"
+                                        Text="WillowKoishi" />
+                                    <TextBlock
+                                        Margin="0,6,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontSize="14"
+                                        FontWeight="Thin"
+                                        Text="Programming Director / UI Layout Design" />
+                                    <TextBlock
+                                        Margin="0,1,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="Medium"
+                                        Text="SQc04" />
+                                    <TextBlock
+                                        Margin="0,6,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontSize="14"
+                                        FontWeight="Thin"
+                                        Text="AI Programming Assistant / Consultant" />
+                                    <TextBlock
+                                        Margin="0,1,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="Medium"
+                                        Text="Copliot" />
+                                    <TextBlock
+                                        Margin="0,6,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontSize="14"
+                                        FontWeight="Thin"
+                                        Text="Payload" />
+                                    <TextBlock
+                                        Margin="0,1,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="Medium"
+                                        Text="Asumoyz" />
+                                    <TextBlock
+                                        Margin="0,6,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontSize="14"
+                                        FontWeight="Thin"
+                                        Text="Software Framework" />
+                                    <TextBlock
+                                        Margin="0,1,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="Medium"
+                                        Text="ㅤㅤㅤㅤ" />
+                                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                        <TextBlock
+                                            Margin="0,1,0,1"
+                                            HorizontalAlignment="Right"
+                                            CenterPoint="8,10,0"
+                                            FontWeight="Medium"
+                                            Rotation="0"
+                                            Text="都" />
+                                        <TextBlock
+                                            Margin="0,1,1,1"
+                                            HorizontalAlignment="Right"
+                                            CenterPoint="8,11,0"
+                                            FontWeight="Medium"
+                                            Rotation="90"
+                                            Text="筑" />
+                                        <TextBlock
+                                            Margin="1,1,0,1"
+                                            HorizontalAlignment="Right"
+                                            CenterPoint="8,11,0"
+                                            FontWeight="Medium"
+                                            Rotation="180"
+                                            Text="は" />
+                                        <TextBlock
+                                            Margin="0,1,-1,1"
+                                            HorizontalAlignment="Right"
+                                            CenterPoint="7,11,0"
+                                            FontWeight="Medium"
+                                            Rotation="0"
+                                            Text="る" />
+                                        <TextBlock
+                                            Margin="-2,1,0,1"
+                                            HorizontalAlignment="Right"
+                                            CenterPoint="8,11,0"
+                                            FontWeight="Medium"
+                                            Rotation="90"
+                                            Text="か" />
                                     </StackPanel>
-                                    <TextBlock Text="lfky" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                    <TextBlock
+                                        Margin="0,1,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="Medium"
+                                        Text="lfky" />
                                     <!--
                                     <TextBlock Text="Software Tester" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
                                     <TextBlock Text="" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
                                     -->
-                                    <TextBlock Text="Special Thanks" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,12,0,1"/>
-                                    <TextBlock Text="二月喵～" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-                                    <TextBlock Text="PangCiyuan" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-                                    <TextBlock Text="Canmi." FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-                                    <TextBlock Text="daelon_ely" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-                                    <TextBlock Text="游悦电子DIY" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-                                    <TextBlock Text="阿良良木翼i" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-                                    <TextBlock Text="You!" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
+                                    <TextBlock
+                                        Margin="0,12,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontSize="14"
+                                        FontWeight="Thin"
+                                        Text="Special Thanks" />
+                                    <TextBlock
+                                        Margin="0,1,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="Medium"
+                                        Text="二月喵～" />
+                                    <TextBlock
+                                        Margin="0,1,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="Medium"
+                                        Text="PangCiyuan" />
+                                    <TextBlock
+                                        Margin="0,1,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="Medium"
+                                        Text="Canmi." />
+                                    <TextBlock
+                                        Margin="0,1,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="Medium"
+                                        Text="daelon_ely" />
+                                    <TextBlock
+                                        Margin="0,1,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="Medium"
+                                        Text="游悦电子DIY" />
+                                    <TextBlock
+                                        Margin="0,1,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="Medium"
+                                        Text="阿良良木翼i" />
+                                    <TextBlock
+                                        Margin="0,1,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="Medium"
+                                        Text="You!" />
 
                                     <StackPanel.ChildrenTransitions>
                                         <TransitionCollection>
-                                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="10"/>
-                                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                                            <EntranceThemeTransition FromVerticalOffset="10" IsStaggeringEnabled="True" />
+                                            <RepositionThemeTransition IsStaggeringEnabled="False" />
                                         </TransitionCollection>
                                     </StackPanel.ChildrenTransitions>
                                 </StackPanel>
                             </toolkit:SettingsCard>
                             <toolkit:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
                                 <StackPanel Orientation="Vertical">
-                                    <HyperlinkButton Content="Visit Our Studio Website" NavigateUri="https://fairingstudio.com/"  Margin="-12,0,0,0"/>
-                                    <HyperlinkButton Content="Help &amp; Feedback" NavigateUri="https://fairingstudio.com/"  Margin="-12,0,0,0"/>
+                                    <HyperlinkButton
+                                        Margin="-12,0,0,0"
+                                        Content="Visit Our Studio Website"
+                                        NavigateUri="https://fairingstudio.com/" />
+                                    <HyperlinkButton
+                                        Margin="-12,0,0,0"
+                                        Content="Help &amp; Feedback"
+                                        NavigateUri="https://fairingstudio.com/" />
 
                                     <StackPanel.ChildrenTransitions>
                                         <TransitionCollection>
-                                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
-                                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                                            <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="True" />
+                                            <RepositionThemeTransition IsStaggeringEnabled="False" />
                                         </TransitionCollection>
                                     </StackPanel.ChildrenTransitions>
                                 </StackPanel>
@@ -154,7 +318,7 @@
                                 <Grid>
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Top">
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                        
+
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
                                             </StackPanel>
@@ -166,14 +330,21 @@
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
 
-                    <toolkit:SettingsExpander Header="FSGaryityTool_Win11 in Github" Description="FSGaryityTool for WinUI3" Margin="0,3,0,3" IsExpanded="True">
+                    <toolkit:SettingsExpander
+                        Margin="0,3,0,3"
+                        Description="FSGaryityTool for WinUI3"
+                        Header="FSGaryityTool_Win11 in Github"
+                        IsExpanded="True">
                         <toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon Glyph="&#xE943;" />
                         </toolkit:SettingsExpander.HeaderIcon>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
                                 <StackPanel Orientation="Vertical">
-                                    <HyperlinkButton Content="Join the project on Github" NavigateUri="https://github.com/SQc04/FSGaryityTool_Win11"  Margin="-12,0,0,0"/>
+                                    <HyperlinkButton
+                                        Margin="-12,0,0,0"
+                                        Content="Join the project on Github"
+                                        NavigateUri="https://github.com/SQc04/FSGaryityTool_Win11" />
                                 </StackPanel>
                             </toolkit:SettingsCard>
                             <!--
@@ -181,7 +352,7 @@
                                 <Grid>
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Top">
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                                            
+
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
                                             </StackPanel>
@@ -193,19 +364,19 @@
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
 
-                    <TextBlock Text="" Margin="0,12,0,0"/>
+                    <TextBlock Margin="0,12,0,0" Text="" />
                     <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
-                            <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
-                            <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                            <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="True" />
+                            <RepositionThemeTransition IsStaggeringEnabled="False" />
                         </TransitionCollection>
                     </StackPanel.ChildrenTransitions>
                 </StackPanel>
-                
+
                 <StackPanel.ChildrenTransitions>
                     <TransitionCollection>
-                        <EntranceThemeTransition IsStaggeringEnabled="True" FromVerticalOffset="100"/>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                        <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="True" />
+                        <RepositionThemeTransition IsStaggeringEnabled="False" />
                     </TransitionCollection>
                 </StackPanel.ChildrenTransitions>
             </StackPanel>

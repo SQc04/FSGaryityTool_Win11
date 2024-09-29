@@ -1,36 +1,13 @@
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Media.Capture;
 using Windows.Media.Capture.Frames;
-using Windows.Media.Core;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+namespace FSGaryityTool_Win11.Views.Pages.CameraControlPage;
 
-namespace FSGaryityTool_Win11.Views.Pages.CameraControlPage
+public sealed partial class CameraControlMainPage : Page
 {
-    public sealed partial class CameraControlMainPage : Page
-    {
-        private MediaCapture mediaCapture;
-        private MediaFrameSourceGroup selectedFrameSourceGroup;
+    private MediaCapture _mediaCapture;
+    private MediaFrameSourceGroup _selectedFrameSourceGroup;
 
-        public CameraControlMainPage()
-        {
-            this.InitializeComponent();
-        }
-
-        
-    }
+    public CameraControlMainPage() => InitializeComponent();
 }

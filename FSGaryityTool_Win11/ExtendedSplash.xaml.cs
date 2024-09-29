@@ -1,68 +1,52 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml.Media.Imaging;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+namespace FSGaryityTool_Win11;
 
-namespace FSGaryityTool_Win11
+public sealed partial class ExtendedSplash : UserControl
 {
-    public sealed partial class ExtendedSplash : UserControl
+    private Window mainWindow;
+
+    private Rect splashImageRect;
+
+    public ExtendedSplash(Window mainWindow)
     {
-        private Window mainWindow;
-        private Rect splashImageRect;
+        InitializeComponent();
+        this.mainWindow = mainWindow;
 
-        public ExtendedSplash(Window mainWindow)
+        // è®¾ç½®åˆå§‹å±å¹•å›¾åƒçš„æº
+        ExtendedSplashImage.Source = new BitmapImage(new("ms-appx:///Assets/SplashScreen.scale-400.png"));
+
+        // å°†æ‰©å±•åˆå§‹å±å¹•å›¾åƒå®šä½åœ¨ä¸ç³»ç»Ÿåˆå§‹å±å¹•å›¾åƒç›¸åŒçš„ä½ç½®
+        splashImageRect = new(0, 0, mainWindow.Bounds.Width, mainWindow.Bounds.Height);
+        PositionImage();
+    }
+
+    // å®šä½å›¾åƒ
+    private void PositionImage()
+    {
+        ExtendedSplashImage.SetValue(Canvas.LeftProperty, splashImageRect.X);
+        ExtendedSplashImage.SetValue(Canvas.TopProperty, splashImageRect.Y);
+        ExtendedSplashImage.Height = splashImageRect.Height;
+        ExtendedSplashImage.Width = splashImageRect.Width;
+    }
+
+    // å½“çª—å£å¤§å°æ›´æ”¹æ—¶ï¼Œæ›´æ–°åˆå§‹å±å¹•å›¾åƒçš„åæ ‡
+    public void ExtendedSplash_OnResize(object sender, WindowSizeChangedEventArgs e)
+    {
+        // å®‰å…¨åœ°æ›´æ–°æ‰©å±•åˆå§‹å±å¹•å›¾åƒçš„åæ ‡ã€‚æ­¤å‡½æ•°å¯èƒ½ä¼šåœ¨å“åº”åº”ç”¨ç¨‹åºè§†å›¾çŠ¶æ€æ›´æ”¹æˆ–çª—å£å¤§å°æ›´æ”¹äº‹ä»¶æ—¶è¢«è°ƒç”¨
+        if (mainWindow is not null)
         {
-            this.InitializeComponent();
-            this.mainWindow = mainWindow;
-
-            // ÉèÖÃ³õÊ¼ÆÁÄ»Í¼ÏñµÄÔ´
-            extendedSplashImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/SplashScreen.scale-400.png"));
-
-            // ½«À©Õ¹³õÊ¼ÆÁÄ»Í¼Ïñ¶¨Î»ÔÚÓëÏµÍ³³õÊ¼ÆÁÄ»Í¼ÏñÏàÍ¬µÄÎ»ÖÃ
-            splashImageRect = new Rect(0, 0, mainWindow.Bounds.Width, mainWindow.Bounds.Height);
+            // æ›´æ–°åˆå§‹å±å¹•å›¾åƒçš„åæ ‡
             PositionImage();
         }
+    }
 
-
-        // ¶¨Î»Í¼Ïñ
-        void PositionImage()
-        {
-            extendedSplashImage.SetValue(Canvas.LeftProperty, splashImageRect.X);
-            extendedSplashImage.SetValue(Canvas.TopProperty, splashImageRect.Y);
-            extendedSplashImage.Height = splashImageRect.Height;
-            extendedSplashImage.Width = splashImageRect.Width;
-        }
-
-        // µ±´°¿Ú´óĞ¡¸ü¸ÄÊ±£¬¸üĞÂ³õÊ¼ÆÁÄ»Í¼ÏñµÄ×ø±ê
-        public void ExtendedSplash_OnResize(Object sender, WindowSizeChangedEventArgs e)
-        {
-            // °²È«µØ¸üĞÂÀ©Õ¹³õÊ¼ÆÁÄ»Í¼ÏñµÄ×ø±ê¡£´Ëº¯Êı¿ÉÄÜ»áÔÚÏìÓ¦Ó¦ÓÃ³ÌĞòÊÓÍ¼×´Ì¬¸ü¸Ä»ò´°¿Ú´óĞ¡¸ü¸ÄÊÂ¼şÊ±±»µ÷ÓÃ
-            if (mainWindow != null)
-            {
-                // ¸üĞÂ³õÊ¼ÆÁÄ»Í¼ÏñµÄ×ø±ê
-                PositionImage();
-            }
-        }
-
-        // ¹«¹²·½·¨£¬ÓÃÀ´×¢²á SizeChanged ÊÂ¼ş´¦ÀíÆ÷
-        public void RegisterSizeChangedEvent()
-        {
-            Window.Current.SizeChanged += ExtendedSplash_OnResize;
-        }
+    // å…¬å…±æ–¹æ³•ï¼Œç”¨æ¥æ³¨å†Œ SizeChanged äº‹ä»¶å¤„ç†å™¨
+    public void RegisterSizeChangedEvent()
+    {
+        Window.Current.SizeChanged += ExtendedSplash_OnResize;
     }
 }
-

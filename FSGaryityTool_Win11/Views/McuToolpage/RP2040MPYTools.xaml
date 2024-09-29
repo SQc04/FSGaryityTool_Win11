@@ -1,20 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="FSGaryityTool_Win11.McuToolpage.RP2040MPYTools"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:FSGaryityTool_Win11.McuToolpage"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FSGaryityTool_Win11.McuToolpage"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    xmlns:Toolkit="using:CommunityToolkit.WinUI.Controls"
-    NavigationCacheMode="Enabled">
+    NavigationCacheMode="Enabled"
+    mc:Ignorable="d">
 
     <Grid>
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
-                <Button x:Name="RSTButton" Click="RSTButton_Click" Width="114" Margin="6">Hardware RST</Button>
-                <Button x:Name="SoftRSTButton" Click="SoftRSTButton_Click" Width="102" Margin="6">Soft RST</Button>
+                <Button
+                    x:Name="RstButton"
+                    Width="114"
+                    Margin="6"
+                    Click="RSTButton_Click">
+                    Hardware RST
+                </Button>
+                <Button
+                    x:Name="SoftRstButton"
+                    Width="102"
+                    Margin="6"
+                    Click="SoftRSTButton_Click">
+                    Soft RST
+                </Button>
             </StackPanel>
         </StackPanel>
     </Grid>

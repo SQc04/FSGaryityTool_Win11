@@ -1,268 +1,223 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Media.Animation;
-using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
-
 using FSGaryityTool_Win11.Views.Pages.FlashDownloadPage;
-using Microsoft.UI.Xaml.Documents;
-using System.Diagnostics;
 using FSGaryityTool_Win11.Views.Pages.TestPage;
-using FSGaryityTool_Win11.Views.Pages.FairingStudioPage;
-using System.Diagnostics.Eventing.Reader;
-using Microsoft.UI;
 using static FSGaryityTool_Win11.Page1;
 using static FSGaryityTool_Win11.Views.Pages.SerialPortPage.SerialPortToolsPage;
-using System.IO.Ports;
-using System.Text;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage;
 
-namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
+public sealed partial class MainPage1 : Page
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class MainPage1 : Page
+    public static int Pge { get; set; } = 0;
+
+    public const int SelectorBarDefaultNumber = 0;
+
+    private int _previousSelectedIndex = SelectorBarDefaultNumber;
+
+    public static MainPage1 Current { get; private set; }
+
+    private readonly ITaskbarList3 _taskbarInstance;
+
+    private CancellationTokenSource _delayCts = new();
+
+    public MainPage1()
     {
-        
-        public static int Pge = 0;
+        InitializeComponent();
 
-        public static int selectorBarDefaultNumber = 0;
-        private int previousSelectedIndex = selectorBarDefaultNumber;
+        Current = this;
 
-        public static MainPage1 mainPage1;
+        SerialPortTextBlock.Text = LanguageText("serialPort");
+        SerialPlotterTextBlock.Text = LanguageText("serialPlotter");
 
-        private ITaskbarList3 taskbarInstance;
+        SerialPortToolsFrame.Navigate(typeof(SerialPortToolsPage));
 
-        private CancellationTokenSource delayCts = new CancellationTokenSource();
-        public MainPage1()
+        FssPagf.Navigate(typeof(Page1), null, null);//ÂàùÂßãÂåñPage1
+
+        SerialPortPageNavigationView.SelectedItem = SelectorBarDefaultNumber switch
         {
-            this.InitializeComponent();
+            0 => SerialPort,
+            1 => SerialPlotter,
+            2 => Test2,
+            _ => SerialPortPageNavigationView.SelectedItem
+        };
 
-            mainPage1 = this;
+        _taskbarInstance = (ITaskbarList3)new TaskbarList();
+        _taskbarInstance.HrInit();
 
-            SerialPortTextBlock.Text = Page1.LanguageText("serialPort");
-            SerialPlotterTextBlock.Text = Page1.LanguageText("serialPlotter");
+        SerialPortConnectToggleButtonText.Text = LanguageText("connectl");
+        RunProgressBar.Visibility = Visibility.Collapsed;
+    }
 
-            SerialPortToolsFrame.Navigate(typeof(SerialPortToolsPage));
+    private async void SerialPortPageNavigationView_SelectionChanged(NavigationView sender,
+        NavigationViewSelectionChangedEventArgs args)
+    {
+        var selectedItem = args.SelectedItem as NavigationViewItem;
+        var currentSelectionIndex = sender.MenuItems.IndexOf(selectedItem);
 
-            
+        var pageType = currentSelectionIndex switch
+        {
+            0 => typeof(Page1),
+            1 => typeof(SerialPlotterPage),
+            2 => typeof(TestPage1),
+            _ => typeof(Page2)
+        };
 
-            FSSPagf.Navigate(typeof(Page1), null, null);//≥ı ºªØPage1
+        var slideNavigationTransitionEffect = currentSelectionIndex - _previousSelectedIndex > 0
+            ? SlideNavigationTransitionEffect.FromRight
+            : SlideNavigationTransitionEffect.FromLeft;
 
-            switch (selectorBarDefaultNumber)
-            {
-                case 0:
-                    SerialPortPageNavigationView.SelectedItem = SerialPort;
-                    break;
-                case 1:
-                    SerialPortPageNavigationView.SelectedItem = SerialPlotter;
-                    break;
-                case 2:
-                    SerialPortPageNavigationView.SelectedItem = Test2;
-                    break;
-            }
+        if (currentSelectionIndex == _previousSelectedIndex)
+            slideNavigationTransitionEffect = SlideNavigationTransitionEffect.FromBottom;
 
-            this.taskbarInstance = (ITaskbarList3)new TaskbarList();
-            this.taskbarInstance.HrInit();
+        FssPagf.Navigate(pageType, null,
+            new SlideNavigationTransitionInfo { Effect = slideNavigationTransitionEffect });
 
-            SerialPortConnectToggleButtonText.Text = LanguageText("connectl");
-            RunProgressBar.Visibility = Visibility.Collapsed;
+        _previousSelectedIndex = currentSelectionIndex;
+
+        // ÂèñÊ∂à‰πãÂâçÁöÑÂª∂Êó∂
+        await _delayCts.CancelAsync();
+        _delayCts = new();
+
+        try
+        {
+            // Á≠âÂæÖ2ÁßíÔºåÂ¶ÇÊûúÂú®ËøôÊúüÈó¥Ë¢´ÂèñÊ∂àÔºåÂ∞ÜÊäõÂá∫ OperationCanceledException
+            await Task.Delay(500, _delayCts.Token);
+
+            // ÁÑ∂ÂêéÂØºËà™Âà∞Âêå‰∏Ä‰∏™È°µÈù¢Ôºå‰ΩÜ‰∏çÊí≠ÊîæËøáÊ∏°Âä®Áîª
+            FssPagf.Navigate(pageType, null, null);
         }
-
-        private async void SerialPortPageNavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        catch (OperationCanceledException)
         {
-            var selectedItem = args.SelectedItem as NavigationViewItem;
-            int currentSelectionIndex = sender.MenuItems.IndexOf(selectedItem);
+            // Â¶ÇÊûúÂª∂Êó∂Ë¢´ÂèñÊ∂àÔºå‰∏çÂÅö‰ªª‰Ωï‰∫ãÊÉÖ
+        }
+    }
 
-            System.Type pageType = typeof(Page2);
+    private bool _toolsToggleButtonIsChecked;
 
-            switch (currentSelectionIndex)
+    private void SerialPortToolsToggleButton_Click(object sender, RoutedEventArgs e)
+    {
+    }
+
+    private void SerialPortToolsToggleButtonFontIcon_Rotation(object name)
+    {
+            
+        if (_toolsToggleButtonIsChecked)
+        {
+            Thread.Sleep(100);
+            DispatcherQueue.TryEnqueue(() =>
             {
-                case 0:
-                    pageType = typeof(Page1);
-                    break;
-                case 1:
-                    pageType = typeof(SerialPlotterPage);
-                    break;
-                case 2:
-                    pageType = typeof(TestPage1);
-                    break;
+                SerialPortToolsToggleButtonFontIcon.Rotation = 90;
+            });
+        }
+        else
+        {
+            Thread.Sleep(100);
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                SerialPortToolsToggleButtonFontIcon.Rotation = 0;
+            });
+        }
+    }
+
+    private void SerialPortToolsSplitView_PaneOpening(SplitView sender, object args)
+    {
+            
+        _toolsToggleButtonIsChecked = true;
+        var serialPortToolsToggleButtonFontIconRotation = new Thread(SerialPortToolsToggleButtonFontIcon_Rotation);
+        serialPortToolsToggleButtonFontIconRotation.Start();
+        SerialPortToolsSplitView.PaneBackground = SerialPortToolsSplitView.DisplayMode switch
+        {
+            SplitViewDisplayMode.CompactOverlay => Resources["CustomAcrylicBrush"] as AcrylicBrush,
+            SplitViewDisplayMode.CompactInline => Application.Current.Resources["AcrylicBackgroundFillColorBaseBrush"] as SolidColorBrush,
+            _ => SerialPortToolsSplitView.PaneBackground
+        };
+        SerialPortConnectToggleButtonGrid.Width = 304;
+        SerialPortToolsPage.Current.RunTProgressBar.Width = 285;
+    }
+
+    private void SerialPortToolsSplitView_PaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
+    {
+        _toolsToggleButtonIsChecked = false;
+        var serialPortToolsToggleButtonFontIconRotation = new Thread(SerialPortToolsToggleButtonFontIcon_Rotation);
+        serialPortToolsToggleButtonFontIconRotation.Start();
+        SerialPortToolsSplitView.PaneBackground = SerialPortToolsSplitView.DisplayMode switch
+        {
+            SplitViewDisplayMode.CompactOverlay or SplitViewDisplayMode.CompactInline =>
+                Application.Current.Resources["AcrylicBackgroundFillColorBaseBrush"] as SolidColorBrush,
+            _ => SerialPortToolsSplitView.PaneBackground
+        };
+
+        SerialPortConnectToggleButtonGrid.Width = 51;
+        SerialPortToolsPage.Current.RunTProgressBar.Width = 32;
+    }
+
+    public void ChangeSplitViewDisplayMode(SplitViewDisplayMode mode)
+    {
+        SerialPortToolsSplitView.DisplayMode = mode;
+    }
+
+    public void SerialPortConnectToggleButton_Click(object sender, RoutedEventArgs e)
+    {
+        var hWnd = (nint)App.MainWindowHandle;                // Ëé∑Âèñ‰∏ªÁ™óÂè£ÁöÑÂè•ÊüÑ
+        if (PortIsConnect is 0)
+        {
+            var app = Application.Current as App;             // Â∞ùËØïÂ∞ÜÂΩìÂâçÂ∫îÁî®Á®ãÂ∫èÂÆû‰æãËΩ¨Êç¢‰∏∫AppÁ±ªÂûã
+            if (app is not null)                                    // Ê£ÄÊü•ËΩ¨Êç¢ÊòØÂê¶ÊàêÂäü
+            {
+                _taskbarInstance.SetProgressState(hWnd, TBPFLAG.TBPF_INDETERMINATE);//ÂºÄÂßã‰ªªÂä°Ê†èÂä†ËΩΩÂä®Áîª
             }
-
-            var slideNavigationTransitionEffect = currentSelectionIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
-
-            if (currentSelectionIndex == previousSelectedIndex) slideNavigationTransitionEffect = SlideNavigationTransitionEffect.FromBottom;
-
-            FSSPagf.Navigate(pageType, null, new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect });
-
-            previousSelectedIndex = currentSelectionIndex;
-
-            // »°œ˚÷Æ«∞µƒ—” ±
-            delayCts.Cancel();
-            delayCts = new CancellationTokenSource();
-
             try
             {
-                // µ»¥˝2√Î£¨»Áπ˚‘⁄’‚∆⁄º‰±ª»°œ˚£¨Ω´≈◊≥ˆ OperationCanceledException
-                await Task.Delay(500, delayCts.Token);
-
-                // »ª∫Ûµº∫ΩµΩÕ¨“ª∏ˆ“≥√Ê£¨µ´≤ª≤•∑≈π˝∂…∂Øª≠
-                FSSPagf.Navigate(pageType, null, null);
+                SerialPortToolsPage.Current.SerialPortConnect();
+                SerialPortConnectToggleButtonText.Text = LanguageText("disconnectl");
+                SerialPortConnectToggleButton.IsChecked = true;
+                RunProgressBar.IsIndeterminate = true;
+                RunProgressBar.ShowPaused = false;
+                RunProgressBar.Visibility = Visibility.Visible;
+                SerialPortToolsPage.Current.HideTimer.Start();
             }
-            catch (OperationCanceledException)
+            catch 
             {
-                // »Áπ˚—” ±±ª»°œ˚£¨≤ª◊ˆ»Œ∫Œ ¬«È
-            }
-        }
-
-        bool toolsToggleButtonIsChecked = false;
-        private void SerialPortToolsToggleButton_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
-        private void SerialPortToolsToggleButtonFontIcon_Rotation(object name)
-        {
-            
-            if (toolsToggleButtonIsChecked)
-            {
-                Thread.Sleep(100);
-                DispatcherQueue.TryEnqueue(() =>
+                SerialPortToolsPage.Current.SerialPortConnectCatch();
+                if (app is not null)
                 {
-                    SerialPortToolsToggleButtonFontIcon.Rotation = 90;
-                });
-            }
-            else
-            {
-                Thread.Sleep(100);
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    SerialPortToolsToggleButtonFontIcon.Rotation = 0;
-                });
-            }
-
-        }
-
-        
-
-        private void SerialPortToolsSplitView_PaneOpening(SplitView sender, object args)
-        {
-            
-            toolsToggleButtonIsChecked = true;
-            Thread SerialPortToolsToggleButtonFontIconRotation = new Thread(SerialPortToolsToggleButtonFontIcon_Rotation);
-            SerialPortToolsToggleButtonFontIconRotation.Start();
-            if (SerialPortToolsSplitView.DisplayMode == SplitViewDisplayMode.CompactOverlay)
-            {
-                SerialPortToolsSplitView.PaneBackground = this.Resources["CustomAcrylicBrush"] as AcrylicBrush;
-            }
-            if (SerialPortToolsSplitView.DisplayMode == SplitViewDisplayMode.CompactInline)
-            {
-                SerialPortToolsSplitView.PaneBackground = Application.Current.Resources["AcrylicBackgroundFillColorBaseBrush"] as SolidColorBrush;
-            }
-            SerialPortConnectToggleButtonGrid.Width = 304;
-            serialPortToolsPage.RunTProgressBar.Width = 285;
-        }
-
-        private void SerialPortToolsSplitView_PaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
-        {
-            toolsToggleButtonIsChecked = false;
-            Thread SerialPortToolsToggleButtonFontIconRotation = new Thread(SerialPortToolsToggleButtonFontIcon_Rotation);
-            SerialPortToolsToggleButtonFontIconRotation.Start();
-            if (SerialPortToolsSplitView.DisplayMode == SplitViewDisplayMode.CompactOverlay)
-            {
-                SerialPortToolsSplitView.PaneBackground = Application.Current.Resources["AcrylicBackgroundFillColorBaseBrush"] as SolidColorBrush;
-            }
-            if (SerialPortToolsSplitView.DisplayMode == SplitViewDisplayMode.CompactInline)
-            {
-                SerialPortToolsSplitView.PaneBackground = Application.Current.Resources["AcrylicBackgroundFillColorBaseBrush"] as SolidColorBrush;
-            }
-            SerialPortConnectToggleButtonGrid.Width = 51;
-            serialPortToolsPage.RunTProgressBar.Width = 32;
-        }
-
-        public void ChangeSplitViewDisplayMode(Microsoft.UI.Xaml.Controls.SplitViewDisplayMode mode)
-        {
-            this.SerialPortToolsSplitView.DisplayMode = mode;
-        }
-
-        public void SerialPortConnectToggleButton_Click(object sender, RoutedEventArgs e)
-        {
-            if(SerialPortToolsPage.portIsConnect == 0)
-            {
-                var app = (Application.Current as App);             // ≥¢ ‘Ω´µ±«∞”¶”√≥Ã–Ú µ¿˝◊™ªªŒ™App¿‡–Õ
-                if (app != null)                                    // ºÏ≤È◊™ªª «∑Ò≥…π¶
-                {
-                    var hWnd = app.MainWindowHandle;                // ªÒ»°÷˜¥∞ø⁄µƒæ‰±˙
-                    this.taskbarInstance.SetProgressState(hWnd, FSGaryityTool_Win11.TBPFLAG.TBPF_INDETERMINATE);//ø™ º»ŒŒÒ¿∏º”‘ÿ∂Øª≠
-                }
-                try
-                {
-                    serialPortToolsPage.SerialPortConnect();
-                    SerialPortConnectToggleButtonText.Text = LanguageText("disconnectl");
-                    SerialPortConnectToggleButton.IsChecked = true;
-                    RunProgressBar.IsIndeterminate = true;
-                    RunProgressBar.ShowPaused = false;
-                    RunProgressBar.Visibility = Visibility.Visible;
-                    serialPortToolsPage._hideTimer.Start();
-                }
-                catch 
-                {
-                    serialPortToolsPage.SerialPortConnectcatch();
-                    if (app != null)
-                    {
-                        var hWnd = app.MainWindowHandle;
-                        this.taskbarInstance.SetProgressState(hWnd, FSGaryityTool_Win11.TBPFLAG.TBPF_NOPROGRESS);//Õ£÷π»ŒŒÒ¿∏º”‘ÿ∂Øª≠
-                    }
-                    SerialPortConnectToggleButtonText.Text = LanguageText("connectl");
-                    SerialPortConnectToggleButton.IsChecked = false;
-                    RunProgressBar.IsIndeterminate = true;
-                    RunProgressBar.ShowPaused = true;
-                    RunProgressBar.Visibility = Visibility.Visible;
-                    SerialPortToolsToggleButton.IsChecked = true;
-                }
-            }
-            else
-            {
-                var app = (Application.Current as App);
-                if (app != null)
-                {
-                    var hWnd = app.MainWindowHandle;
-                    this.taskbarInstance.SetProgressState(hWnd, FSGaryityTool_Win11.TBPFLAG.TBPF_NOPROGRESS);//Õ£÷π»ŒŒÒ¿∏º”‘ÿ∂Øª≠
-                }
-                try
-                {
-                    serialPortToolsPage.SerialPortClose();
-                }
-                catch (Exception err)                                                                       //“ª∞„«Èøˆœ¬πÿ±’¥Æø⁄≤ªª·≥ˆ¥Ì£¨À˘“‘≤ª–Ë“™º”¥¶¿Ì≥Ã–Ú
-                {
-                    page1.RXTextBox.Text = page1.RXTextBox.Text + err + "\r\n";
+                    _taskbarInstance.SetProgressState(hWnd, TBPFLAG.TBPF_NOPROGRESS);//ÂÅúÊ≠¢‰ªªÂä°Ê†èÂä†ËΩΩÂä®Áîª
                 }
                 SerialPortConnectToggleButtonText.Text = LanguageText("connectl");
-                serialPortToolsPage.SerialPortDisconnect();
                 SerialPortConnectToggleButton.IsChecked = false;
-                RunProgressBar.IsIndeterminate = false;
-                RunProgressBar.ShowPaused = false;
-                RunProgressBar.Visibility = Visibility.Collapsed;
+                RunProgressBar.IsIndeterminate = true;
+                RunProgressBar.ShowPaused = true;
+                RunProgressBar.Visibility = Visibility.Visible;
                 SerialPortToolsToggleButton.IsChecked = true;
-
             }
         }
-
+        else
+        {
+            if (Application.Current is App app)
+            {
+                _taskbarInstance.SetProgressState(hWnd, TBPFLAG.TBPF_NOPROGRESS);//ÂÅúÊ≠¢‰ªªÂä°Ê†èÂä†ËΩΩÂä®Áîª
+            }
+            try
+            {
+                SerialPortToolsPage.Current.SerialPortClose();
+            }
+            catch (Exception err)                                                                       //‰∏ÄËà¨ÊÉÖÂÜµ‰∏ãÂÖ≥Èó≠‰∏≤Âè£‰∏ç‰ºöÂá∫ÈîôÔºåÊâÄ‰ª•‰∏çÈúÄË¶ÅÂä†Â§ÑÁêÜÁ®ãÂ∫è
+            {
+                Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + err + "\r\n";
+            }
+            SerialPortConnectToggleButtonText.Text = LanguageText("connectl");
+            SerialPortToolsPage.Current.SerialPortDisconnect();
+            SerialPortConnectToggleButton.IsChecked = false;
+            RunProgressBar.IsIndeterminate = false;
+            RunProgressBar.ShowPaused = false;
+            RunProgressBar.Visibility = Visibility.Collapsed;
+            SerialPortToolsToggleButton.IsChecked = true;
+        }
     }
 }
