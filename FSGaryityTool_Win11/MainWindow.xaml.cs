@@ -209,14 +209,6 @@ public sealed partial class MainWindow : Window
             }
         };
 
-        using (var reader = File.OpenText(SettingsCoreServices.FSGravityToolsSettingsToml))
-        {
-            var settingsTomlr = TOML.Parse(reader);
-            string value = settingsTomlr["FSGravitySettings"]["DefaultNavigationViewPaneOpen"];
-            DefaultNavigationViewPaneOpen = Convert.ToBoolean(value);
-            FSnv.IsPaneOpen = DefaultNavigationViewPaneOpen;
-            Debug.WriteLine("Pane" + DefaultNavigationViewPaneOpen);
-        }
 
         //page1Instance = new Page1(); // 初始化Page1实例
 
@@ -230,6 +222,15 @@ public sealed partial class MainWindow : Window
             DispatcherQueue.TryEnqueue(() =>
             {
                 LanguageSetting();
+
+                using (var reader = File.OpenText(SettingsCoreServices.FSGravityToolsSettingsToml))
+                {
+                    var settingsTomlr = TOML.Parse(reader);
+                    string value = settingsTomlr["FSGravitySettings"]["DefaultNavigationViewPaneOpen"];
+                    DefaultNavigationViewPaneOpen = Convert.ToBoolean(value);
+                    FSnv.IsPaneOpen = DefaultNavigationViewPaneOpen;
+                    Debug.WriteLine("Pane" + DefaultNavigationViewPaneOpen);
+                }
 
                 //设置默认页面
                 using (var reader = File.OpenText(SettingsCoreServices.FSGravityToolsSettingsToml))
