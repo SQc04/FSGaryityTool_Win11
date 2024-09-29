@@ -26,7 +26,6 @@ namespace FSGaryityTool_Win11.Core.Settings
         public static string serialPortComData = "SerialPortCOMData";
         public static string comData = "COMData";
 
-
         public static void CheckSettingFolder()
         {
             //Debug.WriteLine("开始搜索文件夹");
