@@ -145,11 +145,6 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ClevoEcControlinfo">
-      <HintPath>..\ClevoEcControlinfo\bin\Debug\net6.0\ClevoEcControlinfo.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -374,6 +369,10 @@
 	
   <ItemGroup>
     <Resource Remove="Views\McuToolpage\LPC1768FSPnPTools.xaml" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\ClevoEcControlinfo\ClevoEcControlinfo.csproj" />
   </ItemGroup>
 	
 	

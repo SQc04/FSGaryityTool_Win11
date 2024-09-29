@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
@@ -41,7 +41,6 @@ using System.Diagnostics;
 using System.IO;
 
 using Tommy;
-using Newtonsoft.Json;
 using System.Reflection.PortableExecutable;
 using Windows.ApplicationModel.Activation;
 using System.Xml.Linq;
