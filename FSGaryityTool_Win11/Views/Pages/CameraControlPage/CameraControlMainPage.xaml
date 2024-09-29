@@ -1,0 +1,89 @@
+<Page
+    x:Class="FSGaryityTool_Win11.Views.Pages.CameraControlPage.CameraControlMainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FSGaryityTool_Win11.Views.Pages.CameraControlPage"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid>
+        <ScrollViewer>
+            <StackPanel Margin="12,0,0,0" Orientation="Vertical">
+                <Grid Margin="0,6,6,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="246" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel
+                        Grid.Column="0"
+                        CornerRadius="4"
+                        Orientation="Vertical">
+                        <TextBlock Text="Top Camera" />
+                        <ComboBox
+                            x:Name="TopCameraSelectComboBox"
+                            Width="240"
+                            Margin="0,6,6,6" />
+                        <ComboBox
+                            x:Name="TopCameraExposureComboBox"
+                            Width="240"
+                            Margin="0,6,6,6" />
+                        <ToggleButton
+                            x:Name="TopCameraAutoExposureToggleButton"
+                            Width="240"
+                            Margin="0,6,6,6"
+                            Content="Auto mode" />
+                    </StackPanel>
+                    <Border
+                        Grid.Column="1"
+                        MinHeight="300"
+                        Margin="6"
+                        Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                        CornerRadius="4">
+                        <MediaPlayerElement
+                            x:Name="TopCameraMediaPlayerElement"
+                            AutoPlay="True"
+                            Stretch="Uniform" />
+                    </Border>
+                </Grid>
+
+                <Grid Margin="0,0,6,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="246" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel
+                        Grid.Column="0"
+                        CornerRadius="4"
+                        Orientation="Vertical">
+                        <TextBlock Text="Bottom Camera" />
+                        <ComboBox
+                            x:Name="BottomCameraSelectComboBox"
+                            Width="240"
+                            Margin="0,6,6,6" />
+                        <ComboBox
+                            x:Name="BottomCameraExposureComboBox"
+                            Width="240"
+                            Margin="0,6,6,6" />
+                        <ToggleButton
+                            x:Name="BottomCameraAutoExposureToggleButton"
+                            Width="240"
+                            Margin="0,6,6,6"
+                            Content="Auto mode" />
+                    </StackPanel>
+                    <Border
+                        Grid.Column="1"
+                        MinHeight="300"
+                        Margin="6"
+                        Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                        CornerRadius="4">
+                        <MediaPlayerElement
+                            x:Name="BottomCameraMediaPlayerElement"
+                            AutoPlay="True"
+                            Stretch="Uniform" />
+                    </Border>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
