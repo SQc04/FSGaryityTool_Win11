@@ -1,22 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
+# 17
 VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FSGaryityTool_Win11", "FSGaryityTool_Win11.csproj", "{6DC7F8D2-BAFF-4EBF-872A-49532EF6578D}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{5084F606-65D2-45BB-9BC0-C9780B0B222F}"
-	ProjectSection(SolutionItems) = preProject
-		SystemBackdrop.cs = SystemBackdrop.cs
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FSGaryityTool_Win11", "FSGaryityTool_Win11\FSGaryityTool_Win11.csproj", "{6DC7F8D2-BAFF-4EBF-872A-49532EF6578D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
 		Debug|arm64 = Debug|arm64
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
-		Release|Any CPU = Release|Any CPU
 		Release|arm64 = Release|arm64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
