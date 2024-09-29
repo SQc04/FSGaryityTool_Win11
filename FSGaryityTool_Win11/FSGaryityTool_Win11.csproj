@@ -24,15 +24,15 @@
         <Content Include="Assets\Wide310x150Logo.scale-200.png" />
         <Content Include="FSFSoftH.ico" />
         <Content Include="FSSoftH.ico" />
-        <Content Include="Assets\BackgroundTest\TestAlpha.jpg"/>
-        <Content Include="Assets\BackgroundTest\TestBeta.jpg"/>
-        <Content Include="Assets\FS2022.png"/>
-        <Content Include="Assets\FSBLUE12K.png"/>
-        <Content Include="Assets\FSFSoft.png"/>
-        <Content Include="Assets\SmallTile.scale-400.png"/>
-        <Content Include="Assets\SplashScreen.scale-400.png"/>
-        <Content Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-256.png"/>
-        <Content Include="Audio\jesper_k_.mod"/>
+        <Content Include="Assets\BackgroundTest\TestAlpha.jpg" />
+        <Content Include="Assets\BackgroundTest\TestBeta.jpg" />
+        <Content Include="Assets\FS2022.png" />
+        <Content Include="Assets\FSBLUE12K.png" />
+        <Content Include="Assets\FSFSoft.png" />
+        <Content Include="Assets\SmallTile.scale-400.png" />
+        <Content Include="Assets\SplashScreen.scale-400.png" />
+        <Content Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+        <Content Include="Audio\jesper_k_.mod" />
     </ItemGroup>
 
     <ItemGroup>
