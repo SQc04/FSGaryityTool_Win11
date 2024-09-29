@@ -1,14 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
+# 17
 VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FSGaryityTool_Win11", "FSGaryityTool_Win11.csproj", "{6DC7F8D2-BAFF-4EBF-872A-49532EF6578D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FSGaryityTool_Win11", "FSGaryityTool_Win11\FSGaryityTool_Win11.csproj", "{6DC7F8D2-BAFF-4EBF-872A-49532EF6578D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{5084F606-65D2-45BB-9BC0-C9780B0B222F}"
-	ProjectSection(SolutionItems) = preProject
-		SystemBackdrop.cs = SystemBackdrop.cs
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClevoEcControlinfo", "ClevoEcControlinfo\ClevoEcControlinfo.csproj", "{31F140A7-D768-40B0-8B04-7DA8483EFCD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +43,22 @@ Global
 		{6DC7F8D2-BAFF-4EBF-872A-49532EF6578D}.Release|x86.ActiveCfg = Release|x86
 		{6DC7F8D2-BAFF-4EBF-872A-49532EF6578D}.Release|x86.Build.0 = Release|x86
 		{6DC7F8D2-BAFF-4EBF-872A-49532EF6578D}.Release|x86.Deploy.0 = Release|x86
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|arm64.Build.0 = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|x64.Build.0 = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|x86.Build.0 = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|arm64.ActiveCfg = Release|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|arm64.Build.0 = Release|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|x64.ActiveCfg = Release|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|x64.Build.0 = Release|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|x86.ActiveCfg = Release|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

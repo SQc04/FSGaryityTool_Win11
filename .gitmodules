@@ -1,0 +1,3 @@
+[submodule "ClevoEcControlinfo"]
+	path = ClevoEcControlinfo
+	url = git@github.com:SQc04/ClevoEcControlinfo.git

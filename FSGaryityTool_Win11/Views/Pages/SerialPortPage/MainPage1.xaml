@@ -1,0 +1,252 @@
+<Page
+    x:Class="FSGaryityTool_Win11.Views.Pages.SerialPortPage.MainPage1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:FSGaryityTool_Win11.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FSGaryityTool_Win11.Views.Pages.SerialPortPage"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="Transparent"
+    NavigationCacheMode="Enabled"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <Color x:Key="SystemControlBackgroundLightColor">#90FFFFFF</Color>
+            <Color x:Key="SystemControlBackgroundDarkColor">#44252525</Color>
+            <controls:PaneWidthConverter x:Key="PaneWidthConverter" />
+
+            <ResourceDictionary.ThemeDictionaries>
+                <!--  浅色模式的AcrylicBrush  -->
+                <ResourceDictionary x:Key="Light">
+                    <AcrylicBrush
+                        x:Key="CustomAcrylicBrush"
+                        FallbackColor="#F9F9F9"
+                        TintColor="#FCFCFC"
+                        TintOpacity="0.05" />
+                    <SolidColorBrush x:Key="CustomSolidColorBrush" Color="{ThemeResource SystemControlBackgroundLightColor}" />
+                </ResourceDictionary>
+
+                <!--  深色模式的AcrylicBrush  -->
+                <ResourceDictionary x:Key="Dark">
+                    <AcrylicBrush
+                        x:Key="CustomAcrylicBrush"
+                        FallbackColor="#2C2C2C"
+                        TintColor="#2C2C2C"
+                        TintOpacity="0.05" />
+                    <SolidColorBrush x:Key="CustomSolidColorBrush" Color="{ThemeResource SystemControlBackgroundDarkColor}" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0" />
+            <!--  36  -->
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="48" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ProgressBar
+            x:Name="RunProgressBar"
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Margin="0,0,0,0"
+            VerticalAlignment="Bottom"
+            IsIndeterminate="False"
+            ShowError="False"
+            ShowPaused="False" />
+
+        <Border
+            Grid.Row="1"
+            Height="40"
+            VerticalAlignment="Top">
+            <!--
+                Background="{ThemeResource SystemAccentColorLight2}"
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            -->
+            <TextBlock
+                Margin="0,8,0,0"
+                VerticalAlignment="Top"
+                Canvas.ZIndex="1" />
+        </Border>
+
+        <!--<TabView x:Name="SPTabView" Grid.Row="1" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" AddTabButtonClick="TabView_AddTabButtonClick" TabCloseRequested="TabView_TabCloseRequested" />-->
+        <Border
+            Grid.Row="1"
+            Grid.RowSpan="1"
+            Grid.Column="0"
+            Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
+            CornerRadius="0,4,0,0">
+            <ToggleButton
+                x:Name="SerialPortToolsToggleButton"
+                Width="36"
+                Height="36"
+                Margin="6"
+                VerticalAlignment="Top"
+                x:FieldModifier="public"
+                Background="Transparent"
+                BorderThickness="0"
+                Click="SerialPortToolsToggleButton_Click"
+                IsChecked="True">
+                <FontIcon
+                    x:Name="SerialPortToolsToggleButtonFontIcon"
+                    CenterPoint="7.5,7.5,0"
+                    FontSize="15"
+                    Glyph="&#xE76C;"
+                    Rotation="0">
+                    <FontIcon.RotationTransition>
+                        <ScalarTransition />
+                    </FontIcon.RotationTransition>
+                </FontIcon>
+            </ToggleButton>
+        </Border>
+
+        <NavigationView
+            x:Name="SerialPortPageNavigationView"
+            Grid.Row="1"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Stretch"
+            IsBackButtonVisible="Collapsed"
+            IsSettingsVisible="False"
+            PaneDisplayMode="Top"
+            SelectionChanged="SerialPortPageNavigationView_SelectionChanged"
+            SelectionFollowsFocus="Enabled">
+            <NavigationView.MenuItems>
+
+                <NavigationViewItem x:Name="SerialPort" Margin="0,3">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Margin="0,0,2,0">
+                            <FontIcon
+                                Margin="0,0,0,0"
+                                CenterPoint="10,10,0"
+                                FontSize="16"
+                                Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                Glyph="&#xE7EB;"
+                                Rotation="180" />
+                            <FontIcon
+                                Margin="-9,0,0,-2"
+                                FontSize="16"
+                                Glyph="&#xE7EB;" />
+                        </Grid>
+                        <TextBlock
+                            x:Name="SerialPortTextBlock"
+                            Margin="6,0,0,0"
+                            Text="Serial Port" />
+                    </StackPanel>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Name="SerialPlotter" Margin="0,3">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid>
+                            <FontIcon
+                                Margin="0,0,0,0"
+                                FontSize="17"
+                                Foreground="{ThemeResource SystemFillColorAttentionBrush}"
+                                Glyph="&#xE9D9;" />
+                            <FontIcon FontSize="20" Glyph="&#xE950;" />
+                        </Grid>
+                        <TextBlock
+                            x:Name="SerialPlotterTextBlock"
+                            Margin="6,0,0,0"
+                            Text="Serial Plotter" />
+                    </StackPanel>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Name="Test2" Margin="0,3">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Margin="0,0,0,0" Glyph="&#xEA86;" />
+                        <TextBlock
+                            x:Name="Test2TextBlock"
+                            Margin="6,0,0,0"
+                            Text="Test2" />
+                    </StackPanel>
+                </NavigationViewItem>
+
+            </NavigationView.MenuItems>
+        </NavigationView>
+
+        <Grid
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <SplitView
+                x:Name="SerialPortToolsSplitView"
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                CompactPaneLength="48"
+                DisplayMode="CompactInline"
+                IsPaneOpen="{Binding ElementName=SerialPortToolsToggleButton, Path=IsChecked, Mode=TwoWay}"
+                OpenPaneLength="304"
+                PaneBackground="{ThemeResource CustomAcrylicBrush}"
+                PaneClosing="SerialPortToolsSplitView_PaneClosing"
+                PaneOpening="SerialPortToolsSplitView_PaneOpening">
+                <SplitView.Pane>
+                    <Grid x:Name="SerialPortToolsMainGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition
+                                Height="52"
+                                MinHeight="48"
+                                MaxHeight="200" />
+                        </Grid.RowDefinitions>
+                        <Frame
+                            x:Name="SerialPortToolsFrame"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="1"
+                            CornerRadius="0,4,0,0" />
+
+                        <Grid
+                            x:Name="SerialPortConnectToggleButtonGrid"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            HorizontalAlignment="Left">
+                            <ToggleButton
+                                x:Name="SerialPortConnectToggleButton"
+                                MinHeight="32"
+                                Margin="7,6,12,12"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Click="SerialPortConnectToggleButton_Click">
+
+                                <StackPanel Margin="-8" Orientation="Horizontal">
+                                    <FontIcon Margin="1,0,0,0" Glyph="&#xE703;" />
+                                    <TextBlock
+                                        x:Name="SerialPortConnectToggleButtonText"
+                                        Margin="15,0,0,0"
+                                        Text="Connect" />
+                                </StackPanel>
+                            </ToggleButton>
+                        </Grid>
+                    </Grid>
+                </SplitView.Pane>
+                <Frame x:Name="FssPagf" Margin="0,6,0,0">
+                    <Frame.ContentTransitions>
+                        <TransitionCollection>
+                            <NavigationThemeTransition />
+                        </TransitionCollection>
+                    </Frame.ContentTransitions>
+                </Frame>
+            </SplitView>
+
+        </Grid>
+
+    </Grid>
+</Page>
