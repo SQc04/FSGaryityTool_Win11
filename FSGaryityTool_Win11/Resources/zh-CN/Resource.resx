@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="about" xml:space="preserve">
+    <value>关于</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="autoConnectl" xml:space="preserve">
     <value>自动连接串口</value>
     <comment>Serial Port Page text</comment>
@@ -135,6 +139,10 @@
   </data>
   <data name="BackgroundDescription" xml:space="preserve">
     <value>设置FSGravityTool的背景</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="base" xml:space="preserve">
+    <value>亚克力</value>
     <comment>Settings Page text</comment>
   </data>
   <data name="baudRatel" xml:space="preserve">
@@ -165,13 +173,45 @@
     <value>数据位</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="DefLanguage" xml:space="preserve">
+    <value>语言 Language</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="DefLanguageDescription" xml:space="preserve">
+    <value>选择FSGravityTool的显示的语言</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="defPageDescription" xml:space="preserve">
+    <value>指定启动FSGravityTool时显示的页面</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="defStartPage" xml:space="preserve">
+    <value>默认起始页</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="disconnectl" xml:space="preserve">
     <value>断开设备串口</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="download Flash" xml:space="preserve">
+    <value>闪存烧录</value>
+    <comment>Main Page Text</comment>
+  </data>
+  <data name="downloadFlashSettings" xml:space="preserve">
+    <value>闪存烧录设置</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="encoding" xml:space="preserve">
     <value>串口编码</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="general" xml:space="preserve">
+    <value>常规</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="keyboard" xml:space="preserve">
+    <value>键盘</value>
+    <comment>Main Page Text</comment>
   </data>
   <data name="keyboardSettings" xml:space="preserve">
     <value>键盘驱动设置</value>
@@ -193,6 +233,18 @@
     <value>用于RP2040的 MicroPython工具</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="mica" xml:space="preserve">
+    <value>云母</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="micaAlt" xml:space="preserve">
+    <value>云母替代</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="mouse" xml:space="preserve">
+    <value>鼠标</value>
+    <comment>Main Page Text</comment>
+  </data>
   <data name="mouseSettings" xml:space="preserve">
     <value>鼠标驱动设置</value>
     <comment>Settings Page text</comment>
@@ -200,6 +252,14 @@
   <data name="openSPErr" xml:space="preserve">
     <value>打开串口失败，请检查相关设置</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="openToml" xml:space="preserve">
+    <value>打开TOML文件</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="openTomlDescription" xml:space="preserve">
+    <value>打开设置文件</value>
+    <comment>Settings Page text</comment>
   </data>
   <data name="overSerichSP" xml:space="preserve">
     <value>搜索串口完成!</value>
@@ -237,12 +297,24 @@
     <value>串口绘图器</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="serialPort" xml:space="preserve">
+    <value>串口调试</value>
+    <comment>Main Page Text</comment>
+  </data>
   <data name="serialPortl" xml:space="preserve">
     <value>串口</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="settings" xml:space="preserve">
+    <value>设置</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="softToolBackground" xml:space="preserve">
     <value>个性化设置背景</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="softTranslucentToolBackground" xml:space="preserve">
+    <value>选择背景透明效果</value>
     <comment>Settings Page text</comment>
   </data>
   <data name="spClose" xml:space="preserve">
@@ -260,6 +332,10 @@
   <data name="spPullout" xml:space="preserve">
     <value>已拔出</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="spSettings" xml:space="preserve">
+    <value>串口调试设置</value>
+    <comment>Settings Page text</comment>
   </data>
   <data name="startSerichSP" xml:space="preserve">
     <value>开始搜索串口...</value>
@@ -284,6 +360,14 @@
   <data name="stopTwo" xml:space="preserve">
     <value>2</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="thin" xml:space="preserve">
+    <value>薄亚克力</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="TranslucentBackgroundDescription" xml:space="preserve">
+    <value>设置FSGravityTool的背景半透明效果</value>
+    <comment>Settings Page text</comment>
   </data>
   <data name="txHexErr" xml:space="preserve">
     <value>输入内容不是十六进制数!</value>

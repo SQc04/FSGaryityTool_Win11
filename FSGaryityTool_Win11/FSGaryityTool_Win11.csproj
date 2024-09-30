@@ -12,8 +12,7 @@
         <UseWinUI>true</UseWinUI>
         <LangVersion>preview</LangVersion>
         <EnableMsixTooling>true</EnableMsixTooling>
-        <DefaultLanguage>zh-CN</DefaultLanguage>
-        <EnableDefaultPriItems>false</EnableDefaultPriItems>
+        <DefaultLanguage>zh-cn</DefaultLanguage>
     </PropertyGroup>
     <ItemGroup>
         <Content Include="Assets\StoreLogo.png" />
@@ -52,7 +51,6 @@
         <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.1.240916" />
         <PackageReference Include="CommunityToolkit.WinUI.Controls.TabbedCommandBar" Version="8.1.240916" />
         <PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.1.240916" />
-        <PackageReference Include="FluentIcons.WinUI" Version="1.1.258" />
         <PackageReference Include="MICA" Version="2.4.3" />
         <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
         <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
@@ -62,19 +60,9 @@
         <PackageReference Include="System.Management" Version="8.0.0" />
         <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
         <PackageReference Include="Tommy" Version="3.1.2" />
-        <PackageReference Include="WinUI3Utilities" Version="1.1.7.9" />
         <Manifest Include="$(ApplicationManifest)" />
 
         <ProjectReference Include="..\ClevoEcControlinfo\ClevoEcControlinfo.csproj" />
-    </ItemGroup>
-    <Target Name="InjectAdditionalFiles" BeforeTargets="GenerateMSBuildEditorConfigFileShouldRun">
-        <ItemGroup>
-            <AdditionalFiles Include="@(PRIResource)" SourceItemGroup="PRIResource" />
-        </ItemGroup>
-    </Target>
-    <ItemGroup>
-        <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="SourceItemGroup" />
-        <PRIResource Include="Resources\*\*.resjson" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
