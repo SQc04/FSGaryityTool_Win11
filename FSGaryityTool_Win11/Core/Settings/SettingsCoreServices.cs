@@ -2,44 +2,57 @@ using System;
 using System.IO;
 using static FSGaryityTool_Win11.SettingsPage;
 using System.Diagnostics;
-using Microsoft.Windows.Storage;
 using Tommy;
 
 namespace FSGaryityTool_Win11.Core.Settings;
 
 internal class SettingsCoreServices
 {
-    public static TomlTable SettingstomlSp;
 
-    public static string FsGravityToolsFolder { get; } = ApplicationData.GetDefault().LocalPath;
-    public static string FsGravityToolsSettingsToml = Path.Combine(FsGravityToolsFolder, "Settings.toml");
+    public static TomlTable settingstomlSp;
 
-    public const string FsGravitySettings = "FSGravitySettings";
-    public const string SerialPortSettings = "SerialPortSettings";
+    public static string SYSAPLOCAL = Environment.GetFolderPath(folder: Environment.SpecialFolder.LocalApplicationData);
+    public static string FairingStudioFolder = Path.Combine(SYSAPLOCAL, "FAIRINGSTUDIO");
+    public static string FSGravityToolsFolder = Path.Combine(FairingStudioFolder, "FSGravityTool");
+    public static string FSGravityToolsSettingsToml = Path.Combine(FSGravityToolsFolder, "Settings.toml");
 
-    public const string SerialPortComData = "SerialPortCOMData";
-    public const string ComData = "COMData";
+    public static string fsGravitySettings = "FSGravitySettings";
+    public static string serialPortSettings = "SerialPortSettings";
+
+    public static string serialPortComData = "SerialPortCOMData";
+    public static string comData = "COMData";
 
     public static void CheckSettingFolder()
     {
         //Debug.WriteLine("开始搜索文件夹");
-        Debug.WriteLine("开始搜索文件夹  " + FsGravityToolsFolder);            //新建FS文件夹
+        Debug.WriteLine("开始搜索文件夹  " + FairingStudioFolder);            //新建FS文件夹
 
-        if (Directory.Exists(FsGravityToolsFolder))
+        if (Directory.Exists(FairingStudioFolder))
         {
             //Debug.WriteLine("找到文件夹,跳过新建文件夹");
         }
         else
         {
             //Debug.WriteLine("没有找到文件夹");
-            Directory.CreateDirectory(FsGravityToolsFolder);
+            Directory.CreateDirectory(FairingStudioFolder);
+            //Debug.WriteLine("新建文件夹");
+        }
+
+        if (Directory.Exists(FSGravityToolsFolder))
+        {
+            //Debug.WriteLine("找到文件夹,跳过新建文件夹");
+        }
+        else
+        {
+            //Debug.WriteLine("没有找到文件夹");
+            Directory.CreateDirectory(FSGravityToolsFolder);
             //Debug.WriteLine("新建文件夹");
         }
     }
 
     public static void AddTomlFile()
     {
-        if (File.Exists(FsGravityToolsSettingsToml))             //生成TOML
+        if (File.Exists(FSGravityToolsSettingsToml))             //生成TOML
         {
             Debug.WriteLine("找到TOML文件,跳过新建文件");
             return;
@@ -47,12 +60,12 @@ internal class SettingsCoreServices
         else
         {
             Debug.WriteLine("没有找到TOML文件");
-            string[] cOmSaveDeviceinf = ["0"];
+            string[] cOMSaveDeviceinf = { "0" };
             var settingstoml = new TomlTable
             {
                 ["Version"] = MainWindow.FSSoftVersion,
 
-                [FsGravitySettings] =
+                [fsGravitySettings] =
                 {
                     Comment =
                         "FSGaryityTool Settings:",
@@ -66,7 +79,7 @@ internal class SettingsCoreServices
                     //[""] = "",
                 },
 
-                [SerialPortSettings] =
+                [serialPortSettings] =
                 {
                     Comment =
                         "FSGaryityTool SerialPort Settings:\r\n" +
@@ -91,17 +104,17 @@ internal class SettingsCoreServices
                     ["DefaultTXNewLine"] = "1"
                 },
 
-                [SerialPortComData] =
+                [serialPortComData] =
                 {
                     Comment =
                         "This is a cache of information for all serial devices.\r\n" +
                         "",
                     ["CheckTime"] = "2024-04-12 19:48:55",                  //串口设备信息更新的时间
                     ["CheckCounter"] = "0",                                 //串口设备信息更新次数
-                    ["COMSaveDeviceinf"] = string.Join(",", cOmSaveDeviceinf),//已保存串口设备的映射表
+                    ["COMSaveDeviceinf"] = string.Join(",", cOMSaveDeviceinf),//已保存串口设备的映射表
                 },
 
-                [ComData] =
+                [comData] =
                 {
                     Comment =
                         "This is an example of cached serial device information.\r\n",
@@ -120,7 +133,7 @@ internal class SettingsCoreServices
 
             };
 
-            using (var writer = File.CreateText(FsGravityToolsSettingsToml))
+            using (var writer = File.CreateText(FSGravityToolsSettingsToml))
             {
                 settingstoml.WriteTo(writer);
                 Debug.WriteLine("写入Toml");
@@ -131,34 +144,40 @@ internal class SettingsCoreServices
         }
     }
 
-    public static string TomlCheckNulls(string mode, string menu, string name)
+    public static string TomlCheckNulls(string Mode, string Menu, string Name)
     {
-        using var reader = File.OpenText(FsGravityToolsSettingsToml);
-        var sPsettingstomlr = TOML.Parse(reader);             //读取TOML
+        var data = "0";
+        using (var reader = File.OpenText(FSGravityToolsSettingsToml))
+        {
+            var SPsettingstomlr = TOML.Parse(reader);             //读取TOML
 
-        string data = sPsettingstomlr[menu][name] == "Tommy.TomlLazy" ? mode : sPsettingstomlr[menu][name];
-
+            if (SPsettingstomlr[Menu][Name] != "Tommy.TomlLazy") data = SPsettingstomlr[Menu][Name];
+            else
+            {
+                data = Mode;
+            }
+        }
         return data;
     }
 
     public static void CheckSettingsFileVersion()
     {
-        string tomlfsVersion;       //版本号比较
+        string TomlfsVersion;       //版本号比较
 
-        using (var reader = File.OpenText(FsGravityToolsSettingsToml))
+        using (var reader = File.OpenText(FSGravityToolsSettingsToml))
         {
             var settingstomlr = TOML.Parse(reader);
-            tomlfsVersion = settingstomlr["Version"];
+            TomlfsVersion = settingstomlr["Version"];
         }
 
-        var tomlVersion = new Version(tomlfsVersion);
-        var fsGrVersion = new Version(MainWindow.FSSoftVersion);
+        var TomlVersion = new Version(TomlfsVersion);
+        var FSGrVersion = new Version(MainWindow.FSSoftVersion);
 
-        if (fsGrVersion > tomlVersion)
+        if (FSGrVersion > TomlVersion)
         {
             UpdateSettingsFile();
         }
-        else if (fsGrVersion < tomlVersion)
+        else if (FSGrVersion < TomlVersion)
         {
             DowngradeSettingsFile();
         }
@@ -177,51 +196,50 @@ internal class SettingsCoreServices
         string baud, party, stop, data, encoding, rxhex, txhex, dtr, rts, shtime, autosco, autosavrset, autosercom, autoconnect, txnewline;
         string checkTime, checkCounter;
 
-        string[] cOmSaveDeviceinf = ["0", "1"];
-        string cOmDeviceinf;
+        string[] cOMSaveDeviceinf = { "0", "1" };
+        string cOMDeviceinf;
 
-        using (var reader = File.OpenText(FsGravityToolsSettingsToml))                    //打开TOML文件
+        using (var reader = File.OpenText(FSGravityToolsSettingsToml))                    //打开TOML文件
         {
-            SettingstomlSp = TOML.Parse(reader);
+            settingstomlSp = TOML.Parse(reader);
 
-            defpage = TomlCheckNulls("0", FsGravitySettings, "DefaultNvPage");
-            defPageBackground = TomlCheckNulls("0", FsGravitySettings, "SoftBackground");
-            defNavigationViewMode = TomlCheckNulls("0", FsGravitySettings, "DefNavigationViewMode");
-            defaultNavigationViewPaneOpen = TomlCheckNulls("true", FsGravitySettings, "DefaultNavigationViewPaneOpen");
-            backgroundImageOpacity = TomlCheckNulls("0.0", FsGravitySettings, "BackgroundImageOpacity");
+            defpage = TomlCheckNulls("0", fsGravitySettings, "DefaultNvPage");
+            defPageBackground = TomlCheckNulls("0", fsGravitySettings, "SoftBackground");
+            defNavigationViewMode = TomlCheckNulls("0", fsGravitySettings, "DefNavigationViewMode");
+            defaultNavigationViewPaneOpen = TomlCheckNulls("true", fsGravitySettings, "DefaultNavigationViewPaneOpen");
+            backgroundImageOpacity = TomlCheckNulls("0.0", fsGravitySettings, "BackgroundImageOpacity");
 
             var culture = System.Globalization.CultureInfo.CurrentUICulture;
             var lang = culture.Name;
-            defLaunage = SettingstomlSp["FSGravitySettings"]["SoftDefLanguage"] == "Tommy.TomlLazy"
-                ? lang
-                : SettingstomlSp["FSGravitySettings"]["SoftDefLanguage"];
+            if ((string)settingstomlSp["FSGravitySettings"]["SoftDefLanguage"] != "Tommy.TomlLazy") defLaunage = settingstomlSp["FSGravitySettings"]["SoftDefLanguage"];
+            else defLaunage = lang;
 
-            baud = TomlCheckNulls("115200", SerialPortSettings, "DefaultBAUD");
-            party = TomlCheckNulls("None", SerialPortSettings, "DefaultParity");
-            stop = TomlCheckNulls("One", SerialPortSettings, "DefaultSTOP");
-            data = TomlCheckNulls("8", SerialPortSettings, "DefaultDATA");
-            encoding = TomlCheckNulls("utf-8", SerialPortSettings, "DefaultEncoding");
+            baud = TomlCheckNulls("115200", serialPortSettings, "DefaultBAUD");
+            party = TomlCheckNulls("None", serialPortSettings, "DefaultParity");
+            stop = TomlCheckNulls("One", serialPortSettings, "DefaultSTOP");
+            data = TomlCheckNulls("8", serialPortSettings, "DefaultDATA");
+            encoding = TomlCheckNulls("utf-8", serialPortSettings, "DefaultEncoding");
 
-            rxhex = TomlCheckNulls("0", SerialPortSettings, "DefaultRXHEX");
-            txhex = TomlCheckNulls("0", SerialPortSettings, "DefaultTXHEX");
-            dtr = TomlCheckNulls("1", SerialPortSettings, "DefaultDTR");
-            rts = TomlCheckNulls("0", SerialPortSettings, "DefaultRTS");
-            shtime = TomlCheckNulls("0", SerialPortSettings, "DefaultSTime");
-            autosco = TomlCheckNulls("1", SerialPortSettings, "DefaultAUTOSco");
-            autosavrset = TomlCheckNulls("1", SerialPortSettings, "AutoDaveSet");
-            autosercom = TomlCheckNulls("1", SerialPortSettings, "AutoSerichCom");
-            autoconnect = TomlCheckNulls("1", SerialPortSettings, "AutoConnect");
-            txnewline = TomlCheckNulls("1", SerialPortSettings, "DefaultTXNewLine");
+            rxhex = TomlCheckNulls("0", serialPortSettings, "DefaultRXHEX");
+            txhex = TomlCheckNulls("0", serialPortSettings, "DefaultTXHEX");
+            dtr = TomlCheckNulls("1", serialPortSettings, "DefaultDTR");
+            rts = TomlCheckNulls("0", serialPortSettings, "DefaultRTS");
+            shtime = TomlCheckNulls("0", serialPortSettings, "DefaultSTime");
+            autosco = TomlCheckNulls("1", serialPortSettings, "DefaultAUTOSco");
+            autosavrset = TomlCheckNulls("1", serialPortSettings, "AutoDaveSet");
+            autosercom = TomlCheckNulls("1", serialPortSettings, "AutoSerichCom");
+            autoconnect = TomlCheckNulls("1", serialPortSettings, "AutoConnect");
+            txnewline = TomlCheckNulls("1", serialPortSettings, "DefaultTXNewLine");
 
             //if (settingstomlSp["SerialPortSettings"] is not null)  = ;
-            checkTime = SettingstomlSp["SerialPortCOMData"]["CheckTime"] == "Tommy.TomlLazy"
-                ? "2024-04-12 19:48:55"
-                : SettingstomlSp["SerialPortCOMData"]["CheckTime"];
 
-            checkCounter = TomlCheckNulls("0", SerialPortComData, "CheckCounter");
-            cOmDeviceinf = TomlCheckNulls("0", SerialPortComData, "COMSaveDeviceinf");
+            if ((string)settingstomlSp["SerialPortCOMData"]["CheckTime"] != "Tommy.TomlLazy") checkTime = settingstomlSp["SerialPortCOMData"]["CheckTime"];
+            else checkTime = "2024-04-12 19:48:55";
 
-            SettingstomlSp = new()
+            checkCounter = TomlCheckNulls("0", serialPortComData, "CheckCounter");
+            cOMDeviceinf = TomlCheckNulls("0", serialPortComData, "COMSaveDeviceinf");
+
+            settingstomlSp = new()
             {
                 ["Version"] = MainWindow.FSSoftVersion,
 
@@ -271,7 +289,7 @@ internal class SettingsCoreServices
 
                     ["CheckTime"] = "2024-04-12 19:48:55",
                     ["CheckCounter"] = "0",
-                    ["COMSaveDeviceinf"] = cOmDeviceinf//String.Join(",", cOMSaveDeviceinf)
+                    ["COMSaveDeviceinf"] = cOMDeviceinf//String.Join(",", cOMSaveDeviceinf)
                 },
                 ["COMData"] =
                 {
@@ -292,9 +310,9 @@ internal class SettingsCoreServices
             };
         }
         //更新Toml
-        using (var writer = File.CreateText(FsGravityToolsSettingsToml))                  //将设置写入TOML文件
+        using (var writer = File.CreateText(FSGravityToolsSettingsToml))                  //将设置写入TOML文件
         {
-            SettingstomlSp.WriteTo(writer);
+            settingstomlSp.WriteTo(writer);
             //Debug.WriteLine("写入Toml" + settingstomlSp["FSGravitySettings"]["DefaultNvPage"]);
             // Remember to flush the data if needed!
             writer.Flush();
@@ -313,14 +331,14 @@ internal class SettingsCoreServices
 
     public static void SaveSetting(string menuName, string name, string settingItem)
     {
-        using (var reader = File.OpenText(FsGravityToolsSettingsToml))                    //打开TOML文件
+        using (var reader = File.OpenText(FSGravityToolsSettingsToml))                    //打开TOML文件
         {
             SettingsTomlr = TOML.Parse(reader);
 
             SettingsTomlr[menuName][name] = settingItem;
         }
 
-        using (var writer = File.CreateText(FsGravityToolsSettingsToml))                  //将设置写入TOML文件
+        using (var writer = File.CreateText(FSGravityToolsSettingsToml))                  //将设置写入TOML文件
         {
             SettingsTomlr.WriteTo(writer);
             writer.Flush();

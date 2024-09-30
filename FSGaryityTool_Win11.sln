@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClevoEcControlinfo", "Clevo
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|arm64 = Debug|arm64
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|arm64 = Release|arm64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
@@ -41,6 +43,22 @@ Global
 		{6DC7F8D2-BAFF-4EBF-872A-49532EF6578D}.Release|x86.ActiveCfg = Release|x86
 		{6DC7F8D2-BAFF-4EBF-872A-49532EF6578D}.Release|x86.Build.0 = Release|x86
 		{6DC7F8D2-BAFF-4EBF-872A-49532EF6578D}.Release|x86.Deploy.0 = Release|x86
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|arm64.Build.0 = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|x64.Build.0 = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Debug|x86.Build.0 = Debug|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|arm64.ActiveCfg = Release|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|arm64.Build.0 = Release|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|x64.ActiveCfg = Release|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|x64.Build.0 = Release|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|x86.ActiveCfg = Release|Any CPU
+		{31F140A7-D768-40B0-8B04-7DA8483EFCD4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

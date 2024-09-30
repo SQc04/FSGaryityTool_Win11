@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="about" xml:space="preserve">
+    <value>About</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="autoConnectl" xml:space="preserve">
     <value>Auto Connect</value>
     <comment>Serial Port Page text</comment>
@@ -135,6 +139,10 @@
   </data>
   <data name="BackgroundDescription" xml:space="preserve">
     <value>Set the background of FSGravityTool.</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="base" xml:space="preserve">
+    <value>Base</value>
     <comment>Settings Page text</comment>
   </data>
   <data name="baudRatel" xml:space="preserve">
@@ -165,13 +173,45 @@
     <value>Data bits</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="DefLanguage" xml:space="preserve">
+    <value>Language 语言</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="DefLanguageDescription" xml:space="preserve">
+    <value>Select the language in which FSGravityTool is displayed</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="defPageDescription" xml:space="preserve">
+    <value>Specifies the page that is displayed when FSGravityTool is launched</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="defStartPage" xml:space="preserve">
+    <value>Default Starting Page</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="disconnectl" xml:space="preserve">
     <value>DISCONNECT</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="download Flash" xml:space="preserve">
+    <value>Download Flash</value>
+    <comment>Main Page Text</comment>
+  </data>
+  <data name="downloadFlashSettings" xml:space="preserve">
+    <value>Flash Burn Settings</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="encoding" xml:space="preserve">
     <value>Encoding</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="general" xml:space="preserve">
+    <value>General</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="keyboard" xml:space="preserve">
+    <value>Keyboard</value>
+    <comment>Main Page Text</comment>
   </data>
   <data name="keyboardSettings" xml:space="preserve">
     <value>Keyboard Settings</value>
@@ -193,6 +233,18 @@
     <value>Tools for MicroPython in RP2040</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="mica" xml:space="preserve">
+    <value>Mica</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="micaAlt" xml:space="preserve">
+    <value>Mica Alt</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="mouse" xml:space="preserve">
+    <value>Mouse</value>
+    <comment>Main Page Text</comment>
+  </data>
   <data name="mouseSettings" xml:space="preserve">
     <value>Mouse Settings</value>
     <comment>Settings Page text</comment>
@@ -200,6 +252,14 @@
   <data name="openSPErr" xml:space="preserve">
     <value>Error connecting to the serial port, please check the parameters!</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="openToml" xml:space="preserve">
+    <value>Open TOML file</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="openTomlDescription" xml:space="preserve">
+    <value>Open the settings file.</value>
+    <comment>Settings Page text</comment>
   </data>
   <data name="overSerichSP" xml:space="preserve">
     <value>Search SerialPort succeed!</value>
@@ -237,12 +297,24 @@
     <value>Serial Plotter</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="serialPort" xml:space="preserve">
+    <value>Serial Port</value>
+    <comment>Main Page Text</comment>
+  </data>
   <data name="serialPortl" xml:space="preserve">
     <value>Serial Port</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="settings" xml:space="preserve">
+    <value>Settings</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="softToolBackground" xml:space="preserve">
     <value>Personalize the background.</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="softTranslucentToolBackground" xml:space="preserve">
+    <value>Select the translucent background effect</value>
     <comment>Settings Page text</comment>
   </data>
   <data name="spClose" xml:space="preserve">
@@ -260,6 +332,10 @@
   <data name="spPullout" xml:space="preserve">
     <value>is pull out</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="spSettings" xml:space="preserve">
+    <value>Serial Port Settings</value>
+    <comment>Settings Page text</comment>
   </data>
   <data name="startSerichSP" xml:space="preserve">
     <value>Start search SerialPort...</value>
@@ -284,6 +360,14 @@
   <data name="stopTwo" xml:space="preserve">
     <value>2</value>
     <comment>Serial Port Page text</comment>
+  </data>
+  <data name="thin" xml:space="preserve">
+    <value>Thin</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="TranslucentBackgroundDescription" xml:space="preserve">
+    <value>Set the background of FSGravityTool to be translucent</value>
+    <comment>Settings Page text</comment>
   </data>
   <data name="txHexErr" xml:space="preserve">
     <value>ERROR\r\nThe input is not a hexadecimal number!</value>
