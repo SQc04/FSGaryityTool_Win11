@@ -10,103 +10,158 @@
     <Window.SystemBackdrop>
         <MicaBackdrop Kind="BaseAlt"/>
         <DesktopAcrylicBackdrop />
-    </Window.SystemBackdrop> -->
+    </Window.SystemBackdrop>-->
 
     <Grid x:Name="AppTitleBar">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="LeftPaddingColumn" Width="0"/>
-            <ColumnDefinition Width="50"/>
-            <ColumnDefinition/>
-            <ColumnDefinition x:Name="RightPaddingColumn" Width="0"/>
+            <ColumnDefinition x:Name="LeftPaddingColumn" Width="0" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition />
+            <ColumnDefinition x:Name="RightPaddingColumn" Width="0" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="48"/>
-            <RowDefinition/>
+            <RowDefinition Height="48" />
+            <RowDefinition />
 
         </Grid.RowDefinitions>
 
-        <Grid Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0" Grid.RowSpan="2">
-            <Image x:Name="BackgroundImage" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="UniformToFill" 
-                   Source="ms-appx:///Assets/BackgroundTest/TestAlpha.jpg" Opacity="0.0" Margin="0,0,0,0"/>
-        </Grid>
+        <Image
+            x:Name="BackgroundImage"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="4"
+            Margin="0,0,0,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Opacity="0.0"
+            Source="ms-appx:///Assets/BackgroundTest/TestAlpha.jpg"
+            Stretch="UniformToFill" />
 
-        <Border Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0" Grid.RowSpan="2">
+        <Border
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="4">
             <Border.Background>
-                <AcrylicBrush TintColor="Transparent" TintOpacity="0.1" Opacity="0" FallbackColor="Transparent" />
+                <AcrylicBrush
+                    FallbackColor="Transparent"
+                    Opacity="0"
+                    TintColor="Transparent"
+                    TintOpacity="0.1" />
             </Border.Background>
         </Border>
 
-        <Border x:Name="AppTitleBara" Grid.Column="2" Grid.Row="0" Height="48" VerticalAlignment="Top" Canvas.ZIndex="9" Margin="0,0,0,0">
-            <!--Background="{ThemeResource SystemAccentColorLight2}"-->
+        <Border
+            x:Name="AppTitleBara"
+            Grid.Row="0"
+            Grid.Column="2"
+            Height="48"
+            Margin="0,0,0,0"
+            VerticalAlignment="Top"
+            Canvas.ZIndex="9">
+            <!--  Background="{ThemeResource SystemAccentColorLight2}"  -->
             <!--<TextBlock x:Name="AppTitle" VerticalAlignment="Top" Margin="0,8,0,0" />-->
-            <Grid>
-                <StackPanel Grid.Column="2" Grid.Row="0" Orientation="Horizontal" Canvas.ZIndex="10">
-                    <Image x:Name="TitleBarIcon" Stretch="Fill" Source="ms-appx:///Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png"
-                            HorizontalAlignment="Left"
-                            Width="20" Height="20"
-                            Margin="0,2,0,0"/>
+            <StackPanel Canvas.ZIndex="10" Orientation="Horizontal">
+                <Image
+                    x:Name="TitleBarIcon"
+                    Width="20"
+                    Height="20"
+                    Margin="0,2,0,0"
+                    HorizontalAlignment="Left"
+                    Source="ms-appx:///Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png"
+                    Stretch="Fill" />
 
-                    <TextBlock x:Name="TitleBarTextBlock" 
-                                Text="App title" 
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                VerticalAlignment="Center"
-                                Margin="8,2,0,0"/>
-                    <StackPanel.Transitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition />
-                        </TransitionCollection>
-                    </StackPanel.Transitions>
-                </StackPanel>
-            </Grid>
+                <TextBlock
+                    x:Name="TitleBarTextBlock"
+                    Margin="8,2,0,0"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Text="App title" />
+                <StackPanel.Transitions>
+                    <TransitionCollection>
+                        <RepositionThemeTransition />
+                    </TransitionCollection>
+                </StackPanel.Transitions>
+            </StackPanel>
         </Border>
 
-        <NavigationView x:Name="FSnv" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2" 
-                        IsTitleBarAutoPaddingEnabled="False" 
-                        PaneDisplayMode="Auto"
-                        IsTabStop="False" 
-                        IsBackEnabled="True"
-                        BackRequested="NavigationView_BackRequested" 
-                        SelectionChanged="NavigationView_SelectionChanged" 
-                        DisplayModeChanged="NavigationView_DisplayModeChanged"
-                        PaneOpened="FSnv_PaneOpened"
-                        PaneClosed="FSnv_PaneClosed"
-                        CompactModeThresholdWidth="800"
-                        ExpandedModeThresholdWidth="1100"
-                        Margin="0,0,0,0">
+        <NavigationView
+            x:Name="FSnv"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Margin="0,0,0,0"
+            BackRequested="NavigationView_BackRequested"
+            CompactModeThresholdWidth="800"
+            DisplayModeChanged="NavigationView_DisplayModeChanged"
+            ExpandedModeThresholdWidth="1100"
+            IsBackEnabled="True"
+            IsTabStop="False"
+            IsTitleBarAutoPaddingEnabled="False"
+            PaneClosed="FSnv_PaneClosed"
+            PaneDisplayMode="Auto"
+            PaneOpened="FSnv_PaneOpened"
+            SelectionChanged="NavigationView_SelectionChanged">
             <NavigationView.Resources>
-                <!-- This top margin is the height of the custom titleBar -->
+                <!--  This top margin is the height of the custom titleBar  -->
                 <Thickness x:Key="NavigationViewContentMargin">0,48,0,0</Thickness>
                 <Thickness x:Key="NavigationViewMinimalContentMargin">0,48,0,0</Thickness>
                 <Thickness x:Key="NavigationViewContentGridBorderThickness">1,1,0,0</Thickness>
-                <!-- This is the rounded corner on the Top left of the L Pattern -->
+                <!--  This is the rounded corner on the Top left of the L Pattern  -->
                 <CornerRadius x:Key="NavigationViewContentGridCornerRadius">8,0,0,0</CornerRadius>
 
-                <!--StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="AcrylicBackgroundFillColorBaseBrush"/>-->
+                <!--  StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="AcrylicBackgroundFillColorBaseBrush"/>  -->
                 <!--<StaticResource x:Key="NavigationViewExpandedPaneBackground" ResourceKey="AcrylicBackgroundFillColorBaseBrush"/>-->
             </NavigationView.Resources>
 
             <NavigationView.MenuItems>
-                <NavigationViewItem x:Name="SerialPortI" Icon="Sort" Content="Serial Port" Tag="MainPage1" />
-                <NavigationViewItem x:Name="DownFlashI" Content="Download FLASH" Visibility="Collapsed" Tag="Page2">
+                <NavigationViewItem
+                    x:Name="SerialPortI"
+                    Content="Serial Port"
+                    Icon="Sort"
+                    Tag="MainPage1" />
+                <NavigationViewItem
+                    x:Name="DownFlashI"
+                    Content="Download FLASH"
+                    Tag="Page2"
+                    Visibility="Collapsed">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7F1;"/>
-                        <!--&#xEC59;-->
+                        <FontIcon Glyph="&#xE7F1;" />
+                        <!--  &#xEC59;  -->
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="KeyboardI" Icon="Keyboard" Content="Keyboard" Visibility="Collapsed" Tag="Page3" />
-                <NavigationViewItem x:Name="MouseI" Content="Mouse" Visibility="Collapsed" Tag="Page4">
+                <NavigationViewItem
+                    x:Name="KeyboardI"
+                    Content="Keyboard"
+                    Icon="Keyboard"
+                    Tag="Page3"
+                    Visibility="Collapsed" />
+                <NavigationViewItem
+                    x:Name="MouseI"
+                    Content="Mouse"
+                    Tag="Page4"
+                    Visibility="Collapsed">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE962;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="FanControl" Content="FanControl" Tag="Page5" >
+                <NavigationViewItem
+                    x:Name="FanControl"
+                    Content="FanControl"
+                    Tag="Page5">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xECAD;" />
-                        <!--&#xE770;-->
+                        <!--  &#xE770;  -->
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="CameraControl" Content="CameraControl" Visibility="Collapsed" Tag="CameraControlMainPage" >
+                <NavigationViewItem
+                    x:Name="CameraControl"
+                    Content="CameraControl"
+                    Tag="CameraControlMainPage"
+                    Visibility="Collapsed">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE722;" />
                     </NavigationViewItem.Icon>
@@ -118,9 +173,9 @@
                         <FontIcon Glyph="&#xE946;" FontFamily="Segoe MDL2 Assets" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>-->
-                <NavigationViewItem Tag="FSPage" Content="FairingStudio">
+                <NavigationViewItem Content="FairingStudio" Tag="FSPage">
                     <NavigationViewItem.Icon>
-                        <BitmapIcon UriSource="Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png" ShowAsMonochrome="False"/>
+                        <BitmapIcon ShowAsMonochrome="False" UriSource="Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
@@ -129,7 +184,14 @@
             </Grid>
         </NavigationView>
 
-        <Grid x:Name="FsStartImage" Grid.ColumnSpan="4" Grid.RowSpan="2" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Canvas.ZIndex="10">
+        <Grid
+            x:Name="FsStartImage"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="4"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            Canvas.ZIndex="10">
             <Image Source="ms-appx:///Assets/SplashScreen.scale-400.png" />
         </Grid>
 
@@ -141,18 +203,18 @@
         <ColumnDefinition Width="264" />
         <ColumnDefinition x:Name="GC2" />
     </Grid.ColumnDefinitions>
-    
-    </Grid> -->
+
+    </Grid>-->
     <!--
     <TabControl>
     <TabItem Header="Tab 1">
 
     </TabItem>
     <TabItem Header="Tab 2">
-        
+
     </TabItem>
-    </TabControl> -->
+    </TabControl>-->
 
     <!-- <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"></StackPanel> -->
-    
+
 </Window>

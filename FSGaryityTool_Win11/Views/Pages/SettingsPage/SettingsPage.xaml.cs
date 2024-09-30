@@ -1,22 +1,21 @@
+using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using Tommy;
 using System.Diagnostics;
-using Windows.ApplicationModel;
+using Windows.System;
 using FSGaryityTool_Win11.Controls;
+using FSGaryityTool_Win11.Core.Settings;
 using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace FSGaryityTool_Win11;
 
 public sealed partial class SettingsPage : Page
 {
-    public static int Fro1 { get; set; }
-
     public static TomlTable SettingsTomlr { get; set; }
 
     public static string DefaultStartPage { get; set; }
@@ -26,12 +25,6 @@ public sealed partial class SettingsPage : Page
     public static string DefaultPageBackGround { get; set; }
 
     public static int DefaultTomlPageBackGround { get; set; }
-
-    public static string RedirectedFilePath { get; set; }
-
-    public static string AppFilepath { get; set; }
-
-    public static string AppFolderPath { get; set; }
 
     public class Folder
     {
@@ -44,121 +37,53 @@ public sealed partial class SettingsPage : Page
     {
         InitializeComponent();
         Current = this;
-        /*
-        Settingsbar.ItemsSource = new ObservableCollection<Folder>
-        {
-            new Folder { Name = "Settings"},
-        };
-        Settingsbar.ItemClicked += Settingsbar_ItemClicked;
-        */
 
         LanguageSetting();
 
         SetDesktopBackgroundImage();
         var listener = new WallpaperChangeListener();
-        listener.WallpaperChanged += (s, e) => SetDesktopBackgroundImage();
+        listener.WallpaperChanged += (_, _) => SetDesktopBackgroundImage();
     }
 
     public void LanguageSetting()
     {
-        var localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var packageName = string.Empty;
-        try
-        {
-            packageName = Package.Current.Id.FamilyName;
-        }
-        catch (Exception ex)
-        {
-            // 处理异常，例如记录日志或显示错误消息
-            Debug.WriteLine($"获取包名时发生错误: {ex.Message}");
-        }
+        using var reader = File.OpenText(SettingsCoreServices.FsGravityToolsSettingsToml);
+        var settingstomlr = TOML.Parse(reader);
+        DefaultTomlStartPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
+        DefaultTomlPageBackGround = int.Parse(settingstomlr["FSGravitySettings"]["SoftBackground"]);
 
-        AppFolderPath = Path.Combine(localAppDataPath, "Packages", packageName, "LocalCache", "Local");
-        // 获取被重定向的文件夹路径
-        //ApplicationData.Current.LocalFolder.Path
-        var redirectedFolderPath = AppFolderPath;
-        var fsFolder = Path.Combine(redirectedFolderPath, "FAIRINGSTUDIO");
-        var fsGravif = Path.Combine(fsFolder, "FSGravityTool");
-        // 获取被重定向的文件路径
-        AppFilepath = fsGravif;
-        RedirectedFilePath = Path.Combine(fsGravif, "Settings.toml");
-
-        using (var reader = File.OpenText(Page1.FsSetToml))        //打开TOML文件
+        var startPage = new List<string>() //新建字符串
         {
-            var settingstomlr = TOML.Parse(reader);
-            DefaultTomlStartPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
-            DefaultTomlPageBackGround = int.Parse(settingstomlr["FSGravitySettings"]["SoftBackground"]);
-        }
-
-        var startPage = new List<string>()         //新建字符串
-        {
-            Page1.LanguageText("serialPort"), Page1.LanguageText("download Flash"), Page1.LanguageText("keyboard"), Page1.LanguageText("mouse"), "FANControl", "CameraControl"//, ""
+            SettingsPageResources.SPort,
+            SettingsPageResources.DFlash,
+            SettingsPageResources.Keyboard,
+            SettingsPageResources.Mouse,
+            "FANControl",
+            "CameraControl" //, ""
         };
         StartPageCombobox.ItemsSource = startPage;          //将字符串添加到选择框
-        DefaultStartPage = DefaultTomlStartPage switch
-        {
-            //读取TOML设置
-            0 => Page1.LanguageText("serialPort"),
-            1 => Page1.LanguageText("download Flash"),
-            2 => Page1.LanguageText("keyboard"),
-            3 => Page1.LanguageText("mouse"),
-            4 => "FANControl",
-            5 => "CameraControl",
-            _ => DefaultStartPage
-        };
-        //else if (DefaultTomlSTARTPage is 5) DefaultSTARTPage = "";
-        StartPageCombobox.SelectedItem = DefaultStartPage;  //将TOML设置添加到选择框
+        if (DefaultTomlStartPage is > -1 and < 6)
+            StartPageCombobox.SelectedItem = DefaultStartPage = startPage[DefaultTomlStartPage];
 
-        var pageBackGround = new List<string>()         //新建字符串
+        var pageBackGround = new List<string>() //新建字符串
         {
-            Page1.LanguageText("thin"), Page1.LanguageText("base"), Page1.LanguageText("mica"), Page1.LanguageText("micaAlt")//, ""
+            SettingsPageResources.Acrylic,
+            SettingsPageResources.Mica,
+            SettingsPageResources.MicaAlt
         };
         SoftBackgroundCombobox.ItemsSource = pageBackGround;
-        DefaultPageBackGround = DefaultTomlPageBackGround switch
-        {
-            0 => Page1.LanguageText("thin"),
-            1 => Page1.LanguageText("base"),
-            2 => Page1.LanguageText("mica"),
-            3 => Page1.LanguageText("micaAlt"),
-            _ => DefaultPageBackGround
-        };
-
-        SoftBackgroundCombobox.SelectedItem = DefaultPageBackGround;  //将TOML设置添加到选择框
-
-        // = Page1.LanguageText("");
-        StartPage.Header = Page1.LanguageText("defStartPage");
-        StartPage.Description = Page1.LanguageText("defPageDescription");
-
-        Generiall.Text = Page1.LanguageText("general");
-
-        SpSwttingsl.Text = Page1.LanguageText("spSettings");
-        SptSettingsl.Header = Page1.LanguageText("spSettings");
-        DowFlashl.Text = Page1.LanguageText("downloadFlashSettings");
-        DfSettingsl.Header = Page1.LanguageText("downloadFlashSettings");
-
-        Aboutl.Text = Page1.LanguageText("about");
-        AbputTl.Text = Page1.LanguageText("about");
-
-        OpenToml.Header = Page1.LanguageText("openToml");
-        OpenToml.Description = Page1.LanguageText("openTomlDescription");
-
-        SoftToolBackground.Header = Page1.LanguageText("softTranslucentToolBackground");
-        SoftToolBackground.Description = Page1.LanguageText("TranslucentBackgroundDescription");
-
-        SoftLanguage.Header = Page1.LanguageText("DefLanguage");
-        SoftLanguage.Description = Page1.LanguageText("DefLanguageDescription");
+        if (DefaultTomlPageBackGround is > -1 and < 4)
+            SoftBackgroundCombobox.SelectedItem = DefaultPageBackGround = pageBackGround[DefaultTomlPageBackGround];
     }
 
     private void Aboutp_Click(object sender, RoutedEventArgs e)
     {
-
         AboutFrame.Navigate(typeof(AboutPage));
-        AboutFrame.Visibility = Visibility.Visible;
 
         MainSettingsPage.Current.SettingsBar.ItemsSource = new ObservableCollection<Folder>
         {
-            new() { Name = Page1.LanguageText("settings")},
-            new() { Name = Page1.LanguageText("about")},
+            new() { Name = SettingsPageResources.Settings },
+            new() { Name = SettingsPageResources.AboutHeader }
         };
         //AboutFrame.Opacity = 1;
         //AboutINOUT.Begin();
@@ -206,64 +131,46 @@ public sealed partial class SettingsPage : Page
 
     private void StartPageCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        using (var reader = File.OpenText(Page1.FsSetToml))                    //打开TOML文件
+        using (var reader = File.OpenText(SettingsCoreServices.FsGravityToolsSettingsToml))
         {
             SettingsTomlr = TOML.Parse(reader);
 
-            if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("serialPort")) SettingsTomlr["FSGravitySettings"]["DefaultNvPage"] = "0";
-            else if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("download Flash")) SettingsTomlr["FSGravitySettings"]["DefaultNvPage"] = "1";
-            else if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("keyboard")) SettingsTomlr["FSGravitySettings"]["DefaultNvPage"] = "2";
-            else if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("mouse")) SettingsTomlr["FSGravitySettings"]["DefaultNvPage"] = "3";
-            else
-                SettingsTomlr["FSGravitySettings"]["DefaultNvPage"] = (string)StartPageCombobox.SelectedItem switch
-                {
-                    "FANControl" => "4",
-                    "CameraControl" => "5",
-                    _ => SettingsTomlr["FSGravitySettings"]["DefaultNvPage"]
-                };
-            //else if ((string)StartPageCombobox.SelectedItem == "") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "5";
+            if (StartPageCombobox.SelectedIndex is > -1 and < 6)
+                SettingsTomlr["FSGravitySettings"]["DefaultNvPage"] = StartPageCombobox.SelectedIndex.ToString();
         }
-
-        using (var writer = File.CreateText(Page1.FsSetToml))                  //将设置写入TOML文件
-        {
-            SettingsTomlr.WriteTo(writer);
-            Debug.WriteLine("写入Toml" + SettingsTomlr["FSGravitySettings"]["DefaultNvPage"]);
-            // Remember to flush the data if needed!
-            writer.Flush();
-        }
+        using var writer = File.CreateText(SettingsCoreServices.FsGravityToolsSettingsToml);
+        SettingsTomlr.WriteTo(writer);
+        Debug.WriteLine("写入Toml" + SettingsTomlr["FSGravitySettings"]["DefaultNvPage"]);
+        // Remember to flush the data if needed!
+        writer.Flush();
     }
 
-    private void OpenToml_click(object sender, RoutedEventArgs e)
+    private async void OpenToml_Click(object sender, RoutedEventArgs e)
     {
         //Debug.WriteLine(appFolderPath);
-        Debug.WriteLine(AppFilepath);
-        if (Directory.Exists(AppFilepath))
-        {
-            //Debug.WriteLine("找到文件夹,跳过新建文件夹");
-            Process.Start("explorer.exe", RedirectedFilePath);
-        }
-        else
-        {
-            Process.Start("explorer.exe", Page1.FsSetToml);
-            //Debug.WriteLine("没有找到文件夹");
-        }
+        Debug.WriteLine(SettingsCoreServices.FsGravityToolsFolder);
+        //Debug.WriteLine("找到文件夹,跳过新建文件夹");
+        await Launcher.LaunchUriAsync(new(SettingsCoreServices.FsGravityToolsSettingsToml));
+        //Debug.WriteLine("没有找到文件夹");
         //System.Diagnostics.Process.Start("explorer.exe", Page1.FSSetToml);
         //System.Diagnostics.Process.Start("explorer.exe", redirectedFilePath);
     }
 
     private void SoftBackgroundCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        using (var reader = File.OpenText(Page1.FsSetToml))                    //打开TOML文件
+        // 打开TOML文件
+        if (StartPageCombobox.SelectedIndex is <= -1 or >= 4)
+            return;
+
+        using (var reader = File.OpenText(SettingsCoreServices.FsGravityToolsSettingsToml))
         {
             SettingsTomlr = TOML.Parse(reader);
 
-            if ((string)SoftBackgroundCombobox.SelectedItem == Page1.LanguageText("thin")) SettingsTomlr["FSGravitySettings"]["SoftBackground"] = "0";
-            else if ((string)SoftBackgroundCombobox.SelectedItem == Page1.LanguageText("base")) SettingsTomlr["FSGravitySettings"]["SoftBackground"] = "1";
-            else if ((string)SoftBackgroundCombobox.SelectedItem == Page1.LanguageText("mica")) SettingsTomlr["FSGravitySettings"]["SoftBackground"] = "2";
-            else if ((string)SoftBackgroundCombobox.SelectedItem == Page1.LanguageText("micaAlt")) SettingsTomlr["FSGravitySettings"]["SoftBackground"] = "3";
+            SettingsTomlr["FSGravitySettings"]["SoftBackground"] = SoftBackgroundCombobox.SelectedIndex.ToString();
         }
 
-        using (var writer = File.CreateText(Page1.FsSetToml))                  //将设置写入TOML文件
+        // 将设置写入TOML文件
+        using (var writer = File.CreateText(SettingsCoreServices.FsGravityToolsSettingsToml))
         {
             SettingsTomlr.WriteTo(writer);
             Debug.WriteLine("写入Toml" + SettingsTomlr["FSGravitySettings"]["SoftBackground"]);
@@ -271,11 +178,9 @@ public sealed partial class SettingsPage : Page
             writer.Flush();
         }
 
-        // 获取MainWindow的实例
-        var mainWindow = MainWindow.Instance;
-
-        // 更新窗口的背景
-        mainWindow.WindowBackSetting();
+        if (e.RemovedItems is not [])
+            // 更新窗口的背景
+            MainWindow.Instance.WindowBackSetting();
     }
 
     private void SetDesktopBackgroundImage()

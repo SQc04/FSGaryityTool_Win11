@@ -9,7 +9,6 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Tommy;
 using static FSGaryityTool_Win11.Page1;
-using static FSGaryityTool_Win11.Views.Pages.SerialPortPage.MainPage1;
 using System.IO.Ports;
 using System.Management;
 using Application = Microsoft.UI.Xaml.Application;
@@ -20,6 +19,7 @@ using FSGaryityTool_Win11.McuToolpage;
 using System.Diagnostics;
 using FSGaryityTool_Win11.Views.McuToolpage;
 using Microsoft.UI.Xaml.Media.Animation;
+using FSGaryityTool_Win11.Core.Settings;
 
 namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage;
 
@@ -169,7 +169,7 @@ public sealed partial class SerialPortToolsPage : Page
             int defaultData;
             string defaultEncoding;
 
-            using (var reader = File.OpenText(FsSetToml))
+            using (var reader = File.OpenText(SettingsCoreServices.FsGravityToolsSettingsToml))
             {
                 var sPsettingstomlr = TOML.Parse(reader);             //读取TOML
                 //Debug.WriteLine("Print:" + SPsettingstomlr["FSGravitySettings"]["DefaultNvPage"]);
@@ -762,12 +762,12 @@ public sealed partial class SerialPortToolsPage : Page
     private void ComboboxSaveSetting(string menuName, string name, string settingItem)
     {
         //打开TOML文件
-        using var reader = File.OpenText(FsSetToml);
+        using var reader = File.OpenText(SettingsCoreServices.FsGravityToolsSettingsToml);
         SettingsTomlr = TOML.Parse(reader);
         SettingsTomlr[menuName][name] = settingItem;
 
         //将设置写入TOML文件
-        using var writer = File.CreateText(FsSetToml);
+        using var writer = File.CreateText(SettingsCoreServices.FsGravityToolsSettingsToml);
         SettingsTomlr.WriteTo(writer);
         writer.Flush();
     }
@@ -810,7 +810,7 @@ public sealed partial class SerialPortToolsPage : Page
         if (!int.TryParse((string)BandComboBox.SelectedItem, out var baudRate) || baudRate is 0)
         {
             // 如果输入的不是数字，使用设置文件中的数字覆盖它
-            using var reader = File.OpenText(FsSetToml);
+            using var reader = File.OpenText(SettingsCoreServices.FsGravityToolsSettingsToml);
             SettingsTomlr = TOML.Parse(reader);
             BandComboBox.SelectedItem = ((TomlString)SettingsTomlr["SerialPortSettings"]["DefaultBAUD"]).Value;
         }
