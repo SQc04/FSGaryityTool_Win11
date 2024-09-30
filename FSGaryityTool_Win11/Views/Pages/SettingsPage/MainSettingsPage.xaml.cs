@@ -17,7 +17,7 @@ public sealed partial class MainSettingsPage : Page
 
         SettingsBar.ItemsSource = new ObservableCollection<SettingsPage.Folder>
         {
-            new() { Name = Page1.LanguageText("settings")},
+            new() { Name = SettingsPageResources.Settings }
         };
         SettingsBar.ItemClicked += SettingsBar_ItemClicked;
     }
