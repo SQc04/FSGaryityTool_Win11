@@ -181,8 +181,6 @@ public sealed partial class MainWindow : Window
         InitializeComponent();
         Instance = this;
 
-        ((FrameworkElement)Content).ActualThemeChanged += Window_ThemeChanged;
-
         var isFirstActivation = true;
         var mainContent = Content;
 
@@ -323,6 +321,7 @@ public sealed partial class MainWindow : Window
         Activated += (sender, e) =>
         {
             AppWindow.Changed += AppWindow_Changed;
+            ((FrameworkElement)Content).ActualThemeChanged += Window_ThemeChanged;
 
             if (isFirstActivation)
             {
