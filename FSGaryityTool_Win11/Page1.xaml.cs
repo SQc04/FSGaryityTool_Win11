@@ -19,6 +19,7 @@ using Windows.ApplicationModel.DataTransfer;
 using System.Globalization;
 using FSGaryityTool_Win11.Views.Pages.SerialPortPage;
 using Windows.System;
+using FSGaryityTool_Win11.Core.Settings;
 
 namespace FSGaryityTool_Win11;
 
@@ -48,16 +49,6 @@ public sealed partial class Page1 : Page
     public static int RunPbt { get; set; } = 0;
 
     public static int RunT { get; set; } = 0;
-
-    public static string Sysaplocal { get; set; } = Environment.GetFolderPath(folder: Environment.SpecialFolder.LocalApplicationData);
-
-    public static string FsFolder { get; set; } = Path.Combine(Sysaplocal, "FAIRINGSTUDIO");
-
-    public static string FsGravif { get; set; } = Path.Combine(FsFolder, "FSGravityTool");
-
-    public static string FsSetJson { get; set; } = Path.Combine(FsGravif, "Settings.json");
-
-    public static string FsSetToml { get; set; } = Path.Combine(FsGravif, "Settings.toml");
 
     public static int Baudrate { get; set; } = 0;
 
@@ -216,7 +207,7 @@ public sealed partial class Page1 : Page
             string defaultStop;
             int defaultData;
 
-            using (var reader = File.OpenText(FsSetToml))
+            using (var reader = File.OpenText(SettingsCoreServices.FsGravityToolsSettingsToml))
             {
                 var sPsettingstomlr = TOML.Parse(reader);             //读取TOML
                 //Debug.WriteLine("Print:" + SPsettingstomlr["FSGravitySettings"]["DefaultNvPage"]);
