@@ -166,6 +166,11 @@
                                         FontWeight="Medium"
                                         Text="SQc04" />
                                     <TextBlock
+                                        Margin="0,1,0,1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="Medium"
+                                        Text="Poker-sang" />
+                                    <TextBlock
                                         Margin="0,6,0,1"
                                         HorizontalAlignment="Right"
                                         FontSize="14"
