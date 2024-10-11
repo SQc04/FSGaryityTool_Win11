@@ -45,7 +45,7 @@ public sealed partial class SerialPortToolsPage : Page
     public static int RxHex { get; set; }
 
     /// <summary>
-    /// FTR
+    /// DTR
     /// </summary>
     public static int Dtr { get; set; }
 
@@ -464,13 +464,13 @@ public sealed partial class SerialPortToolsPage : Page
                 foreach (var port in insertedPorts) // 遍历所有新插入的串口
                 {
                     var info = SerialPortInfo.GetPort(port); // 获取串口的信息
-                    Page1.Current.RxTextBox.Text += $"{port}{LanguageText("spPlogin")}\r\n"; // 更新文本框的内容
-
+                    Page1.Current.RxTextBox.Text += $"{port}: {info.Description}{LanguageText("spPlogin")}\r\n"; // 更新文本框的内容
                 }
 
                 foreach (var port in removedPorts) // 遍历所有被拔出的串口
                 {
-                    Page1.Current.RxTextBox.Text += $"{port}{LanguageText("spPullout")}\r\n"; // 更新文本框的内容
+                    var info = SerialPortInfo.GetPort(port); // 获取串口的信息
+                    Page1.Current.RxTextBox.Text += $"{port}: {info.Description}{LanguageText("spPullout")}\r\n"; // 更新文本框的内容
                     if (PortIsConnect is 1 && port == selectedPort) // 如果当前连接的串口被拔出，则断开连接
                     {
                         MainPage1.Current.SerialPortConnectToggleButton_Click(null, null);

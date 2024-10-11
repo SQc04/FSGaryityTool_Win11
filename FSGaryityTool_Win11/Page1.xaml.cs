@@ -39,7 +39,7 @@ public sealed partial class Page1 : Page
 {
     public static string Rxpstr { get; set; }
 
-    public static StringBuilder Datapwate { get; set; } = new(2048);
+    public static StringBuilder Datapwate { get; set; } = new();
 
     public ObservableCollection<DataItem> DataList { get; set; } = new();
 
@@ -428,6 +428,7 @@ foreach (var item in items)
         {
             var data = CommonRes.SerialPort.ReadExisting();
             _buffer.Append(data);
+            Datapwate.Append(data);
 
             if (!_isProcessing)
             {
@@ -471,48 +472,6 @@ foreach (var item in items)
                         {
                             DataList.Add(itemh);
                         });
-                        /*
-                        int newlineIndex;
-                        while ((newlineIndex = data.IndexOf('\n')) != -1) // 只要缓冲区中还有换行符
-                        {
-                            string packet = data.Substring(0, newlineIndex); // 取出一个完整的数据包 .Replace("\r", "")
-                            data = data.Substring(newlineIndex + 1); // 从缓冲区中移除这个数据包
-
-                            if (!string.IsNullOrWhiteSpace(packet)) // 如果packet不为空
-                            {
-                                DataItem item = new DataItem { Timesr = Timesr, Rxstr = packet };
-
-                                // 将操作排队到UI线程
-                                DispatcherQueue.TryEnqueue(() =>
-                                {
-                                    dataList.Add(item);
-                                });
-                            }
-                        }
-
-                        // 检查缓冲区中是否还有剩余数据
-                        if (!string.IsNullOrWhiteSpace(data))
-                        {
-                            if (dataList.Count > 0)
-                            {
-
-                                DispatcherQueue.TryEnqueue(() =>
-                                {
-                                    // 将剩余数据添加到最后一个链表元素的Rxstr属性中
-                                    dataList.Last().Rxstr += data;
-                                });
-                            }
-                            else
-                            {
-                                // 如果链表为空，则新建一个链表元素
-                                DataItem item = new DataItem { Timesr = Timesr, Rxstr = data };
-                                DispatcherQueue.TryEnqueue(() =>
-                                {
-                                    dataList.Add(item);
-                                });
-                            }
-                        }
-                        */
                     }
                     else // 以数值形式读取
                     {
@@ -710,6 +669,7 @@ foreach (var item in items)
             
         RxTextBox.Text = "";    //清除文本框内容
         DataList.Clear();
+        Datapwate.Clear();
     }
 
     private void RXTextBox_TextChanged(object sender, TextChangedEventArgs e)

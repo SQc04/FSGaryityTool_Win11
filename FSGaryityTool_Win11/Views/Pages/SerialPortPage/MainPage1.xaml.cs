@@ -102,11 +102,12 @@ public sealed partial class MainPage1 : Page
 
     private void SerialPortToolsToggleButton_Click(object sender, RoutedEventArgs e)
     {
+
     }
 
     private void SerialPortToolsToggleButtonFontIcon_Rotation(object name)
     {
-            
+
         if (_toolsToggleButtonIsChecked)
         {
             Thread.Sleep(100);

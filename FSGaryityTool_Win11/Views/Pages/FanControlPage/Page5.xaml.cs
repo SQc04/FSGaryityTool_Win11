@@ -9,6 +9,8 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas.Geometry;
 using System.Numerics;
 using Windows.UI;
+using System.ComponentModel;
+using Windows.System;
 
 namespace FSGaryityTool_Win11.Views.Pages.FanControlPage;
 
@@ -19,7 +21,10 @@ public sealed partial class Page5 : Page
     private Timer _gpuDelayTimer;
 
     public Timer TempTimer { get; set; }
+    private DispatcherTimer TempSettimer = new DispatcherTimer();
 
+    private KalmanFilter cpuTempFilter = new KalmanFilter(1, 1, 1, 25); // 参数可根据实际情况调整
+    private KalmanFilter gpuTempFilter = new KalmanFilter(1, 1, 1, 25);
     public Timer ServerRunCheckTimer { get; set; }
 
     public string CpuTempDisplay => $"{CpuTemp.Value}℃";
@@ -34,9 +39,60 @@ public sealed partial class Page5 : Page
 
     public static int GpuDutySet { get; set; } = 166;
 
+    public TempViewModel ViewModel { get; set; }
+    public class TempViewModel : INotifyPropertyChanged
+    {
+        private int _cpumTemp;
+        private int _gpumTemp;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int CpumTemp
+        {
+            get { return _cpumTemp; }
+            set
+            {
+                if (_cpumTemp != value)
+                {
+                    _cpumTemp = value;
+                    OnPropertyChanged(nameof(CpumTemp));
+                }
+            }
+        }
+
+        public int GpumTemp
+        {
+            get { return _gpumTemp; }
+            set
+            {
+                if (_gpumTemp != value)
+                {
+                    _gpumTemp = value;
+                    OnPropertyChanged(nameof(GpumTemp));
+                }
+            }
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        }
+    }
+
+    private void SetDefaultFanControl()
+    {
+        CpuFanRadialGauge.Value = 60;
+        GpuFanRadialGauge.Value = 60;
+        CpuTempText.Text = "N/A℃";
+        GpuTempText.Text = "N/A℃";
+        CpuFanRpmRadialGauge.Value = 0;
+        GpuFanRpmRadialGauge.Value = 0;
+    }
+
     public Page5()
     {
-        InitializeComponent();
+        this.InitializeComponent();
 
         try
         {
@@ -59,37 +115,24 @@ public sealed partial class Page5 : Page
                 }
                 else
                 {
-                    CpuFanRadialGauge.Value = 60;
-                    GpuFanRadialGauge.Value = 60;
-                    CpuTempText.Text = "N/A℃";
-                    GpuTempText.Text = "N/A℃";
-                    CpuFanRpmRadialGauge.Value = 0;
-                    GpuFanRpmRadialGauge.Value = 0;
+                    SetDefaultFanControl();
                 }
             }
             else
             {
-                CpuFanRadialGauge.Value = 60;
-                GpuFanRadialGauge.Value = 60;
-                CpuTempText.Text = "N/A℃";
-                GpuTempText.Text = "N/A℃";
-                CpuFanRpmRadialGauge.Value = 0;
-                GpuFanRpmRadialGauge.Value = 0;
+                SetDefaultFanControl();
             }
         }
         catch
         {
-            CpuFanRadialGauge.Value = 60;
-            GpuFanRadialGauge.Value = 60;
-            CpuTempText.Text = "N/A℃";
-            GpuTempText.Text = "N/A℃";
-            CpuFanRpmRadialGauge.Value = 0;
-            GpuFanRpmRadialGauge.Value = 0;
+            SetDefaultFanControl();
         }
 
         if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
         {
             Debug.WriteLine("An instance of this application is already running.");
+            CpuTempText.Text = "N/A℃";
+            GpuTempText.Text = "N/A℃";
             return;
         }
         else
@@ -103,6 +146,49 @@ public sealed partial class Page5 : Page
             Clevoinfo_Click(null, null);
 
             ServerRunCheckTimer = new(ServerRunCheckTimeTick, null, 0, 5000);
+
+            //自动温度控制
+            TempSettimer.Interval = new TimeSpan(0, 0, 2); // 每2秒检查一次
+            TempSettimer.Tick += TempSetTimer_Tick;
+            TempSettimer.Start();
+        }
+        ViewModel = new TempViewModel();
+        this.DataContext = ViewModel;
+        ViewModel.CpumTemp = 25;
+        ViewModel.GpumTemp = 25;
+    }
+
+    public class KalmanFilter
+    {
+        private double Q; // 过程噪声协方差
+        private double R; // 测量噪声协方差
+        private double P; // 估计误差协方差
+        private double X; // 状态估计值
+        private double K; // 卡尔曼增益
+
+        public KalmanFilter(double processNoise, double measurementNoise, double estimatedError, double initialValue)
+        {
+            Q = processNoise;
+            R = measurementNoise;
+            P = estimatedError;
+            X = initialValue;
+        }
+
+        public double Update(double measurement)
+        {
+            // 预测更新
+            P = P + Q;
+
+            // 计算卡尔曼增益
+            K = P / (P + R);
+
+            // 状态更新
+            X = X + K * (measurement - X);
+
+            // 更新估计误差协方差
+            P = (1 - K) * P;
+
+            return X;
         }
     }
 
@@ -194,21 +280,8 @@ public sealed partial class Page5 : Page
 
         if (isConnect)
         {
-            var val = ClevoEcControl.GetCpuFanRpm();
-            var cpuFanRpm = val switch
-            {
-                0 => 0,
-                > 300 and < 5000 => 2100000 / val,
-                _ => 0
-            };
-
-            val = ClevoEcControl.GetGpuFanRpm();
-            var gpuFanRpm = val switch
-            {
-                0 => 0,
-                > 300 and < 5000 => 2100000 / val,
-                _ => 0
-            };
+            var cpuFanRpm = FanRpmCalculation(ClevoEcControl.GetCpuFanRpm());
+            var gpuFanRpm = FanRpmCalculation(ClevoEcControl.GetGpuFanRpm());
 
             DispatcherQueue.TryEnqueue(() =>
             {
@@ -223,9 +296,13 @@ public sealed partial class Page5 : Page
             var data = ClevoEcControl.GetTempFanDuty(fanId);
             int cpuTemp = data.Remote;
             CpuFanDuty = data.FanDuty;
+
+            double predictedCpuTemp = cpuTempFilter.Update(cpuTemp);
+
             DispatcherQueue.TryEnqueue(() =>
             {
-                CpuTemp.Value = cpuTemp;
+                //CpuTemp.Value = cpuTemp;
+                ViewModel.CpumTemp = (int)predictedCpuTemp;
                 CpuTempText.Text = cpuTemp + "℃";
             });
             if (CpuFanDuty != CpuDutySet)
@@ -237,9 +314,13 @@ public sealed partial class Page5 : Page
             data = ClevoEcControl.GetTempFanDuty(fanId);
             int gpuTemp = data.Remote;
             GpuFanDuty = data.FanDuty;
+
+            double predictedGpuTemp = gpuTempFilter.Update(gpuTemp);
+
             DispatcherQueue.TryEnqueue(() =>
             {
-                GpuTemp.Value = gpuTemp;
+                //GpuTemp.Value = gpuTemp;
+                ViewModel.GpumTemp = (int)predictedGpuTemp;
                 GpuTempText.Text = gpuTemp + "℃";
             });
             if (GpuFanDuty != GpuDutySet)
@@ -248,6 +329,9 @@ public sealed partial class Page5 : Page
             }
             CpuFanDuty = CpuDutySet;
             GpuFanDuty = GpuDutySet;
+
+            //Debug.WriteLine("CpuTemp" + (int)predictedCpuTemp);
+            //Debug.WriteLine("GpuTemp" + (int)predictedGpuTemp);
         }
         else
         {
@@ -257,8 +341,21 @@ public sealed partial class Page5 : Page
                 GpuTempText.Text = "N/A℃";
                 CpuFanRpmRadialGauge.Value = 0;
                 GpuFanRpmRadialGauge.Value = 0;
+                //cpumTemp = -1;
+                //gpumTemp = -1;
             });
         }
+    }
+
+    private int FanRpmCalculation(int Value)
+    {
+        var fanRpm = Value switch
+        {
+            0 => 0,
+            > 300 and < 5000 => 2100000 / Value,
+            _ => 0
+        };
+        return fanRpm;
     }
 
     private void ClevoGetFaninfo_Click(object sender, RoutedEventArgs e)
@@ -412,4 +509,25 @@ public sealed partial class Page5 : Page
 
         args.DrawingSession.DrawGeometry(path, color, 3);
     }
+    private void TempSetTimer_Tick(object sender, object e)
+    {
+        // 更新界面上的风扇转速显示
+        if (CpuFanControlToggleButton.IsChecked == true)
+        {
+            CpuFanRadialGauge.Value = CalculateFanSpeed(ViewModel.CpumTemp, 0.014, 2, 2.2, 15);
+        }
+        if (GpuFanControlToggleButton.IsChecked == true)
+        {
+            GpuFanRadialGauge.Value = CalculateFanSpeed(ViewModel.GpumTemp, 0.014, 2, 2.2, 0);
+        }
+    }
+    private int CalculateFanSpeed(int temperature, double math0, double math1, double math2, double math3)
+    {
+        int math = (int)(math0 * Math.Pow(temperature, math1) - math3);
+        //Debug.WriteLine("Temp" + temperature);
+        //Debug.WriteLine("Control" + math);
+        return math;
+    }
+
+
 }

@@ -9,8 +9,8 @@
 
   <Identity
     Name="FairingStudio.38016BA363F1E"
-    Publisher="CN=D2A86BA3-0461-4681-B61E-02B24605C356"
-    Version="0.3.6.0" />
+    Publisher="CN=FAIRING STUDIO"
+    Version="0.3.7.0" />
 
   <Properties>
     <DisplayName>FS Gravity Tool</DisplayName>

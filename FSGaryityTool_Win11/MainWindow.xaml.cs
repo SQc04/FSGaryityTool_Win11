@@ -28,7 +28,7 @@ namespace FSGaryityTool_Win11;
 
 public sealed partial class MainWindow : Window
 {
-    public const string FSSoftVersion = "0.3.6";
+    public const string FSSoftVersion = "0.3.7";
     public const string FSSoftName = "FSGravityTool Dev";
 
     public static int FsPage { get; set; }
@@ -318,10 +318,11 @@ public sealed partial class MainWindow : Window
             m_TitleBar.ButtonInactiveBackgroundColor = Color.FromArgb(255, 22, 22, 22);
         }*/
 
+        ((FrameworkElement)Content).ActualThemeChanged += Window_ThemeChanged;
+        
         Activated += (sender, e) =>
         {
             AppWindow.Changed += AppWindow_Changed;
-            ((FrameworkElement)Content).ActualThemeChanged += Window_ThemeChanged;
 
             if (isFirstActivation)
             {
@@ -351,7 +352,7 @@ public sealed partial class MainWindow : Window
             {
                 case 0: Thread.Sleep(1450);
                     break;
-                case 4: Thread.Sleep(100);
+                case 4: Thread.Sleep(1500);
                     break;
             }
             DispatcherQueue.TryEnqueue(() =>
