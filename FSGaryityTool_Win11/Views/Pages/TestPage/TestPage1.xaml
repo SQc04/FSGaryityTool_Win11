@@ -1,13 +1,12 @@
-<Page
-    x:Class="FSGaryityTool_Win11.Views.Pages.TestPage.TestPage1"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:FSGaryityTool_Win11.Views.Pages.TestPage"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
-    NavigationCacheMode="Enabled"
-    mc:Ignorable="d">
+<Page x:Class="FSGaryityTool_Win11.Views.Pages.TestPage.TestPage1"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:FSGaryityTool_Win11.Views.Pages.TestPage"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+      NavigationCacheMode="Enabled"
+      mc:Ignorable="d">
 
 
     <Grid>
@@ -20,54 +19,40 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <toolkit:GridSplitter
-            Grid.Row="1"
-            Grid.Column="0"
-            VerticalAlignment="Top" />
-        <toolkit:GridSplitter
-            Grid.Row="0"
-            Grid.Column="1"
-            HorizontalAlignment="Left" />
+        <toolkit:GridSplitter Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" Margin="0,-6,0,0"/>
+        <toolkit:GridSplitter Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="-6,0,0,0"/>
 
-        <Border
-            Grid.Row="0"
-            Grid.Column="1"
-            Margin="12"
-            Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
-            BorderBrush="{ThemeResource TextControlElevationBorderBrush}"
-            BorderThickness="2"
-            CornerRadius="{StaticResource ControlCornerRadius}">
+        <Border Grid.Row="0"
+                Grid.Column="1"
+                Margin="12"
+                Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
+                BorderBrush="{ThemeResource TextControlElevationBorderBrush}"
+                BorderThickness="2"
+                CornerRadius="{StaticResource ControlCornerRadius}"
+                Visibility="Visible">
             <!--  ThemeResource TextControlElevationBorderFocusedBrush  -->
             <Grid>
                 <Border Margin="12,6,0,8">
-                    <ScrollViewer
-                        Margin="0,-6"
-                        HorizontalScrollBarVisibility="Disabled"
-                        VerticalScrollBarVisibility="Auto">
-                        <TextBlock
-                            Margin="0,0,12,0"
-                            IsTextSelectionEnabled="True"
-                            SelectionHighlightColor="{ThemeResource AccentTextFillColorTertiaryBrush}"
-                            Text=""
-                            TextWrapping="WrapWholeWords" />
+                    <ScrollViewer Margin="0,-6" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                        <TextBlock Margin="0,0,12,0" IsTextSelectionEnabled="True" SelectionHighlightColor="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="" TextWrapping="WrapWholeWords" />
                     </ScrollViewer>
                 </Border>
 
-                <Border
-                    Height="2"
-                    Margin="0,0,0,-1"
-                    VerticalAlignment="Bottom"
-                    Background="{ThemeResource AccentTextFillColorTertiaryBrush}"
-                    Visibility="Collapsed" />
+                <Border Height="2" Margin="0,0,0,-1" VerticalAlignment="Bottom" Background="{ThemeResource AccentTextFillColorTertiaryBrush}" Visibility="Collapsed" />
             </Grid>
         </Border>
 
-        <TextBox
-            Grid.Row="1"
-            Grid.Column="1"
-            Margin="12"
-            AcceptsReturn="True"
-            ScrollViewer.VerticalScrollBarVisibility="Auto"
-            TextWrapping="Wrap" />
+        <TextBox Grid.Row="1"
+                 Grid.Column="1"
+                 Margin="12"
+                 AcceptsReturn="True"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 TextWrapping="Wrap"
+                 Visibility="Visible" />
+
+        <WebView2 x:Name="Webview1" Grid.Row="0" Grid.Column="0" Margin="6" Visibility="Collapsed" />
+        <WebView2 x:Name="Webview2" Grid.Row="0" Grid.Column="1" Margin="6" Visibility="Collapsed" />
+        <WebView2 x:Name="Webview3" Grid.Row="1" Grid.Column="0" Margin="6" Visibility="Collapsed" />
+        <WebView2 x:Name="Webview4" Grid.Row="1" Grid.Column="1" Margin="6" Visibility="Collapsed" />
     </Grid>
 </Page>

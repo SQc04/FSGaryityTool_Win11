@@ -181,17 +181,21 @@ public sealed partial class MainWindow : Window
         InitializeComponent();
         Instance = this;
 
+        
+
         var isFirstActivation = true;
         var mainContent = Content;
 
         Resize(this, DefaultWidth, DefaultHeight);
 
         // 将窗口的标题栏设置为自定义标题栏
-        ExtendsContentIntoTitleBar = true;  // enable custom titlebar
+        ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBara);
 
         AppWindow.Title = FSSoftName;//Set AppWindow
         AppWindow.SetIcon("FSFSoftH.ico");
+
+        AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
 
         // 在窗口激活后注册 SizeChanged 事件处理器
         Activated += (sender, e) =>
@@ -404,7 +408,6 @@ public sealed partial class MainWindow : Window
                 _lastDefWindowBackGround = defPageBackground;
             }
 
-            SetConfigurationSourceTheme(); // 设置配置源主题。
 
             // 根据defWindowBackGround的值选择背景效果的类型。
             switch (DefWindowBackGround)

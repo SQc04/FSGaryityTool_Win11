@@ -1,15 +1,14 @@
-﻿<Application
-    x:Class="FSGaryityTool_Win11.App"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:FSGaryityTool_Win11">
+﻿<Application x:Class="FSGaryityTool_Win11.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:FSGaryityTool_Win11">
     <Application.Resources>
         <ResourceDictionary>
+            <!--<FontFamily x:Key="ContentControlThemeFontFamily">Microsoft YaHei UI</FontFamily>-->
+
+            <!--  MiSans  -->
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <!-- Other merged dictionaries here -->
+                <!--  Other merged dictionaries here  -->
             </ResourceDictionary.MergedDictionaries>
-            <!-- Other app resources here -->
+            <!--  Other app resources here  -->
         </ResourceDictionary>
     </Application.Resources>
 </Application>

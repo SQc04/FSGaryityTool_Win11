@@ -651,7 +651,7 @@
                             </Border>
                             <Border x:Name="CdhBorder" Height="32" Margin="6" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4">
                                 <TextBlock x:Name="CdhTextBlock"
-                                           Width="54"
+                                           Width="55"
                                            Margin="0"
                                            VerticalAlignment="Center"
                                            Text="DCD"
@@ -662,7 +662,7 @@
                             </Border>
                             <Border x:Name="RiBorder" Height="32" Margin="6" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4">
                                 <TextBlock x:Name="RiTextBlock"
-                                           Width="53.5"
+                                           Width="55"
                                            Margin="0"
                                            VerticalAlignment="Center"
                                            Text="RI"

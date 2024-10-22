@@ -460,22 +460,25 @@ public sealed partial class SerialPortToolsPage : Page
             DispatcherQueue.TryEnqueue(() => // 在UI线程中执行以下操作
             {
                 var selectedPort = (string)ComComboBox.SelectedItem; // 获取当前选中的串口
-
-                foreach (var port in insertedPorts) // 遍历所有新插入的串口
+                try
                 {
-                    var info = SerialPortInfo.GetPort(port); // 获取串口的信息
-                    Page1.Current.RxTextBox.Text += $"{port}: {info.Description}{LanguageText("spPlogin")}\r\n"; // 更新文本框的内容
-                }
-
-                foreach (var port in removedPorts) // 遍历所有被拔出的串口
-                {
-                    var info = SerialPortInfo.GetPort(port); // 获取串口的信息
-                    Page1.Current.RxTextBox.Text += $"{port}: {info.Description}{LanguageText("spPullout")}\r\n"; // 更新文本框的内容
-                    if (PortIsConnect is 1 && port == selectedPort) // 如果当前连接的串口被拔出，则断开连接
+                    foreach (var port in insertedPorts) // 遍历所有新插入的串口
                     {
-                        MainPage1.Current.SerialPortConnectToggleButton_Click(null, null);
+                        var info = SerialPortInfo.GetPort(port); // 获取串口的信息
+                        Page1.Current.RxTextBox.Text += $"{port}: {info.Description}{LanguageText("spPlogin")}\r\n"; // 更新文本框的内容
+                    }
+
+                    foreach (var port in removedPorts) // 遍历所有被拔出的串口
+                    {
+                        var info = SerialPortInfo.GetPort(port); // 获取串口的信息
+                        Page1.Current.RxTextBox.Text += $"{port}: {info.Description}{LanguageText("spPullout")}\r\n"; // 更新文本框的内容
+                        if (PortIsConnect is 1 && port == selectedPort) // 如果当前连接的串口被拔出，则断开连接
+                        {
+                            MainPage1.Current.SerialPortConnectToggleButton_Click(null, null);
+                        }
                     }
                 }
+                catch { }
 
                 ComComboBox.Items.Clear(); // 清空组合框的内容
                 ComListview.Items.Clear(); // 清空列表视图的内容
