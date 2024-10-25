@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
@@ -19,66 +20,170 @@ internal class SerialPortCoreServices
         /// <summary>
         /// Represents the configuration for a serial port.
         /// </summary>
-        public class SerialPortConfig
+        public class SerialPortConfig : INotifyPropertyChanged
         {
-            //SerialPortConfig
+            private int baudRate;                       //波特率
+            private Parity parity;                      //校验位
+            private StopBits stopBits;                  //停止位
+            private int dataBits;                       //数据位
+            private int timeout;                        //超时时间
+            private Encoding encoding;                  //编码
 
-            /// <summary>
-            /// Gets or sets the baud rate.
-            /// </summary>
-            public int BaudRate { get; set; }
+            private string serialDeviceIcon;                //设备图标
+            private string serialDeviceName;                //设备名
+            private string serialDeviceDescription;         //设备介绍
+            private string serialDeviceManufacturer;        //设备制造商
+            private int serialDeviceResetDefBaudRate;       //设备硬重启时时上电打印的默认波特率
 
-            /// <summary>
-            /// Gets or sets the parity.
-            /// </summary>
-            public Parity Parity { get; set; }
+            public event PropertyChangedEventHandler PropertyChanged;
 
-            /// <summary>
-            /// Gets or sets the stop bits.
-            /// </summary>
-            public StopBits StopBits { get; set; }
+            protected void OnPropertyChanged(string propertyName)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
 
-            /// <summary>
-            /// Gets or sets the data bits.
-            /// </summary>
-            public int DataBits { get; set; }
+            public int BaudRate
+            {
+                get => baudRate;
+                set
+                {
+                    if (baudRate != value)
+                    {
+                        baudRate = value;
+                        OnPropertyChanged(nameof(BaudRate));
+                    }
+                }
+            }
 
-            /// <summary>
-            /// Gets or sets the timeout.
-            /// </summary>
-            public int Timeout { get; set; }
+            public Parity Parity
+            {
+                get => parity;
+                set
+                {
+                    if (parity != value)
+                    {
+                        parity = value;
+                        OnPropertyChanged(nameof(Parity));
+                    }
+                }
+            }
 
-            /// <summary>
-            /// Gets or sets the encoding.
-            /// </summary>
-            public Encoding Encoding { get; set; }
+            public StopBits StopBits
+            {
+                get => stopBits;
+                set
+                {
+                    if (stopBits != value)
+                    {
+                        stopBits = value;
+                        OnPropertyChanged(nameof(StopBits));
+                    }
+                }
+            }
 
-            //SerialDeviceConfig
+            public int DataBits
+            {
+                get => dataBits;
+                set
+                {
+                    if (dataBits != value)
+                    {
+                        dataBits = value;
+                        OnPropertyChanged(nameof(DataBits));
+                    }
+                }
+            }
 
-            /// <summary>
-            /// Gets or sets the serial device icon.
-            /// </summary>
-            public string SerialDeviceIcon { get; set; }
+            public int Timeout
+            {
+                get => timeout;
+                set
+                {
+                    if (timeout != value)
+                    {
+                        timeout = value;
+                        OnPropertyChanged(nameof(Timeout));
+                    }
+                }
+            }
 
-            /// <summary>
-            /// Gets or sets the serial device name.
-            /// </summary>
-            public string SerialDeviceName { get; set; }
+            public Encoding Encoding
+            {
+                get => encoding;
+                set
+                {
+                    if (encoding != value)
+                    {
+                        encoding = value;
+                        OnPropertyChanged(nameof(Encoding));
+                    }
+                }
+            }
 
-            /// <summary>
-            /// Gets or sets the serial device description.
-            /// </summary>
-            public string SerialDeviceDescription { get; set; }
+            public string SerialDeviceIcon
+            {
+                get => serialDeviceIcon;
+                set
+                {
+                    if (serialDeviceIcon != value)
+                    {
+                        serialDeviceIcon = value;
+                        OnPropertyChanged(nameof(SerialDeviceIcon));
+                    }
+                }
+            }
 
-            /// <summary>
-            /// Gets or sets the serial device manufacturer.
-            /// </summary>
-            public string SerialDeviceManufacturer { get; set; }
+            public string SerialDeviceName
+            {
+                get => serialDeviceName;
+                set
+                {
+                    if (serialDeviceName != value)
+                    {
+                        serialDeviceName = value;
+                        OnPropertyChanged(nameof(SerialDeviceName));
+                    }
+                }
+            }
 
-            /// <summary>
-            /// Gets or sets the default baud rate for resetting the serial device.
-            /// </summary>
-            public int SerialDeviceResetDefBaudRate { get; set; }
+            public string SerialDeviceDescription
+            {
+                get => serialDeviceDescription;
+                set
+                {
+                    if (serialDeviceDescription != value)
+                    {
+                        serialDeviceDescription = value;
+                        OnPropertyChanged(nameof(SerialDeviceDescription));
+                    }
+                }
+            }
+
+            public string SerialDeviceManufacturer
+            {
+                get => serialDeviceManufacturer;
+                set
+                {
+                    if (serialDeviceManufacturer != value)
+                    {
+                        serialDeviceManufacturer = value;
+                        OnPropertyChanged(nameof(SerialDeviceManufacturer));
+                    }
+                }
+            }
+
+            public int SerialDeviceResetDefBaudRate
+            {
+                get => serialDeviceResetDefBaudRate;
+                set
+                {
+                    if (serialDeviceResetDefBaudRate != value)
+                    {
+                        serialDeviceResetDefBaudRate = value;
+                        OnPropertyChanged(nameof(SerialDeviceResetDefBaudRate));
+                    }
+                }
+            }
         }
 
         /// <summary>

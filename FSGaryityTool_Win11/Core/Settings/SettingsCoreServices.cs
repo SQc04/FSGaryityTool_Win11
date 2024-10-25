@@ -85,7 +85,7 @@ internal class SettingsCoreServices
                         "FSGaryityTool SerialPort Settings:\r\n" +
                         "Parity:None,Odd,Even,Mark,Space\r\n" +
                         "STOPbits:None,One,OnePointFive,Two\r\n" +
-                        "DATAbits:5~9",
+                        "DATAbits:5~8",
 
                     ["DefaultBAUD"] = "115200",
                     ["DefaultParity"] = "None",
@@ -263,7 +263,7 @@ internal class SettingsCoreServices
                         "FSGaryityTool SerialPort Settings:\r\n" +
                         "Parity:None,Odd,Even,Mark,Space\r\n" +
                         "STOPbits:None,One,OnePointFive,Two\r\n" +
-                        "DATAbits:5~9",
+                        "DATAbits:5~8",
 
                     ["DefaultBAUD"] = baud,
                     ["DefaultParity"] = party,

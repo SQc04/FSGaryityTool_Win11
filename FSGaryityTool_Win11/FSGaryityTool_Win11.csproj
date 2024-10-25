@@ -1,10 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
         <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-        <WindowsSdkPackageVersion>10.0.26100.38</WindowsSdkPackageVersion>
+		<WindowsSdkPackageVersion>10.0.26100.38</WindowsSdkPackageVersion>
         <PublishAot>false</PublishAot>
+		<!--<AllowUnsafeBlocks>true</AllowUnsafeBlocks>-->
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <Platforms>x86;x64;arm64</Platforms>
         <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
@@ -63,7 +65,7 @@
         <PackageReference Include="MICA" Version="2.4.3" />
         <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
         <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240829007" />
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
         <PackageReference Include="NAudio" Version="2.2.1" />
         <PackageReference Include="System.IO.Ports" Version="8.0.0" />
         <PackageReference Include="System.Management" Version="8.0.0" />

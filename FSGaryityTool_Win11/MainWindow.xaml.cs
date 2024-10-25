@@ -23,6 +23,7 @@ using FSGaryityTool_Win11.Views.Pages.FlashDownloadPage;
 using FSGaryityTool_Win11.Views.Pages.FairingStudioPage;
 using FSGaryityTool_Win11.Views.Pages.SerialPortPage;
 using FSGaryityTool_Win11.Views.Pages.CameraControlPage;
+using FSGaryityTool_Win11.Controls;
 
 namespace FSGaryityTool_Win11;
 
@@ -95,10 +96,11 @@ public sealed partial class MainWindow : Window
 
     public NavigationFailedEventHandler OnNavigationFailed { get; private set; }
     public static MainWindow Instance { get; private set; }
+    private static Win32WindowHelper win32WindowHelper;
 
     // 窗口的最小宽度和高度
-    private const int MinWidth = 642;
-    private const int MinHeight = 409;
+    private const int MinWidth = 515;
+    private const int MinHeight = 328;
 
     // 窗口的默认宽度和高度
     private const int DefaultWidth = 1840;
@@ -110,8 +112,12 @@ public sealed partial class MainWindow : Window
         {
             var hWnd = WindowNative.GetWindowHandle(window);
             var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+
             AppWindow.Resize(new() { Width = width, Height = height });
-            AppWindow.Changed += AppWindow_Changed;
+
+
+            win32WindowHelper = new Win32WindowHelper(window);
+            win32WindowHelper.SetWindowMinMaxSize(new Win32WindowHelper.POINT() { x = MinWidth, y = MinHeight });
 
             return true;
         }
@@ -124,22 +130,7 @@ public sealed partial class MainWindow : Window
 
     private void AppWindow_Changed(AppWindow sender, AppWindowChangedEventArgs args)
     {
-        try
-        {
-            if (AppWindow is null)
-                return;
-
-            if (AppWindow.Size is { Height: < MinHeight, Width: < MinWidth })
-                AppWindow.Resize(new() { Width = MinWidth, Height = MinHeight });
-            else if (AppWindow.Size.Height < MinHeight)
-                AppWindow.Resize(new() { Width = AppWindow.Size.Width, Height = MinHeight });
-            else if (AppWindow.Size.Width < MinWidth)
-                AppWindow.Resize(new() { Width = MinWidth, Height = AppWindow.Size.Height });
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex);
-        }
+        
     }
 
     public void DelayedInitialize(UIElement mainContent)
@@ -180,13 +171,11 @@ public sealed partial class MainWindow : Window
     {
         InitializeComponent();
         Instance = this;
-
         
-
         var isFirstActivation = true;
         var mainContent = Content;
 
-        Resize(this, DefaultWidth, DefaultHeight);
+        Resize(this, DefaultWidth, DefaultHeight);//==================
 
         // 将窗口的标题栏设置为自定义标题栏
         ExtendsContentIntoTitleBar = true;

@@ -19,6 +19,7 @@ using Windows.ApplicationModel.DataTransfer;
 using System.Globalization;
 using FSGaryityTool_Win11.Views.Pages.SerialPortPage;
 using Windows.System;
+using System.ComponentModel;
 
 namespace FSGaryityTool_Win11;
 
@@ -40,9 +41,40 @@ public sealed partial class Page1 : Page
     public static string Rxpstr { get; set; }
 
     public static StringBuilder Datapwate { get; set; } = new();
-
     public ObservableCollection<DataItem> DataList { get; set; } = new();
+    public partial class ViewModel : INotifyPropertyChanged
+    {
+        private string _rxTextinfo;
 
+        public string RxTextinfo
+        {
+            get => _rxTextinfo;
+            set
+            {
+                if (_rxTextinfo != value)
+                {
+                    _rxTextinfo = value;
+                    OnPropertyChanged(nameof(RxTextinfo));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        public void AppendToRxTextinfo(string text)
+        {
+            RxTextinfo += text;
+        }
+        public void ClearRxTextinfo()
+        {
+            RxTextinfo = "";
+        }
+    }
+    public ViewModel _viewModel = new ViewModel();
     public static int Rollta { get; set; } = 0;
 
     public static int RunPbt { get; set; } = 0;
@@ -88,6 +120,8 @@ public sealed partial class Page1 : Page
 
         _taskbarInstance = (ITaskbarList3)new TaskbarList();
         _taskbarInstance.HrInit();
+
+        RxText.DataContext = _viewModel;
     }
 
     public static string LanguageText(string laugtext)
@@ -550,7 +584,7 @@ foreach (var item in items)
         catch (Exception ex)
         {
             // 如果发送过程中出现错误，显示错误信息并断开串口连接
-            RxTextBox.Text += $"{ex.Message}\r\n";
+            _viewModel.AppendToRxTextinfo($"{ex.Message}\r\n");
             MainPage1.Current.SerialPortConnectToggleButton_Click(sender, e);
         }
     }
@@ -581,12 +615,12 @@ foreach (var item in items)
             // 如果需要在每条消息后添加换行符
             AppendNewLineIfRequired();
             // 更新接收文本框的内容
-            RxTextBox.Text += $"TX: {str}" + "\r\n";
+            _viewModel.AppendToRxTextinfo($"TX: {str}" + "\r\n");
         }
         catch
         {
             // 如果串口字符写入出错，显示错误信息
-            RxTextBox.Text += $"{LanguageText("txStringErr")}\r\n";
+            _viewModel.AppendToRxTextinfo($"{LanguageText("txStringErr")}\r\n");
             // 抛出异常以便外层捕获
             throw;
         }
@@ -611,7 +645,7 @@ foreach (var item in items)
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     // 更新接收文本框的内容
-                    RxTextBox.Text += $"TX: 0x {string.Join(" ", bytes.Select(b => b.ToString("X2")))}\r\n";
+                    _viewModel.AppendToRxTextinfo($"TX: 0x {string.Join(" ", bytes.Select(b => b.ToString("X2")))}\r\n");
                 });
                 input = "";
             });
@@ -619,7 +653,7 @@ foreach (var item in items)
         catch (FormatException)
         {
             // 如果输入的字符串不是有效的十六进制数，显示错误信息
-            RxTextBox.Text += $"{LanguageText("txHexErr")}\r\n";
+            _viewModel.AppendToRxTextinfo($"{LanguageText("txHexErr")}\r\n");
             // 抛出异常以便外层捕获
             throw;
         }
@@ -667,7 +701,7 @@ foreach (var item in items)
     private void CLEARButton_Click(object sender, RoutedEventArgs e)
     {
             
-        RxTextBox.Text = "";    //清除文本框内容
+        _viewModel.ClearRxTextinfo();    //清除文本框内容
         DataList.Clear();
         Datapwate.Clear();
     }

@@ -61,6 +61,7 @@
                            Stretch="Fill" />
 
                     <TextBlock x:Name="TitleBarTextBlock" Margin="8,2,0,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="App title" />
+
                     <StackPanel.Transitions>
                         <TransitionCollection>
                             <RepositionThemeTransition />

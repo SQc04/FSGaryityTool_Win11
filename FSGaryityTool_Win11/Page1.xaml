@@ -37,7 +37,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="70" MinHeight="52" MaxHeight="200" />
+            <RowDefinition Height="70" MinHeight="52" MaxHeight="600" />
         </Grid.RowDefinitions>
 
         <!--<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" Height="10000"/>-->
@@ -120,7 +120,19 @@
                      IsSpellCheckEnabled="False"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      TextChanged="RXTextBox_TextChanged"
-                     TextWrapping="Wrap" />
+                     TextWrapping="Wrap"
+                     Visibility="Collapsed" />
+            <Border Margin="12,0,12,6" Background="{ThemeResource CustomRxBoxSolidColorBrush}" BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}" BorderThickness="3" CornerRadius="6">
+                <ScrollView>
+
+                    <TextBlock x:Name="RxText"
+                               Margin="6,6,12,6"
+                               IsTextSelectionEnabled="True"
+                               SelectionHighlightColor="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                               Text="{Binding RxTextinfo}"
+                               TextWrapping="Wrap" />
+                </ScrollView>
+            </Border>
         </Grid>
 
 

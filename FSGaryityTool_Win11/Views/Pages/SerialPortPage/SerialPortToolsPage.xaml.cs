@@ -465,13 +465,13 @@ public sealed partial class SerialPortToolsPage : Page
                     foreach (var port in insertedPorts) // 遍历所有新插入的串口
                     {
                         var info = SerialPortInfo.GetPort(port); // 获取串口的信息
-                        Page1.Current.RxTextBox.Text += $"{port}: {info.Description}{LanguageText("spPlogin")}\r\n"; // 更新文本框的内容
+                        Page1.Current._viewModel.AppendToRxTextinfo($"{port}: {info.Description}{LanguageText("spPlogin")}\r\n"); // 更新文本框的内容
                     }
 
                     foreach (var port in removedPorts) // 遍历所有被拔出的串口
                     {
                         var info = SerialPortInfo.GetPort(port); // 获取串口的信息
-                        Page1.Current.RxTextBox.Text += $"{port}: {info.Description}{LanguageText("spPullout")}\r\n"; // 更新文本框的内容
+                        Page1.Current._viewModel.AppendToRxTextinfo($"{port}: {info.Description}{LanguageText("spPullout")}\r\n"); // 更新文本框的内容
                         if (PortIsConnect is 1 && port == selectedPort) // 如果当前连接的串口被拔出，则断开连接
                         {
                             MainPage1.Current.SerialPortConnectToggleButton_Click(null, null);
@@ -638,7 +638,7 @@ public sealed partial class SerialPortToolsPage : Page
 
         async Task SearchAndAddSerialToComboBoxAsync(SerialPort myPort, ComboBox myBox)
         {
-            Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + LanguageText("startSerichSP") + "\r\n";
+            Page1.Current._viewModel.AppendToRxTextinfo(LanguageText("startSerichSP") + "\r\n");
             var comMem = (string)ComComboBox.SelectedItem;           //记忆串口名
             ArryPort = SerialPort.GetPortNames();                       //SerialPort.GetPortNames()函数功能为获取计算机所有可用串口，以字符串数组形式输出
             ArryPort = new HashSet<string>(ArryPort).ToArray(); // 移除可能的重复项
@@ -656,16 +656,16 @@ public sealed partial class SerialPortToolsPage : Page
                 var info = await Task.Run(() => SerialPortInfo.GetPort(t));
                 if (info is not null)
                 {
-                    Page1.Current.RxTextBox.Text += t + ": " + info.Description + "\r\n";
+                    Page1.Current._viewModel.AppendToRxTextinfo(t + ": " + info.Description + "\r\n");
                 }
                 else
                 {
-                    Page1.Current.RxTextBox.Text += t + "\r\n";
+                    Page1.Current._viewModel.AppendToRxTextinfo(t + "\r\n");
                 }
                 //RXTextBox.Text += t + "\r\n" + GetPortDescription(t) + "\r\n";
             }
             //MyBox.Items.Add("COM0");
-            Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + LanguageText("overSerichSP") + "\r\n";
+            Page1.Current._viewModel.AppendToRxTextinfo(LanguageText("overSerichSP") + "\r\n");
             ComComboBox.SelectedItem = comMem;
             ComListview.SelectedItem = comMem;
         }
@@ -713,12 +713,12 @@ public sealed partial class SerialPortToolsPage : Page
 
         Page1.Current.SerialPortConnect(portName, bandRate, parity, stopBits, dataBits, 1500, encoding);
 
-        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "BaudRate = " + Convert.ToInt32(BandComboBox.SelectedItem) + "\r\n";
-        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "Parity = " + (Parity)Enum.Parse(typeof(Parity), ((ParityOption)ParComboBox.SelectedItem).Value) + "\r\n";
-        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), ((StopBitsOption)StopComboBox.SelectedItem).Value) + "\r\n";
-        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "DataBits = " + Convert.ToInt32(DataComboBox.SelectedItem) + "\r\n";
-        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "Encoding = " + (string)EncodingComboBox.SelectedItem + "\r\n";
-        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + LanguageText("serialPortl") + " " + ComComboBox.SelectedItem + LanguageText("spConnect") + "\r\n";
+        Page1.Current._viewModel.AppendToRxTextinfo("BaudRate = " + Convert.ToInt32(BandComboBox.SelectedItem) + "\r\n");
+        Page1.Current._viewModel.AppendToRxTextinfo("Parity = " + (Parity)Enum.Parse(typeof(Parity), ((ParityOption)ParComboBox.SelectedItem).Value) + "\r\n");
+        Page1.Current._viewModel.AppendToRxTextinfo("StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), ((StopBitsOption)StopComboBox.SelectedItem).Value) + "\r\n");
+        Page1.Current._viewModel.AppendToRxTextinfo("DataBits = " + Convert.ToInt32(DataComboBox.SelectedItem) + "\r\n");
+        Page1.Current._viewModel.AppendToRxTextinfo("Encoding = " + (string)EncodingComboBox.SelectedItem + "\r\n");
+        Page1.Current._viewModel.AppendToRxTextinfo(LanguageText("serialPortl") + " " + ComComboBox.SelectedItem + LanguageText("spConnect") + "\r\n");
 
         Timer = new(TimerTick, null, 0, 250); // 每秒触发8次
 
@@ -727,7 +727,7 @@ public sealed partial class SerialPortToolsPage : Page
 
     public void SerialPortConnectCatch()
     {
-        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + LanguageText("openSPErr") + "\r\n";
+        Page1.Current._viewModel.AppendToRxTextinfo(LanguageText("openSPErr") + "\r\n");
         //MessageBox.Show("打开串口失败，请检查相关设置", "错误");
 
         PortIsConnect = 0;
@@ -736,7 +736,7 @@ public sealed partial class SerialPortToolsPage : Page
     public void SerialPortClose()
     {
         CommonRes.SerialPort.Close();                                                                              //关闭串口
-        Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "\n" + LanguageText("serialPortl") + " " + ComComboBox.SelectedItem + LanguageText("spClose") + "\r\n";
+        Page1.Current._viewModel.AppendToRxTextinfo("\n" + LanguageText("serialPortl") + " " + ComComboBox.SelectedItem + LanguageText("spClose") + "\r\n");
     }
     public void SerialPortDisconnect()
     {
@@ -826,7 +826,7 @@ public sealed partial class SerialPortToolsPage : Page
             if (PortIsConnect is 1)
             {
                 CommonRes.SerialPort.BaudRate = Convert.ToInt32(BandComboBox.SelectedItem);
-                Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "BaudRate = " + Convert.ToInt32(BandComboBox.SelectedItem) + "\r\n";
+                Page1.Current._viewModel.AppendToRxTextinfo("BaudRate = " + Convert.ToInt32(BandComboBox.SelectedItem) + "\r\n");
             }
             Baudrate = Convert.ToInt32(BandComboBox.SelectedItem);
         }
@@ -848,7 +848,7 @@ public sealed partial class SerialPortToolsPage : Page
         if (PortIsConnect is 1)
         {
             CommonRes.SerialPort.Parity = (Parity)Enum.Parse(typeof(Parity), ((ParityOption)ParComboBox.SelectedItem).Value);
-            Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "Parity = " + (Parity)Enum.Parse(typeof(Parity), ((ParityOption)ParComboBox.SelectedItem).Value) + "\r\n";
+            Page1.Current._viewModel.AppendToRxTextinfo("Parity = " + (Parity)Enum.Parse(typeof(Parity), ((ParityOption)ParComboBox.SelectedItem).Value) + "\r\n");
         }
     }
     private void STOPComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -860,7 +860,7 @@ public sealed partial class SerialPortToolsPage : Page
         if (PortIsConnect is 1)
         {
             CommonRes.SerialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), ((StopBitsOption)StopComboBox.SelectedItem).Value);
-            Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), ((StopBitsOption)StopComboBox.SelectedItem).Value) + "\r\n";
+            Page1.Current._viewModel.AppendToRxTextinfo("StopBits = " + (StopBits)Enum.Parse(typeof(StopBits), ((StopBitsOption)StopComboBox.SelectedItem).Value) + "\r\n");
         }
         if (StopComboBox.SelectedItem is StopBitsOption selectedOption)
         {
@@ -884,7 +884,7 @@ public sealed partial class SerialPortToolsPage : Page
         if (PortIsConnect is 1)
         {
             CommonRes.SerialPort.DataBits = Convert.ToInt32(DataComboBox.SelectedItem);
-            Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "DataBits = " + Convert.ToInt32(DataComboBox.SelectedItem) + "\r\n";
+            Page1.Current._viewModel.AppendToRxTextinfo("DataBits = " + Convert.ToInt32(DataComboBox.SelectedItem) + "\r\n");
         }
         DatainfoBadge.Value = Convert.ToInt32(DataComboBox.SelectedItem);
     }
@@ -898,7 +898,7 @@ public sealed partial class SerialPortToolsPage : Page
         if (PortIsConnect is 1)
         {
             CommonRes.SerialPort.Encoding = Encoding.GetEncoding((string)EncodingComboBox.SelectedItem);
-            Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + "Encoding = " + (string)EncodingComboBox.SelectedItem + "\r\n";
+            Page1.Current._viewModel.AppendToRxTextinfo("Encoding = " + (string)EncodingComboBox.SelectedItem + "\r\n");
         }
     }
 
