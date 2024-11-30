@@ -29,8 +29,8 @@ namespace FSGaryityTool_Win11;
 
 public sealed partial class MainWindow : Window
 {
-    public const string FSSoftVersion = "0.3.7";
-    public const string FSSoftName = "FSGravityTool Dev";
+    public const string FSSoftVersion = "0.3.8";
+    public const string FSSoftName = "FSGravityTool";
 
     public static int FsPage { get; set; }
 
@@ -246,7 +246,7 @@ public sealed partial class MainWindow : Window
                 {
                     // 连接策略对象。
                     _configurationSource = new();
-                    Activated += Window_Activated;  // 当窗口被激活时的事件处理。
+                    //Activated += Window_Activated;  // 当窗口被激活时的事件处理。
                     Closed += Window_Closed;  // 当窗口被关闭时的事件处理。
 
                     // 初始配置状态。
@@ -310,6 +310,10 @@ public sealed partial class MainWindow : Window
             m_TitleBar.ButtonInactiveForegroundColor = Colors.Gainsboro;
             m_TitleBar.ButtonInactiveBackgroundColor = Color.FromArgb(255, 22, 22, 22);
         }*/
+
+
+        TitleDev.Visibility = Visibility.Visible;
+        //TitleBeta.Visibility = Visibility.Visible;
 
         ((FrameworkElement)Content).ActualThemeChanged += Window_ThemeChanged;
         

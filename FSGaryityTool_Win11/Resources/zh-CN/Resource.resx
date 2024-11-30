@@ -314,7 +314,7 @@
     <comment>Settings Page text</comment>
   </data>
   <data name="softTranslucentToolBackground" xml:space="preserve">
-    <value>选择背景透明效果</value>
+    <value>应用背景材质</value>
     <comment>Settings Page text</comment>
   </data>
   <data name="spClose" xml:space="preserve">

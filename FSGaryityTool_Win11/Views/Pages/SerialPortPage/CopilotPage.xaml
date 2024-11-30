@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page x:Class="FSGaryityTool_Win11.Views.Pages.SerialPortPage.CopilotPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:FSGaryityTool_Win11.Views.Pages.SerialPortPage"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      NavigationCacheMode="Enabled"
+      mc:Ignorable="d">
+
+    <Grid>
+        <WebView2 x:Name="Webview1"
+                  Grid.Row="0"
+                  Grid.RowSpan="2"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="2"
+                  Margin="0,0,12,12"
+                  Visibility="Visible" />
+        <Button x:Name="CopilotRefreshButton"
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Width="32"
+                Height="32"
+                Margin="0,6,18,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Click="CopilotRefreshButton_Click">
+            <FontIcon Margin="-4" FontSize="16" Glyph="&#xE72C;" />
+        </Button>
+    </Grid>
+</Page>

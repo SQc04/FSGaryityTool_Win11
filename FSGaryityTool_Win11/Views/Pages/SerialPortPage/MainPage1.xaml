@@ -121,7 +121,21 @@
                 <NavigationViewItem x:Name="Test2" Margin="0,3">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Margin="0,0,0,0" Glyph="&#xEA86;" />
-                        <TextBlock x:Name="Test2TextBlock" Margin="6,0,0,0" Text="Test2" />
+                        <TextBlock x:Name="Test2TextBlock" Margin="6,0,0,0" Text="TestPage" />
+                    </StackPanel>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Name="Copilot" Margin="0,3">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Margin="0,0,0,0" Height="20" Source="ms-appx:///Assets/CopilotV1.svg" Stretch="UniformToFill" />
+                        <TextBlock x:Name="CopilotTextBlock" Margin="6,0,0,0" Text="Copilot" />
+                    </StackPanel>
+                </NavigationViewItem>
+                
+                <NavigationViewItem x:Name="CopilotV2" Margin="0,3">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Margin="0,0,0,0" Height="20" Source="ms-appx:///Assets/CopilotV2.svg" Stretch="UniformToFill" />
+                        <TextBlock x:Name="CopilotTextBlock2" Margin="6,0,0,0" Text="Copilot" />
                     </StackPanel>
                 </NavigationViewItem>
 

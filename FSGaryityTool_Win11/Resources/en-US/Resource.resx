@@ -314,7 +314,7 @@
     <comment>Settings Page text</comment>
   </data>
   <data name="softTranslucentToolBackground" xml:space="preserve">
-    <value>Select the translucent background effect</value>
+    <value>Application Background Material</value>
     <comment>Settings Page text</comment>
   </data>
   <data name="spClose" xml:space="preserve">

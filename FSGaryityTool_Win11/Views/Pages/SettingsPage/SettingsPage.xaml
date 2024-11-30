@@ -547,84 +547,85 @@
                 </Border>
                 <TextBlock x:Name="Generiall" Margin="0" Text="General" />
                 <StackPanel>
+                    <!--    -->
+                    <toolkit:SettingsCard x:Name="StartPage" Margin="0,3,0,3" Description="Specifies the page that is displayed when FSGravityTool is launched." Header="Default start page">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon FontSize="12" Glyph="&#xE8A1;" />
+                        </toolkit:SettingsCard.HeaderIcon>
+                        <Grid>
+                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                <ComboBox x:Name="StartPageCombobox" Width="150" Margin="0,0,27,0" SelectionChanged="StartPageCombobox_SelectionChanged" />
+                            </StackPanel>
+                        </Grid>
+                    </toolkit:SettingsCard>
 
-                    <StackPanel>
-                        <toolkit:SettingsCard x:Name="StartPage" Margin="0,3,0,3" Description="Specifies the page that is displayed when FSGravityTool is launched." Header="Default start page">
-                            <toolkit:SettingsCard.HeaderIcon>
-                                <FontIcon FontSize="12" Glyph="&#xE8A1;" />
-                            </toolkit:SettingsCard.HeaderIcon>
-                            <Grid>
-                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                    <ComboBox x:Name="StartPageCombobox" Width="150" Margin="0,0,27,0" SelectionChanged="StartPageCombobox_SelectionChanged" />
-                                </StackPanel>
-                            </Grid>
-                        </toolkit:SettingsCard>
-                    </StackPanel>
-                    <StackPanel>
-                        <toolkit:SettingsCard x:Name="SoftToolBackground" Margin="0,3,0,3" Description="Set the background of FSGravityTool." Header="Personalize the background">
-                            <toolkit:SettingsCard.HeaderIcon>
-                                <FontIcon FontSize="12" Glyph="&#xEF1F;" />
-                            </toolkit:SettingsCard.HeaderIcon>
-                            <Grid>
-                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                    <ComboBox x:Name="SoftBackgroundCombobox" Width="150" Margin="0,0,27,0" SelectionChanged="SoftBackgroundCombobox_SelectionChanged" />
-                                </StackPanel>
-                            </Grid>
-                        </toolkit:SettingsCard>
-                    </StackPanel>
-                    <StackPanel>
-                        <toolkit:SettingsExpander x:Name="SoftBackground" Margin="0,3,0,3" Description="" Header="">
-                            <toolkit:SettingsExpander.HeaderIcon>
-                                <FontIcon FontSize="12" Glyph="&#xE790;" />
-                            </toolkit:SettingsExpander.HeaderIcon>
-                            <toolkit:SettingsExpander.Items>
-                                <toolkit:SettingsCard>
-                                    <Grid>
-                                        <toolkit:ColorPickerButton />
+                    <toolkit:SettingsCard Margin="0,3,0,3">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon FontSize="12" Glyph="&#xE8A1;" />
+                        </toolkit:SettingsCard.HeaderIcon>
+                        <Grid />
+                    </toolkit:SettingsCard>
 
-                                    </Grid>
-                                </toolkit:SettingsCard>
-                                <toolkit:SettingsCard>
-                                    <Grid />
-                                </toolkit:SettingsCard>
-                            </toolkit:SettingsExpander.Items>
-                        </toolkit:SettingsExpander>
-                    </StackPanel>
-                    <StackPanel Visibility="Collapsed">
-                        <toolkit:SettingsCard x:Name="SoftLanguage" Margin="0,3,0,3" Description="Set the background of FSGravityTool." Header="Language">
-                            <toolkit:SettingsCard.HeaderIcon>
-                                <FontIcon FontSize="12" Glyph="&#xF2B7;" />
-                            </toolkit:SettingsCard.HeaderIcon>
-                            <Grid>
-                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                    <ComboBox x:Name="SoftLanguageCombobox" Width="150" Margin="0,0,27,0" SelectionChanged="SoftLanguageCombobox_SelectionChanged" />
-                                </StackPanel>
-                            </Grid>
-                        </toolkit:SettingsCard>
-                    </StackPanel>
-                    <StackPanel>
-                        <toolkit:SettingsCard x:Name="OpenToml"
-                                              Margin="0,3,0,3"
-                                              Click="OpenToml_click"
-                                              Description="Open the settings file."
-                                              Header="Open TOML file"
-                                              IsClickEnabled="True">
-                            <toolkit:SettingsCard.HeaderIcon>
-                                <FontIcon FontSize="12" Glyph="&#xE835;" />
-                            </toolkit:SettingsCard.HeaderIcon>
+                    <toolkit:SettingsCard x:Name="SoftToolBackground" Margin="0,3,0,3" Description="Set the background of FSGravityTool." Header="Personalize the background">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon FontSize="12" Glyph="&#xEF1F;" />
+                        </toolkit:SettingsCard.HeaderIcon>
+                        <Grid>
+                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                <ComboBox x:Name="SoftBackgroundCombobox" Width="150" Margin="0,0,27,0" SelectionChanged="SoftBackgroundCombobox_SelectionChanged" />
+                            </StackPanel>
+                        </Grid>
+                    </toolkit:SettingsCard>
 
-                            <toolkit:SettingsCard.ActionIcon>
-                                <FontIcon FontSize="12" Glyph="&#xE8A7;" />
-                            </toolkit:SettingsCard.ActionIcon>
-                            <Grid>
-                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" />
-                            </Grid>
-                        </toolkit:SettingsCard>
-                    </StackPanel>
+                    <toolkit:SettingsExpander x:Name="SoftBackground" Margin="0,3,0,3" Description="" Header="">
+                        <toolkit:SettingsExpander.HeaderIcon>
+                            <FontIcon FontSize="12" Glyph="&#xE790;" />
+                        </toolkit:SettingsExpander.HeaderIcon>
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard>
+                                <Grid>
+                                    <toolkit:ColorPickerButton />
+
+                                </Grid>
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard>
+                                <Grid />
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
+
+                    <toolkit:SettingsCard x:Name="SoftLanguage" Margin="0,3,0,3" Description="Set the background of FSGravityTool." Header="Language">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon FontSize="12" Glyph="&#xF2B7;" />
+                        </toolkit:SettingsCard.HeaderIcon>
+                        <Grid>
+                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                <ComboBox x:Name="SoftLanguageCombobox" Width="150" Margin="0,0,27,0" SelectionChanged="SoftLanguageCombobox_SelectionChanged" />
+                            </StackPanel>
+                        </Grid>
+                    </toolkit:SettingsCard>
+
+                    <toolkit:SettingsCard x:Name="OpenToml"
+                                          Margin="0,3,0,3"
+                                          Click="OpenToml_click"
+                                          Description="Open the settings file."
+                                          Header="Open TOML file"
+                                          IsClickEnabled="True">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon FontSize="12" Glyph="&#xE835;" />
+                        </toolkit:SettingsCard.HeaderIcon>
+
+                        <toolkit:SettingsCard.ActionIcon>
+                            <FontIcon FontSize="12" Glyph="&#xE8A7;" />
+                        </toolkit:SettingsCard.ActionIcon>
+                        <Grid>
+                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" />
+                        </Grid>
+                    </toolkit:SettingsCard>
 
                     <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
-                            <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="True" />
+                            <EntranceThemeTransition />
                             <RepositionThemeTransition IsStaggeringEnabled="False" />
                         </TransitionCollection>
                     </StackPanel.ChildrenTransitions>
@@ -705,7 +706,7 @@
                     -->
                     <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
-                            <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="True" />
+                            <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="False" />
                             <RepositionThemeTransition IsStaggeringEnabled="False" />
                         </TransitionCollection>
                     </StackPanel.ChildrenTransitions>
@@ -806,7 +807,7 @@
                     </Button>
                     <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
-                            <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="True" />
+                            <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="False" />
                             <RepositionThemeTransition IsStaggeringEnabled="False" />
                         </TransitionCollection>
                     </StackPanel.ChildrenTransitions>
@@ -817,14 +818,14 @@
 
                     <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
-                            <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="True" />
+                            <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="False" />
                             <RepositionThemeTransition IsStaggeringEnabled="False" />
                         </TransitionCollection>
                     </StackPanel.ChildrenTransitions>
                 </StackPanel>
                 <StackPanel.ChildrenTransitions>
                     <TransitionCollection>
-                        <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="True" />
+                        <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="False" />
                         <RepositionThemeTransition IsStaggeringEnabled="False" />
                     </TransitionCollection>
                 </StackPanel.ChildrenTransitions>

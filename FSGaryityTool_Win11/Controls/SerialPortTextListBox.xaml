@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="FSGaryityTool_Win11.Controls.SerialPortTextListBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:FSGaryityTool_Win11.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Color x:Key="SystemControlBackgroundLightColor">#90FFFFFF</Color>
+            <Color x:Key="SystemControlBackgroundDarkColor">#44252525</Color>
+            <ResourceDictionary.ThemeDictionaries>
+                <!--  浅色模式的AcrylicBrush  -->
+                <ResourceDictionary x:Key="Light">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundLightColor}" TintColor="#FCFCFC" TintOpacity="0.0" />
+                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundLightColor}" />
+                </ResourceDictionary>
+                <!--  深色模式的AcrylicBrush  -->
+                <ResourceDictionary x:Key="Dark">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundDarkColor}" TintColor="#2C2C2C" TintOpacity="0.15" />
+                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundDarkColor}" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Grid.Row="0"
+          Grid.Column="1"
+          Grid.ColumnSpan="1"
+          Margin="0,0,0,0"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
+        <Border x:Name="BorderBackRx"
+                MinWidth="1"
+                Margin="0,0,0,6"
+                Background="{ThemeResource CustomRxBoxSolidColorBrush}"
+                BorderBrush="{ThemeResource TextControlElevationBorderBrush}"
+                BorderThickness="3"
+                CornerRadius="6"
+                Opacity="1">
+            <ListView x:Name="RxListView" Margin="3" BorderThickness="0" RightTapped="RXListView_RightTapped">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:DataItem">
+                        <Grid Margin="0,3,0,6">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0"
+                                       Grid.Column="0"
+                                       Height="18"
+                                       Margin="0,0,10,0"
+                                       VerticalAlignment="Top"
+                                       Text="{x:Bind Timesr}" />
+                            <TextBlock Grid.Row="0"
+                                       Grid.Column="1"
+                                       Height="auto"
+                                       Margin="0,0,10,0"
+                                       HorizontalAlignment="Stretch"
+                                       IsTextSelectionEnabled="True"
+                                       PointerPressed="RxstrTextBlock_PointerPressed"
+                                       SelectionHighlightColor="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                       Text="{x:Bind Rxstr}"
+                                       TextWrapping="Wrap" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerTransitions>
+                    <TransitionCollection />
+                </ListView.ItemContainerTransitions>
+            </ListView>
+
+        </Border>
+    </Grid>
+</UserControl>

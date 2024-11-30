@@ -65,6 +65,7 @@ public sealed partial class MainPage1 : Page
             0 => typeof(Page1),
             1 => typeof(SerialPlotterPage),
             2 => typeof(TestPage1),
+            3 => typeof(CopilotPage),
             _ => typeof(Page2)
         };
 
@@ -182,6 +183,8 @@ public sealed partial class MainPage1 : Page
                 RunProgressBar.ShowPaused = false;
                 RunProgressBar.Visibility = Visibility.Visible;
                 SerialPortToolsPage.Current.HideTimer.Start();
+
+                Page1.Current.SerialPortOpen();
             }
             catch 
             {
@@ -196,6 +199,8 @@ public sealed partial class MainPage1 : Page
                 RunProgressBar.ShowPaused = true;
                 RunProgressBar.Visibility = Visibility.Visible;
                 SerialPortToolsToggleButton.IsChecked = true;
+
+                Page1.Current.SerialPortClose();
             }
         }
         else
@@ -219,6 +224,7 @@ public sealed partial class MainPage1 : Page
             RunProgressBar.ShowPaused = false;
             RunProgressBar.Visibility = Visibility.Collapsed;
             SerialPortToolsToggleButton.IsChecked = true;
+            Page1.Current.SerialPortClose();
         }
     }
 }

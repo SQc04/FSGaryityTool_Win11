@@ -11,6 +11,7 @@ using System.Numerics;
 using Windows.UI;
 using System.ComponentModel;
 using Windows.System;
+using System.Reflection;
 
 namespace FSGaryityTool_Win11.Views.Pages.FanControlPage;
 
@@ -80,15 +81,7 @@ public sealed partial class Page5 : Page
         }
     }
 
-    private void SetDefaultFanControl()
-    {
-        CpuFanRadialGauge.Value = 60;
-        GpuFanRadialGauge.Value = 60;
-        CpuTempText.Text = "N/A℃";
-        GpuTempText.Text = "N/A℃";
-        CpuFanRpmRadialGauge.Value = 0;
-        GpuFanRpmRadialGauge.Value = 0;
-    }
+    
 
     public Page5()
     {
@@ -115,24 +108,23 @@ public sealed partial class Page5 : Page
                 }
                 else
                 {
-                    SetDefaultFanControl();
+                    ResetUiForDisconnected(2);
                 }
             }
             else
             {
-                SetDefaultFanControl();
+                ResetUiForDisconnected(2);
             }
         }
         catch
         {
-            SetDefaultFanControl();
+            ResetUiForDisconnected(2);
         }
 
         if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
         {
             Debug.WriteLine("An instance of this application is already running.");
-            CpuTempText.Text = "N/A℃";
-            GpuTempText.Text = "N/A℃";
+            ResetUiForDisconnected(0);
             return;
         }
         else
@@ -285,66 +277,46 @@ public sealed partial class Page5 : Page
 
             DispatcherQueue.TryEnqueue(() =>
             {
-                CpuDutySet = (int)Math.Round(CpuFanRadialGauge.Value / 100.0 * 255);
-                GpuDutySet = (int)Math.Round(GpuFanRadialGauge.Value / 100.0 * 255);
+                CpuDutySet = UpdateFanDutySet(CpuFanRadialGauge.Value);
+                GpuDutySet = UpdateFanDutySet(GpuFanRadialGauge.Value);
 
                 CpuFanRpmRadialGauge.Value = cpuFanRpm;
                 GpuFanRpmRadialGauge.Value = gpuFanRpm;
             });
 
-            var fanId = 1;
-            var data = ClevoEcControl.GetTempFanDuty(fanId);
-            int cpuTemp = data.Remote;
-            CpuFanDuty = data.FanDuty;
-
-            double predictedCpuTemp = cpuTempFilter.Update(cpuTemp);
-
-            DispatcherQueue.TryEnqueue(() =>
-            {
-                //CpuTemp.Value = cpuTemp;
-                ViewModel.CpumTemp = (int)predictedCpuTemp;
-                CpuTempText.Text = cpuTemp + "℃";
-            });
-            if (CpuFanDuty != CpuDutySet)
-            {
-                ClevoEcControl.SetFanDuty(fanId, CpuDutySet);
-            }
-
-            fanId = 2;
-            data = ClevoEcControl.GetTempFanDuty(fanId);
-            int gpuTemp = data.Remote;
-            GpuFanDuty = data.FanDuty;
-
-            double predictedGpuTemp = gpuTempFilter.Update(gpuTemp);
-
-            DispatcherQueue.TryEnqueue(() =>
-            {
-                //GpuTemp.Value = gpuTemp;
-                ViewModel.GpumTemp = (int)predictedGpuTemp;
-                GpuTempText.Text = gpuTemp + "℃";
-            });
-            if (GpuFanDuty != GpuDutySet)
-            {
-                ClevoEcControl.SetFanDuty(fanId, GpuDutySet);
-            }
-            CpuFanDuty = CpuDutySet;
-            GpuFanDuty = GpuDutySet;
-
-            //Debug.WriteLine("CpuTemp" + (int)predictedCpuTemp);
-            //Debug.WriteLine("GpuTemp" + (int)predictedGpuTemp);
+            UpdateFanData(1, CpuDutySet, CpuFanDuty, CpuTempText, cpuTempFilter, temp => ViewModel.CpumTemp = temp);
+            UpdateFanData(2, GpuDutySet, GpuFanDuty, GpuTempText, gpuTempFilter, temp => ViewModel.GpumTemp = temp);
         }
         else
         {
             DispatcherQueue.TryEnqueue(() =>
             {
-                CpuTempText.Text = "N/A℃";
-                GpuTempText.Text = "N/A℃";
-                CpuFanRpmRadialGauge.Value = 0;
-                GpuFanRpmRadialGauge.Value = 0;
-                //cpumTemp = -1;
-                //gpumTemp = -1;
+                ResetUiForDisconnected(1);
             });
         }
+    }
+    private void UpdateFanData(int fanId, int dutySet, int duty, TextBlock tempText, KalmanFilter tempFilter, Action<int> setTemp) 
+    { 
+        var data = ClevoEcControl.GetTempFanDuty(fanId);
+        int temp = data.Remote; 
+        duty = data.FanDuty;
+        double predictedTemp = tempFilter.Update(temp);
+        DispatcherQueue.TryEnqueue(() => 
+        {
+            setTemp((int)predictedTemp);
+            tempText.Text = temp + "℃"; 
+        });
+        if (duty != dutySet)
+        { 
+            ClevoEcControl.SetFanDuty(fanId, dutySet); 
+        }
+        duty = dutySet;
+    }
+
+    private int UpdateFanDutySet(double value) 
+    { 
+        int str = (int)Math.Round(value / 100.0 * 255); 
+        return str;
     }
 
     private int FanRpmCalculation(int Value)
@@ -358,6 +330,31 @@ public sealed partial class Page5 : Page
         return fanRpm;
     }
 
+    private void ResetUiForDisconnected(int Model)
+    {
+        if (Model == 0)
+        {
+            CpuTempText.Text = "N/A℃";
+            GpuTempText.Text = "N/A℃";
+        }
+        else if (Model == 1)
+        {
+            CpuTempText.Text = "N/A℃";
+            GpuTempText.Text = "N/A℃";
+            CpuFanRpmRadialGauge.Value = 0;
+            GpuFanRpmRadialGauge.Value = 0;
+        }
+        else if (Model == 2)
+        {
+            CpuFanRadialGauge.Value = 60;
+            GpuFanRadialGauge.Value = 60;
+            CpuTempText.Text = "N/A℃";
+            GpuTempText.Text = "N/A℃";
+            CpuFanRpmRadialGauge.Value = 0;
+            GpuFanRpmRadialGauge.Value = 0;
+        }
+    }
+
     private void ClevoGetFaninfo_Click(object sender, RoutedEventArgs e)
     {
         var info = ClevoEcControl.InitIo();
@@ -368,7 +365,7 @@ public sealed partial class Page5 : Page
         Debug.WriteLine("info: " + fanNum);
 
         var fanId = 1;
-        var cpuDuty = (int)Math.Round(CpuFanRadialGauge.Value / 100.0 * 255);
+        var cpuDuty = UpdateFanDutySet(CpuFanRadialGauge.Value);
         var data = ClevoEcControl.GetTempFanDuty(fanId);
         // 使用Debug.WriteLine打印字段
         Debug.WriteLine("Remote: " + data.Remote);
@@ -381,7 +378,7 @@ public sealed partial class Page5 : Page
         Debug.WriteLine("FanRpm:" + cpuFanRpm);
 
         fanId = 2;
-        var gpuDuty = (int)Math.Round(GpuFanRadialGauge.Value / 100.0 * 255);
+        var gpuDuty = UpdateFanDutySet(GpuFanRadialGauge.Value);
         data = ClevoEcControl.GetTempFanDuty(fanId);
         // 使用Debug.WriteLine打印字段
         Debug.WriteLine("Remote: " + data.Remote);
@@ -452,7 +449,7 @@ public sealed partial class Page5 : Page
         // 从RadialGauge获取数据
         DispatcherQueue.TryEnqueue(() =>
         {
-            CpuDutySet = (int)Math.Round(CpuFanRadialGauge.Value / 100.0 * 255);
+            CpuDutySet = UpdateFanDutySet(CpuFanRadialGauge.Value);
         });
         var isConnect = ClevoEcControl.IsServerStarted();
         if (isConnect)
@@ -471,7 +468,7 @@ public sealed partial class Page5 : Page
         // 从RadialGauge获取数据
         DispatcherQueue.TryEnqueue(() =>
         {
-            GpuDutySet = (int)Math.Round(GpuFanRadialGauge.Value / 100.0 * 255);
+            GpuDutySet = UpdateFanDutySet(GpuFanRadialGauge.Value);
         });
         var isConnect = ClevoEcControl.IsServerStarted();
         if (isConnect)

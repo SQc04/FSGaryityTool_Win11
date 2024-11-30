@@ -99,72 +99,99 @@
                         </toolkit:SettingsExpander.HeaderIcon>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard ContentAlignment="Left">
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Margin="0,6,0,1" HorizontalAlignment="Right" FontSize="14" FontWeight="Thin" Text="Production / Visual Design" />
-                                    <TextBlock Margin="0,1,0,1" HorizontalAlignment="Right" FontWeight="Medium" Text="WillowKoishi" />
-                                    <TextBlock Margin="0,6,0,1" HorizontalAlignment="Right" FontSize="14" FontWeight="Thin" Text="Programming Director / UI Layout Design" />
-                                    <TextBlock Margin="0,1,0,1" HorizontalAlignment="Right" FontWeight="Medium" Text="SQc04" />
-                                    <TextBlock Margin="0,1,0,1" HorizontalAlignment="Right" FontWeight="Medium" Text="Poker-sang" />
-                                    <TextBlock Margin="0,6,0,1" HorizontalAlignment="Right" FontSize="14" FontWeight="Thin" Text="AI Programming Assistant / Consultant" />
-                                    <TextBlock Margin="0,1,0,1" HorizontalAlignment="Right" FontWeight="Medium" Text="Copliot" />
-                                    <TextBlock Margin="0,6,0,1" HorizontalAlignment="Right" FontSize="14" FontWeight="Thin" Text="Payload" />
-                                    <TextBlock Margin="0,1,0,1" HorizontalAlignment="Right" FontWeight="Medium" Text="Asumoyz" />
-                                    <TextBlock Margin="0,6,0,1" HorizontalAlignment="Right" FontSize="14" FontWeight="Thin" Text="Software Framework" />
-                                    <TextBlock Margin="0,1,0,1" HorizontalAlignment="Right" FontWeight="Medium" Text="ㅤㅤㅤㅤ" />
-                                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                        <TextBlock Margin="0,1,0,1"
-                                                   HorizontalAlignment="Right"
-                                                   CenterPoint="8,10,0"
-                                                   FontWeight="Medium"
-                                                   Rotation="0"
-                                                   Text="都" />
-                                        <TextBlock Margin="0,1,1,1"
-                                                   HorizontalAlignment="Right"
-                                                   CenterPoint="8,11,0"
-                                                   FontWeight="Medium"
-                                                   Rotation="90"
-                                                   Text="筑" />
-                                        <TextBlock Margin="1,1,0,1"
-                                                   HorizontalAlignment="Right"
-                                                   CenterPoint="8,11,0"
-                                                   FontWeight="Medium"
-                                                   Rotation="180"
-                                                   Text="は" />
-                                        <TextBlock Margin="0,1,-1,1"
-                                                   HorizontalAlignment="Right"
-                                                   CenterPoint="7,11,0"
-                                                   FontWeight="Medium"
-                                                   Rotation="0"
-                                                   Text="る" />
-                                        <TextBlock Margin="-2,1,0,1"
-                                                   HorizontalAlignment="Right"
-                                                   CenterPoint="8,11,0"
-                                                   FontWeight="Medium"
-                                                   Rotation="90"
-                                                   Text="か" />
-                                    </StackPanel>
-                                    <TextBlock Margin="0,1,0,1" HorizontalAlignment="Right" FontWeight="Medium" Text="lfky" />
-                                    <!--
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" Orientation="Vertical">
+                                        <TextBlock Margin="0,6,0,1" HorizontalAlignment="Right" TextAlignment="Right">
+                                            <Run FontSize="14" FontWeight="Thin" Text="Production / Visual Design" />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text="WillowKoishi" />
+                                            <LineBreak /><LineBreak />
+                                            <Run FontSize="14" FontWeight="Thin" Text="Programming Director / UI Layout Design" />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text="SQc04" />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text="Poker-sang" />
+                                            <LineBreak /><LineBreak />
+                                            <Run FontSize="14" FontWeight="Thin" Text="AI Programming Assistant / Consultant" />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text="Asumoyz" />
+                                            <LineBreak /><LineBreak />
+                                            <Run FontSize="14" FontWeight="Thin" Text="Software Framework" />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text="lfky" />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text="ㅤㅤㅤㅤ" />
+                                        </TextBlock>
+
+                                        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                            <TextBlock Margin="0,1,0,1"
+                                                       HorizontalAlignment="Right"
+                                                       CenterPoint="8,10,0"
+                                                       FontWeight="Medium"
+                                                       Rotation="0"
+                                                       Text="都" />
+                                            <TextBlock Margin="0,1,1,1"
+                                                       HorizontalAlignment="Right"
+                                                       CenterPoint="8,11,0"
+                                                       FontWeight="Medium"
+                                                       Rotation="90"
+                                                       Text="筑" />
+                                            <TextBlock Margin="1,1,0,1"
+                                                       HorizontalAlignment="Right"
+                                                       CenterPoint="8,11,0"
+                                                       FontWeight="Medium"
+                                                       Rotation="180"
+                                                       Text="は" />
+                                            <TextBlock Margin="0,1,-1,1"
+                                                       HorizontalAlignment="Right"
+                                                       CenterPoint="7,11,0"
+                                                       FontWeight="Medium"
+                                                       Rotation="0"
+                                                       Text="る" />
+                                            <TextBlock Margin="-2,1,0,1"
+                                                       HorizontalAlignment="Right"
+                                                       CenterPoint="8,11,0"
+                                                       FontWeight="Medium"
+                                                       Rotation="90"
+                                                       Text="か" />
+                                        </StackPanel>
+                                        <!--
                                     <TextBlock Text="Software Tester" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
                                     <TextBlock Text="" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
-                                    -->
-                                    <TextBlock Margin="0,12,0,1" HorizontalAlignment="Right" FontSize="14" FontWeight="Thin" Text="Special Thanks" />
-                                    <TextBlock Margin="0,1,0,1" HorizontalAlignment="Right" FontWeight="Medium" Text="二月喵～" />
-                                    <TextBlock Margin="0,1,0,1" HorizontalAlignment="Right" FontWeight="Medium" Text="PangCiyuan" />
-                                    <TextBlock Margin="0,1,0,1" HorizontalAlignment="Right" FontWeight="Medium" Text="Canmi." />
-                                    <TextBlock Margin="0,1,0,1" HorizontalAlignment="Right" FontWeight="Medium" Text="daelon_ely" />
-                                    <TextBlock Margin="0,1,0,1" HorizontalAlignment="Right" FontWeight="Medium" Text="游悦电子DIY" />
-                                    <TextBlock Margin="0,1,0,1" HorizontalAlignment="Right" FontWeight="Medium" Text="阿良良木翼i" />
-                                    <TextBlock Margin="0,1,0,1" HorizontalAlignment="Right" FontWeight="Medium" Text="You!" />
+                                        -->
+                                        <TextBlock Margin="0,12,0,1" HorizontalAlignment="Right" TextAlignment="Right">
+                                            <Run FontSize="14" FontWeight="Thin" Text="Special Thanks" />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text="二月喵～" />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text="PangCiyuan" />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text="Canmi." />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text="daelon_ely" />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text="游悦电子DIY" />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text="You!" />
+                                            <LineBreak />
+                                        </TextBlock>
+                                        <StackPanel.ChildrenTransitions>
+                                            <TransitionCollection>
+                                                <EntranceThemeTransition FromVerticalOffset="10" IsStaggeringEnabled="True" />
+                                                <RepositionThemeTransition IsStaggeringEnabled="False" />
+                                            </TransitionCollection>
+                                        </StackPanel.ChildrenTransitions>
+                                    </StackPanel>
 
-                                    <StackPanel.ChildrenTransitions>
-                                        <TransitionCollection>
-                                            <EntranceThemeTransition FromVerticalOffset="10" IsStaggeringEnabled="True" />
-                                            <RepositionThemeTransition IsStaggeringEnabled="False" />
-                                        </TransitionCollection>
-                                    </StackPanel.ChildrenTransitions>
-                                </StackPanel>
+
+                                </Grid>
                             </toolkit:SettingsCard>
+
                             <toolkit:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
                                 <StackPanel Orientation="Vertical">
                                     <HyperlinkButton Margin="-12,0,0,0" Content="Visit Our Studio Website" NavigateUri="https://fairingstudio.com/" />

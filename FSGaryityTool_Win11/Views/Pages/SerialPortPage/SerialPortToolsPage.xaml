@@ -525,7 +525,7 @@
                                     BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4">
-                                <Grid Width="120" HorizontalAlignment="Center">
+                                <Grid Width="118" HorizontalAlignment="Center">
                                     <TextBlock x:Name="BaudTextBlock" Width="70" Margin="0" VerticalAlignment="Center" TextAlignment="Center">
                                         BAUDRATE
                                     </TextBlock>
@@ -534,7 +534,7 @@
                             </Border>
                             <ComboBox x:Name="BandComboBox"
                                       Width="108"
-                                      Margin="6"
+                                      Margin="7,6,6,6"
                                       IsEditable="True"
                                       SelectionChanged="BANDComboBox_SelectionChanged"
                                       Style="{StaticResource ComboBoxStyle}" />
@@ -551,13 +551,13 @@
                                     BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4">
-                                <Grid Width="120" HorizontalAlignment="Center">
+                                <Grid Width="118" HorizontalAlignment="Center">
                                     <TextBlock x:Name="PartTextBlock" Width="70" Margin="0" VerticalAlignment="Center" TextAlignment="Center">
                                         Parity
                                     </TextBlock>
                                 </Grid>
                             </Border>
-                            <ComboBox x:Name="ParComboBox" Width="108" Margin="6" SelectionChanged="PARComboBox_SelectionChanged" Style="{StaticResource ComboBoxStyle}" />
+                            <ComboBox x:Name="ParComboBox" Width="108" Margin="7,6,6,6" SelectionChanged="PARComboBox_SelectionChanged" Style="{StaticResource ComboBoxStyle}" />
 
                         </StackPanel>
 
@@ -595,13 +595,13 @@
                                     BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4">
-                                <Grid Width="120" HorizontalAlignment="Center">
+                                <Grid Width="118" HorizontalAlignment="Center">
                                     <TextBlock x:Name="StopTextBlock" Width="70" Margin="0" VerticalAlignment="Center" TextAlignment="Center">
                                         STOP Bits
                                     </TextBlock>
                                 </Grid>
                             </Border>
-                            <ComboBox x:Name="StopComboBox" Width="108" Margin="6" SelectionChanged="STOPComboBox_SelectionChanged" />
+                            <ComboBox x:Name="StopComboBox" Width="108" Margin="7,6,6,6" SelectionChanged="STOPComboBox_SelectionChanged" />
 
                         </StackPanel>
 
@@ -619,13 +619,13 @@
                                     BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4">
-                                <Grid Width="120" HorizontalAlignment="Center">
+                                <Grid Width="118" HorizontalAlignment="Center">
                                     <TextBlock x:Name="DataTextBlock" Width="70" Margin="0" VerticalAlignment="Center" TextAlignment="Center">
                                         DATA Bits
                                     </TextBlock>
                                 </Grid>
                             </Border>
-                            <ComboBox x:Name="DataComboBox" Width="108" Margin="6" SelectionChanged="DATAComboBox_SelectionChanged" />
+                            <ComboBox x:Name="DataComboBox" Width="108" Margin="7,6,6,6" SelectionChanged="DATAComboBox_SelectionChanged" />
 
                         </StackPanel>
 
@@ -636,13 +636,13 @@
                                 </Grid>
                             </Border>
                             <Border Margin="6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlElevationBorderBrush}" BorderThickness="1" CornerRadius="4">
-                                <Grid Width="120" HorizontalAlignment="Center">
+                                <Grid Width="118" HorizontalAlignment="Center">
                                     <TextBlock x:Name="EncodingTextBlock" Width="70" Margin="0" VerticalAlignment="Center" TextAlignment="Center">
                                         Encoding
                                     </TextBlock>
                                 </Grid>
                             </Border>
-                            <ComboBox x:Name="EncodingComboBox" Width="108" Margin="6" SelectionChanged="EncodingComboBox_SelectionChanged" Style="{StaticResource ComboBoxStyle}" />
+                            <ComboBox x:Name="EncodingComboBox" Width="108" Margin="7,6,6,6" SelectionChanged="EncodingComboBox_SelectionChanged" Style="{StaticResource ComboBoxStyle}" />
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal">
@@ -651,7 +651,7 @@
                             </Border>
                             <Border x:Name="CdhBorder" Height="32" Margin="6" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4">
                                 <TextBlock x:Name="CdhTextBlock"
-                                           Width="55"
+                                           Width="54"
                                            Margin="0"
                                            VerticalAlignment="Center"
                                            Text="DCD"
@@ -662,7 +662,7 @@
                             </Border>
                             <Border x:Name="RiBorder" Height="32" Margin="6" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4">
                                 <TextBlock x:Name="RiTextBlock"
-                                           Width="55"
+                                           Width="54"
                                            Margin="0"
                                            VerticalAlignment="Center"
                                            Text="RI"

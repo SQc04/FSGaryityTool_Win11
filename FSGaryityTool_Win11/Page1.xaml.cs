@@ -20,13 +20,48 @@ using System.Globalization;
 using FSGaryityTool_Win11.Views.Pages.SerialPortPage;
 using Windows.System;
 using System.ComponentModel;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static FSGaryityTool_Win11.Page1;
 
 namespace FSGaryityTool_Win11;
 
-public class DataItem
+public class DataItem : INotifyPropertyChanged
 {
-    public string Timesr { get; set; }
-    public string Rxstr { get; set; }
+    private string _timesr;
+    private string _rxstr;
+
+    public string Timesr
+    {
+        get => _timesr;
+        set
+        {
+            if (_timesr != value)
+            {
+                _timesr = value;
+                OnPropertyChanged(nameof(Timesr));
+            }
+        }
+    }
+
+    public string Rxstr
+    {
+        get => _rxstr;
+        set
+        {
+            if (_rxstr != value)
+            {
+                _rxstr = value;
+                OnPropertyChanged(nameof(Rxstr));
+            }
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }
 
 /*
@@ -55,6 +90,8 @@ public sealed partial class Page1 : Page
                 {
                     _rxTextinfo = value;
                     OnPropertyChanged(nameof(RxTextinfo));
+                    // 通知订阅者 RxTextinfo 变化
+                    RxTextinfoChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -65,15 +102,20 @@ public sealed partial class Page1 : Page
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public event EventHandler RxTextinfoChanged;
+
         public void AppendToRxTextinfo(string text)
         {
             RxTextinfo += text;
         }
+
         public void ClearRxTextinfo()
         {
             RxTextinfo = "";
         }
     }
+
     public ViewModel _viewModel = new ViewModel();
     public static int Rollta { get; set; } = 0;
 
@@ -101,8 +143,6 @@ public sealed partial class Page1 : Page
 
     public static string Str { get; set; }
 
-    public DateTime CurrentTime { get; set; } 
-
     public static class CommonRes
     {
         public static SerialPort SerialPort { get; set; } = new();
@@ -111,6 +151,8 @@ public sealed partial class Page1 : Page
     }
 
     private ITaskbarList3 _taskbarInstance;
+
+    private DispatcherTimer _resizeTimer;
 
     public Page1()
     {
@@ -122,6 +164,11 @@ public sealed partial class Page1 : Page
         _taskbarInstance.HrInit();
 
         RxText.DataContext = _viewModel;
+        _viewModel.RxTextinfoChanged += ViewModel_RxTextinfoChanged;
+
+        //_resizeTimer = new DispatcherTimer();
+        //_resizeTimer.Interval = TimeSpan.FromMilliseconds(500);
+        //_resizeTimer.Tick += ResizeTimer_Tick;
     }
 
     public static string LanguageText(string laugtext)
@@ -277,6 +324,7 @@ public sealed partial class Page1 : Page
             }
 
             CommonRes.SerialPort.DataReceived += _serialPort_DataReceived;
+
             //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
 
             LanguageSetting();
@@ -450,19 +498,25 @@ foreach (var item in items)
 {
     dataList.AddLast(item);新的
     */
-    private DateTime _lastReceivedTime = DateTime.Now; // 添加这一行来声明lastReceivedTime变量
+
     private StringBuilder _buffer = new();
+    private List<byte> _bufferHex = [];
 
     private bool _isProcessing;
     private readonly object _lock = new();
+    Encoding currentEncoding;
 
     private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
     {
         lock (_lock)
         {
-            var data = CommonRes.SerialPort.ReadExisting();
-            _buffer.Append(data);
-            Datapwate.Append(data);
+            int bytesToRead = CommonRes.SerialPort.BytesToRead;
+
+            byte[] bytes = new byte[bytesToRead];
+
+            CommonRes.SerialPort.Read(bytes, 0, bytesToRead);
+
+            _bufferHex.AddRange(bytes);
 
             if (!_isProcessing)
             {
@@ -479,15 +533,35 @@ foreach (var item in items)
         {
             var timesr = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ff   "); //显示时间
 
+            if (SerialPortToolsPage.RxHex is 0)
+            {
+
+            }
+            else
+            {
+
+            }
+
+
             while (true)
             {
+                /*
                 string data;
+                byte[] bytes;
 
                 lock (_lock)
                 {
                     if (_buffer.Length > 0)
                     {
-                        data = _buffer.ToString();
+                        if (SerialPortToolsPage.RxHex is 0)
+                        {
+                            data = _buffer.ToString();
+                        }
+                        else
+                        {
+                            bytes = _bufferHex;
+                        }
+                 
                         _buffer.Clear();
                     }
                     else
@@ -501,44 +575,15 @@ foreach (var item in items)
                 {
                     if (SerialPortToolsPage.RxHex is 0) // 如果以字符串形式读取
                     {
-                        var itemh = new DataItem { Timesr = timesr, Rxstr = data };
-                        DispatcherQueue.TryEnqueue(() =>
-                        {
-                            DataList.Add(itemh);
-                        });
+                        ProcessDataString(timesr, data);
                     }
                     else // 以数值形式读取
                     {
-                        var bytes = Encoding.ASCII.GetBytes(data); // 将字符串转换为字节数组
-                        var length = bytes.Length;
-
-                        var itemh = new DataItem { Timesr = timesr, Rxstr = data };
-                        DispatcherQueue.TryEnqueue(() =>
-                        {
-                            DataList.Add(itemh);
-                        });
-
-                        for (var i = 0; i < length; i += 16)
-                        {
-                            var tmpStr = "";
-                            for (var j = i; j < i + 16 && j < length; j++)
-                            {
-                                tmpStr += bytes[j].ToString("X2") + " ";
-                            }
-
-                            var timesrh = "|                                     |"; //显示时间
-                            var item = new DataItem { Timesr = timesrh, Rxstr = tmpStr };
-
-                            DispatcherQueue.TryEnqueue(() =>
-                            {
-                                DataList.Add(item);
-                                UpdateItemsRepeater();
-                            });
-                        }
-
-                        //lastReceivedTime = DateTime.Now; // 更新最后接收数据的时间
+                        currentEncoding = Encoding.GetEncoding(SerialPortToolsPage.EncodingSelectedItem);
+                        ProcessDataHex(timesr, data, currentEncoding);
                     }
                 }
+                //*/
             }
         }
         catch (Exception ex)
@@ -547,6 +592,40 @@ foreach (var item in items)
         }
         DispatcherQueue.TryEnqueue(UpdateItemsRepeater);
     }
+
+    private void ProcessDataString(string timesr, string data)
+    {
+        DataItem itemh = new DataItem { Timesr = timesr, Rxstr = data };
+
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            DataList.Add(itemh);
+        });
+    }
+
+    private void ProcessDataHex(string timesr, byte[] bytes, Encoding encoding)
+    {
+        int length = bytes.Length;
+
+        for (var i = 0; i < length; i += 16)
+        {
+            string tmpStr = "";
+            for (var j = i; j < i + 16 && j < length; j++)
+            {
+                tmpStr += bytes[j].ToString("X2") + " ";
+            }
+
+            string timesrh = "|                                     |"; //显示时间
+            DataItem item = new DataItem { Timesr = timesrh, Rxstr = tmpStr };
+
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                DataList.Add(item);
+                UpdateItemsRepeater();
+            });
+        }
+    }
+
 
     private void UpdateItemsRepeater()
     {
@@ -974,5 +1053,48 @@ foreach (var item in items)
             // 设置ListView的选中项
             RxListView.SelectedItem = dataItem;
         }
+    }
+
+
+    public void SerialPortOpen()
+    {
+        BorderBackRx.BorderBrush = (Brush)Application.Current.Resources["TextControlElevationBorderFocusedBrush"];
+        RxTextBoxBorder.BorderBrush = (Brush)Application.Current.Resources["TextControlElevationBorderFocusedBrush"];
+    }
+
+    public void SerialPortClose()
+    {
+        BorderBackRx.BorderBrush = (Brush)Application.Current.Resources["TextControlElevationBorderBrush"];
+        RxTextBoxBorder.BorderBrush = (Brush)Application.Current.Resources["TextControlElevationBorderBrush"];
+    }
+
+    private async void ViewModel_RxTextinfoChanged(object sender, EventArgs e)
+    {
+        await Task.Delay(10);
+        // 获取 ScrollViewer 的内容高度
+        var scrollViewer = RxTextBoxScrollViewer;
+        var extentHeight = scrollViewer.ExtentHeight;
+        var viewportHeight = scrollViewer.ViewportHeight;
+        //await Task.Delay(100);
+        // 滚动到最下面
+        scrollViewer.ChangeView(null, extentHeight - viewportHeight, null);
+    }
+    
+    private void RxText_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        //if(RxText.TextWrapping == TextWrapping.WrapWholeWords)
+        //{
+        //    RxText.TextWrapping = TextWrapping.NoWrap;
+        //}
+        //RxText.Foreground = (Brush)Application.Current.Resources["TextFillColorPrimaryBrush"];
+        //_resizeTimer.Stop();
+        //_resizeTimer.Start();
+    }
+    private void ResizeTimer_Tick(object sender, object e)
+    {
+        //RxText.TextWrapping = TextWrapping.WrapWholeWords;
+        //_resizeTimer.Stop();
+        // 这里可以添加重新计算自动换行的逻辑
+        //RxText.Foreground = (Brush)Application.Current.Resources["SystemFillColorAttentionBrush"];
     }
 }

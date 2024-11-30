@@ -68,11 +68,16 @@
                     MinWidth="1"
                     Margin="0,0,0,6"
                     Background="{ThemeResource CustomRxBoxSolidColorBrush}"
-                    BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}"
+                    BorderBrush="{ThemeResource TextControlElevationBorderBrush}"
                     BorderThickness="3"
                     CornerRadius="6"
                     Opacity="1">
                 <ListView x:Name="RxListView" Margin="3" BorderThickness="0" ItemsSource="{x:Bind DataList, Mode=OneWay}" RightTapped="RXListView_RightTapped">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local:DataItem">
                             <Grid Margin="0,3,0,6">
@@ -107,6 +112,7 @@
                         <TransitionCollection />
                     </ListView.ItemContainerTransitions>
                 </ListView>
+
             </Border>
         </Grid>
 
@@ -122,16 +128,25 @@
                      TextChanged="RXTextBox_TextChanged"
                      TextWrapping="Wrap"
                      Visibility="Collapsed" />
-            <Border Margin="12,0,12,6" Background="{ThemeResource CustomRxBoxSolidColorBrush}" BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}" BorderThickness="3" CornerRadius="6">
-                <ScrollView>
+            <Border x:Name="RxTextBoxBorder"
+                    Margin="12,0,12,6"
+                    Background="{ThemeResource CustomRxBoxSolidColorBrush}"
+                    BorderBrush="{ThemeResource TextControlElevationBorderBrush}"
+                    BorderThickness="3"
+                    CornerRadius="6">
+                <ScrollViewer x:Name="RxTextBoxScrollViewer">
 
-                    <TextBlock x:Name="RxText"
-                               Margin="6,6,12,6"
-                               IsTextSelectionEnabled="True"
-                               SelectionHighlightColor="{ThemeResource AccentTextFillColorTertiaryBrush}"
-                               Text="{Binding RxTextinfo}"
-                               TextWrapping="Wrap" />
-                </ScrollView>
+                    <RichTextBlock x:Name="RxText"
+                                   Margin="6,6,12,6"
+                                   IsTextSelectionEnabled="True"
+                                   SelectionHighlightColor="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                   SizeChanged="RxText_SizeChanged"
+                                   TextWrapping="NoWrap">
+                        <Paragraph>
+                            <Run Text="{Binding RxTextinfo}" />
+                        </Paragraph>
+                    </RichTextBlock>
+                </ScrollViewer>
             </Border>
         </Grid>
 

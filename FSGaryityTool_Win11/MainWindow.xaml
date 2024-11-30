@@ -60,7 +60,62 @@
                            Source="ms-appx:///Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png"
                            Stretch="Fill" />
 
-                    <TextBlock x:Name="TitleBarTextBlock" Margin="8,2,0,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="App title" />
+                    <TextBlock x:Name="TitleBarTextBlock" Margin="8,2,1,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="App title" />
+
+                    <Border x:Name="TitleDev"
+                            Height="16"
+                            Margin="3,2,0,0"
+                            Background="LawnGreen"
+                            CornerRadius="2"
+                            Opacity="0.9"
+                            Visibility="Collapsed">
+                        <TextBlock Margin="3,0,3,0" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" Text="Dev" />
+                    </Border>
+                    <Border x:Name="TitleBeta"
+                            Height="16"
+                            Margin="3,2,0,0"
+                            Background="Aqua"
+                            CornerRadius="2"
+                            Opacity="0.9"
+                            Visibility="Collapsed">
+                        <TextBlock Margin="3,0,3,0" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" Text="Beta" />
+                    </Border>
+                    <Border x:Name="TitleCanary"
+                            Height="16"
+                            Margin="3,2,0,0"
+                            Background="Yellow"
+                            CornerRadius="2"
+                            Opacity="0.9"
+                            Visibility="Collapsed">
+                        <TextBlock Margin="3,0,3,0" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" Text="Canary" />
+                    </Border>
+                    <Border x:Name="TitleInsider"
+                            Height="16"
+                            Margin="3,2,0,0"
+                            Background="SkyBlue"
+                            CornerRadius="2"
+                            Opacity="0.9"
+                            Visibility="Collapsed">
+                        <TextBlock Margin="3,0,3,0" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" Text="Insider" />
+                    </Border>
+                    <Border x:Name="TitlePreview"
+                            Height="16"
+                            Margin="3,2,0,0"
+                            Background="PaleVioletRed"
+                            CornerRadius="2"
+                            Opacity="0.9"
+                            Visibility="Visible">
+                        <TextBlock Margin="3,0,3,0" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" Text="Preview" />
+                    </Border>
+                    <Border x:Name="TitleExperimental"
+                            Height="16"
+                            Margin="3,2,0,0"
+                            Background="Gray"
+                            CornerRadius="2"
+                            Opacity="0.9"
+                            Visibility="Collapsed">
+                        <TextBlock Margin="3,0,3,0" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" Text="Experimental" />
+                    </Border>
 
                     <StackPanel.Transitions>
                         <TransitionCollection>

@@ -78,9 +78,6 @@ public sealed partial class SerialPortToolsPage : Page
     public static string[] ArryPort { get; set; }
 
     public static int Baudrate { get; set; }
-
-    public Timer Timer { get; set; }
-
     public Timer TimerSerialPort { get; set; }
 
     private bool _isLoaded;
@@ -114,33 +111,30 @@ public sealed partial class SerialPortToolsPage : Page
 
         HideTimer = new() { Interval = TimeSpan.FromMilliseconds(750) };
         HideTimer.Tick += HideTimer_Tick;
+
+        Page1.CommonRes.SerialPort.PinChanged += PinChanged;
     }
+
+
 
     private void FsBorderIsChecked(int isChecked, Border border, TextBlock textBlock)
     {
-        var foregroundColor = (SolidColorBrush)Application.Current.Resources["TextFillColorPrimaryBrush"];
-        var backgroundColor = (SolidColorBrush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
-        var foreCheckColor = (SolidColorBrush)Application.Current.Resources["TextOnAccentFillColorPrimaryBrush"];
-        var darkAccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
-        var lightAccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
-        var theme = Application.Current.RequestedTheme;
+        SolidColorBrush foregroundColor = (SolidColorBrush)Application.Current.Resources["TextFillColorPrimaryBrush"];
+        SolidColorBrush foreCheckColor = (SolidColorBrush)Application.Current.Resources["TextOnAccentFillColorPrimaryBrush"];
 
-        if (isChecked is 1)
-        {
-            border.Background = theme switch
-            {
-                ApplicationTheme.Dark => new SolidColorBrush(darkAccentColor),
-                ApplicationTheme.Light => new SolidColorBrush(lightAccentColor),
-                _ => border.Background
-            };
-            textBlock.Foreground = foreCheckColor;
-        }
-        else
-        {
-            border.Background = backgroundColor;
-            textBlock.Foreground = foregroundColor;
-        }
+        SolidColorBrush backgroundColor = (SolidColorBrush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
+        SolidColorBrush backCheckColor = (SolidColorBrush)Application.Current.Resources["SystemFillColorAttentionBrush"];
+
+
+        //var darkAccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorLight2"];
+        //var lightAccentColor = (Windows.UI.Color)Application.Current.Resources["SystemAccentColorDark1"];
+        //var theme = Application.Current.RequestedTheme;
+
+        border.Background = isChecked == 1 ? backCheckColor : backgroundColor;
+
+        textBlock.Foreground = isChecked == 1 ? foreCheckColor : foregroundColor;
     }
+
     private T TomlGetValueOrDefault<T>(TomlTable table, string menu, string name, T defaultValue)
     {
         if (table[menu][name] != "Tommy.TomlLazy")
@@ -251,7 +245,7 @@ public sealed partial class SerialPortToolsPage : Page
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             // 创建一个 List<string> 来存储编码名称
-            var encodings = new List<string> { "gb2312" };
+            var encodings = new List<string> {};
 
             // 将编码名称添加到 List<string> 中
             encodings.AddRange(Encoding.GetEncodings().Select(encodingInfo => encodingInfo.Name));
@@ -342,46 +336,38 @@ public sealed partial class SerialPortToolsPage : Page
         ChipToolKitComboBox.ItemsSource = mcuTools;
         ChipToolKitComboBox.SelectedItem = mcuTools[1];
     }
-    public void TimerTick(object stateInfo)
-    {
-        DispatcherQueue.TryEnqueue(() =>
-        {
-            //RXDATA_ClickAsync(null, null);
-            Page1.Current.CurrentTime = DateTime.Now;     //获取当前时间
 
-            if (RunT is 0) RunPbt += 2;
-
-            else RunPbt -= 2;
-
-            RunTProgressBar.Value = RunPbt;
-            RunT = RunPbt switch
-            {
-                100 => 1,
-                0 => 0,
-                _ => RunT
-            };
-
-            if (CommonRes.SerialPort.IsOpen)
-            {
-                FsBorderIsChecked(CommonRes.SerialPort.DsrHolding ? 1 : 0, DsrBorder, DsrTextBlock);
-
-                FsBorderIsChecked(CommonRes.SerialPort.CtsHolding ? 1 : 0, CtsBorder, CtsTextBlock);
-
-                FsBorderIsChecked(CommonRes.SerialPort.CDHolding ? 1 : 0, CdhBorder, CdhTextBlock);
-            }
-        });
-    }
-        
+    private int ringHold = 0;
     private void PinChanged(object sender, SerialPinChangedEventArgs e)
     {
-        if (e.EventType == SerialPinChange.Ring)
-        {
-            var ri = 0;
-            // RI 信号使能
-            // RI 信号未使能
-            ri = ri is 0 ? 1 : 0;
+        SerialPort sp = (SerialPort)sender;
+        SerialPinChange pinChange = e.EventType;
 
-            FsBorderIsChecked(ri, RiBorder, RiTextBlock);
+        switch (pinChange)
+        {
+            case SerialPinChange.CtsChanged:
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    FsBorderIsChecked(sp.CtsHolding ? 1 : 0, CtsBorder, CtsTextBlock);
+                });
+                break;
+            case SerialPinChange.DsrChanged:
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    FsBorderIsChecked(sp.DsrHolding ? 1 : 0, DsrBorder, DsrTextBlock);
+                });
+                break;
+            case SerialPinChange.CDChanged:
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    FsBorderIsChecked(sp.CDHolding ? 1 : 0, CdhBorder, CdhTextBlock);
+                });
+                break;
+            case SerialPinChange.Ring:
+                FsBorderIsChecked(ringHold == 0 ? 1 : 0, RiBorder, RiTextBlock);
+                ringHold = ringHold == 0 ? 1 : 0;
+                break;
+                // 根据需要添加其他情况
         }
     }
 
@@ -720,7 +706,7 @@ public sealed partial class SerialPortToolsPage : Page
         Page1.Current._viewModel.AppendToRxTextinfo("Encoding = " + (string)EncodingComboBox.SelectedItem + "\r\n");
         Page1.Current._viewModel.AppendToRxTextinfo(LanguageText("serialPortl") + " " + ComComboBox.SelectedItem + LanguageText("spConnect") + "\r\n");
 
-        Timer = new(TimerTick, null, 0, 250); // 每秒触发8次
+        RunTProgressBar.Value = 100;
 
         PortIsConnect = 1;
     }
@@ -740,8 +726,9 @@ public sealed partial class SerialPortToolsPage : Page
     }
     public void SerialPortDisconnect()
     {
+        RunTProgressBar.Value = 0;
+
         PortIsConnect = 0;
-        Timer.Dispose();
     }
 
     private void COMComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -889,6 +876,8 @@ public sealed partial class SerialPortToolsPage : Page
         DatainfoBadge.Value = Convert.ToInt32(DataComboBox.SelectedItem);
     }
 
+    public static string EncodingSelectedItem = "utf-8";
+
     private void EncodingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (AutoSaveSet is 1)
@@ -898,6 +887,7 @@ public sealed partial class SerialPortToolsPage : Page
         if (PortIsConnect is 1)
         {
             CommonRes.SerialPort.Encoding = Encoding.GetEncoding((string)EncodingComboBox.SelectedItem);
+            EncodingSelectedItem = (string)EncodingComboBox.SelectedItem;
             Page1.Current._viewModel.AppendToRxTextinfo("Encoding = " + (string)EncodingComboBox.SelectedItem + "\r\n");
         }
     }
