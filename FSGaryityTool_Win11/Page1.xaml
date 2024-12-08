@@ -134,7 +134,7 @@
                     BorderBrush="{ThemeResource TextControlElevationBorderBrush}"
                     BorderThickness="3"
                     CornerRadius="6">
-                <ScrollViewer x:Name="RxTextBoxScrollViewer">
+                <ScrollViewer x:Name="RxTextBoxScrollViewer" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Visible">
 
                     <RichTextBlock x:Name="RxText"
                                    Margin="6,6,12,6"

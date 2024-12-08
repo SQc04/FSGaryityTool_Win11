@@ -28,7 +28,7 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="*" MinWidth="90" MaxWidth="150" />
+                                <ColumnDefinition Width="*" MinWidth="78" MaxWidth="150" />
                                 <ColumnDefinition Width="4*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
@@ -91,7 +91,7 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="300" />
-                                <ColumnDefinition Width="*" MinWidth="90" MaxWidth="150" />
+                                <ColumnDefinition Width="*" MinWidth="78" MaxWidth="150" />
                                 <ColumnDefinition Width="4*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>

@@ -10,21 +10,34 @@
         <ResourceDictionary>
             <Color x:Key="SystemControlBackgroundLightColor">#90FFFFFF</Color>
             <Color x:Key="SystemControlBackgroundDarkColor">#44252525</Color>
+
+            <Color x:Key="RxBoxButtonBorderBackgroundLightColor">#1F252525</Color>
+            <Color x:Key="RxBoxButtonBorderBackgroundDarkColor">#248F8F8F</Color>
+
+            <x:String x:Key="RxBoxButtonStackPanelOpacityChangeDuration">00:00:00.2</x:String>
+            <Storyboard x:Key="FadeInStoryboard">
+                <DoubleAnimation Storyboard.TargetName="RxBoxButtonStackPanel" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="{StaticResource RxBoxButtonStackPanelOpacityChangeDuration}" />
+            </Storyboard>
             <ResourceDictionary.ThemeDictionaries>
                 <!--  浅色模式的AcrylicBrush  -->
                 <ResourceDictionary x:Key="Light">
                     <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundLightColor}" TintColor="#FCFCFC" TintOpacity="0.0" />
                     <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundLightColor}" />
+
+                    <SolidColorBrush x:Key="CustomRxBorderSolidColorBrush" Color="{StaticResource RxBoxButtonBorderBackgroundLightColor}" />
                 </ResourceDictionary>
                 <!--  深色模式的AcrylicBrush  -->
                 <ResourceDictionary x:Key="Dark">
                     <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundDarkColor}" TintColor="#2C2C2C" TintOpacity="0.15" />
                     <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundDarkColor}" />
+
+                    <SolidColorBrush x:Key="CustomRxBorderSolidColorBrush" Color="{StaticResource RxBoxButtonBorderBackgroundDarkColor}" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid Grid.Row="0"
+    <Grid x:Name="RxBoxGrid"
+          Grid.Row="0"
           Grid.Column="1"
           Grid.ColumnSpan="1"
           Margin="0,0,0,0"
@@ -80,5 +93,73 @@
             </ListView>
 
         </Border>
+
+        <StackPanel x:Name="RxBoxButtonStackPanel"
+                    Margin="8"
+                    Padding="3"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Background="{ThemeResource CustomRxBorderSolidColorBrush}"
+                    CornerRadius="{ThemeResource ControlCornerRadius}"
+                    Orientation="Horizontal">
+            <ToggleButton Width="32" Height="32" Margin="2" Background="Transparent" BorderBrush="Transparent">
+                <Grid>
+                    <FontIcon Margin="-5,-6,0,0" VerticalAlignment="Top" FontSize="12" Glyph="&#xE943;" />
+                    <TextBlock Margin="-12,0,-10,-10" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" Text="HEX" />
+                </Grid>
+            </ToggleButton>
+            <ToggleButton Width="32" Height="32" Margin="2" Background="Transparent" BorderBrush="Transparent">
+                <FontIcon Margin="-112" FontSize="16" Glyph="&#xE917;" />
+            </ToggleButton>
+            <Button Width="32" Height="32" Margin="2" Background="Transparent" BorderBrush="Transparent">
+                <FontIcon Margin="-112" FontSize="16" Glyph="&#xE74E;" />
+            </Button>
+            <Button Width="32" Height="32" Margin="2" Background="Transparent" BorderBrush="Transparent">
+                <FontIcon Margin="-112" FontSize="16" Glyph="&#xE74D;" />
+            </Button>
+        </StackPanel>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Wide">
+                    <VisualState.StateTriggers>
+                        <local:WidthStateTrigger MinWidth="300" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="RxBoxButtonStackPanel.Orientation" Value="Horizontal" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <local:WidthStateTrigger MinWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="RxBoxButtonStackPanel.Orientation" Value="Vertical" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualStateGroup.Transitions>
+                    <VisualTransition GeneratedDuration="0:0:0.2" From="Wide" To="Narrow">
+                        <Storyboard>
+                            <DoubleAnimation Completed="OnFadeOutCompleted"
+                                             Storyboard.TargetName="RxBoxButtonStackPanel"
+                                             Storyboard.TargetProperty="Opacity"
+                                             From="1"
+                                             To="0"
+                                             Duration="{StaticResource RxBoxButtonStackPanelOpacityChangeDuration}" />
+                        </Storyboard>
+                    </VisualTransition>
+                    <VisualTransition GeneratedDuration="0:0:0.2" From="Narrow" To="Wide">
+                        <Storyboard>
+                            <DoubleAnimation Completed="OnFadeOutCompleted"
+                                             Storyboard.TargetName="RxBoxButtonStackPanel"
+                                             Storyboard.TargetProperty="Opacity"
+                                             From="1"
+                                             To="0"
+                                             Duration="{StaticResource RxBoxButtonStackPanelOpacityChangeDuration}" />
+                        </Storyboard>
+                    </VisualTransition>
+                </VisualStateGroup.Transitions>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </UserControl>

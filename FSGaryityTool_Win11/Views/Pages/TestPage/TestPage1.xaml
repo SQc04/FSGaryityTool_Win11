@@ -41,8 +41,10 @@
         <toolkit:GridSplitter Grid.Row="1" Grid.Column="0" Margin="0,-6,0,0" VerticalAlignment="Top" />
         <toolkit:GridSplitter Grid.Row="0" Grid.Column="1" Margin="-6,0,0,0" HorizontalAlignment="Left" />
 
-        <controls:SerialPortTextListBox x:Name="serialPortTextListBox" Margin="12,12,6,6"/>
+        <controls:SerialPortTextListBox x:Name="serialPortTextListBox" Margin="12,12,6,6" IsConnect="True" />
 
+        <StackPanel ></StackPanel>
+        
         <Border Grid.Row="0"
                 Grid.Column="1"
                 Margin="12"
@@ -55,11 +57,11 @@
             <Grid>
                 <Border Margin="12,6,0,8">
                     <ScrollViewer Margin="0,-6" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                        
+
                         <!--<TextBlock Margin="0,0,12,0" IsTextSelectionEnabled="True" SelectionHighlightColor="{ThemeResource AccentTextFillColorTertiaryBrush}" Text="" TextWrapping="WrapWholeWords" />-->
                     </ScrollViewer>
                 </Border>
-                
+
                 <Border Height="2" Margin="0,0,0,-1" VerticalAlignment="Bottom" Background="{ThemeResource AccentTextFillColorTertiaryBrush}" Visibility="Collapsed" />
             </Grid>
         </Border>

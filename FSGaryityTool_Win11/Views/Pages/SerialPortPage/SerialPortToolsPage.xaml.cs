@@ -317,7 +317,7 @@ public sealed partial class SerialPortToolsPage : Page
         EncodingTextBlock.Text = LanguageText("encoding");
         RxhexButton.Content = LanguageText("rxHexl");
         TxhexButton.Content = LanguageText("txHexl");
-        TxNewLineButton.Content = LanguageText("txNewLinel");
+        TxNewLineButton.Content = LanguageText("txNewLinel");// + "\uE751"
         SaveSetButton.Content = LanguageText("autoSaveSetl");
         AutoScrollButton.Content = LanguageText("autoScrolll");
         AutoComButton.Content = LanguageText("autoSerichComl");
@@ -686,6 +686,8 @@ public sealed partial class SerialPortToolsPage : Page
         });
     }
 
+    private string OpenSerialPortInfo;
+
     public void SerialPortConnect()
     {
         ConCom = (string)ComComboBox.SelectedItem;
@@ -708,6 +710,7 @@ public sealed partial class SerialPortToolsPage : Page
 
         RunTProgressBar.Value = 100;
 
+        OpenSerialPortInfo = (string)ComComboBox.SelectedItem;
         PortIsConnect = 1;
     }
 
@@ -722,7 +725,7 @@ public sealed partial class SerialPortToolsPage : Page
     public void SerialPortClose()
     {
         CommonRes.SerialPort.Close();                                                                              //关闭串口
-        Page1.Current._viewModel.AppendToRxTextinfo("\n" + LanguageText("serialPortl") + " " + ComComboBox.SelectedItem + LanguageText("spClose") + "\r\n");
+        Page1.Current._viewModel.AppendToRxTextinfo("\n" + LanguageText("serialPortl") + " " + OpenSerialPortInfo + LanguageText("spClose") + "\r\n");
     }
     public void SerialPortDisconnect()
     {

@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Media.Animation;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
@@ -146,12 +147,16 @@ namespace FSGaryityTool_Win11.Controls
             var viewModel = new ViewModel();
             this.DataContext = viewModel;
 
+            this.Loaded += OnLoaded;
+            this.Unloaded += OnUnloaded;
+            this.ActualThemeChanged += OnActualThemeChanged;
+            this.SizeChanged += RxBoxGrid_SizeChanged;
         }
 
         public void AddData(Byte[] bytes)
         {
-            string hex = BitConverter.ToString(bytes).Replace("-", " "); 
-            var viewModel = (ViewModel)DataContext; 
+            string hex = BitConverter.ToString(bytes).Replace("-", " ");
+            var viewModel = (ViewModel)DataContext;
             viewModel.RxTextinfo += hex;
         }
 
@@ -180,6 +185,63 @@ namespace FSGaryityTool_Win11.Controls
                 // 设置ListView的选中项
                 RxListView.SelectedItem = dataItem;
             }
+        }
+
+        public static readonly DependencyProperty IsConnectProperty =
+                DependencyProperty.Register("IsConnect", typeof(bool), typeof(SerialPortTextListBox), new PropertyMetadata(false, OnIsConnectChanged));
+
+        public bool IsConnect
+        {
+            get { return (bool)GetValue(IsConnectProperty); }
+            set { SetValue(IsConnectProperty, value); }
+        }
+
+        private static void OnIsConnectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as SerialPortTextListBox;
+            control.UpdateBorderBrush((bool)e.NewValue);
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            UpdateBorderBrush(IsConnect);
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            this.ActualThemeChanged -= OnActualThemeChanged;
+        }
+
+        private void OnActualThemeChanged(FrameworkElement sender, object args)
+        {
+            UpdateBorderBrush(IsConnect);
+        }
+
+        private void UpdateBorderBrush(bool isConnect)
+        {
+            BorderBackRx.BorderBrush = (Brush)Application.Current.Resources[isConnect ? "TextControlElevationBorderFocusedBrush" : "TextControlElevationBorderBrush"];
+        }
+
+        private void RxBoxGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var widthTriggerWide = (WidthStateTrigger)Wide.StateTriggers.First();
+            widthTriggerWide.UpdateTrigger(RxBoxGrid.ActualWidth);
+            var widthTriggerNarrow = (WidthStateTrigger)Narrow.StateTriggers.First();
+            widthTriggerNarrow.UpdateTrigger(RxBoxGrid.ActualWidth);
+        }
+
+        private void OnFadeOutCompleted(object sender, object e)
+        {
+            if (RxBoxGrid.ActualWidth >= 300)
+            {
+                RxBoxButtonStackPanel.Orientation = Orientation.Horizontal;
+            }
+            else 
+            { 
+                RxBoxButtonStackPanel.Orientation = Orientation.Vertical; 
+            }
+
+            var fadeInStoryboard = (Storyboard)this.Resources["FadeInStoryboard"]; fadeInStoryboard.Begin();
         }
     }
 }
