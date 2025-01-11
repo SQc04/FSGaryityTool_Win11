@@ -243,5 +243,15 @@ namespace FSGaryityTool_Win11.Controls
 
             var fadeInStoryboard = (Storyboard)this.Resources["FadeInStoryboard"]; fadeInStoryboard.Begin();
         }
+
+        private void BoxMenuButton_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            AnimatedIcon.SetState(this.SearchAnimatedIcon, "PointerOver");
+        }
+
+        private void BoxMenuButton_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            AnimatedIcon.SetState(this.SearchAnimatedIcon, "Normal");
+        }
     }
 }

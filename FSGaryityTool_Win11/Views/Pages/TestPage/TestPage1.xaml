@@ -43,8 +43,16 @@
 
         <controls:SerialPortTextListBox x:Name="serialPortTextListBox" Margin="12,12,6,6" IsConnect="True" />
 
-        <StackPanel ></StackPanel>
-        
+
+        <StackPanel Grid.Row="1" Grid.Column="0">
+            <controls:SerialPortFlowInfoBox Margin="12,12,6,6" InfoName="RI" LogicAnalyzer="{Binding IsChecked, ElementName=RITestLogicAnalyzer}" LogicAnalyzerBoxMaxTime="1" LogicalValue="{Binding IsChecked, ElementName=RITestValue}" />
+            <ToggleButton x:Name="RITestValue" Margin="12,12,6,6" Content="RITestValue" />
+            <ToggleButton x:Name="RITestLogicAnalyzer" Margin="12,12,6,6" Content="RITestLogicAnalyzer" />
+        </StackPanel>
+
+
+        <StackPanel />
+
         <Border Grid.Row="0"
                 Grid.Column="1"
                 Margin="12"
@@ -65,6 +73,8 @@
                 <Border Height="2" Margin="0,0,0,-1" VerticalAlignment="Bottom" Background="{ThemeResource AccentTextFillColorTertiaryBrush}" Visibility="Collapsed" />
             </Grid>
         </Border>
+
+
 
         <TextBox Grid.Row="1"
                  Grid.Column="1"

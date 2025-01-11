@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="FSGaryityTool_Win11.Controls.SerialPortFlowInfoBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:FSGaryityTool_Win11.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Color x:Key="SystemControlBackgroundLightColor">#90FFFFFF</Color>
+            <Color x:Key="SystemControlBackgroundDarkColor">#44252525</Color>
+
+            <Color x:Key="RxBoxButtonBorderBackgroundLightColor">#1F252525</Color>
+            <Color x:Key="RxBoxButtonBorderBackgroundDarkColor">#248F8F8F</Color>
+
+            <ResourceDictionary.ThemeDictionaries>
+                <!--  浅色模式的AcrylicBrush  -->
+                <ResourceDictionary x:Key="Light">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundLightColor}" TintColor="#FCFCFC" TintOpacity="0.0" />
+                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundLightColor}" />
+
+                </ResourceDictionary>
+                <!--  深色模式的AcrylicBrush  -->
+                <ResourceDictionary x:Key="Dark">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundDarkColor}" TintColor="#2C2C2C" TintOpacity="0.15" />
+                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundDarkColor}" />
+
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Border x:Name="SerialInfoBorder"
+                Grid.Row="0"
+                Margin="0,0,0,6"
+                Background="{ThemeResource CustomRxBoxSolidColorBrush}"
+                BorderBrush="{ThemeResource CircleElevationBorderBrush}"
+                BorderThickness="3"
+                CornerRadius="6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border x:Name="InfoBorder"
+                        Grid.Column="0"
+                        MinHeight="32"
+                        Margin="3"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        CornerRadius="4">
+                    <TextBlock x:Name="InfoNameTextBlock"
+                               Width="36"
+                               Margin="0"
+                               VerticalAlignment="Center"
+                               Text="{x:Bind InfoName, Mode=OneWay}"
+                               TextAlignment="Center" />
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border Grid.Column="1" Width="1" Margin="1,3,1,3" Background="{ThemeResource ControlStrongStrokeColorDisabledBrush}" />
+                <Border Grid.Column="2" Margin="3" BorderBrush="{ThemeResource CircleElevationBorderBrush}" BorderThickness="1" CornerRadius="4" >
+                    <Canvas x:Name="OscilloscopeCanvas" />
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

@@ -173,6 +173,14 @@
     <value>数据位</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="default" xml:space="preserve">
+    <value>默认</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="defaultDesktopAcrylicBackGround" xml:space="preserve">
+    <value>桌面亚克力</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="DefLanguage" xml:space="preserve">
     <value>语言 Language</value>
     <comment>Settings Page text</comment>
@@ -368,6 +376,10 @@
   <data name="TranslucentBackgroundDescription" xml:space="preserve">
     <value>设置FSGravityTool的背景半透明效果</value>
     <comment>Settings Page text</comment>
+  </data>
+  <data name="transparent" xml:space="preserve">
+    <value>透明</value>
+    <comment>Setting Page text</comment>
   </data>
   <data name="txHexErr" xml:space="preserve">
     <value>输入内容不是十六进制数!</value>

@@ -29,14 +29,13 @@ namespace FSGaryityTool_Win11;
 
 public sealed partial class MainWindow : Window
 {
-    public const string FSSoftVersion = "0.3.8";
+    public const string FSSoftVersion = "0.3.10";
     public const string FSSoftName = "FSGravityTool";
 
     public static int FsPage { get; set; }
 
     public static int DefWindowBackGround { get; set; }
 
-    public static bool DefaultNavigationViewPaneOpen { get; set; }
 
     // public static Page1 page1Instance { get; set; }
 
@@ -167,6 +166,7 @@ public sealed partial class MainWindow : Window
         });
     }
 
+    public WindowBackgroundBrushControl windowBackgroundBrushControl;
     public MainWindow()
     {
         InitializeComponent();
@@ -214,74 +214,67 @@ public sealed partial class MainWindow : Window
             {
                 LanguageSetting();
 
-                using (var reader = File.OpenText(SettingsCoreServices.FSGravityToolsSettingsToml))
-                {
-                    var settingsTomlr = TOML.Parse(reader);
-                    string value = settingsTomlr["FSGravitySettings"]["DefaultNavigationViewPaneOpen"];
-                    DefaultNavigationViewPaneOpen = Convert.ToBoolean(value);
-                    FSnv.IsPaneOpen = DefaultNavigationViewPaneOpen;
-                    Debug.WriteLine("Pane" + DefaultNavigationViewPaneOpen);
-                }
+                FSnv.IsPaneOpen = SettingsCoreServices.GetMainWindowNavigationPaneInfo();
+                var nvPage = int.Parse(SettingsCoreServices.GetStartPageSetting());
+                FSnv.SelectedItem = FSnv.MenuItems[nvPage];             //设置默认页面
+                FsPage = nvPage;
 
-                //设置默认页面
-                using (var reader = File.OpenText(SettingsCoreServices.FSGravityToolsSettingsToml))
-                {
-                    var settingsTomlr = TOML.Parse(reader);
-                    Debug.WriteLine("Print:" + settingsTomlr["FSGravitySettings"]["DefaultNvPage"]);
-                    var nvPage = int.Parse(settingsTomlr["FSGravitySettings"]["DefaultNvPage"]);
-                    FSnv.SelectedItem = FSnv.MenuItems[nvPage];             //设置默认页面
-                    FsPage = nvPage;
-                }
-                using (var reader = File.OpenText(SettingsCoreServices.FSGravityToolsSettingsToml))
-                {
-                    var settingsTomlr = TOML.Parse(reader);
-                    Debug.WriteLine("Print:" + settingsTomlr["FSGravitySettings"]["SoftBackground"]);
-                    var defPageBackground = int.Parse(settingsTomlr["FSGravitySettings"]["SoftBackground"]);
-                    DefWindowBackGround = defPageBackground;
-                    _lastDefWindowBackGround = defPageBackground;
-                }
+                WindowBackgroundBrushControl.appWindow = AppWindow;
+                WindowBackgroundBrushControl.window = this;
+
+                var defPageBackground = int.Parse(SettingsCoreServices.GetSoftBackgroundSetting());
+                DefWindowBackGround = defPageBackground;
+                _lastDefWindowBackGround = defPageBackground;
+
                 TitleBarTextBlock.Text = FSSoftName;
 
                 if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
                 {
-                    // 连接策略对象。
-                    _configurationSource = new();
-                    //Activated += Window_Activated;  // 当窗口被激活时的事件处理。
+                    Activated += WindowBackgroundBrushControl.ActivatedBackgroundBrush;  // 当窗口被激活时的事件处理。
+                    Activated += Window_Activated;  // 当窗口被激活时的事件处理。
+
+                    Closed += WindowBackgroundBrushControl.CloseBackgroundBrush;  // 当窗口被关闭时的事件处理。
                     Closed += Window_Closed;  // 当窗口被关闭时的事件处理。
 
                     // 初始配置状态。
-                    _configurationSource.IsInputActive = true;  // 设置输入活动状态为真。
+                    
                     SetConfigurationSourceTheme();  // 设置配置源主题。
-
+                    WindowBackgroundBrushControl.WindowBackgroundBrushKind BackgroundBrushKind;
                     // 根据defWindowBackGround的值选择背景效果的类型。
                     switch (DefWindowBackGround)
                     {
                         case 0:
-                            _acrylicController = new();
-                            _acrylicController.Kind = Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Thin;
-                            _acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                            _acrylicController.SetSystemBackdropConfiguration(_configurationSource);
+                            BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.AcrylicThin;
                             break;
                         case 1:
-                            _acrylicController = new();
-                            _acrylicController.Kind = Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Base;
-                            _acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                            _acrylicController.SetSystemBackdropConfiguration(_configurationSource);
+                            BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.AcrylicBase;
                             break;
                         case 2:
-                            _micaController = new();
-                            _micaController.Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base;
-                            _micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                            _micaController.SetSystemBackdropConfiguration(_configurationSource);
+                            BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.Mica;
                             break;
                         case 3:
-                            _micaController = new();
-                            _micaController.Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt;
-                            _micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                            _micaController.SetSystemBackdropConfiguration(_configurationSource);
+                            BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.MicaAlt;
                             break;
+                        case 4:
+                            BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.AcrylicDesktop;
+                            break;
+                        case 5:
+                            BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.Transparent;
+                            break;
+                        case 6:
+                            BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.None;
+                            break;
+                        default:
+                            BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.None;
+                            break;
+
                     }
+                    WindowBackgroundBrushControl.SetWindowBackgroundBrush(BackgroundBrushKind);
+
+                    WindowBackgroundBrushControl.WindowBackgroundBrushActivatedEnable = bool.Parse(SettingsCoreServices.GetSoftBackgroundActivatedEnableSetting());
                 }
+
+                
             });
         });
 
@@ -329,6 +322,11 @@ public sealed partial class MainWindow : Window
             }
             LoadingEnd();
         };
+    }
+
+    private void MainWindow_Closed(object sender, WindowEventArgs args)
+    {
+        throw new NotImplementedException();
     }
 
     private int _lastDefWindowBackGround;
@@ -389,186 +387,79 @@ public sealed partial class MainWindow : Window
     {
         if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
         {
-            using (var reader = File.OpenText(SettingsCoreServices.FSGravityToolsSettingsToml)) // 打开TOML文件
+            var defPageBackground = int.Parse(SettingsCoreServices.GetSoftBackgroundSetting());
+            if (defPageBackground != _lastDefWindowBackGround)
             {
-                var settingsTomlr = TOML.Parse(reader);
-                Debug.WriteLine("Print:" + settingsTomlr["FSGravitySettings"]["SoftBackground"]);
-                var defPageBackground = int.Parse(settingsTomlr["FSGravitySettings"]["SoftBackground"]);
-                if (defPageBackground != _lastDefWindowBackGround)
-                {
-                    DefWindowBackGround = defPageBackground;
-                }
-                _lastDefWindowBackGround = defPageBackground;
+                DefWindowBackGround = defPageBackground;
             }
+            _lastDefWindowBackGround = defPageBackground;
 
-
+            WindowBackgroundBrushControl.WindowBackgroundBrushKind BackgroundBrushKind;
             // 根据defWindowBackGround的值选择背景效果的类型。
             switch (DefWindowBackGround)
             {
                 case 0:
-                    _acrylicController ??= new();
-                    _acrylicController.Kind = Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Thin;
-                    _acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                    _acrylicController.SetSystemBackdropConfiguration(_configurationSource);
+                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.AcrylicThin;
                     break;
                 case 1:
-                    _acrylicController ??= new();
-                    _acrylicController.Kind = Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Base;
-                    _acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                    _acrylicController.SetSystemBackdropConfiguration(_configurationSource);
+                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.AcrylicBase;
                     break;
                 case 2:
-                    _micaController ??= new();
-                    _micaController.Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base;
-                    _micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                    _micaController.SetSystemBackdropConfiguration(_configurationSource);
+                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.Mica;
                     break;
                 case 3:
-                    _micaController ??= new();
-                    _micaController.Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt;
-                    _micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                    _micaController.SetSystemBackdropConfiguration(_configurationSource);
+                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.MicaAlt;
                     break;
-            }
+                case 4:
+                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.AcrylicDesktop;
+                    break;
+                case 5:
+                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.Transparent;
+                    break;
+                case 6:
+                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.None;
+                    break;
+                default:
+                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.None;
+                    break;
 
-            // 释放当前背景效果的资源
-            ReleaseCurrentBackdropResources();
+            }
+            WindowBackgroundBrushControl.SetWindowBackgroundBrush(BackgroundBrushKind);
         }
     }
-    private void ReleaseCurrentBackdropResources()
-    {
-        Task.Run(() =>
-        {
-            // 释放m_acrylicController的资源，并将其设置为null
-            if (_acrylicController is not null)
-            {
-                if (DefWindowBackGround is 2 or 3)
-                {
-                    //Thread.Sleep(100);
-                    _acrylicController.Dispose();
-                    _acrylicController = null;
-                }
-            }
-            // 释放m_micaController的资源，并将其设置为null
-            if (_micaController is not null)
-            {
-                if (DefWindowBackGround is 0 or 1)
-                {
-                    //Thread.Sleep(100);
-                    _micaController.Dispose();
-                    _micaController = null;
-                }
-            }
-        });
-    }
 
-    /// <summary>
-    /// 定义一个DesktopAcrylicController对象，用于控制窗口的背景
-    /// </summary>
-    private Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController _acrylicController;
-
-    /// <summary>
-    /// 定义一个MicaController对象，用于控制云母效果
-    /// </summary>
-    private Microsoft.UI.Composition.SystemBackdrops.MicaController _micaController;
-
-    /// <summary>
-    /// 定义一个SystemBackdropConfiguration对象，用于配置窗口的背景
-    /// </summary>
-    private Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration _configurationSource;
-
-    /// <summary>
-    /// 当窗口被激活时，此方法会被调用
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="args"></param>
     private void Window_Activated(object sender, WindowActivatedEventArgs args)
     {
-        // 根据窗口的激活状态来更新m_configurationSource.IsInputActive的值
-        _configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
-        // 根据窗口的激活状态来设置背景效果
-        if (_configurationSource.IsInputActive)
-        {
-            switch (DefWindowBackGround)
-            {
-                // 使用云母效果
-                case 2 or 3:
-                {
-                    _micaController ??= new();
-                    _micaController.Kind = DefWindowBackGround is 2 ? Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base : Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt;
-                    _micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                    _micaController.SetSystemBackdropConfiguration(_configurationSource);
-                    break;
-                }
-                // 使用亚克力效果
-                case 0 or 1:
-                {
-                    _acrylicController ??= new();
-                    _acrylicController.Kind = DefWindowBackGround is 0 ? Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Thin : Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicKind.Base;
-                    _acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                    _acrylicController.SetSystemBackdropConfiguration(_configurationSource);
-                    break;
-                }
-            }
-        }
+        SetConfigurationSourceTheme();
     }
 
     // 当窗口被关闭时，此方法会被调用
     private void Window_Closed(object sender, WindowEventArgs args)
     {
-        // 释放m_acrylicController的资源，并将其设置为null
-        if (_acrylicController is not null)
-        {
-            _acrylicController.Dispose();
-            _acrylicController = null;
-        }
-        // 释放m_micaController的资源，并将其设置为null
-        if (_micaController is not null)
-        {
-            _micaController.Dispose();
-            _micaController = null;
-        }
         // 移除窗口激活事件的处理方法
-        Activated -= Window_Activated;
-        // 将配置对象设置为null
-        _configurationSource = null;
+        Activated -= WindowBackgroundBrushControl.ActivatedBackgroundBrush;
     }
 
     // 当窗口的主题改变时，此方法会被调用
     private void Window_ThemeChanged(FrameworkElement sender, object args)
     {
-        Debug.WriteLine("Change");
+        SetConfigurationSourceTheme();
         // 如果配置对象不为null，则根据当前的主题来更新m_configurationSource.Theme的值
-        if (_configurationSource is not null)
-        {
-            SetConfigurationSourceTheme();
-            WindowBackSetting();
-        }
+        WindowBackSetting();
     }
 
     // 根据当前的主题来设置m_configurationSource.Theme的值
     private void SetConfigurationSourceTheme()
     {
-        var theme = ((FrameworkElement)Content).ActualTheme;
-        _configurationSource.Theme = theme switch
+        try
         {
-            ElementTheme.Dark =>
-                // 如果主题是深色，SystemBackdropTheme会被设置为Dark
-                Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark,
-            ElementTheme.Light =>
-                // 如果主题是浅色，SystemBackdropTheme会被设置为Light
-                Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light,
-            ElementTheme.Default =>
-                // 如果主题是默认的，SystemBackdropTheme会被设置为Default
-                Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Default,
-            _ => _configurationSource.Theme
-        };
-
-        var titleBar = AppWindow.TitleBar;
-        titleBar.ButtonForegroundColor = theme is ElementTheme.Dark ? Colors.White : Colors.Black;
-
-        titleBar.ButtonBackgroundColor = Colors.Transparent;
-        titleBar.ButtonHoverBackgroundColor = Color.FromArgb(64, 128, 128, 128);
+            WindowBackgroundBrushControl.ApplyTheme(((FrameworkElement)Content), WindowBackgroundBrushControl.WindowTheme.System);
+            WindowBackgroundBrushControl.SetAppTitleBar(((FrameworkElement)Content), WindowBackgroundBrushControl.WindowTheme.System);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+        }
     }
 
     private void NavigationView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
@@ -599,14 +490,14 @@ public sealed partial class MainWindow : Window
 
     private void FSnv_PaneOpened(NavigationView sender, object args)
     {
-        Debug.WriteLine(DefaultNavigationViewPaneOpen);
-        SettingsCoreServices.SaveSetting("FSGravitySettings", "DefaultNavigationViewPaneOpen", "true");
+        //Debug.WriteLine(DefaultNavigationViewPaneOpen);
+        SettingsCoreServices.SetMainWindowNavigationPaneInfo(true);
     }
 
     private void FSnv_PaneClosed(NavigationView sender, object args)
     {
-        Debug.WriteLine(DefaultNavigationViewPaneOpen);
-        SettingsCoreServices.SaveSetting("FSGravitySettings", "DefaultNavigationViewPaneOpen", "false");
+        //Debug.WriteLine(DefaultNavigationViewPaneOpen);
+        SettingsCoreServices.SetMainWindowNavigationPaneInfo(false);
     }
     /*
         public class Tab1

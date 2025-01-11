@@ -70,6 +70,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         }
         
         /// <summary>
+        ///   查找类似 默认 的本地化字符串。
+        /// </summary>
+        internal static string _default {
+            get {
+                return ResourceManager.GetString("default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 关于 的本地化字符串。
         /// </summary>
         internal static string about {
@@ -183,6 +192,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         internal static string dataBits {
             get {
                 return ResourceManager.GetString("dataBits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 桌面亚克力 的本地化字符串。
+        /// </summary>
+        internal static string defaultDesktopAcrylicBackGround {
+            get {
+                return ResourceManager.GetString("defaultDesktopAcrylicBackGround", resourceCulture);
             }
         }
         
@@ -624,6 +642,15 @@ namespace FSGaryityTool_Win11.Resources.zh_CN {
         internal static string TranslucentBackgroundDescription {
             get {
                 return ResourceManager.GetString("TranslucentBackgroundDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 透明 的本地化字符串。
+        /// </summary>
+        internal static string transparent {
+            get {
+                return ResourceManager.GetString("transparent", resourceCulture);
             }
         }
         

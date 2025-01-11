@@ -10,10 +10,12 @@ using System.Diagnostics;
 using Windows.ApplicationModel;
 using FSGaryityTool_Win11.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
+using FSGaryityTool_Win11.Core.Settings;
+using System.ComponentModel;
 
 namespace FSGaryityTool_Win11;
 
-public sealed partial class SettingsPage : Page
+public sealed partial class SettingsPage : Page, INotifyPropertyChanged
 {
     public static int Fro1 { get; set; }
 
@@ -24,7 +26,7 @@ public sealed partial class SettingsPage : Page
     public static int DefaultTomlStartPage { get; set; }
 
     public static string DefaultPageBackGround { get; set; }
-
+    public static bool DefaultSoftBackgroundToggleSwitch { get; set; }
     public static int DefaultTomlPageBackGround { get; set; }
 
     public static string RedirectedFilePath { get; set; }
@@ -39,6 +41,30 @@ public sealed partial class SettingsPage : Page
     }
 
     public static SettingsPage Current { get; private set; }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    private bool _windowBackgroundBrushActivatedEnable;
+    public bool WindowBackgroundBrushActivatedEnable
+    {
+        get => _windowBackgroundBrushActivatedEnable;
+        set
+        {
+            if (_windowBackgroundBrushActivatedEnable != value)
+            {
+                _windowBackgroundBrushActivatedEnable = value;
+                OnPropertyChanged(nameof(WindowBackgroundBrushActivatedEnable));
+                WindowBackgroundBrushControl.WindowBackgroundBrushActivatedEnable = value; // 同步到 WindowBackgroundBrushControl
+                SettingsCoreServices.SetSoftBackgroundActivatedEnableSetting(value.ToString());
+            }
+        }
+    }
+
+
+    private void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 
     public SettingsPage()
     {
@@ -111,7 +137,14 @@ public sealed partial class SettingsPage : Page
 
         var pageBackGround = new List<string>()         //新建字符串
         {
-            Page1.LanguageText("thin"), Page1.LanguageText("base"), Page1.LanguageText("mica"), Page1.LanguageText("micaAlt")//, ""
+            Page1.LanguageText("default"),
+            Page1.LanguageText("thin"),
+            Page1.LanguageText("defaultDesktopAcrylicBackGround"),
+            Page1.LanguageText("base"), 
+            Page1.LanguageText("mica"), 
+            Page1.LanguageText("micaAlt"),
+            //Page1.LanguageText("transparent"),
+            //, ""
         };
         SoftBackgroundCombobox.ItemsSource = pageBackGround;
         DefaultPageBackGround = DefaultTomlPageBackGround switch
@@ -120,10 +153,17 @@ public sealed partial class SettingsPage : Page
             1 => Page1.LanguageText("base"),
             2 => Page1.LanguageText("mica"),
             3 => Page1.LanguageText("micaAlt"),
+            4 => Page1.LanguageText("defaultDesktopAcrylicBackGround"),
+            5 => Page1.LanguageText("transparent"),
+            6 => Page1.LanguageText("default"),
             _ => DefaultPageBackGround
         };
 
         SoftBackgroundCombobox.SelectedItem = DefaultPageBackGround;  //将TOML设置添加到选择框
+
+        DefaultSoftBackgroundToggleSwitch = bool.Parse(SettingsCoreServices.GetSoftBackgroundActivatedEnableSetting());
+
+        _windowBackgroundBrushActivatedEnable = DefaultSoftBackgroundToggleSwitch;
 
         // = Page1.LanguageText("");
         StartPage.Header = Page1.LanguageText("defStartPage");
@@ -206,31 +246,18 @@ public sealed partial class SettingsPage : Page
 
     private void StartPageCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        using (var reader = File.OpenText(Page1.FsSetToml))                    //打开TOML文件
+        string StartPageSetting = (string)StartPageCombobox.SelectedItem switch
         {
-            SettingsTomlr = TOML.Parse(reader);
+            var item when item == Page1.LanguageText("serialPort") => "0",
+            var item when item == Page1.LanguageText("download Flash") => "1",
+            var item when item == Page1.LanguageText("keyboard") => "2",
+            var item when item == Page1.LanguageText("mouse") => "3",
+            var item when item == "FANControl" => "4",
+            var item when item == "CameraControl" => "5",
+            _ => SettingsCoreServices.GetStartPageSetting()
+        };
 
-            if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("serialPort")) SettingsTomlr["FSGravitySettings"]["DefaultNvPage"] = "0";
-            else if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("download Flash")) SettingsTomlr["FSGravitySettings"]["DefaultNvPage"] = "1";
-            else if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("keyboard")) SettingsTomlr["FSGravitySettings"]["DefaultNvPage"] = "2";
-            else if ((string)StartPageCombobox.SelectedItem == Page1.LanguageText("mouse")) SettingsTomlr["FSGravitySettings"]["DefaultNvPage"] = "3";
-            else
-                SettingsTomlr["FSGravitySettings"]["DefaultNvPage"] = (string)StartPageCombobox.SelectedItem switch
-                {
-                    "FANControl" => "4",
-                    "CameraControl" => "5",
-                    _ => SettingsTomlr["FSGravitySettings"]["DefaultNvPage"]
-                };
-            //else if ((string)StartPageCombobox.SelectedItem == "") settingstomlr["FSGravitySettings"]["DefaultNvPage"] = "5";
-        }
-
-        using (var writer = File.CreateText(Page1.FsSetToml))                  //将设置写入TOML文件
-        {
-            SettingsTomlr.WriteTo(writer);
-            Debug.WriteLine("写入Toml" + SettingsTomlr["FSGravitySettings"]["DefaultNvPage"]);
-            // Remember to flush the data if needed!
-            writer.Flush();
-        }
+        SettingsCoreServices.SetStartPageSetting(StartPageSetting);
     }
 
     private void OpenToml_click(object sender, RoutedEventArgs e)
@@ -253,23 +280,18 @@ public sealed partial class SettingsPage : Page
 
     private void SoftBackgroundCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        using (var reader = File.OpenText(Page1.FsSetToml))                    //打开TOML文件
+        string SoftBackgroundSetting = (string)SoftBackgroundCombobox.SelectedItem switch
         {
-            SettingsTomlr = TOML.Parse(reader);
-
-            if ((string)SoftBackgroundCombobox.SelectedItem == Page1.LanguageText("thin")) SettingsTomlr["FSGravitySettings"]["SoftBackground"] = "0";
-            else if ((string)SoftBackgroundCombobox.SelectedItem == Page1.LanguageText("base")) SettingsTomlr["FSGravitySettings"]["SoftBackground"] = "1";
-            else if ((string)SoftBackgroundCombobox.SelectedItem == Page1.LanguageText("mica")) SettingsTomlr["FSGravitySettings"]["SoftBackground"] = "2";
-            else if ((string)SoftBackgroundCombobox.SelectedItem == Page1.LanguageText("micaAlt")) SettingsTomlr["FSGravitySettings"]["SoftBackground"] = "3";
-        }
-
-        using (var writer = File.CreateText(Page1.FsSetToml))                  //将设置写入TOML文件
-        {
-            SettingsTomlr.WriteTo(writer);
-            Debug.WriteLine("写入Toml" + SettingsTomlr["FSGravitySettings"]["SoftBackground"]);
-            // Remember to flush the data if needed!
-            writer.Flush();
-        }
+            var item when item == Page1.LanguageText("thin") => "0",
+            var item when item == Page1.LanguageText("base") => "1",
+            var item when item == Page1.LanguageText("mica") => "2",
+            var item when item == Page1.LanguageText("micaAlt") => "3",
+            var item when item == Page1.LanguageText("defaultDesktopAcrylicBackGround") => "4",
+            var item when item == Page1.LanguageText("transparent") => "5",
+            var item when item == Page1.LanguageText("default") => "6",
+            _ => SettingsCoreServices.GetSoftBackgroundSetting()
+        };
+        SettingsCoreServices.SetSoftBackgroundSetting(SoftBackgroundSetting);
 
         // 获取MainWindow的实例
         var mainWindow = MainWindow.Instance;
@@ -291,4 +313,6 @@ public sealed partial class SettingsPage : Page
     private void SoftLanguageCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
     }
+
+    
 }

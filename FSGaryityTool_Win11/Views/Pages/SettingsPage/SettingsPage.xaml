@@ -559,28 +559,36 @@
                         </Grid>
                     </toolkit:SettingsCard>
 
-                    <toolkit:SettingsCard Margin="0,3,0,3">
+                    <toolkit:SettingsCard Margin="0,3,0,3" Visibility="Collapsed">
                         <toolkit:SettingsCard.HeaderIcon>
                             <FontIcon FontSize="12" Glyph="&#xE8A1;" />
                         </toolkit:SettingsCard.HeaderIcon>
                         <Grid />
                     </toolkit:SettingsCard>
 
-                    <toolkit:SettingsCard x:Name="SoftToolBackground" Margin="0,3,0,3" Description="Set the background of FSGravityTool." Header="Personalize the background">
-                        <toolkit:SettingsCard.HeaderIcon>
+                    <toolkit:SettingsExpander x:Name="SoftToolBackground" Margin="0,3,0,3" Description="Set the background of FSGravityTool." Header="Personalize the background" IsExpanded="True">
+                        <toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon FontSize="12" Glyph="&#xEF1F;" />
-                        </toolkit:SettingsCard.HeaderIcon>
+                        </toolkit:SettingsExpander.HeaderIcon>
                         <Grid>
                             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                <ComboBox x:Name="SoftBackgroundCombobox" Width="150" Margin="0,0,27,0" SelectionChanged="SoftBackgroundCombobox_SelectionChanged" />
+                                <ComboBox x:Name="SoftBackgroundCombobox" Width="150" Margin="0,0,0,0" SelectionChanged="SoftBackgroundCombobox_SelectionChanged" />
                             </StackPanel>
                         </Grid>
-                    </toolkit:SettingsCard>
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard Description="Keep the application transparent when it is not in focus." Header="Keep transparent">
+                                <Grid>
+                                    <controls:ToggleSwitch x:Name="SoftBackgroundToggleSwitch" IsOn="{x:Bind WindowBackgroundBrushActivatedEnable, Mode=TwoWay}" />
+                                </Grid>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
 
                     <toolkit:SettingsExpander x:Name="SoftBackground" Margin="0,3,0,3" Description="" Header="">
                         <toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon FontSize="12" Glyph="&#xE790;" />
                         </toolkit:SettingsExpander.HeaderIcon>
+                        <ComboBox x:Name="SoftBackgroundColorComboBox" Width="150" Margin="0,0,0,0" />
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard>
                                 <Grid>

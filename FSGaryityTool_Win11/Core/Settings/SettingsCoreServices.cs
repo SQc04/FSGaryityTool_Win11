@@ -22,6 +22,10 @@ internal class SettingsCoreServices
     public static string serialPortComData = "SerialPortCOMData";
     public static string comData = "COMData";
 
+    public static string StartPage = "DefaultNvPage";
+    public static string SoftBackgroundActivatedEnable = "SoftBackgroundActivatedEnable";
+    public static string SoftBackground = "SoftBackground";
+
     public static void CheckSettingFolder()
     {
         //Debug.WriteLine("开始搜索文件夹");
@@ -71,11 +75,16 @@ internal class SettingsCoreServices
                         "FSGaryityTool Settings:",
                     ["DefaultNvPage"] = "0",
                     ["SoftBackground"] = "0",
+                    ["SoftBackgroundToggleSwitch"] = "color",
+                    ["SoftBackgroundActivatedEnable"] = "false",
                     ["SoftDefLanguage"] = "zh-CN",
                     ["DefNavigationViewMode"] = "0",
                     ["DefaultNavigationViewPaneOpen"] = "true",
                     ["BackgroundImageSourse"] = "",
                     ["BackgroundImageOpacity"] = "0.0",
+                    ["BackgroundColor"] = "#FFFFFF00",
+                    ["DefaultWindowWidth"] = "1840",
+                    ["DefaultWindowHight"] = "960",
                     //[""] = "",
                 },
 
@@ -144,7 +153,7 @@ internal class SettingsCoreServices
         }
     }
 
-    public static string TomlCheckNulls(string Mode, string Menu, string Name)
+    private static string TomlCheckNulls(string Mode, string Menu, string Name)
     {
         var data = "0";
         using (var reader = File.OpenText(FSGravityToolsSettingsToml))
@@ -187,12 +196,13 @@ internal class SettingsCoreServices
         }
     }
 
-    public static void UpdateSettingsFile()
+    private static void UpdateSettingsFile()
     {
         Debug.WriteLine(">");
 
         //缓存设置
-        string defpage, defPageBackground, defLaunage, defNavigationViewMode, defaultNavigationViewPaneOpen, backgroundImageOpacity;
+        string defpage, defPageBackground, defsoftBackgroundToggleSwitch, softBackgroundActivatedEnable, defLaunage, defNavigationViewMode, defaultNavigationViewPaneOpen, backgroundImageOpacity, backgroundColor;
+        string defaultWindowWidth, defaultWindowHight;
         string baud, party, stop, data, encoding, rxhex, txhex, dtr, rts, shtime, autosco, autosavrset, autosercom, autoconnect, txnewline;
         string checkTime, checkCounter;
 
@@ -205,9 +215,14 @@ internal class SettingsCoreServices
 
             defpage = TomlCheckNulls("0", fsGravitySettings, "DefaultNvPage");
             defPageBackground = TomlCheckNulls("0", fsGravitySettings, "SoftBackground");
+            defsoftBackgroundToggleSwitch = TomlCheckNulls("color", fsGravitySettings, "SoftBackgroundToggleSwitch");
+            softBackgroundActivatedEnable = TomlCheckNulls("true", fsGravitySettings, "SoftBackgroundActivatedEnable");
             defNavigationViewMode = TomlCheckNulls("0", fsGravitySettings, "DefNavigationViewMode");
             defaultNavigationViewPaneOpen = TomlCheckNulls("true", fsGravitySettings, "DefaultNavigationViewPaneOpen");
             backgroundImageOpacity = TomlCheckNulls("0.0", fsGravitySettings, "BackgroundImageOpacity");
+            backgroundColor = TomlCheckNulls("#FFFFFF00", fsGravitySettings, "BackgroundColor");
+            defaultWindowWidth = TomlCheckNulls("1840", fsGravitySettings, "DefaultWindowWidth");
+            defaultWindowHight = TomlCheckNulls("960", fsGravitySettings, "DefaultWindowHight");
 
             var culture = System.Globalization.CultureInfo.CurrentUICulture;
             var lang = culture.Name;
@@ -249,11 +264,16 @@ internal class SettingsCoreServices
                         "FSGaryityTool Settings:",
                     ["DefaultNvPage"] = defpage,
                     ["SoftBackground"] = defPageBackground,
+                    ["SoftBackgroundToggleSwitch"] = defsoftBackgroundToggleSwitch,
+                    ["SoftBackgroundActivatedEnable"] = softBackgroundActivatedEnable,
                     ["SoftDefLanguage"] = defLaunage,
                     ["DefNavigationViewMode"] = defNavigationViewMode,
                     ["DefaultNavigationViewPaneOpen"] = defaultNavigationViewPaneOpen,
                     ["BackgroundImageSourse"] = "",
                     ["BackgroundImageOpacity"] = backgroundImageOpacity,
+                    ["BackgroundColor"] = backgroundColor,
+                    ["DefaultWindowWidth"] = defaultWindowWidth,
+                    ["DefaultWindowHight"] = defaultWindowHight,
                     //[""] = "",
                 },
 
@@ -319,17 +339,27 @@ internal class SettingsCoreServices
         }
     }
 
-    public static void DowngradeSettingsFile()
+    private static void DowngradeSettingsFile()
     {
         Debug.WriteLine("<");
     }
 
-    public static void CheckSettingsFile()
+    private static void CheckSettingsFile()
     {
         Debug.WriteLine("=");
     }
 
-    public static void SaveSetting(string menuName, string name, string settingItem)
+    private static string GetSetting(string menuName, string name)
+    {
+        string settingItem;
+        using (var reader = File.OpenText(FSGravityToolsSettingsToml))                    //打开TOML文件
+        {
+            SettingsTomlr = TOML.Parse(reader);
+            settingItem = SettingsTomlr[menuName][name];
+        }
+        return settingItem;
+    }
+    private static void SaveSetting(string menuName, string name, string settingItem)
     {
         using (var reader = File.OpenText(FSGravityToolsSettingsToml))                    //打开TOML文件
         {
@@ -344,4 +374,48 @@ internal class SettingsCoreServices
             writer.Flush();
         }
     }
+
+    //MainWindow's settings
+    public static bool GetMainWindowNavigationPaneInfo()
+    {
+        bool DefaultNavigationPaneIsOpen = Convert.ToBoolean(GetSetting(fsGravitySettings, "DefaultNavigationViewPaneOpen"));
+        return DefaultNavigationPaneIsOpen;
+    }
+    public static void SetMainWindowNavigationPaneInfo(bool DefaultNavigationPaneIsOpen)
+    {
+        SaveSetting(fsGravitySettings, "DefaultNavigationViewPaneOpen", Convert.ToString(DefaultNavigationPaneIsOpen));
+    }
+
+    public static string GetStartPageSetting()
+    {
+        string StartPageSetting = GetSetting(fsGravitySettings, StartPage);
+        return StartPageSetting;
+    }
+    public static void SetStartPageSetting(string StartPageSetting)
+    {
+        SaveSetting(fsGravitySettings, StartPage, StartPageSetting);
+    }
+
+    public static string GetSoftBackgroundActivatedEnableSetting()
+    {
+        string SoftBackgroundActivatedEnableSetting = GetSetting(fsGravitySettings, SoftBackgroundActivatedEnable);
+        return SoftBackgroundActivatedEnableSetting;
+    }
+
+    public static void SetSoftBackgroundActivatedEnableSetting(string SoftBackgroundActivatedEnableSetting)
+    {
+        SaveSetting(fsGravitySettings, SoftBackgroundActivatedEnable, SoftBackgroundActivatedEnableSetting);
+    }
+
+    public static string GetSoftBackgroundSetting()
+    {
+        string SoftBackgroundSetting = GetSetting(fsGravitySettings, SoftBackground);
+        return SoftBackgroundSetting;
+    }
+
+    public static void SetSoftBackgroundSetting(string SoftBackgroundSetting)
+    {
+        SaveSetting(fsGravitySettings, SoftBackground, SoftBackgroundSetting);
+    }
+
 }

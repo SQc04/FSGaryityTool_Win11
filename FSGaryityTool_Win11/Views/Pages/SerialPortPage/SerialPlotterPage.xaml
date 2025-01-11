@@ -84,11 +84,7 @@
                 CornerRadius="6">
             <ScrollViewer x:Name="RxTextBoxScrollViewer">
 
-                <RichTextBlock x:Name="RxText"
-                               Margin="6,6,12,6"
-                               IsTextSelectionEnabled="True"
-                               SelectionHighlightColor="{ThemeResource AccentTextFillColorTertiaryBrush}"
-                               TextWrapping="NoWrap">
+                <RichTextBlock x:Name="RxText" Margin="6,6,12,6" IsTextSelectionEnabled="True" SelectionHighlightColor="{ThemeResource AccentTextFillColorTertiaryBrush}" TextWrapping="NoWrap">
                     <Paragraph>
                         <Run Text="" />
                     </Paragraph>

@@ -173,6 +173,14 @@
     <value>Data bits</value>
     <comment>Serial Port Page text</comment>
   </data>
+  <data name="default" xml:space="preserve">
+    <value>Default</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="defaultDesktopAcrylicBackGround" xml:space="preserve">
+    <value>Desktop Acrylic</value>
+    <comment>Settings Page text</comment>
+  </data>
   <data name="DefLanguage" xml:space="preserve">
     <value>Language 语言</value>
     <comment>Settings Page text</comment>
@@ -367,6 +375,10 @@
   </data>
   <data name="TranslucentBackgroundDescription" xml:space="preserve">
     <value>Set the background of FSGravityTool to be translucent</value>
+    <comment>Settings Page text</comment>
+  </data>
+  <data name="transparent" xml:space="preserve">
+    <value>Transparent</value>
     <comment>Settings Page text</comment>
   </data>
   <data name="txHexErr" xml:space="preserve">

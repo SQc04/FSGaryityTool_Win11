@@ -37,7 +37,7 @@
 
         <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="4">
             <Border.Background>
-                <AcrylicBrush FallbackColor="Transparent" Opacity="0" TintColor="Transparent" TintOpacity="0.1" />
+                <AcrylicBrush FallbackColor="Transparent" Opacity="0.0" TintColor="Transparent" TintOpacity="0.1" />
             </Border.Background>
         </Border>
 
@@ -51,6 +51,22 @@
             <!--  Background="{ThemeResource SystemAccentColorLight2}"  -->
             <!--<TextBlock x:Name="AppTitle" VerticalAlignment="Top" Margin="0,8,0,0" />-->
             <Grid>
+                <Grid.Resources>
+                    <Style x:Key="TitleBadgeStyle" TargetType="Border">
+                        <Setter Property="Height" Value="16"/>
+                        <Setter Property="Margin" Value="3,2,0,0"/>
+                        <Setter Property="CornerRadius" Value="2"/>
+                        <Setter Property="Opacity" Value="0.9"/>
+                    </Style>
+                    <Style x:Key="TitleBadgeTextStyle" TargetType="TextBlock">
+                        <Setter Property="Margin" Value="3,0,3,0"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <!--{ThemeResource TextOnAccentFillColorPrimaryBrush}-->
+                    </Style>
+                </Grid.Resources>
+                
                 <StackPanel Grid.Row="0" Grid.Column="2" Canvas.ZIndex="10" Orientation="Horizontal">
                     <Image x:Name="TitleBarIcon"
                            Width="20"
@@ -62,59 +78,23 @@
 
                     <TextBlock x:Name="TitleBarTextBlock" Margin="8,2,1,0" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="App title" />
 
-                    <Border x:Name="TitleDev"
-                            Height="16"
-                            Margin="3,2,0,0"
-                            Background="LawnGreen"
-                            CornerRadius="2"
-                            Opacity="0.9"
-                            Visibility="Collapsed">
-                        <TextBlock Margin="3,0,3,0" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" Text="Dev" />
+                    <Border x:Name="TitleDev" Style="{StaticResource TitleBadgeStyle}" Background="LawnGreen" Visibility="Collapsed">
+                        <TextBlock Style="{StaticResource TitleBadgeTextStyle}" Text="Dev" />
                     </Border>
-                    <Border x:Name="TitleBeta"
-                            Height="16"
-                            Margin="3,2,0,0"
-                            Background="Aqua"
-                            CornerRadius="2"
-                            Opacity="0.9"
-                            Visibility="Collapsed">
-                        <TextBlock Margin="3,0,3,0" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" Text="Beta" />
+                    <Border x:Name="TitleBeta" Style="{StaticResource TitleBadgeStyle}" Background="Aqua" Visibility="Collapsed">
+                        <TextBlock Style="{StaticResource TitleBadgeTextStyle}" Text="Beta" />
                     </Border>
-                    <Border x:Name="TitleCanary"
-                            Height="16"
-                            Margin="3,2,0,0"
-                            Background="Yellow"
-                            CornerRadius="2"
-                            Opacity="0.9"
-                            Visibility="Collapsed">
-                        <TextBlock Margin="3,0,3,0" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" Text="Canary" />
+                    <Border x:Name="TitleCanary" Style="{StaticResource TitleBadgeStyle}" Background="Yellow" Visibility="Collapsed">
+                        <TextBlock Style="{StaticResource TitleBadgeTextStyle}" Text="Canary" />
                     </Border>
-                    <Border x:Name="TitleInsider"
-                            Height="16"
-                            Margin="3,2,0,0"
-                            Background="SkyBlue"
-                            CornerRadius="2"
-                            Opacity="0.9"
-                            Visibility="Collapsed">
-                        <TextBlock Margin="3,0,3,0" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" Text="Insider" />
+                    <Border x:Name="TitleInsider" Style="{StaticResource TitleBadgeStyle}" Background="SkyBlue" Visibility="Collapsed">
+                        <TextBlock Style="{StaticResource TitleBadgeTextStyle}" Text="Insider" />
                     </Border>
-                    <Border x:Name="TitlePreview"
-                            Height="16"
-                            Margin="3,2,0,0"
-                            Background="PaleVioletRed"
-                            CornerRadius="2"
-                            Opacity="0.9"
-                            Visibility="Visible">
-                        <TextBlock Margin="3,0,3,0" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" Text="Preview" />
+                    <Border x:Name="TitlePreview" Style="{StaticResource TitleBadgeStyle}" Background="PaleVioletRed" Visibility="Visible">
+                        <TextBlock Style="{StaticResource TitleBadgeTextStyle}" Text="Preview" />
                     </Border>
-                    <Border x:Name="TitleExperimental"
-                            Height="16"
-                            Margin="3,2,0,0"
-                            Background="Gray"
-                            CornerRadius="2"
-                            Opacity="0.9"
-                            Visibility="Collapsed">
-                        <TextBlock Margin="3,0,3,0" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" Text="Experimental" />
+                    <Border x:Name="TitleExperimental" Style="{StaticResource TitleBadgeStyle}" Background="Gray" Visibility="Collapsed">
+                        <TextBlock Style="{StaticResource TitleBadgeTextStyle}" Text="Experimental" />
                     </Border>
 
                     <StackPanel.Transitions>
