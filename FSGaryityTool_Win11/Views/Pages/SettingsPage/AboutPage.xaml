@@ -9,6 +9,18 @@
       mc:Ignorable="d">
     <!--  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"  -->
 
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <BitmapImage x:Key="FsLogoImage" UriSource="ms-appx:///Assets/FS2022-Light.png" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <BitmapImage x:Key="FsLogoImage" UriSource="ms-appx:///Assets/FS2022-Dark.png" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -95,7 +107,7 @@
 
                     <toolkit:SettingsExpander Margin="0,2,0,3" Description="List of Producers / Special Thanks" Header="FairingStudio" IsExpanded="True">
                         <toolkit:SettingsExpander.HeaderIcon>
-                            <BitmapIcon ShowAsMonochrome="False" UriSource="ms-appx:///Assets/FS2022.png" />
+                            <ImageIcon Source="{ThemeResource FsLogoImage}" />
                         </toolkit:SettingsExpander.HeaderIcon>
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard ContentAlignment="Left">
@@ -118,6 +130,10 @@
                                             <Run FontWeight="Medium" Text="Poker-sang" />
                                             <LineBreak /><LineBreak />
                                             <Run FontSize="14" FontWeight="Thin" Text="AI Programming Assistant / Consultant" />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text="Copilot" />
+                                            <LineBreak /><LineBreak />
+                                            <Run FontSize="14" FontWeight="Thin" Text="Payload" />
                                             <LineBreak />
                                             <Run FontWeight="Medium" Text="Asumoyz" />
                                             <LineBreak /><LineBreak />

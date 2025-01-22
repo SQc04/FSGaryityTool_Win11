@@ -88,7 +88,7 @@ public sealed partial class MainWindow : Window
 
         if (args.IsSettingsSelected)
         {
-            FSnvf.Navigate(typeof(MainSettingsPage), null, new SuppressNavigationTransitionInfo());
+            FSnvf.Navigate(typeof(MainSettingsPage), null, new DrillInNavigationTransitionInfo());
             FsPage = 7;
         }
     }

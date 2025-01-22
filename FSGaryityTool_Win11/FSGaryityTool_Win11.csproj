@@ -26,6 +26,7 @@
         <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
         <AppxPackageDir>D:\I\FAIRING STUDIO\FSSoftware\FSGarvityTool\FSGaryityTool_Win11\bin\win10-x64\publish\x64-Pkg</AppxPackageDir>
         <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+        <ApplicationIcon>FSFSoftH.ico</ApplicationIcon>
     </PropertyGroup>
     <ItemGroup>
       <None Remove="Assets\CopilotV1.svg" />

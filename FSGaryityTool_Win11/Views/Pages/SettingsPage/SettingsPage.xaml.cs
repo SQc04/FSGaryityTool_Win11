@@ -12,6 +12,7 @@ using FSGaryityTool_Win11.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using FSGaryityTool_Win11.Core.Settings;
 using System.ComponentModel;
+using Microsoft.UI.Xaml.Media;
 
 namespace FSGaryityTool_Win11;
 
@@ -35,6 +36,7 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
 
     public static string AppFolderPath { get; set; }
 
+    private WallpaperChangeListener _wallpaperChangeListener = new();
     public class Folder
     {
         public string Name { get; set; }
@@ -80,9 +82,8 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
 
         LanguageSetting();
 
-        SetDesktopBackgroundImage();
-        var listener = new WallpaperChangeListener();
-        listener.WallpaperChanged += (s, e) => SetDesktopBackgroundImage();
+        SetDesktopBackground();
+        //_wallpaperChangeListener.WallpaperChanged += (s, e) => SetDesktopBackgroundImage();
     }
 
     public void LanguageSetting()
@@ -300,13 +301,24 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
         mainWindow.WindowBackSetting();
     }
 
-    private void SetDesktopBackgroundImage()
+    private void SetDesktopBackground()
     {
         var wallpaperPath = WallpaperHelper.GetWallpaperPath();
         if (!string.IsNullOrEmpty(wallpaperPath))
         {
             var bitmapImage = new BitmapImage(new(wallpaperPath));
             DesktopBackgroundImage.Source = bitmapImage;
+            Debug.WriteLine("壁纸已更改！");
+        }
+        else
+        {
+            // 如果Windows背景设置为纯色，则设置DesktopBackgroundBorder的背景
+            var backgroundColor = WallpaperHelper.GetSolidColorBackground();
+            if (backgroundColor != null)
+            {
+                DesktopBackgroundBorder.Background = new SolidColorBrush(backgroundColor.Value);
+                Debug.WriteLine("纯色背景已设置！");
+            }
         }
     }
 
