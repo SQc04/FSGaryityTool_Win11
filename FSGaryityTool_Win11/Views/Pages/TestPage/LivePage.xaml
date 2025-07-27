@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Page x:Class="FSGaryityTool_Win11.Views.Pages.TestPage.LivePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:FSGaryityTool_Win11.Views.Pages.TestPage"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+      mc:Ignorable="d">
+    <Page.Resources>
+
+        <ResourceDictionary>
+            <Color x:Key="SystemControlBackgroundLightColor">#90FFFFFF</Color>
+            <Color x:Key="SystemControlBackgroundDarkColor">#44252525</Color>
+
+            <Color x:Key="SystemBorderBrushLightColor">#15252525</Color>
+            <Color x:Key="SystemBorderBrushDarkColor">#15FFFFFF</Color>
+
+            <Color x:Key="RxBoxButtonBorderBackgroundLightColor">#1F252525</Color>
+            <Color x:Key="RxBoxButtonBorderBackgroundDarkColor">#248F8F8F</Color>
+            <ResourceDictionary.ThemeDictionaries>
+                <!--  ǳɫģʽ��AcrylicBrush  -->
+                <ResourceDictionary x:Key="Light">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundLightColor}" TintColor="#FCFCFC" TintOpacity="0.0" />
+                    <SolidColorBrush x:Key="CustomBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundLightColor}" />
+                    <SolidColorBrush x:Key="CustomBoxElevationBorderBrush" Color="{StaticResource SystemBorderBrushLightColor}" />
+
+                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemControlBackgroundLightColor}" />
+                </ResourceDictionary>
+
+                <!--  ��ɫģʽ��AcrylicBrush  -->
+                <ResourceDictionary x:Key="Dark">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundDarkColor}" TintColor="#2C2C2C" TintOpacity="0.15" />
+                    <SolidColorBrush x:Key="CustomBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundDarkColor}" />
+                    <SolidColorBrush x:Key="CustomBoxElevationBorderBrush" Color="{StaticResource SystemBorderBrushDarkColor}" />
+
+                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemControlBackgroundDarkColor}" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+
+        </ResourceDictionary>
+    </Page.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <toolkit:GridSplitter Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,-6,0,0" VerticalAlignment="Top" />
+        <toolkit:GridSplitter Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="-6,0,0,0" HorizontalAlignment="Left" />
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBox x:Name="Textbox1" Margin="6" TextChanged="Textbox1_TextChanged" />
+            <Border Grid.Row="1"
+                    Margin="6"
+                    Background="Transparent"
+                    BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}"
+                    BorderThickness="2"
+                    CornerRadius="{StaticResource OverlayCornerRadius}">
+                <WebView2 x:Name="Webview1" Source="{Binding ElementName=Textbox1}" />
+            </Border>
+        </Grid>
+        <Grid Grid.Row="1" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBox x:Name="Textbox2" Margin="6" TextChanged="Textbox2_TextChanged" />
+            <Border Grid.Row="1"
+                    Margin="6"
+                    Background="Transparent"
+                    BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}"
+                    BorderThickness="2"
+                    CornerRadius="{StaticResource OverlayCornerRadius}">
+                <WebView2 x:Name="Webview2" />
+            </Border>
+        </Grid>
+        <Grid Grid.Row="0" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBox x:Name="Textbox3" Margin="6" TextChanged="Textbox3_TextChanged" />
+            <Border Grid.Row="1"
+                    Margin="6"
+                    Background="Transparent"
+                    BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}"
+                    BorderThickness="2"
+                    CornerRadius="{StaticResource OverlayCornerRadius}">
+                <WebView2 x:Name="Webview3" />
+            </Border>
+        </Grid>
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBox x:Name="Textbox4" Margin="6" TextChanged="Textbox4_TextChanged" />
+            <Border Grid.Row="1"
+                    Margin="6"
+                    Background="Transparent"
+                    BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}"
+                    BorderThickness="2"
+                    CornerRadius="{StaticResource OverlayCornerRadius}">
+                <WebView2 x:Name="Webview4" />
+            </Border>
+        </Grid>
+
+    </Grid>
+</Page>

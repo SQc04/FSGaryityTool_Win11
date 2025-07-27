@@ -1,0 +1,396 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="FSGaryityTool_Win11.Controls.WS64LedBoardBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:FSGaryityTool_Win11.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Color x:Key="DefaultLightBoardColor">#9F000000</Color>
+            <Color x:Key="DefaultDarkBoardColor">#FF000000</Color>
+            <Color x:Key="DefaultLightLedColor">#7F9F9F9F</Color>
+            <Color x:Key="DefaultDarkLedColor">#FF191919</Color>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="DefaultBoardColorBrush" Color="{ThemeResource DefaultLightBoardColor}" />
+                    <SolidColorBrush x:Key="DefaultLedColorBrush" Color="{ThemeResource DefaultLightLedColor}" />
+                </ResourceDictionary>
+
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="DefaultBoardColorBrush" Color="{ThemeResource DefaultDarkBoardColor}" />
+                    <SolidColorBrush x:Key="DefaultLedColorBrush" Color="{ThemeResource DefaultDarkLedColor}" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+
+    <Grid>
+        <Border MinWidth="90" MinHeight="90" Background="{ThemeResource DefaultBoardColorBrush}">
+            <Grid Margin="4">
+                <Grid.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="Margin" Value="1" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="BorderBrush" Value="#3FFFFFFF" />
+                        <Setter Property="Background" Value="{ThemeResource DefaultLedColorBrush}" />
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border x:Name="LED0" Grid.Row="0" Grid.Column="0">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED1" Grid.Row="0" Grid.Column="1">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED2" Grid.Row="0" Grid.Column="2">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED3" Grid.Row="0" Grid.Column="3">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED4" Grid.Row="0" Grid.Column="4">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED5" Grid.Row="0" Grid.Column="5">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED6" Grid.Row="0" Grid.Column="6">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED7" Grid.Row="0" Grid.Column="7">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+
+                <Border x:Name="LED15" Grid.Row="1" Grid.Column="0">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED14" Grid.Row="1" Grid.Column="1">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED13" Grid.Row="1" Grid.Column="2">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED12" Grid.Row="1" Grid.Column="3">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED11" Grid.Row="1" Grid.Column="4">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED10" Grid.Row="1" Grid.Column="5">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED9" Grid.Row="1" Grid.Column="6">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED8" Grid.Row="1" Grid.Column="7">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+
+                <Border x:Name="LED16" Grid.Row="2" Grid.Column="0">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED17" Grid.Row="2" Grid.Column="1">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED18" Grid.Row="2" Grid.Column="2">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED19" Grid.Row="2" Grid.Column="3">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED20" Grid.Row="2" Grid.Column="4">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED21" Grid.Row="2" Grid.Column="5">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED22" Grid.Row="2" Grid.Column="6">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED23" Grid.Row="2" Grid.Column="7">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+
+                <Border x:Name="LED31" Grid.Row="3" Grid.Column="0">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED30" Grid.Row="3" Grid.Column="1">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED29" Grid.Row="3" Grid.Column="2">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED28" Grid.Row="3" Grid.Column="3">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED27" Grid.Row="3" Grid.Column="4">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED26" Grid.Row="3" Grid.Column="5">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED25" Grid.Row="3" Grid.Column="6">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED24" Grid.Row="3" Grid.Column="7">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+
+                <Border x:Name="LED32" Grid.Row="4" Grid.Column="0">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED33" Grid.Row="4" Grid.Column="1">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED34" Grid.Row="4" Grid.Column="2">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED35" Grid.Row="4" Grid.Column="3">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED36" Grid.Row="4" Grid.Column="4">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED37" Grid.Row="4" Grid.Column="5">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED38" Grid.Row="4" Grid.Column="6">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED39" Grid.Row="4" Grid.Column="7">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+
+                <Border x:Name="LED47" Grid.Row="5" Grid.Column="0">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED46" Grid.Row="5" Grid.Column="1">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED45" Grid.Row="5" Grid.Column="2">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED44" Grid.Row="5" Grid.Column="3">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED43" Grid.Row="5" Grid.Column="4">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED42" Grid.Row="5" Grid.Column="5">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED41" Grid.Row="5" Grid.Column="6">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED40" Grid.Row="5" Grid.Column="7">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+
+                <Border x:Name="LED48" Grid.Row="6" Grid.Column="0">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED49" Grid.Row="6" Grid.Column="1">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED50" Grid.Row="6" Grid.Column="2">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED51" Grid.Row="6" Grid.Column="3">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED52" Grid.Row="6" Grid.Column="4">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED53" Grid.Row="6" Grid.Column="5">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED54" Grid.Row="6" Grid.Column="6">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED55" Grid.Row="6" Grid.Column="7">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+
+                <Border x:Name="LED63" Grid.Row="7" Grid.Column="0">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED62" Grid.Row="7" Grid.Column="1">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED61" Grid.Row="7" Grid.Column="2">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED60" Grid.Row="7" Grid.Column="3">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED59" Grid.Row="7" Grid.Column="4">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED58" Grid.Row="7" Grid.Column="5">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED57" Grid.Row="7" Grid.Column="6">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+                <Border x:Name="LED56" Grid.Row="7" Grid.Column="7">
+                    <Border.BackgroundTransition>
+                        <BrushTransition />
+                    </Border.BackgroundTransition>
+                </Border>
+            </Grid>
+            <Border.BackgroundTransition>
+                <BrushTransition />
+            </Border.BackgroundTransition>
+        </Border>
+    </Grid>
+</UserControl>

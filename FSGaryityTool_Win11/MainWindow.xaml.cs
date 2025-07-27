@@ -1,35 +1,38 @@
+﻿using CommunityToolkit.WinUI;
+using FSGaryityTool_Win11.Controls;
+using FSGaryityTool_Win11.Core.Settings;
+using FSGaryityTool_Win11.Views.Pages.CameraControlPage;
+using FSGaryityTool_Win11.Views.Pages.FairingStudioPage;
+using FSGaryityTool_Win11.Views.Pages.FanControlPage;
+using FSGaryityTool_Win11.Views.Pages.FlashDownloadPage;
+using FSGaryityTool_Win11.Views.Pages.KsyboardPage;
+using FSGaryityTool_Win11.Views.Pages.MousePage;
+using FSGaryityTool_Win11.Views.Pages.SerialPortPage;
+using FSGaryityTool_Win11.Views.Pages.TestPage;
+using Microsoft.UI;           // Needed for WindowId.
+using Microsoft.UI.Windowing; // Needed for AppWindow.
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
+using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.UI;           // Needed for WindowId.
-using Microsoft.UI.Windowing; // Needed for AppWindow.
+using Tommy;
+using Windows.UI;          // Needed for XAML/HWND interop.
 using WinRT;
 using WinRT.Interop;
-using Windows.UI;          // Needed for XAML/HWND interop.
-using System.Diagnostics;
-using System.IO;
-using Tommy;
-using Microsoft.UI.Xaml.Media.Animation;
-using FSGaryityTool_Win11.Core.Settings;
-using FSGaryityTool_Win11.Views.Pages.KsyboardPage;
-using FSGaryityTool_Win11.Views.Pages.MousePage;
-using FSGaryityTool_Win11.Views.Pages.FanControlPage;
-using FSGaryityTool_Win11.Views.Pages.FlashDownloadPage;
-using FSGaryityTool_Win11.Views.Pages.FairingStudioPage;
-using FSGaryityTool_Win11.Views.Pages.SerialPortPage;
-using FSGaryityTool_Win11.Views.Pages.CameraControlPage;
-using FSGaryityTool_Win11.Controls;
 
 namespace FSGaryityTool_Win11;
 
 public sealed partial class MainWindow : Window
 {
-    public const string FSSoftVersion = "0.3.10";
+    public const string FSSoftVersion = "0.3.16";
     public const string FSSoftName = "FSGravityTool";
 
     public static int FsPage { get; set; }
@@ -47,6 +50,8 @@ public sealed partial class MainWindow : Window
         [nameof(Page4)] = typeof(Page4),
         [nameof(Page5)] = typeof(Page5),
         [nameof(CameraControlMainPage)] = typeof(CameraControlMainPage),
+        [nameof(AudioTestPage)] = typeof(AudioTestPage),
+        [nameof(LivePage)] = typeof(LivePage),
         [nameof(FSPage)] = typeof(FSPage)
     };
 
@@ -58,8 +63,10 @@ public sealed partial class MainWindow : Window
         [3] = () => Debug.WriteLine("MousePage"),
         [4] = () => Debug.WriteLine("FanControlPage"),
         [5] = () => Debug.WriteLine("CameraControlPage"),
-        [6] = () => { if (FSPage.fSPage.MyWebView2.CanGoBack) FSPage.fSPage.MyWebView2.GoBack(); },
-        [7] = () => Debug.WriteLine("SettingsPage")
+        [6] = () => Debug.WriteLine("AudioPage"),
+        [7] = () => Debug.WriteLine("LivePage"),
+        [8] = () => { if (FSPage.fSPage.MyWebView2.CanGoBack) FSPage.fSPage.MyWebView2.GoBack(); },
+        [9] = () => Debug.WriteLine("SettingsPage")
     };
 
     private void CanvasControl_Draw(
@@ -101,10 +108,6 @@ public sealed partial class MainWindow : Window
     private const int MinWidth = 515;
     private const int MinHeight = 328;
 
-    // 窗口的默认宽度和高度
-    private const int DefaultWidth = 1840;
-    private const int DefaultHeight = 960;
-
     public bool Resize(Window window, int width, int height)
     {
         try
@@ -127,43 +130,52 @@ public sealed partial class MainWindow : Window
         return false;
     }
 
+    private CancellationTokenSource _windowSizeCts;
+    // Win32 API 判断窗口最小化
+    [DllImport("user32.dll")]
+    private static extern bool IsIconic(IntPtr hWnd);
+
     private void AppWindow_Changed(AppWindow sender, AppWindowChangedEventArgs args)
     {
-        
-    }
-
-    public void DelayedInitialize(UIElement mainContent)
-    {
-        Task.Run(() =>
+        if (args.DidSizeChange)
         {
-            Thread.Sleep(500);  // 延时改为0.5秒
+            // 取消上一次的延迟任务
+            _windowSizeCts?.Cancel();
+            _windowSizeCts = new CancellationTokenSource();
 
-            // 创建淡出动画
-            DispatcherQueue.TryEnqueue(() =>
+            var token = _windowSizeCts.Token;
+            var size = sender.Size;
+
+            Task.Run(async () =>
             {
-                var storyboard = new Storyboard();
-                var fadeOutAnimation = new DoubleAnimation
+                try
                 {
-                    From = 1.0,
-                    To = 0.0,
-                    Duration = new(TimeSpan.FromMilliseconds(50))
-                };
-                Storyboard.SetTarget(fadeOutAnimation, (ExtendedSplash)App.Window.Content);
-                Storyboard.SetTargetProperty(fadeOutAnimation, "Opacity");
-                storyboard.Children.Add(fadeOutAnimation);
+                    await Task.Delay(1000, token);
+                    // 获取窗口句柄
+                    var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+                    if (IsIconic(hWnd))
+                    {
+                        _windowSizeCts?.Cancel();
+                        return; // 最小化时不处理
+                    }
 
-                // 播放淡出动画
-                //storyboard.Begin();
-            });
-
-            Thread.Sleep(1);  // 等待淡出动画完成
-
-            // 移除 ExtendedSplash
-            DispatcherQueue.TryEnqueue(() =>
-            {
-                App.RemoveExtendedSplash(mainContent);
-            });
-        });
+                    if (!token.IsCancellationRequested)
+                    {
+                        await DispatcherQueue.EnqueueAsync(() =>
+                        {
+                            SettingsCoreServices.SetDefaultWindow(size.Width, size.Height);
+                        });
+                    }
+                }
+                catch (TaskCanceledException)
+                {
+                }
+            }, token);
+        }/*
+        if (args.DidPositionChange)
+        {
+            // 窗口位置发生变化
+        }*/
     }
 
     public WindowBackgroundBrushControl windowBackgroundBrushControl;
@@ -171,11 +183,15 @@ public sealed partial class MainWindow : Window
     {
         InitializeComponent();
         Instance = this;
-        
+
+        SettingsCoreServices.CheckSettingFolder();
+        SettingsCoreServices.AddTomlFile();
+
         var isFirstActivation = true;
         var mainContent = Content;
 
-        Resize(this, DefaultWidth, DefaultHeight);//==================
+        var (width, height) = SettingsCoreServices.GetDefaultWindow();
+        Resize(this, width, height);
 
         // 将窗口的标题栏设置为自定义标题栏
         ExtendsContentIntoTitleBar = true;
@@ -200,13 +216,12 @@ public sealed partial class MainWindow : Window
             }
         };
 
+        FSnv.IsPaneOpen = SettingsCoreServices.GetMainWindowNavigationPaneInfo();
 
         //page1Instance = new Page1(); // 初始化Page1实例
 
         Task.Run(() =>
         {
-            SettingsCoreServices.CheckSettingFolder();
-            SettingsCoreServices.AddTomlFile();
             SettingsCoreServices.CheckSettingsFileVersion();
 
             // 在初始化完成后，回到 UI 线程移除 ExtendedSplash
@@ -214,7 +229,6 @@ public sealed partial class MainWindow : Window
             {
                 LanguageSetting();
 
-                FSnv.IsPaneOpen = SettingsCoreServices.GetMainWindowNavigationPaneInfo();
                 var nvPage = int.Parse(SettingsCoreServices.GetStartPageSetting());
                 FSnv.SelectedItem = FSnv.MenuItems[nvPage];             //设置默认页面
                 FsPage = nvPage;
@@ -274,7 +288,6 @@ public sealed partial class MainWindow : Window
                     WindowBackgroundBrushControl.WindowBackgroundBrushActivatedEnable = bool.Parse(SettingsCoreServices.GetSoftBackgroundActivatedEnableSetting());
                 }
 
-                
             });
         });
 
@@ -332,6 +345,17 @@ public sealed partial class MainWindow : Window
     private int _lastDefWindowBackGround;
 
     public static bool IsFirstLoading { get; set; } = true;
+    public void DelayedInitialize(UIElement mainContent)
+    {
+        Task.Run(() =>
+        {
+            Thread.Sleep(300);  // 延时改为0.5秒
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                App.RemoveExtendedSplash(mainContent);
+            });
+        });
+    }
 
     public void LoadingEnd()
     {
@@ -343,11 +367,24 @@ public sealed partial class MainWindow : Window
     {
         Task.Run(() =>
         {
+            Thread.Sleep(500);
             switch (FsPage)
             {
-                case 0: Thread.Sleep(1450);
+                case 0: Thread.Sleep(1000);
                     break;
-                case 4: Thread.Sleep(1500);
+                case 1: Thread.Sleep(200);
+                    break;
+                case 2: Thread.Sleep(100);
+                    break;
+                case 3: Thread.Sleep(100);
+                    break;
+                case 4: Thread.Sleep(300);
+                    break;
+                case 5: Thread.Sleep(500);
+                    break;
+                case 6: Thread.Sleep(1000);
+                    break;
+                case 7: Thread.Sleep(500);
                     break;
             }
             DispatcherQueue.TryEnqueue(() =>
@@ -355,7 +392,7 @@ public sealed partial class MainWindow : Window
                 var fadeOutAnimation = new DoubleAnimation
                 {
                     To = 0,
-                    Duration = TimeSpan.FromMilliseconds(75)
+                    Duration = TimeSpan.FromMilliseconds(100)
                 };
 
                 var storyboard = new Storyboard();
@@ -366,7 +403,7 @@ public sealed partial class MainWindow : Window
 
                 storyboard.Begin();
             });
-            Thread.Sleep(200);
+            Thread.Sleep(250);
             DispatcherQueue.TryEnqueue(() =>
             {
                 FsStartImage.Visibility = Visibility.Collapsed;
@@ -499,31 +536,5 @@ public sealed partial class MainWindow : Window
         //Debug.WriteLine(DefaultNavigationViewPaneOpen);
         SettingsCoreServices.SetMainWindowNavigationPaneInfo(false);
     }
-    /*
-        public class Tab1
-        {
-        private SerialPort serialPort1;
-
-        public Tab1()
-        {
-        this.serialPort1 = new SerialPort();
-        // 配置并打开serialPort1
-        }
-
-        // 使用serialPort1进行通信
-        }
-
-        public class Tab2
-        {
-        private SerialPort serialPort2;
-
-        public Tab2()
-        {
-        this.serialPort2 = new SerialPort();
-        // 配置并打开serialPort2
-        }
-
-        // 使用serialPort2进行通信
-        }
-*/
+    
 }

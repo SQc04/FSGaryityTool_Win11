@@ -1,17 +1,18 @@
+﻿using ClevoEcControlinfo;
+using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
-using System.Diagnostics;
-using ClevoEcControlinfo;
-using System.Threading;
-using Microsoft.Graphics.Canvas.UI.Xaml;
-using Microsoft.Graphics.Canvas.Geometry;
-using System.Numerics;
-using Windows.UI;
 using System.ComponentModel;
-using Windows.System;
+using System.Diagnostics;
+using System.Numerics;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using Windows.System;
+using Windows.UI;
 
 namespace FSGaryityTool_Win11.Views.Pages.FanControlPage;
 
@@ -41,19 +42,20 @@ public sealed partial class Page5 : Page
     public static int GpuDutySet { get; set; } = 166;
 
     public TempViewModel ViewModel { get; set; }
+
     public class TempViewModel : INotifyPropertyChanged
     {
-        private int _cpumTemp;
-        private int _gpumTemp;
+        private double _cpumTemp;
+        private double _gpumTemp;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int CpumTemp
+        public double CpumTemp
         {
             get { return _cpumTemp; }
             set
             {
-                if (_cpumTemp != value)
+                if (Math.Abs(_cpumTemp - value) > 0.01) // 避免频繁更新
                 {
                     _cpumTemp = value;
                     OnPropertyChanged(nameof(CpumTemp));
@@ -61,12 +63,12 @@ public sealed partial class Page5 : Page
             }
         }
 
-        public int GpumTemp
+        public double GpumTemp
         {
             get { return _gpumTemp; }
             set
             {
-                if (_gpumTemp != value)
+                if (Math.Abs(_gpumTemp - value) > 0.01) // 避免频繁更新
                 {
                     _gpumTemp = value;
                     OnPropertyChanged(nameof(GpumTemp));
@@ -77,33 +79,34 @@ public sealed partial class Page5 : Page
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
         }
     }
-
-    
 
     public Page5()
     {
         this.InitializeComponent();
+        _ = InitializeAsync();
+    }
 
+    private async Task InitializeAsync()
+    {
         try
         {
-            var isConnect = ClevoEcControl.IsServerStarted();
+            var isConnect = await Task.Run(() => ClevoEcControl.IsServerStarted());
             if (isConnect)
             {
-                var isInitialize = ClevoEcControl.InitIo();
+                var isInitialize = await Task.Run(() => ClevoEcControl.InitIo());
                 Debug.WriteLine("isInitialize: " + isInitialize);
                 if (isInitialize)
                 {
-                    var fanNum = ClevoEcControl.GetFanCount();
+                    var fanNum = await Task.Run(() => ClevoEcControl.GetFanCount());
                     Debug.WriteLine("info: " + fanNum);
 
                     var fanId = 1;
-                    var data = ClevoEcControl.GetTempFanDuty(fanId);
+                    var data = await Task.Run(() => ClevoEcControl.GetTempFanDuty(fanId));
                     CpuFanRadialGauge.Value = (int)Math.Round(data.FanDuty / 255.0 * 100);
                     fanId = 2;
-                    data = ClevoEcControl.GetTempFanDuty(fanId);
+                    data = await Task.Run(() => ClevoEcControl.GetTempFanDuty(fanId));
                     GpuFanRadialGauge.Value = (int)Math.Round(data.FanDuty / 255.0 * 100);
                 }
                 else
@@ -146,8 +149,8 @@ public sealed partial class Page5 : Page
         }
         ViewModel = new TempViewModel();
         this.DataContext = ViewModel;
-        ViewModel.CpumTemp = 25;
-        ViewModel.GpumTemp = 25;
+        ViewModel.CpumTemp = 25.0;
+        ViewModel.GpumTemp = 25.0;
     }
 
     public class KalmanFilter
@@ -515,10 +518,10 @@ public sealed partial class Page5 : Page
         }
         if (GpuFanControlToggleButton.IsChecked == true)
         {
-            GpuFanRadialGauge.Value = CalculateFanSpeed(ViewModel.GpumTemp, 0.014, 2, 2.2, 0);
+            GpuFanRadialGauge.Value = CalculateFanSpeed(ViewModel.GpumTemp, 0.014, 2, 2.2, -15);
         }
     }
-    private int CalculateFanSpeed(int temperature, double math0, double math1, double math2, double math3)
+    private int CalculateFanSpeed(double temperature, double math0, double math1, double math2, double math3)
     {
         int math = (int)(math0 * Math.Pow(temperature, math1) - math3);
         //Debug.WriteLine("Temp" + temperature);

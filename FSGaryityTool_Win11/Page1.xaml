@@ -1,9 +1,12 @@
-<Page x:Class="FSGaryityTool_Win11.Page1"
+﻿<Page x:Class="FSGaryityTool_Win11.Page1"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
+      xmlns:controls="using:FSGaryityTool_Win11.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="using:FSGaryityTool_Win11"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:serialPortTool="using:FSGaryityTool_Win11.Views.Pages.SerialPortPage"
       xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
       NavigationCacheMode="Enabled"
       mc:Ignorable="d">
@@ -12,17 +15,29 @@
         <ResourceDictionary>
             <Color x:Key="SystemControlBackgroundLightColor">#90FFFFFF</Color>
             <Color x:Key="SystemControlBackgroundDarkColor">#44252525</Color>
+
+            <Color x:Key="SystemBorderBrushLightColor">#15252525</Color>
+            <Color x:Key="SystemBorderBrushDarkColor">#15FFFFFF</Color>
+
+            <Color x:Key="RxBoxButtonBorderBackgroundLightColor">#1F252525</Color>
+            <Color x:Key="RxBoxButtonBorderBackgroundDarkColor">#248F8F8F</Color>
+
             <ResourceDictionary.ThemeDictionaries>
                 <!--  浅色模式的AcrylicBrush  -->
                 <ResourceDictionary x:Key="Light">
-                    <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="#F9F9F9" TintColor="#FCFCFC" TintOpacity="0.0" />
-                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemControlBackgroundLightColor}" />
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundLightColor}" TintColor="#FCFCFC" TintOpacity="0.0" />
+                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundLightColor}" />
+                    <SolidColorBrush x:Key="CustomRxBorderSolidColorBrush" Color="{StaticResource RxBoxButtonBorderBackgroundLightColor}" />
+                    <SolidColorBrush x:Key="CustomBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundLightColor}" />
+                    <SolidColorBrush x:Key="CustomBoxElevationBorderBrush" Color="{StaticResource SystemBorderBrushLightColor}" />
                 </ResourceDictionary>
-
                 <!--  深色模式的AcrylicBrush  -->
                 <ResourceDictionary x:Key="Dark">
-                    <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="#2C2C2C" TintColor="#2C2C2C" TintOpacity="0.15" />
-                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemControlBackgroundDarkColor}" />
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundDarkColor}" TintColor="#2C2C2C" TintOpacity="0.15" />
+                    <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundDarkColor}" />
+                    <SolidColorBrush x:Key="CustomRxBorderSolidColorBrush" Color="{StaticResource RxBoxButtonBorderBackgroundDarkColor}" />
+                    <SolidColorBrush x:Key="CustomBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundDarkColor}" />
+                    <SolidColorBrush x:Key="CustomBoxElevationBorderBrush" Color="{StaticResource SystemBorderBrushDarkColor}" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
@@ -63,7 +78,8 @@
               Grid.ColumnSpan="1"
               Margin="0,0,0,0"
               HorizontalAlignment="Stretch"
-              VerticalAlignment="Stretch">
+              VerticalAlignment="Stretch"
+              Visibility="Collapsed">
             <Border x:Name="BorderBackRx"
                     MinWidth="1"
                     Margin="0,0,0,6"
@@ -112,9 +128,17 @@
                         <TransitionCollection />
                     </ListView.ItemContainerTransitions>
                 </ListView>
-
             </Border>
         </Grid>
+
+        <controls:BeyondTextBox Grid.Row="0"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="1"
+                                Margin="0,0,0,6"
+                                EditorMode="Text"
+                                IsConnect="False"
+                                Text="114"
+                                TextAlignment="Center" />
 
         <Grid Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
@@ -134,102 +158,16 @@
                      TextWrapping="Wrap"
                      Visibility="Collapsed" />
 
-            <StackPanel Grid.Row="0" Margin="12,0,12,6">
-                <Border x:Name="SerialInfoCdhBorder"
-                        Grid.Row="0"
-                        Margin="0,0,0,6"
-                        Background="{ThemeResource CustomRxBoxSolidColorBrush}"
-                        BorderBrush="{ThemeResource CircleElevationBorderBrush}"
-                        BorderThickness="3"
-                        CornerRadius="6">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Border x:Name="CdhBorder"
-                                Grid.Column="0"
-                                Height="32"
-                                Margin="3"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="4">
-                            <TextBlock x:Name="CdhTextBlock"
-                                       Width="36"
-                                       Margin="0"
-                                       VerticalAlignment="Center"
-                                       Text="DCD"
-                                       TextAlignment="Center" />
-                            <Border.BackgroundTransition>
-                                <BrushTransition />
-                            </Border.BackgroundTransition>
-                        </Border>
-                        <Border Grid.Column="1" Width="1" Margin="1,3,1,3" Background="{ThemeResource ControlStrongStrokeColorDisabledBrush}" />
-                        <Border Grid.Column="2" Margin="3" BorderBrush="{ThemeResource CircleElevationBorderBrush}" BorderThickness="1" CornerRadius="4" />
-                    </Grid>
-                </Border>
-                <Border x:Name="SerialInfoRingBorder"
-                        Grid.Row="0"
-                        Margin="0,0,0,6"
-                        Background="{ThemeResource CustomRxBoxSolidColorBrush}"
-                        BorderBrush="{ThemeResource CircleElevationBorderBrush}"
-                        BorderThickness="3"
-                        CornerRadius="6">
-                    <StackPanel Orientation="Horizontal">
-                        <Border x:Name="RiBorder" Height="32" Margin="3" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4">
-                            <TextBlock x:Name="RiTextBlock"
-                                       Width="36"
-                                       Margin="0"
-                                       VerticalAlignment="Center"
-                                       Text="RI"
-                                       TextAlignment="Center" />
-                            <Border.BackgroundTransition>
-                                <BrushTransition />
-                            </Border.BackgroundTransition>
-                        </Border>
-                    </StackPanel>
-                </Border>
-                <Border x:Name="SerialInfoDsrBorder"
-                        Margin="0,0,0,6"
-                        Background="{ThemeResource CustomRxBoxSolidColorBrush}"
-                        BorderBrush="{ThemeResource CircleElevationBorderBrush}"
-                        BorderThickness="3"
-                        CornerRadius="6">
-                    <StackPanel Orientation="Horizontal">
-                        <Border x:Name="DsrBorder" Height="32" Margin="3" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4">
-                            <TextBlock x:Name="DsrTextBlock"
-                                       Width="36"
-                                       Margin="0"
-                                       VerticalAlignment="Center"
-                                       Text="DSR"
-                                       TextAlignment="Center" />
-                            <Border.BackgroundTransition>
-                                <BrushTransition />
-                            </Border.BackgroundTransition>
-                        </Border>
-                    </StackPanel>
-                </Border>
-                <Border x:Name="SerialInfoCtsBorder"
-                        Grid.Row="0"
-                        Margin="0,0,0,0"
-                        Background="{ThemeResource CustomRxBoxSolidColorBrush}"
-                        BorderBrush="{ThemeResource CircleElevationBorderBrush}"
-                        BorderThickness="3"
-                        CornerRadius="6">
-                    <StackPanel Orientation="Horizontal">
-                        <Border x:Name="CtsBorder" Height="32" Margin="3" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4">
-                            <TextBlock x:Name="CtsTextBlock"
-                                       Width="36"
-                                       Margin="0"
-                                       VerticalAlignment="Center"
-                                       Text="CTS"
-                                       TextAlignment="Center" />
-                            <Border.BackgroundTransition>
-                                <BrushTransition />
-                            </Border.BackgroundTransition>
-                        </Border>
-                    </StackPanel>
-                </Border>
+            <StackPanel x:Name="SerialPortFlowInfoBoxStackPanel" Grid.Row="0" Margin="12,0,12,0">
+                <StackPanel.Resources>
+                    <Style TargetType="controls:SerialPortFlowInfoBox">
+                        <Setter Property="LogicAnalyzerBoxMaxTime" Value="5" />
+                    </Style>
+                </StackPanel.Resources>
+                <controls:SerialPortFlowInfoBox x:Name="SerialPortFlowInfoBoxDCD" InfoName="DCD" LogicAnalyzer="{Binding SerialPortFlowInfoBoxLogicAnalyzer}" LogicalValue="False" />
+                <controls:SerialPortFlowInfoBox x:Name="SerialPortFlowInfoBoxRING" InfoName="RI" LogicAnalyzer="{Binding SerialPortFlowInfoBoxLogicAnalyzer}" LogicalValue="False" />
+                <controls:SerialPortFlowInfoBox x:Name="SerialPortFlowInfoBoxDSR" InfoName="DSR" LogicAnalyzer="{Binding SerialPortFlowInfoBoxLogicAnalyzer}" LogicalValue="False" />
+                <controls:SerialPortFlowInfoBox x:Name="SerialPortFlowInfoBoxCTS" InfoName="CTS" LogicAnalyzer="{Binding SerialPortFlowInfoBoxLogicAnalyzer}" LogicalValue="False" />
             </StackPanel>
 
             <Border x:Name="RxTextBoxBorder"
@@ -239,7 +177,7 @@
                     BorderBrush="{ThemeResource TextControlElevationBorderBrush}"
                     BorderThickness="3"
                     CornerRadius="6">
-                <ScrollViewer x:Name="RxTextBoxScrollViewer" HorizontalScrollBarVisibility="Visible" HorizontalScrollMode="Auto">
+                <ScrollViewer x:Name="RxTextBoxScrollViewer" HorizontalScrollBarVisibility="Visible" HorizontalScrollMode="Auto" IsScrollInertiaEnabled="True">
                     <RichTextBlock x:Name="RxText"
                                    Margin="6,6,12,6"
                                    IsTextSelectionEnabled="True"
@@ -262,10 +200,15 @@
             <TextBox x:Name="TxTextBox"
                      Margin="0,6,0,12"
                      AcceptsReturn="True"
+                     Background="{ThemeResource CustomRxBoxSolidColorBrush}"
+                     BorderBrush="{ThemeResource TextControlElevationBorderBrush}"
+                     BorderThickness="3"
                      IsSpellCheckEnabled="False"
                      KeyUp="TXTextBox_KeyUp"
                      PlaceholderText="Type your data here...&#x0a;Press Ctrl+Enter to send data."
                      PreviewKeyDown="TXTextBox_PreviewKeyDown"
+                     ScrollViewer.IsScrollInertiaEnabled="True"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
                      TextChanged="TXTextBox_TextChanged"
                      TextWrapping="Wrap" />
         </Grid>
@@ -277,12 +220,25 @@
                     VerticalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    Click="TXButton_Click"
-                    Style="{StaticResource AccentButtonStyle}">
+                    Click="TXButton_Click">
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <Viewbox MinHeight="24" MaxHeight="45" Margin="-2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <FontIcon Margin="1" Glyph="&#xE8B6;" />
+                        <Border CenterPoint="24,20,0" Rotation="270">
+                            <AnimatedIcon x:Name="SearchAnimatedIcon" Margin="-1,-1,-1,-1" AnimatedIcon.State="NormalOn" RenderTransformOrigin="0.5, 0.5">
+                                <AnimatedIcon.Source>
+                                    <animatedvisuals:AnimatedChevronDownSmallVisualSource />
+                                </AnimatedIcon.Source>
+                                <AnimatedIcon.FallbackIconSource>
+                                    <SymbolIconSource Symbol="Setting" />
+                                </AnimatedIcon.FallbackIconSource>
+                            </AnimatedIcon>
+                            <Border.RotationTransition>
+                                <ScalarTransition />
+                            </Border.RotationTransition>
+                        </Border>
+
                         <!--  &#xE724;  -->
+                        <!--  &#xE8B6;  -->
                     </Viewbox>
                 </Grid>
             </Button>

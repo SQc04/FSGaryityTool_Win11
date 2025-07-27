@@ -1,4 +1,4 @@
-using Microsoft.Win32;
+锘縰sing Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -46,7 +46,7 @@ public static class WallpaperHelper
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"获取纯色背景颜色时发生错误: {ex.Message}");
+            Debug.WriteLine($"鑾峰彇绾壊妗岄潰鑳屾櫙鑹叉椂鍙戠敓寮傚父: {ex.Message}");
         }
 
         return null;

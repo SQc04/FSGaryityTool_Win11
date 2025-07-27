@@ -1,0 +1,1411 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Page x:Class="FSGaryityTool_Win11.Views.Pages.TestPage.AudioTestPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:FSGaryityTool_Win11.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:FSGaryityTool_Win11.Views.Pages.TestPage"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d">
+    <Page.Resources>
+        <ResourceDictionary>
+            <Color x:Key="SystemControlBackgroundLightColor">#90FFFFFF</Color>
+            <Color x:Key="SystemControlBackgroundDarkColor">#44252525</Color>
+
+            <Color x:Key="SystemBorderBrushLightColor">#15252525</Color>
+            <Color x:Key="SystemBorderBrushDarkColor">#15FFFFFF</Color>
+
+            <Color x:Key="RxBoxButtonBorderBackgroundLightColor">#1F252525</Color>
+            <Color x:Key="RxBoxButtonBorderBackgroundDarkColor">#248F8F8F</Color>
+
+
+            <ResourceDictionary.ThemeDictionaries>
+                <!--  浅色模式的AcrylicBrush  -->
+                <ResourceDictionary x:Key="Light">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundLightColor}" TintColor="#FCFCFC" TintOpacity="0.0" />
+                    <SolidColorBrush x:Key="CustomBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundLightColor}" />
+                    <SolidColorBrush x:Key="CustomBoxElevationBorderBrush" Color="{StaticResource SystemBorderBrushLightColor}" />
+                </ResourceDictionary>
+                <!--  深色模式的AcrylicBrush  -->
+                <ResourceDictionary x:Key="Dark">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundDarkColor}" TintColor="#2C2C2C" TintOpacity="0.15" />
+                    <SolidColorBrush x:Key="CustomBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundDarkColor}" />
+                    <SolidColorBrush x:Key="CustomBoxElevationBorderBrush" Color="{StaticResource SystemBorderBrushDarkColor}" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+    <Grid>
+        <ScrollViewer>
+            <StackPanel Margin="60">
+                <StackPanel.Resources>
+                    <Style TargetType="controls:WaveFormBox">
+                        <Setter Property="Height" Value="150" />
+                        <Setter Property="Margin" Value="12,6" />
+                        <Setter Property="Height" Value="400" />
+                    </Style>
+                    <Style TargetType="controls:DataPlotBox">
+                        <Setter Property="HorizontalAlignment" Value="Left" />
+                        <Setter Property="Margin" Value="12,6" />
+                        <Setter Property="Height" Value="400" />
+                    </Style>
+                </StackPanel.Resources>
+                <Grid Height="600" Margin="12,12,12,6" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{ThemeResource ControlCornerRadius}">
+                    <StackPanel Margin="100">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="360"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xF61F;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="模板匹配 (1950s)" />
+                                </Grid>
+                            </Border>
+                            <Border>
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="25"
+                                      Y1="75"
+                                      Y2="75" />
+                            </Border>
+                            <Border Width="360"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE9D2;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="动态时间规整(DTW) (1970s)" />
+                                </Grid>
+                            </Border>
+                            <Border>
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="25"
+                                      Y1="75"
+                                      Y2="75" />
+                            </Border>
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="360"
+                                        Height="150"
+                                        Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                        BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                        BorderThickness="3"
+                                        CornerRadius="{ThemeResource ControlCornerRadius}">
+                                    <Grid VerticalAlignment="Stretch">
+                                        <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                        <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="HMM-GMM (1980s~1990s)" />
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="770" />
+                            <Border Width="360">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="180"
+                                      X2="180"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="360"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xF22C;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="预训练模型 (2020s)" />
+                                </Grid>
+                            </Border>
+                            <Border>
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="25"
+                                      Y1="75"
+                                      Y2="75" />
+                            </Border>
+                            <Border Width="360"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xF003;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="端到端模型 (2016~)" />
+                                </Grid>
+                            </Border>
+                            <Border>
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="25"
+                                      Y1="75"
+                                      Y2="75" />
+                            </Border>
+                            <Border Width="360"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE8EB;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="DNN (2010s)" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+                <Grid Height="1000" Margin="12,12,12,6" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{ThemeResource ControlCornerRadius}">
+                    <StackPanel Margin="100">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="360"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xF61F;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="输入模块" />
+                                </Grid>
+                            </Border>
+                            <Border>
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="25"
+                                      Y1="75"
+                                      Y2="75" />
+                            </Border>
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="360"
+                                        Height="150"
+                                        Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                        BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                        BorderThickness="3"
+                                        CornerRadius="{ThemeResource ControlCornerRadius}">
+                                    <Grid VerticalAlignment="Stretch">
+                                        <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE90B;" />
+                                        <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="预处理模块" />
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                            <Border>
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="25"
+                                      Y1="75"
+                                      Y2="75" />
+                            </Border>
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="360"
+                                        Height="150"
+                                        Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                        BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                        BorderThickness="3"
+                                        CornerRadius="{ThemeResource ControlCornerRadius}">
+                                    <Grid VerticalAlignment="Stretch">
+                                        <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                        <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="特征提取模块" />
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="360" />
+                            <Border Width="25" />
+                            <Border Width="360" />
+                            <Border Width="25" />
+                            <Border Width="360">
+                                <Line Stroke="{ThemeResource SystemFillColorCautionBrush}"
+                                      StrokeThickness="3"
+                                      X1="180"
+                                      X2="180"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border>
+                                <Line Stroke="{ThemeResource SystemFillColorCautionBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="950"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                            <Border Width="50" />
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                            <Border Width="50" />
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                            <Border Width="50" />
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                            <Border Width="50" />
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                            <Border Width="50" />
+                            <Border Width="120" />
+                            <Border Width="50" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                    <TextBlock Margin="0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="CFCC" />
+                                    <TextBlock Margin="0,12" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="耳蜗滤波倒谱系数" />
+                                </Grid>
+                            </Border>
+                            <Border Width="50" Height="3" />
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                    <TextBlock Margin="0,36" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="GFCC" />
+                                    <TextBlock Margin="0,3" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                                        <Run Text="伽马音频频率" />
+                                        <LineBreak />
+                                        <Run Text="   倒谱系数" />
+                                    </TextBlock>
+                                </Grid>
+                            </Border>
+                            <Border Width="50" Height="3" />
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                    <TextBlock Margin="0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="MFCC" />
+                                    <TextBlock Margin="0,12" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="梅尔频率倒谱系数" />
+                                </Grid>
+                            </Border>
+                            <Border Width="50" Height="3" />
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                    <TextBlock Margin="0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="平均加权融合" />
+                                    <TextBlock Margin="0,12" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="0.33 : 0.33 : 0.34" />
+                                </Grid>
+                            </Border>
+                            <Border Width="50" Height="3" />
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                    <TextBlock Margin="0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="特征拼接融合" />
+                                    <TextBlock Margin="0,12" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="12" Text="CFCC+GFCC+MFCC" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                            <Border Width="50" />
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                            <Border Width="50" />
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                            <Border Width="50" />
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                            <Border Width="50" />
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                            <Border Width="50" />
+                            <Border Width="120" />
+                            <Border Width="50" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border>
+                                <Line Stroke="{ThemeResource SystemFillColorCautionBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="950"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="360" />
+                            <Border Width="25" />
+                            <Border Width="360" />
+                            <Border Width="25" />
+                            <Border Width="360">
+                                <Line Stroke="{ThemeResource SystemFillColorCautionBrush}"
+                                      StrokeThickness="3"
+                                      X1="180"
+                                      X2="180"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="360" Height="150" />
+                            <Border Width="26" />
+                            <Border Width="360"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE72D;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="输出预测结果和准确率" />
+                                </Grid>
+                            </Border>
+                            <Border>
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="25"
+                                      Y1="75"
+                                      Y2="75" />
+                            </Border>
+                            <Border Width="360"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xF22C;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="分类模块" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+
+                    </StackPanel>
+
+                </Grid>
+                <Grid Height="1000" Margin="12,12,12,6" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{ThemeResource ControlCornerRadius}">
+                    <StackPanel Margin="100">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xF61F;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="语言信号" />
+                                </Grid>
+                            </Border>
+                            <Border Height="3">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="50"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE90B;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="预处理+预加重" />
+                                </Grid>
+                            </Border>
+                            <Border Height="3">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="50"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xF406;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="分帧" />
+                                </Grid>
+                            </Border>
+                            <Border Height="3">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="50"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xED1F;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="加窗+FFT" />
+                                </Grid>
+                            </Border>
+                            <Border Height="3">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="50"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xEAFC;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="计算谱线能量" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="120" />
+                            <Border Width="50" />
+                            <Border Width="120" />
+                            <Border Width="50" />
+                            <Border Width="120" />
+                            <Border Width="50" />
+                            <Border Width="120" />
+                            <Border Width="50" />
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Height="3">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="740"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                            <Border Width="50" />
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                            <Border Width="50" />
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                            <Border Width="50" />
+                            <Border Width="120">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="25" />
+                            </Border>
+                            <Border Width="50" />
+                            <Border Width="120" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE93C;" />
+                                    <TextBlock Margin="0,15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="Cochlear滤波" />
+                                </Grid>
+                            </Border>
+                            <Border Width="50" Height="3" />
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE93C;" />
+                                    <TextBlock Margin="0,15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="Gammatone滤波" />
+                                </Grid>
+                            </Border>
+                            <Border Width="50" Height="3" />
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE93C;" />
+                                    <TextBlock Margin="0,15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="Mel滤波" />
+                                </Grid>
+                            </Border>
+                            <Border Width="50" Height="3" />
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE8B9;" />
+                                    <TextBlock Margin="0,15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="语谱图" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Canvas Width="460" Height="50">
+                                <Line Stroke="{ThemeResource SystemFillColorSuccessBrush}"
+                                      StrokeThickness="3"
+                                      X1="60"
+                                      X2="230"
+                                      Y1="0"
+                                      Y2="50" />
+                                <Line Stroke="{ThemeResource SystemFillColorCautionBrush}"
+                                      StrokeThickness="3"
+                                      X1="230"
+                                      X2="230"
+                                      Y1="0"
+                                      Y2="50" />
+                                <Line Stroke="{ThemeResource SystemFillColorCriticalBrush}"
+                                      StrokeThickness="3"
+                                      X1="400"
+                                      X2="230"
+                                      Y1="0"
+                                      Y2="50" />
+                            </Canvas>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="120" />
+                            <Border Width="50" Height="3" />
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE9D2;" />
+                                    <TextBlock Margin="0,15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="DCT离散余弦变换" />
+                                </Grid>
+                            </Border>
+                            <Border Height="3">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="50"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE9D9;" />
+                                    <TextBlock Margin="0,15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="倒谱分析" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Canvas Width="460" Height="50">
+                                <Line Stroke="{ThemeResource SystemFillColorSuccessBrush}"
+                                      StrokeThickness="3"
+                                      X1="400"
+                                      X2="60"
+                                      Y1="0"
+                                      Y2="50" />
+                                <Line Stroke="{ThemeResource SystemFillColorCautionBrush}"
+                                      StrokeThickness="3"
+                                      X1="400"
+                                      X2="230"
+                                      Y1="0"
+                                      Y2="50" />
+                                <Line Stroke="{ThemeResource SystemFillColorCriticalBrush}"
+                                      StrokeThickness="3"
+                                      X1="400"
+                                      X2="400"
+                                      Y1="0"
+                                      Y2="50" />
+                            </Canvas>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                    <TextBlock Margin="0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="CFCC" />
+                                    <TextBlock Margin="0,12" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="耳蜗滤波倒谱系数" />
+                                </Grid>
+                            </Border>
+                            <Border Width="50" Height="3" />
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                    <TextBlock Margin="0,36" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="GFCC" />
+                                    <TextBlock Margin="0,3" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                                        <Run Text="伽马音频频率" />
+                                        <LineBreak />
+                                        <Run Text="   倒谱系数" />
+                                    </TextBlock>
+                                </Grid>
+                            </Border>
+                            <Border Width="50" Height="3" />
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                    <TextBlock Margin="0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="MFCC" />
+                                    <TextBlock Margin="0,12" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="梅尔频率倒谱系数" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                </Grid>
+                <Grid Height="750" Margin="12,12,12,6" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{ThemeResource ControlCornerRadius}">
+                    <StackPanel Margin="100">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel>
+                                <Border Width="120"
+                                        Height="150"
+                                        Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                        BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                        BorderThickness="3"
+                                        CornerRadius="{ThemeResource ControlCornerRadius}">
+                                    <Grid VerticalAlignment="Stretch">
+                                        <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                        <TextBlock Margin="0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="CFCC" />
+                                        <TextBlock Margin="0,12" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="耳蜗滤波倒谱系数" />
+                                    </Grid>
+                                </Border>
+                                <Border Width="120" Height="30" />
+                                <Border Width="120"
+                                        Height="150"
+                                        Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                        BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                        BorderThickness="3"
+                                        CornerRadius="{ThemeResource ControlCornerRadius}">
+                                    <Grid VerticalAlignment="Stretch">
+                                        <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                        <TextBlock Margin="0,36" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="GFCC" />
+                                        <TextBlock Margin="0,3" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                                            <Run Text="伽马音频频率" />
+                                            <LineBreak />
+                                            <Run Text="   倒谱系数" />
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                                <Border Width="120" Height="30" />
+                                <Border Width="120"
+                                        Height="150"
+                                        Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                        BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                        BorderThickness="3"
+                                        CornerRadius="{ThemeResource ControlCornerRadius}">
+                                    <Grid VerticalAlignment="Stretch">
+                                        <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                        <TextBlock Margin="0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="MFCC" />
+                                        <TextBlock Margin="0,12" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="梅尔频率倒谱系数" />
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Canvas Width="150">
+                                    <Line Stroke="{ThemeResource SystemFillColorSuccessBrush}"
+                                          StrokeThickness="3"
+                                          X1="0"
+                                          X2="150"
+                                          Y1="75"
+                                          Y2="165" />
+                                    <Line Stroke="{ThemeResource SystemFillColorCautionBrush}"
+                                          StrokeThickness="3"
+                                          X1="0"
+                                          X2="150"
+                                          Y1="260"
+                                          Y2="165" />
+                                    <Line Stroke="{ThemeResource SystemFillColorCriticalBrush}"
+                                          StrokeThickness="3"
+                                          X1="0"
+                                          X2="150"
+                                          Y1="440"
+                                          Y2="165" />
+                                    <Line Stroke="{ThemeResource SystemFillColorSuccessBrush}"
+                                          StrokeThickness="3"
+                                          X1="0"
+                                          X2="150"
+                                          Y1="75"
+                                          Y2="350" />
+                                    <Line Stroke="{ThemeResource SystemFillColorCautionBrush}"
+                                          StrokeThickness="3"
+                                          X1="0"
+                                          X2="150"
+                                          Y1="260"
+                                          Y2="350" />
+                                    <Line Stroke="{ThemeResource SystemFillColorCriticalBrush}"
+                                          StrokeThickness="3"
+                                          X1="0"
+                                          X2="150"
+                                          Y1="440"
+                                          Y2="350" />
+                                </Canvas>
+                            </StackPanel>
+                            <StackPanel>
+                                <Border Height="35" />
+                                <TextBlock Width="420" Margin="3" HorizontalTextAlignment="Center" Text="平均加权融合" />
+                                <Border Width="420"
+                                        Height="180"
+                                        Padding="3"
+                                        Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                        BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                        BorderThickness="3"
+                                        CornerRadius="{ThemeResource ControlCornerRadius}">
+                                    <StackPanel Margin="3" Orientation="Horizontal">
+                                        <Border Width="120"
+                                                Height="150"
+                                                Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                                BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                                BorderThickness="3"
+                                                CornerRadius="{ThemeResource ControlCornerRadius}">
+                                            <Grid VerticalAlignment="Stretch">
+                                                <TextBlock Margin="3" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="20" Text="⨉0.33" />
+                                                <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                                <TextBlock Margin="0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="CFCC" />
+                                                <TextBlock Margin="0,12" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="耳蜗滤波倒谱系数" />
+                                            </Grid>
+                                        </Border>
+                                        <FontIcon Glyph="&#xE710;" />
+                                        <Border Width="120"
+                                                Height="150"
+                                                Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                                BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                                BorderThickness="3"
+                                                CornerRadius="{ThemeResource ControlCornerRadius}">
+                                            <Grid VerticalAlignment="Stretch">
+                                                <TextBlock Margin="3" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="20" Text="⨉0.33" />
+                                                <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                                <TextBlock Margin="0,36" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="GFCC" />
+                                                <TextBlock Margin="0,3" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                                                    <Run Text="伽马音频频率" />
+                                                    <LineBreak />
+                                                    <Run Text="   倒谱系数" />
+                                                </TextBlock>
+                                            </Grid>
+                                        </Border>
+                                        <FontIcon Glyph="&#xE710;" />
+                                        <Border Width="120"
+                                                Height="150"
+                                                Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                                BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                                BorderThickness="3"
+                                                CornerRadius="{ThemeResource ControlCornerRadius}">
+                                            <Grid VerticalAlignment="Stretch">
+                                                <TextBlock Margin="3" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="20" Text="⨉0.34" />
+                                                <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                                <TextBlock Margin="0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="MFCC" />
+                                                <TextBlock Margin="0,12" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="梅尔频率倒谱系数" />
+                                            </Grid>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                                <Border Height="40" />
+                                <Border Width="420"
+                                        Height="180"
+                                        Padding="3"
+                                        Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                        BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                        BorderThickness="3"
+                                        CornerRadius="{ThemeResource ControlCornerRadius}">
+                                    <StackPanel Margin="3" Orientation="Horizontal">
+
+                                        <Border Width="120"
+                                                Height="150"
+                                                Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                                BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                                BorderThickness="3"
+                                                CornerRadius="{ThemeResource ControlCornerRadius}">
+                                            <Grid VerticalAlignment="Stretch">
+                                                <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                                <TextBlock Margin="0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="CFCC" />
+                                                <TextBlock Margin="0,12" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="耳蜗滤波倒谱系数" />
+                                            </Grid>
+                                        </Border>
+                                        <FontIcon Glyph="&#xE710;" />
+                                        <Border Width="120"
+                                                Height="150"
+                                                Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                                BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                                BorderThickness="3"
+                                                CornerRadius="{ThemeResource ControlCornerRadius}">
+                                            <Grid VerticalAlignment="Stretch">
+                                                <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                                <TextBlock Margin="0,36" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="GFCC" />
+                                                <TextBlock Margin="0,3" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                                                    <Run Text="伽马音频频率" />
+                                                    <LineBreak />
+                                                    <Run Text="   倒谱系数" />
+                                                </TextBlock>
+                                            </Grid>
+                                        </Border>
+                                        <FontIcon Glyph="&#xE710;" />
+                                        <Border Width="120"
+                                                Height="150"
+                                                Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                                BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                                BorderThickness="3"
+                                                CornerRadius="{ThemeResource ControlCornerRadius}">
+                                            <Grid VerticalAlignment="Stretch">
+                                                <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE928;" />
+                                                <TextBlock Margin="0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="MFCC" />
+                                                <TextBlock Margin="0,12" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="梅尔频率倒谱系数" />
+                                            </Grid>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                                <TextBlock Width="420" Margin="3" HorizontalTextAlignment="Center" Text="特征拼接融合" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+                <Grid Height="380" Margin="12,12,12,6" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{ThemeResource ControlCornerRadius}">
+                    <StackPanel Margin="100">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xF61F;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="语言信号" />
+                                </Grid>
+                            </Border>
+                            <Border Height="3">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="50"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE90B;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="预处理+预加重" />
+                                </Grid>
+                            </Border>
+                            <Border Height="3">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="50"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xF406;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="分帧" />
+                                </Grid>
+                            </Border>
+                            <Border Height="3">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="50"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xED1F;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="加窗+FFT" />
+                                </Grid>
+                            </Border>
+                            <Border Height="3">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="50"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xEAFC;" />
+                                    <TextBlock Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="计算谱线能量" />
+                                </Grid>
+                            </Border>
+                            <Border Height="3">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="50"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="" />
+                                    <TextBlock Margin="0,15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="Cochlear滤波" />
+                                </Grid>
+                            </Border>
+                            <Border Height="3">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="50"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE9D2;" />
+                                    <TextBlock Margin="0,15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="DCT离散余弦变换" />
+                                </Grid>
+                            </Border>
+                            <Border Height="3">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="50"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="&#xE9D9;" />
+                                    <TextBlock Margin="0,15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="倒谱分析" />
+                                </Grid>
+                            </Border>
+                            <Border Height="3">
+                                <Line Stroke="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                      StrokeThickness="3"
+                                      X1="0"
+                                      X2="50"
+                                      Y1="0"
+                                      Y2="0" />
+                            </Border>
+                            <Border Width="120"
+                                    Height="150"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}">
+                                <Grid VerticalAlignment="Stretch">
+                                    <FontIcon Margin="0,-15,0,0" VerticalAlignment="Center" FontSize="50" Glyph="" />
+                                    <TextBlock Margin="0,24" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="CFCC" />
+                                    <TextBlock Margin="0,3" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                                        <Run Text="耳蜗滤波倒谱系数" />
+                                    </TextBlock>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+                <Grid Height="500" Margin="12,12,12,6" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{ThemeResource ControlCornerRadius}">
+                    <Border Width="700"
+                            Height="260"
+                            Margin="100"
+                            Background="{ThemeResource CustomBoxSolidColorBrush}"
+                            BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                            BorderThickness="3"
+                            CornerRadius="{ThemeResource ControlCornerRadius}">
+                        <Canvas Margin="0">
+                            <!--  输入层  -->
+                            <Ellipse Canvas.Left="50" Canvas.Top="100" Width="50" Height="50" Fill="{ThemeResource SystemFillColorAttentionBrush}" />
+                            <TextBlock Canvas.Left="60" Canvas.Top="113" Foreground="{ThemeResource TextOnAccentFillColorSecondaryBrush}" Text="Input" />
+
+                            <!--  嵌入层  -->
+                            <Rectangle Canvas.Left="150" Canvas.Top="100" Width="100" Height="50" Fill="{ThemeResource SystemFillColorSuccessBrush}" />
+                            <TextBlock Canvas.Left="160" Canvas.Top="113" Foreground="{ThemeResource TextOnAccentFillColorSecondaryBrush}" Text="Embedding" />
+
+                            <!--  位置编码  -->
+                            <Rectangle Canvas.Left="300" Canvas.Top="100" Width="100" Height="50" Fill="{ThemeResource SystemFillColorCautionBrush}" />
+                            <TextBlock Canvas.Left="310" Canvas.Top="113" Foreground="{ThemeResource TextOnAccentFillColorSecondaryBrush}" Text="Pos Encoding" />
+
+                            <!--  Transformer 编码器层  -->
+                            <Rectangle Canvas.Left="450" Canvas.Top="50" Width="100" Height="50" Fill="{ThemeResource SystemFillColorCriticalBrush}" />
+                            <TextBlock Canvas.Left="455" Canvas.Top="63" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" Text="Encoder Layer" />
+                            <Rectangle Canvas.Left="450" Canvas.Top="150" Width="100" Height="50" Fill="{ThemeResource SystemFillColorCriticalBackgroundBrush}" />
+                            <TextBlock Canvas.Left="455" Canvas.Top="163" Text="Encoder Layer" />
+                            <TextBlock Canvas.Left="453" Canvas.Top="83" FontSize="12" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" Text="8 Heads | 160 FFN" />
+                            <TextBlock Canvas.Left="453" Canvas.Top="183" FontSize="12" Text="8 Heads | 160 FFN" />
+
+                            <!--  输出层  -->
+                            <Ellipse Canvas.Left="600" Canvas.Top="100" Width="50" Height="50" Fill="{ThemeResource SystemFillColorNeutralBrush}" />
+                            <TextBlock Canvas.Left="603" Canvas.Top="113" Text="Output" />
+
+                            <!--  输入层到嵌入层的连接  -->
+                            <Line Stroke="{ThemeResource SystemFillColorAttentionBrush}"
+                                  StrokeThickness="2"
+                                  X1="100"
+                                  X2="150"
+                                  Y1="125"
+                                  Y2="125" />
+
+                            <!--  嵌入层到位置编码的连接  -->
+                            <Line Stroke="{ThemeResource SystemFillColorAttentionBrush}"
+                                  StrokeThickness="2"
+                                  X1="250"
+                                  X2="300"
+                                  Y1="125"
+                                  Y2="125" />
+
+                            <!--  位置编码到Transformer 编码器层的连接  -->
+                            <Line Stroke="{ThemeResource SystemFillColorAttentionBrush}"
+                                  StrokeThickness="2"
+                                  X1="400"
+                                  X2="450"
+                                  Y1="125"
+                                  Y2="75" />
+                            <Line Stroke="{ThemeResource SystemFillColorAttentionBrush}"
+                                  StrokeThickness="2"
+                                  X1="400"
+                                  X2="450"
+                                  Y1="125"
+                                  Y2="175" />
+
+                            <!--  Transformer 编码器层到输出层的连接  -->
+                            <Line Stroke="{ThemeResource SystemFillColorAttentionBrush}"
+                                  StrokeThickness="2"
+                                  X1="550"
+                                  X2="600"
+                                  Y1="75"
+                                  Y2="125" />
+                            <Line Stroke="{ThemeResource SystemFillColorAttentionBrush}"
+                                  StrokeThickness="2"
+                                  X1="550"
+                                  X2="600"
+                                  Y1="175"
+                                  Y2="125" />
+                        </Canvas>
+                    </Border>
+                </Grid>
+
+
+                <ScrollViewer Margin="12,6" HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled" VerticalScrollBarVisibility="Disabled" VerticalScrollMode="Disabled">
+                    <StackPanel Orientation="Horizontal" />
+                </ScrollViewer>
+                <controls:WaveFormBox x:Name="waveFormBox"
+                                      Height="200"
+                                      DisplayMode="TimeDomain"
+                                      XAxisLabel="Time(s)"
+                                      XAxisTicks="10"
+                                      YAxisLabel=""
+                                      YAxisTicks="4" />
+                <controls:WaveFormBox x:Name="waveFormBox2"
+                                      DisplayMode="FrequencySpectrum"
+                                      XAxisLabel="Time(s)"
+                                      XAxisTicks="10"
+                                      YAxisLabel="Freq(Hz)"
+                                      YAxisTicks="8" />
+
+                <StackPanel Orientation="Horizontal">
+                    <controls:DataPlotBox x:Name="DataPlotBox2" Width="650" DisplayMode="FrequencySpectrumVisualization" XAxisTicks="5" YAxisTicks="4" />
+
+                </StackPanel>
+                <controls:WaveFormBox x:Name="waveFormBox3"
+                                      DisplayMode="FrequencySpectrum"
+                                      XAxisLabel="Time(s)"
+                                      XAxisTicks="10"
+                                      YAxisLabel="Freq(Hz)"
+                                      YAxisTicks="4" />
+                <StackPanel Orientation="Horizontal">
+                    <controls:DataPlotBox x:Name="DataPlotBox3" Width="650" XAxisTicks="5" YAxisTicks="4" />
+                    <controls:DataPlotBox x:Name="DataPlotBoxCochlear"
+                                          Width="650"
+                                          Height="400"
+                                          Margin="0,0,12,0"
+                                          DisplayMode="CochlearFilterBankVisualization"
+                                          XAxisLabel="Freq"
+                                          XAxisTicks="10"
+                                          YAxisLabel=""
+                                          YAxisTicks="4" />
+                </StackPanel>
+                <controls:WaveFormBox x:Name="waveFormBox4"
+                                      DisplayMode="FrequencySpectrum"
+                                      XAxisLabel="Time(s)"
+                                      XAxisTicks="10"
+                                      YAxisLabel="Freq(Hz)"
+                                      YAxisTicks="4" />
+
+                <StackPanel Orientation="Horizontal">
+                    <controls:DataPlotBox x:Name="DataPlotBox4" Width="650" XAxisTicks="5" YAxisTicks="4" />
+                    <controls:DataPlotBox x:Name="DataPlotBoxGammatone"
+                                          Width="650"
+                                          Height="400"
+                                          Margin="0,0,12,0"
+                                          DisplayMode="GammatoneFilterBankVisualization"
+                                          XAxisLabel="Freq"
+                                          XAxisTicks="10"
+                                          YAxisLabel=""
+                                          YAxisTicks="4" />
+                </StackPanel>
+
+                <controls:WaveFormBox x:Name="waveFormBox5"
+                                      DisplayMode="FrequencySpectrum"
+                                      XAxisLabel="Time(s)"
+                                      XAxisTicks="10"
+                                      YAxisLabel="Freq(Hz)"
+                                      YAxisTicks="4" />
+
+                <StackPanel Orientation="Horizontal">
+                    <controls:DataPlotBox x:Name="DataPlotBox5" Width="650" XAxisTicks="5" YAxisTicks="4" />
+                    <controls:DataPlotBox x:Name="DataPlotBox"
+                                          Width="650"
+                                          Height="400"
+                                          Margin="0,0,12,0"
+                                          DisplayMode="MelFilterBankVisualization"
+                                          XAxisLabel="Freq"
+                                          XAxisTicks="10"
+                                          YAxisLabel=""
+                                          YAxisTicks="4" />
+                    <StackPanel Margin="0,0,12,0">
+                        <ToggleButton x:Name="HammingWindowToggle" Margin="0,0,0,6" HorizontalAlignment="Stretch" Content="Hamming Window" IsEnabledChanged="HammingWindowToggle_IsEnabledChanged" />
+                        <ToggleButton x:Name="HmRateToggle" Margin="0,0,0,6" HorizontalAlignment="Stretch" Content="Hm Rate" IsEnabledChanged="HammingWindowToggle_IsEnabledChanged" />
+                        <NumberBox x:Name="HammingAlphaValue" MinWidth="128" ValueChanged="HammingAlphaValue_ValueChanged" Value="0.54" />
+                        <Slider Maximum="1" SmallChange="0.01" StepFrequency="0.01" Value="{x:Bind HammingAlphaValue.Value, Mode=TwoWay}" />
+                        <NumberBox x:Name="HammingBetaValue" ValueChanged="HammingAlphaValue_ValueChanged" Value="0.46" />
+                        <Slider Maximum="1" SmallChange="0.01" StepFrequency="0.01" Value="{x:Bind HammingBetaValue.Value, Mode=TwoWay}" />
+                        <NumberBox x:Name="HmRateValue" ValueChanged="HammingAlphaValue_ValueChanged" Value="0.1" />
+                        <Slider Maximum="1" SmallChange="0.01" StepFrequency="0.01" Value="{x:Bind HmRateValue.Value, Mode=TwoWay}" />
+                        <Button MinWidth="128" HorizontalAlignment="Stretch" Click="Button_Click_1" Content="Set" />
+                    </StackPanel>
+                </StackPanel>
+
+                <controls:WaveFormBox x:Name="waveFormBox6"
+                                      DisplayMode="FrequencySpectrum"
+                                      XAxisLabel="Time(s)"
+                                      XAxisTicks="10"
+                                      YAxisLabel="Freq(Hz)"
+                                      YAxisTicks="4" />
+                <controls:WaveFormBox x:Name="waveFormBox7"
+                                      DisplayMode="FrequencySpectrum"
+                                      XAxisLabel="Time(s)"
+                                      XAxisTicks="10"
+                                      YAxisLabel="Freq(Hz)"
+                                      YAxisTicks="4" />
+
+
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Margin="72,12"
+                VerticalAlignment="Top"
+                Background="{ThemeResource CustomBoxSolidColorBrush}"
+                BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                BorderThickness="3"
+                CornerRadius="{ThemeResource ControlCornerRadius}">
+            <StackPanel Orientation="Horizontal">
+                <Button Margin="3" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="Button_Click" Content="Load" />
+                <Button x:Name="SetFolderPath" Margin="3" Click="SetFolderPath_Click" Content="Load folder" />
+                <TextBox x:Name="FolderPathText" Margin="3" Text="{x:Bind FolderPath, Mode=TwoWay}" />
+                <Button x:Name="Processing" Margin="3" Click="Processing_Click" Content="Fast Processing" />
+                <Button x:Name="ProcessingPre" Margin="3" Click="ProcessingPre_Click" Content="ProcessingPre" />
+                <Button x:Name="Characteristicing" Margin="3" Click="Characteristicing_Click" Content="Characteristicing" />
+                <ComboBox x:Name="CharacteristicingMode" Margin="3">
+                    <ComboBoxItem>CFCC</ComboBoxItem>
+                    <ComboBoxItem>GFCC</ComboBoxItem>
+                    <ComboBoxItem>MFCC</ComboBoxItem>
+                    <ComboBoxItem>SDC</ComboBoxItem>
+                    <ComboBoxItem>WeightedFusion</ComboBoxItem>
+                    <ComboBoxItem>FeatureSplicingFusion</ComboBoxItem>
+                </ComboBox>
+                <Button x:Name="DebugData" Margin="3" Click="DebugData_Click" Content="LoadDebugData" />
+            </StackPanel>
+        </Border>
+
+        <ProgressBar x:Name="ProcessingCharacteristicingProgressBar" VerticalAlignment="Bottom" Value="0" />
+    </Grid>
+</Page>

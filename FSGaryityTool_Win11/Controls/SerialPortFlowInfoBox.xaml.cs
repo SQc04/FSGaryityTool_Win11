@@ -1,9 +1,12 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace FSGaryityTool_Win11.Controls
 {
@@ -23,13 +26,46 @@ namespace FSGaryityTool_Win11.Controls
         Right
     }
 
-    public sealed partial class SerialPortFlowInfoBox : UserControl
+    public sealed partial class SerialPortFlowInfoBox : UserControl, INotifyPropertyChanged
     {
         private DispatcherTimer _timer;
-        private List<(bool Value, DateTime Timestamp)> _logicalValues;
+        private Queue<(bool Value, DateTime Timestamp)> _logicalValues;
         private double _canvasHeight;
         private double _canvasWidth;
-        private int LogicAnalyzerBoxTimems = 200;
+        private int LogicAnalyzerBoxTimems = 6;
+
+        private PointCollection _oscilloscopePoints = new PointCollection();
+        public PointCollection OscilloscopePoints
+        {
+            get => _oscilloscopePoints;
+            set
+            {
+                if (_oscilloscopePoints != value)
+                {
+                    _oscilloscopePoints = value;
+                    OnPropertyChanged(nameof(OscilloscopePoints));
+                }
+            }
+        }
+
+        private PointCollection _oscilloscopePolygonPoints = new PointCollection();
+        public PointCollection OscilloscopePolygonPoints
+        {
+            get => _oscilloscopePolygonPoints;
+            set
+            {
+                if (_oscilloscopePolygonPoints != value)
+                {
+                    _oscilloscopePolygonPoints = value;
+                    OnPropertyChanged(nameof(OscilloscopePolygonPoints));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
 
         public SerialPortInfoName InfoName
         {
@@ -58,7 +94,7 @@ namespace FSGaryityTool_Win11.Controls
         private static void OnLogicAnalyzerBoxHorizontalChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (SerialPortFlowInfoBox)d;
-            if((SerialPortFlowInfoLogicAnalyzerBoxHorizontal)e.NewValue == SerialPortFlowInfoLogicAnalyzerBoxHorizontal.Left)
+            if ((SerialPortFlowInfoLogicAnalyzerBoxHorizontal)e.NewValue == SerialPortFlowInfoLogicAnalyzerBoxHorizontal.Left)
             {
                 //control.InfoBorder.HorizontalAlignment = HorizontalAlignment.Right;
             }
@@ -94,12 +130,24 @@ namespace FSGaryityTool_Win11.Controls
             get => (bool)GetValue(LogicAnalyzerProperty);
             set => SetValue(LogicAnalyzerProperty, value);
         }
+        private void UserControl_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            VisualStateManager.GoToState(this, "PointerEntered", true);
+        }
+
+        private void UserControl_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            VisualStateManager.GoToState(this, "PointerExited", true);
+        }
 
         public SerialPortFlowInfoBox()
         {
             this.InitializeComponent();
             InfoNameTextBlock.DataContext = this;
-            _logicalValues = new List<(bool, DateTime)>();
+            _logicalValues = new Queue<(bool, DateTime)>();
+
+            this.ActualThemeChanged += OnActualThemeChanged;
+
             UpdateMaxValues();
             _timer = new DispatcherTimer
             {
@@ -120,7 +168,7 @@ namespace FSGaryityTool_Win11.Controls
             var control = d as SerialPortFlowInfoBox;
             bool newValue = (bool)e.NewValue;
             control.FsBorderIsChecked(newValue ? 1 : 0, control.InfoBorder, control.InfoNameTextBlock);
-            control.UpdateOscilloscope(newValue); // ��������ͼ��
+            control.UpdateOscilloscope(newValue); // 更新示波器图像
         }
 
         private static void OnLogicAnalyzerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -133,26 +181,36 @@ namespace FSGaryityTool_Win11.Controls
         private void UpdateMaxValues()
         {
             DateTime now = DateTime.Now;
-            DateTime cutoffTime = now.AddSeconds(-LogicAnalyzerBoxMaxTime);
-
-            // ������ڵ��߼�ֵ
-            _logicalValues.RemoveAll(value => value.Timestamp < cutoffTime);
+            RemoveExpiredLogicalValues(now);
         }
 
         private void UpdateOscilloscope(bool? newValue = null)
         {
             DateTime now = DateTime.Now;
-            if (_logicalValues.Count > 0)
+            // 添加新值
+            _logicalValues.Enqueue((newValue ?? LogicalValue, now));
+
+            RemoveExpiredLogicalValues(now);
+            RedrawCanvas(now);
+        }
+        private void RemoveExpiredLogicalValues(DateTime now)
+        {
+            DateTime cutoffTime = now.AddSeconds(-LogicAnalyzerBoxMaxTime);
+
+            // 只要队列中有两个及以上点，并且第2个点也超时，才移除第1个点
+            while (_logicalValues.Count > 1)
             {
-                // ���ӵ�ǰֵ
-                _logicalValues.Add((newValue ?? _logicalValues[^1].Value, now));
+                var first = _logicalValues.Peek();
+                var second = _logicalValues.ToArray()[1];
+                if (second.Timestamp < cutoffTime)
+                {
+                    _logicalValues.Dequeue();
+                }
+                else
+                {
+                    break;
+                }
             }
-            else
-            {
-                // ���ӳ�ʼֵ
-                _logicalValues.Add((LogicalValue, now));
-            }
-            RedrawCanvas();
         }
 
         private void UpdateLogicAnalyzer(bool isEnabled)
@@ -176,52 +234,84 @@ namespace FSGaryityTool_Win11.Controls
         {
             _canvasHeight = e.NewSize.Height;
             _canvasWidth = e.NewSize.Width;
-            RedrawCanvas();
+            DateTime now = DateTime.Now;
+            RedrawCanvas(now);
         }
 
         private double startPront = 0;//_canvasWidth
         private double strokeThickness = 2;
 
-        private void RedrawCanvas()
+
+        private void RedrawCanvas(DateTime now)
         {
-            OscilloscopeCanvas.Children.Clear();
-            if (_logicalValues.Count == 0)
-            {
-                return;
-            }
+            double totalTimeSpan = LogicAnalyzerBoxMaxTime * 1000; // 转换为毫秒
 
-            var path = new Path
+            Task.Run(() =>
             {
-                Stroke = (Brush)Application.Current.Resources["AccentTextFillColorTertiaryBrush"],
-                StrokeThickness = strokeThickness
-            };
-            var geometry = new PathGeometry();
-            var figure = new PathFigure { StartPoint = new Windows.Foundation.Point(_canvasWidth, _logicalValues[0].Value ? 0 : _canvasHeight) };
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    if (_logicalValues.Count == 0)
+                    {
 
-            DateTime startTime = _logicalValues[0].Timestamp;
-            for (int i = 1; i < _logicalValues.Count; i++)
-            {
-                double elapsedTime = (_logicalValues[i].Timestamp - startTime).TotalMilliseconds;
-                double x = _canvasWidth - (elapsedTime / (LogicAnalyzerBoxMaxTime * 1000) * _canvasWidth);
-                double y = _logicalValues[i].Value ? 0 : _canvasHeight;
-                figure.Segments.Add(new LineSegment { Point = new Windows.Foundation.Point(x, y) });
-            }
+                        OscilloscopePoints?.Clear();
+                        OscilloscopePolygonPoints?.Clear();
+                        return;
+                    }
+                    RemoveExpiredLogicalValues(now);
+                    if (_logicalValues.Count == 0)
+                    {
+                        return;
+                    }
+                });
 
-            geometry.Figures.Add(figure);
-            path.Data = geometry;
-            OscilloscopeCanvas.Children.Add(path);
+                var logicalValuesSnapshot = _logicalValues.ToArray();
+
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    OscilloscopePoints.Clear();
+                    OscilloscopePolygonPoints.Clear();
+                    OscilloscopePolygonPoints.Add(new Windows.Foundation.Point(_canvasWidth, _canvasHeight));
+                    OscilloscopePolygonPoints.Add(new Windows.Foundation.Point(0, _canvasHeight));
+                });
+
+                foreach (var value in logicalValuesSnapshot)
+                {
+                    double elapsedTime = (now - value.Timestamp).TotalMilliseconds;
+                    double x = _canvasWidth - (elapsedTime / totalTimeSpan * _canvasWidth);
+                    double y = value.Value ? 0 : _canvasHeight;
+
+                    if (x >= 0 && x <= _canvasWidth)
+                    {
+                        DispatcherQueue.TryEnqueue(() =>
+                        {
+                            OscilloscopePoints.Add(new Windows.Foundation.Point(x, y));
+                            OscilloscopePolygonPoints.Add(new Windows.Foundation.Point(x, y));
+                        });
+                    }
+                }
+            });
         }
-
+        
         private void FsBorderIsChecked(int isChecked, Border border, TextBlock textBlock)
         {
             SolidColorBrush foregroundColor = (SolidColorBrush)Application.Current.Resources["TextFillColorPrimaryBrush"];
             SolidColorBrush foreCheckColor = (SolidColorBrush)Application.Current.Resources["TextOnAccentFillColorPrimaryBrush"];
 
             SolidColorBrush backgroundColor = (SolidColorBrush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
-            SolidColorBrush backCheckColor = (SolidColorBrush)Application.Current.Resources["SystemFillColorAttentionBrush"];
+            SolidColorBrush backCheckColor = (SolidColorBrush)Application.Current.Resources["AccentFillColorDefaultBrush"];
 
             border.Background = isChecked == 1 ? backCheckColor : backgroundColor;
             textBlock.Foreground = isChecked == 1 ? foreCheckColor : foregroundColor;
+        }
+
+        private void OnActualThemeChanged(FrameworkElement sender, object args)
+        {
+            FsBorderIsChecked(LogicalValue ? 1 : 0, InfoBorder, InfoNameTextBlock);
+        }
+
+        private void ClearSerialInfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            _logicalValues.Clear();
         }
     }
 }

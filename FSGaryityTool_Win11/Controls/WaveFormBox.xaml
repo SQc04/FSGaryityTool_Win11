@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="FSGaryityTool_Win11.Controls.WaveFormBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:FSGaryityTool_Win11.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Color x:Key="SystemControlBackgroundLightColor">#90FFFFFF</Color>
+            <Color x:Key="SystemControlBackgroundDarkColor">#44252525</Color>
+
+            <Color x:Key="SystemBorderBrushLightColor">#15252525</Color>
+            <Color x:Key="SystemBorderBrushDarkColor">#15FFFFFF</Color>
+
+            <Color x:Key="RxBoxButtonBorderBackgroundLightColor">#1F252525</Color>
+            <Color x:Key="RxBoxButtonBorderBackgroundDarkColor">#248F8F8F</Color>
+
+            <Storyboard x:Name="PointerEnteredStoryboard">
+                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ClearSerialInfoButton" Storyboard.TargetProperty="Visibility">
+                    <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                        <DiscreteObjectKeyFrame.Value>
+                            <Visibility>Visible</Visibility>
+                        </DiscreteObjectKeyFrame.Value>
+                    </DiscreteObjectKeyFrame>
+                </ObjectAnimationUsingKeyFrames>
+            </Storyboard>
+            <Storyboard x:Name="PointerExitedStoryboard">
+                <ObjectAnimationUsingKeyFrames BeginTime="0:0:0" Storyboard.TargetName="ClearSerialInfoButton" Storyboard.TargetProperty="Visibility">
+                    <DiscreteObjectKeyFrame KeyTime="0:0:0.25">
+                        <DiscreteObjectKeyFrame.Value>
+                            <Visibility>Collapsed</Visibility>
+                        </DiscreteObjectKeyFrame.Value>
+                    </DiscreteObjectKeyFrame>
+                </ObjectAnimationUsingKeyFrames>
+            </Storyboard>
+
+            <ResourceDictionary.ThemeDictionaries>
+                <!--  浅色模式的AcrylicBrush  -->
+                <ResourceDictionary x:Key="Light">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundLightColor}" TintColor="#FCFCFC" TintOpacity="0.0" />
+                    <SolidColorBrush x:Key="CustomBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundLightColor}" />
+                    <SolidColorBrush x:Key="CustomBoxElevationBorderBrush" Color="{StaticResource SystemBorderBrushLightColor}" />
+                </ResourceDictionary>
+                <!--  深色模式的AcrylicBrush  -->
+                <ResourceDictionary x:Key="Dark">
+                    <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundDarkColor}" TintColor="#2C2C2C" TintOpacity="0.15" />
+                    <SolidColorBrush x:Key="CustomBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundDarkColor}" />
+                    <SolidColorBrush x:Key="CustomBoxElevationBorderBrush" Color="{StaticResource SystemBorderBrushDarkColor}" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Border Background="{ThemeResource CustomBoxSolidColorBrush}" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{StaticResource ControlCornerRadius}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Border x:Name="WaveFormGrid" Grid.Row="1" Grid.Column="1" Margin="6" />
+                <Image x:Name="WaveFormImage" Grid.Row="1" Grid.Column="1" Margin="6" Stretch="Fill" />
+                <Canvas x:Name="SoundCanvas" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="6" />
+                <Grid x:Name="DataPlotXtext" Grid.Row="2" Grid.Column="1" Margin="0,0,0,0">
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="HorizontalTextAlignment" Value="Left" />
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions />
+                </Grid>
+                <Grid x:Name="DataPlotYtext" Grid.Row="1" Grid.Column="0" Margin="6,0,0,0">
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.RowDefinitions />
+                </Grid>
+
+                <TextBlock Text="{x:Bind XAxisLabel}" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center"/>
+                <TextBlock Text="{x:Bind YAxisLabel}" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                <Grid x:Name="WaveFormInfo" Grid.Row="1" Grid.Column="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid x:Name="EnergyScaleGrid" Grid.Column="0">
+                        <Grid.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </Grid.Resources>
+                    </Grid>
+                    <Rectangle x:Name="ColorScaleRectangle" Grid.Column="1" Width="24" Margin="6" />
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

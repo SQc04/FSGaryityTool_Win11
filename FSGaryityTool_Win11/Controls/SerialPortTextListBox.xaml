@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <UserControl x:Class="FSGaryityTool_Win11.Controls.SerialPortTextListBox"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,33 +6,39 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="using:FSGaryityTool_Win11.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
              mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
             <Color x:Key="SystemControlBackgroundLightColor">#90FFFFFF</Color>
             <Color x:Key="SystemControlBackgroundDarkColor">#44252525</Color>
 
+            <Color x:Key="SystemBorderBrushLightColor">#15252525</Color>
+            <Color x:Key="SystemBorderBrushDarkColor">#15FFFFFF</Color>
+
             <Color x:Key="RxBoxButtonBorderBackgroundLightColor">#1F252525</Color>
             <Color x:Key="RxBoxButtonBorderBackgroundDarkColor">#248F8F8F</Color>
 
-            <x:String x:Key="RxBoxButtonStackPanelOpacityChangeDuration">00:00:00.2</x:String>
+            <x:String x:Key="BoxButtonStackPanelOpacityChangeDuration">00:00:00.2</x:String>
             <Storyboard x:Key="FadeInStoryboard">
-                <DoubleAnimation Storyboard.TargetName="RxBoxButtonStackPanel" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="{StaticResource RxBoxButtonStackPanelOpacityChangeDuration}" />
+                <DoubleAnimation Storyboard.TargetName="RxBoxButtonStackPanel" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="{StaticResource BoxButtonStackPanelOpacityChangeDuration}" />
             </Storyboard>
             <ResourceDictionary.ThemeDictionaries>
                 <!--  浅色模式的AcrylicBrush  -->
                 <ResourceDictionary x:Key="Light">
                     <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundLightColor}" TintColor="#FCFCFC" TintOpacity="0.0" />
                     <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundLightColor}" />
-
                     <SolidColorBrush x:Key="CustomRxBorderSolidColorBrush" Color="{StaticResource RxBoxButtonBorderBackgroundLightColor}" />
+                    <SolidColorBrush x:Key="CustomBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundLightColor}" />
+                    <SolidColorBrush x:Key="CustomBoxElevationBorderBrush" Color="{StaticResource SystemBorderBrushLightColor}" />
                 </ResourceDictionary>
                 <!--  深色模式的AcrylicBrush  -->
                 <ResourceDictionary x:Key="Dark">
                     <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="{StaticResource SystemControlBackgroundDarkColor}" TintColor="#2C2C2C" TintOpacity="0.15" />
                     <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundDarkColor}" />
-
                     <SolidColorBrush x:Key="CustomRxBorderSolidColorBrush" Color="{StaticResource RxBoxButtonBorderBackgroundDarkColor}" />
+                    <SolidColorBrush x:Key="CustomBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundDarkColor}" />
+                    <SolidColorBrush x:Key="CustomBoxElevationBorderBrush" Color="{StaticResource SystemBorderBrushDarkColor}" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
@@ -52,47 +58,66 @@
                 BorderThickness="3"
                 CornerRadius="6"
                 Opacity="1">
-            <ListView x:Name="RxListView" Margin="3" BorderThickness="0" RightTapped="RXListView_RightTapped">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="local:DataItem">
-                        <Grid Margin="0,3,0,6">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
+            <Border.BackgroundTransition>
+                <BrushTransition />
+            </Border.BackgroundTransition>
+            <ScrollViewer>
+                <Grid>
+                    <!--
+                    <ItemsRepeater x:Name="TextListBoxItemsRepeater">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="local:CharItem">
+                                <Border Padding="0" Background="{x:Bind IsSelected, Converter={StaticResource SelectionBrushConverter}}" BorderBrush="Transparent" BorderThickness="0">
+                                    <Grid>
+                                        <TextBlock FontFamily="Consolas" FontSize="16" Text="{x:Bind Char}" />
+                                        <Rectangle Width="2" Height="18" HorizontalAlignment="Left" Fill="Black" Visibility="{x:Bind IsCaret, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>                    -->
+                    <ListView x:Name="RxListView" Margin="3" BorderThickness="0" RightTapped="RXListView_RightTapped">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="local:DataItem">
+                                <Grid Margin="0,3,0,6">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Row="0"
-                                       Grid.Column="0"
-                                       Height="18"
-                                       Margin="0,0,10,0"
-                                       VerticalAlignment="Top"
-                                       Text="{x:Bind Timesr}" />
-                            <TextBlock Grid.Row="0"
-                                       Grid.Column="1"
-                                       Height="auto"
-                                       Margin="0,0,10,0"
-                                       HorizontalAlignment="Stretch"
-                                       IsTextSelectionEnabled="True"
-                                       PointerPressed="RxstrTextBlock_PointerPressed"
-                                       SelectionHighlightColor="{ThemeResource AccentTextFillColorTertiaryBrush}"
-                                       Text="{x:Bind Rxstr}"
-                                       TextWrapping="Wrap" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.ItemContainerTransitions>
-                    <TransitionCollection />
-                </ListView.ItemContainerTransitions>
-            </ListView>
-
+                                    <TextBlock Grid.Row="0"
+                                               Grid.Column="0"
+                                               Height="18"
+                                               Margin="0,0,10,0"
+                                               VerticalAlignment="Top"
+                                               Text="{x:Bind Timesr}" />
+                                    <TextBlock Grid.Row="0"
+                                               Grid.Column="1"
+                                               Height="auto"
+                                               Margin="0,0,10,0"
+                                               HorizontalAlignment="Stretch"
+                                               IsTextSelectionEnabled="True"
+                                               PointerPressed="RxstrTextBlock_PointerPressed"
+                                               SelectionHighlightColor="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                               Text="{x:Bind Rxstr}"
+                                               TextWrapping="Wrap" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerTransitions>
+                            <TransitionCollection />
+                        </ListView.ItemContainerTransitions>
+                    </ListView>
+                </Grid>
+            </ScrollViewer>
         </Border>
 
         <StackPanel x:Name="RxBoxButtonStackPanel"
@@ -103,6 +128,9 @@
                     Background="{ThemeResource CustomRxBorderSolidColorBrush}"
                     CornerRadius="{ThemeResource ControlCornerRadius}"
                     Orientation="Horizontal">
+            <StackPanel.BackgroundTransition>
+                <BrushTransition />
+            </StackPanel.BackgroundTransition>
             <ToggleButton Width="32" Height="32" Margin="2" Background="Transparent" BorderBrush="Transparent">
                 <Grid>
                     <FontIcon Margin="-5,-6,0,0" VerticalAlignment="Top" FontSize="12" Glyph="&#xE943;" />
@@ -113,25 +141,120 @@
                 <FontIcon Margin="-112" FontSize="16" Glyph="&#xE917;" />
             </ToggleButton>
             <Button Width="32" Height="32" Margin="2" Background="Transparent" BorderBrush="Transparent">
-                <FontIcon Margin="-112" FontSize="16" Glyph="&#xE74E;" />
-            </Button>
-            <Button Width="32" Height="32" Margin="2" Background="Transparent" BorderBrush="Transparent">
                 <FontIcon Margin="-112" FontSize="16" Glyph="&#xE74D;" />
             </Button>
+            <Button x:Name="BoxSettingsButton"
+                    Width="35"
+                    Height="32"
+                    Margin="2,2,-4,2"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    PointerEntered="BoxSettingsButton_PointerEntered"
+                    PointerExited="BoxSettingsButton_PointerExited">
+                <Button.Flyout>
+                    <Flyout Placement="BottomEdgeAlignedRight">
+                        <Grid Margin="-9,-8">
+                            <StackPanel>
+                                <StackPanel.Resources>
+                                    <Style TargetType="toolkit:Segmented">
+                                        <Setter Property="Margin" Value="3" />
+                                        <Setter Property="BorderThickness" Value="3" />
+                                        <Setter Property="Padding" Value="4" />
+                                        <Setter Property="BorderBrush" Value="{ThemeResource CustomBoxElevationBorderBrush}" />
+                                        <Setter Property="Background" Value="Transparent" />
+                                    </Style>
+                                    <Style TargetType="toolkit:SegmentedItem" />
+
+                                    <Style TargetType="FontIcon">
+                                        <Setter Property="Margin" Value="-5,0" />
+                                    </Style>
+                                </StackPanel.Resources>
+                                <toolkit:Segmented>
+                                    <toolkit:SegmentedItem>
+                                        <FontIcon Glyph="&#xE8BC;" />
+                                    </toolkit:SegmentedItem>
+                                    <toolkit:SegmentedItem>
+                                        <FontIcon Glyph="&#xE700;" />
+                                    </toolkit:SegmentedItem>
+                                    <toolkit:SegmentedItem>
+                                        <Grid>
+                                            <FontIcon Margin="-5,-6,0,0" VerticalAlignment="Top" FontSize="15" Glyph="&#xE8E4;" />
+                                            <TextBlock Margin="-12,0,-10,-7" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" Text="HEX" />
+                                        </Grid>
+                                    </toolkit:SegmentedItem>
+                                </toolkit:Segmented>
+
+                                <toolkit:Segmented>
+                                    <toolkit:SegmentedItem>
+                                        <FontIcon Glyph="&#xE8E4;" />
+                                    </toolkit:SegmentedItem>
+                                    <toolkit:SegmentedItem>
+                                        <FontIcon Glyph="&#xE8E3;" />
+                                    </toolkit:SegmentedItem>
+                                    <toolkit:SegmentedItem>
+                                        <FontIcon Glyph="&#xE8E2;" />
+                                    </toolkit:SegmentedItem>
+                                </toolkit:Segmented>
+                            </StackPanel>
+                        </Grid>
+                    </Flyout>
+                </Button.Flyout>
+                <AnimatedIcon x:Name="SettingsAnimatedIcon" Margin="-6,-6,-3,-6" AnimatedIcon.State="NormalOn" RenderTransformOrigin="0.5, 0.5">
+                    <AnimatedIcon.Source>
+                        <animatedvisuals:AnimatedSettingsVisualSource />
+                    </AnimatedIcon.Source>
+                    <AnimatedIcon.FallbackIconSource>
+                        <SymbolIconSource Symbol="Setting" />
+                    </AnimatedIcon.FallbackIconSource>
+                </AnimatedIcon>
+            </Button>
             <Button x:Name="BoxMenuButton"
-                          Width="32"
-                          Height="32"
-                          Margin="2"
-                          Background="Transparent"
-                          BorderBrush="Transparent"
-                          PointerEntered="BoxMenuButton_PointerEntered"
-                          PointerExited="BoxMenuButton_PointerExited">
-                <AnimatedIcon x:Name="SearchAnimatedIcon" Margin="-6">
+                    Width="35"
+                    Height="32"
+                    Margin="2,2,-4,2"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    PointerEntered="BoxMenuButton_PointerEntered"
+                    PointerExited="BoxMenuButton_PointerExited">
+                <Button.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedRight">
+                        <MenuFlyoutItem Text="Copy">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8C8;" />
+                            </MenuFlyoutItem.Icon>
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="C" Modifiers="Control" />
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Copy Time">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE823;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Copy Data">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8A4;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem Text="Save All Data">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE74E;" />
+                            </MenuFlyoutItem.Icon>
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="S" Modifiers="Control" />
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+
+                    </MenuFlyout>
+
+                </Button.Flyout>
+                <AnimatedIcon x:Name="SearchAnimatedIcon" Margin="-6,-6,-3,-6" AnimatedIcon.State="NormalOn" RenderTransformOrigin="0.5, 0.5">
                     <AnimatedIcon.Source>
                         <animatedvisuals:AnimatedChevronDownSmallVisualSource />
                     </AnimatedIcon.Source>
                     <AnimatedIcon.FallbackIconSource>
-                        <SymbolIconSource Symbol="Find" />
+                        <SymbolIconSource Symbol="Setting" />
                     </AnimatedIcon.FallbackIconSource>
                 </AnimatedIcon>
             </Button>
@@ -163,7 +286,7 @@
                                              Storyboard.TargetProperty="Opacity"
                                              From="1"
                                              To="0"
-                                             Duration="{StaticResource RxBoxButtonStackPanelOpacityChangeDuration}" />
+                                             Duration="{StaticResource BoxButtonStackPanelOpacityChangeDuration}" />
                         </Storyboard>
                     </VisualTransition>
                     <VisualTransition GeneratedDuration="0:0:0.2" From="Narrow" To="Wide">
@@ -173,7 +296,7 @@
                                              Storyboard.TargetProperty="Opacity"
                                              From="1"
                                              To="0"
-                                             Duration="{StaticResource RxBoxButtonStackPanelOpacityChangeDuration}" />
+                                             Duration="{StaticResource BoxButtonStackPanelOpacityChangeDuration}" />
                         </Storyboard>
                     </VisualTransition>
                 </VisualStateGroup.Transitions>

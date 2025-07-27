@@ -1,4 +1,4 @@
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using System;
@@ -119,7 +119,14 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
 
         var startPage = new List<string>()         //新建字符串
         {
-            Page1.LanguageText("serialPort"), Page1.LanguageText("download Flash"), Page1.LanguageText("keyboard"), Page1.LanguageText("mouse"), "FANControl", "CameraControl"//, ""
+            Page1.LanguageText("serialPort"), 
+            Page1.LanguageText("download Flash"), 
+            Page1.LanguageText("keyboard"), 
+            Page1.LanguageText("mouse"), 
+            "FANControl", 
+            "CameraControl",
+            "AudioControl",
+            "LiveControl"//, ""
         };
         StartPageCombobox.ItemsSource = startPage;          //将字符串添加到选择框
         DefaultStartPage = DefaultTomlStartPage switch
@@ -131,6 +138,8 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
             3 => Page1.LanguageText("mouse"),
             4 => "FANControl",
             5 => "CameraControl",
+            6 => "AudioControl",
+            7 => "LiveControl",
             _ => DefaultStartPage
         };
         //else if (DefaultTomlSTARTPage is 5) DefaultSTARTPage = "";
@@ -255,6 +264,8 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
             var item when item == Page1.LanguageText("mouse") => "3",
             var item when item == "FANControl" => "4",
             var item when item == "CameraControl" => "5",
+            var item when item == "AudioControl" => "6",
+            var item when item == "LiveControl" => "7",
             _ => SettingsCoreServices.GetStartPageSetting()
         };
 

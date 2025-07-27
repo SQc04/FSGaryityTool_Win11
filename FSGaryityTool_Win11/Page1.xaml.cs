@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +22,7 @@ using Windows.System;
 using System.ComponentModel;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static FSGaryityTool_Win11.Page1;
+using FSGaryityTool_Win11.Controls;
 
 namespace FSGaryityTool_Win11;
 
@@ -71,7 +72,7 @@ public class ComDataItem
 }
 */
 
-public sealed partial class Page1 : Page
+public sealed partial class Page1 : Page, INotifyPropertyChanged
 {
     public static string Rxpstr { get; set; }
 
@@ -152,7 +153,7 @@ public sealed partial class Page1 : Page
 
     private ITaskbarList3 _taskbarInstance;
 
-    private DispatcherTimer _resizeTimer;
+    private DispatcherTimer _resizeTimer; 
 
     public Page1()
     {
@@ -169,6 +170,12 @@ public sealed partial class Page1 : Page
         //_resizeTimer = new DispatcherTimer();
         //_resizeTimer.Interval = TimeSpan.FromMilliseconds(500);
         //_resizeTimer.Tick += ResizeTimer_Tick;
+        SerialPortFlowInfoBoxStackPanel.DataContext = this;
+        SerialPortFlowInfoBoxDCD.DataContext = this;
+        SerialPortFlowInfoBoxRING.DataContext = this;
+        SerialPortFlowInfoBoxDSR.DataContext = this;
+        SerialPortFlowInfoBoxCTS.DataContext = this;
+        SerialPortIsConnect = false;
     }
 
     public static string LanguageText(string laugtext)
@@ -381,23 +388,81 @@ public sealed partial class Page1 : Page
 
     //public event SerialDataReceivedEventHandler DataReceived;
 
-    public void SerialPortConnect(string portName ,int baudRate ,string parity ,string stopBits ,int dataBits,int timeout, string encoding)
+    public void SerialPortConnect(string portName ,int baudRate ,Parity parity ,StopBits stopBits ,int dataBits,int timeout, Encoding encoding)
     {
         CommonRes.SerialPort.PortName = portName;
         CommonRes.SerialPort.BaudRate = baudRate;
-        CommonRes.SerialPort.Parity = (Parity)Enum.Parse(typeof(Parity), parity);        //校验位
-        CommonRes.SerialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), stopBits); //停止位
+        CommonRes.SerialPort.Parity = parity;        //校验位
+        CommonRes.SerialPort.StopBits = stopBits; //停止位
         CommonRes.SerialPort.DataBits = dataBits;                                //数据位
         CommonRes.SerialPort.ReadTimeout = timeout;
 
         //_SerialPort.DtrEnable = true;                                                                             //启用数据终端就绪信息
 
-        CommonRes.SerialPort.Encoding = Encoding.GetEncoding(encoding);
+        CommonRes.SerialPort.Encoding = encoding;
         CommonRes.SerialPort.ReceivedBytesThreshold = 1;
 
         CommonRes.SerialPort.Open(); // 打开串口
     }
 
+    private bool _serialPortIsConnect;
+    public bool SerialPortIsConnect
+    {
+        get => _serialPortIsConnect;
+        set
+        {
+            if (_serialPortIsConnect != value)
+            {
+                _serialPortIsConnect = value;
+                OnPropertyChanged(nameof(SerialPortIsConnect));
+            }
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    public static void SetPinValue(bool value, string pin)
+    {
+        switch (pin)
+        {
+            case "DCD":
+                Current.SerialPortFlowInfoBoxDCD.LogicalValue = value;
+                break;
+            case "RI":
+                Current.SerialPortFlowInfoBoxRING.LogicalValue = value;
+                break;
+            case "DSR":
+                Current.SerialPortFlowInfoBoxDSR.LogicalValue = value;
+                break;
+            case "CTS":
+                Current.SerialPortFlowInfoBoxCTS.LogicalValue = value;
+                break;
+        }
+    }
+
+    private bool _serialPortFlowInfoBoxLogicAnalyzer = false;
+    public bool SerialPortFlowInfoBoxLogicAnalyzer
+    {
+        get => _serialPortFlowInfoBoxLogicAnalyzer;
+        set
+        {
+            if (_serialPortFlowInfoBoxLogicAnalyzer != value)
+            {
+                _serialPortFlowInfoBoxLogicAnalyzer = value;
+                OnPropertyChanged(nameof(SerialPortFlowInfoBoxLogicAnalyzer));
+            }
+        }
+    }
+
+    public void SerialPortFlowInfoBoxLogicAnalyzerToggle(bool value)
+    {
+        SerialPortFlowInfoBoxLogicAnalyzer = value;
+    }
     /*
     private DateTime lastReceivedTime = DateTime.Now; // 添加这一行来声明lastReceivedTime变量
 StringBuilder buffer = new StringBuilder();
@@ -647,6 +712,9 @@ foreach (var item in items)
     {
     }
 
+    private readonly ManualResetEventSlim _serialPortSendWaitHandle = new(true);
+
+
     // 当点击发送按钮时执行的操作
     private void TXButton_Click(object sender, RoutedEventArgs e)
     {
@@ -681,62 +749,149 @@ foreach (var item in items)
             SendHexData();
         }
     }
+    private void CheckSerialIsOpen()
+    {
+        while (!CommonRes.SerialPort.IsOpen)
+        {
+            _serialPortSendWaitHandle.Reset();
+            _serialPortSendWaitHandle.Wait(250); // 100ms 检查一次
+
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                MainPage1.Current.SetRunProgressBarValue(null, MainPage1.ProgressState.Paused);
+            });
+        }
+    }
 
     // 以字符形式发送数据
     private void SendStringData()
     {
         try
         {
-            // 获取要发送的字符串
             var str = TxTextBox.Text;
-            // 通过串口发送字符串
-            CommonRes.SerialPort.Write(str);
-            // 如果需要在每条消息后添加换行符
-            AppendNewLineIfRequired();
-            // 更新接收文本框的内容
-            _viewModel.AppendToRxTextinfo($"TX: {str}" + "\r\n");
+
+            Task.Run(() =>
+            {
+                var encoding = CommonRes.SerialPort.Encoding ?? Encoding.UTF8;
+                var bytes = encoding.GetBytes(str);
+                int total = bytes.Length;
+                int sent = 0;
+                int chunkSize = 128; // 可根据需要调整
+
+                while (sent < total)
+                {
+                    // 检查串口是否打开，否则等待
+                    CheckSerialIsOpen();
+                    _serialPortSendWaitHandle.Set();
+
+                    int len = Math.Min(chunkSize, total - sent);
+                    CommonRes.SerialPort.Write(bytes, sent, len);
+                    sent += len;
+                    int percent = (int)((sent * 100.0) / total);
+
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        MainPage1.Current.SetRunProgressBarValue(percent, MainPage1.ProgressState.Value);
+                    });
+                }
+
+                // 发送换行符和日志、进度条完成，需回到UI线程
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    AppendNewLineIfRequired();
+                    var encoding = CommonRes.SerialPort.Encoding ?? Encoding.UTF8;
+                    if (encoding.GetByteCount(str) <= 1024)
+                    {
+                        _viewModel.AppendToRxTextinfo($"Send: {str}\r\n");
+                    }
+                    else _viewModel.AppendToRxTextinfo($"Send Succeed - {total} bytes\r\n");
+                    MainPage1.Current.SetRunProgressBarValue(100, MainPage1.ProgressState.Value);
+                    SendEnd();
+
+                });
+            });
         }
-        catch
+        catch (Exception ex)
         {
-            // 如果串口字符写入出错，显示错误信息
-            _viewModel.AppendToRxTextinfo($"{LanguageText("txStringErr")}\r\n");
-            // 抛出异常以便外层捕获
+            _viewModel.AppendToRxTextinfo($"{LanguageText("txStrErr")}: {ex.Message}\r\n");
             throw;
         }
     }
+
 
     // 以十六进制数值形式发送数据
     private void SendHexData()
     {
         try
         {
-            // 获取要发送的十六进制字符串，并进行必要的预处理
             var input = PrepareHexString();
             Task.Run(() =>
             {
-                // 将十六进制字符串转换为字节数组
                 var bytes = ConvertHexStringToByteArray(input);
-                // 通过串口发送字节数组
-                CommonRes.SerialPort.Write(bytes, 0, bytes.Length);
-                // 如果需要在每条消息后添加换行符
+                int total = bytes.Length;
+                int sent = 0;
+                int chunkSize = 128; // 可根据需要调整
+
+                while (sent < total)
+                {
+                    // 检查串口是否打开，否则等待
+                    CheckSerialIsOpen();
+                    _serialPortSendWaitHandle.Set();
+
+                    int len = Math.Min(chunkSize, total - sent);
+                    CommonRes.SerialPort.Write(bytes, sent, len);
+                    sent += len;
+                    int percent = (int)((sent * 100.0) / total);
+
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        MainPage1.Current.SetRunProgressBarValue(percent, MainPage1.ProgressState.Value);
+                    });
+                }
+
                 AppendNewLineIfRequired();
 
                 DispatcherQueue.TryEnqueue(() =>
                 {
-                    // 更新接收文本框的内容
-                    _viewModel.AppendToRxTextinfo($"TX: 0x {string.Join(" ", bytes.Select(b => b.ToString("X2")))}\r\n");
+                    if (bytes.Length <= 1024)
+                    {
+                        _viewModel.AppendToRxTextinfo($"Send: 0x {string.Join(" ", bytes.Select(b => b.ToString("X2")))}\r\n");
+                    }
+                    else _viewModel.AppendToRxTextinfo($"Send Succeed ({total} bytes)\r\n");
+                    MainPage1.Current.SetRunProgressBarValue(100, MainPage1.ProgressState.Value); // 发送完成
+                    SendEnd();
                 });
                 input = "";
             });
         }
         catch (FormatException)
         {
-            // 如果输入的字符串不是有效的十六进制数，显示错误信息
             _viewModel.AppendToRxTextinfo($"{LanguageText("txHexErr")}\r\n");
-            // 抛出异常以便外层捕获
             throw;
         }
     }
+
+    private CancellationTokenSource _sendDelayCts = new();
+    private void SendEnd()
+    {
+        _sendDelayCts.Cancel();
+        _sendDelayCts = new();
+        var token = _sendDelayCts.Token;
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(1500, token);
+            }
+            catch (TaskCanceledException) { }
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                MainPage1.Current.SetRunProgressBarValue(null, MainPage1.ProgressState.Running);
+            });
+        });
+
+    }
+
 
     // 对输入的十六进制字符串进行预处理
     private string PrepareHexString()
@@ -796,15 +951,20 @@ foreach (var item in items)
             CommonRes.SerialPort.BaudRate = 74880;// BANDComboBox.SelectedItem = "74880";//ESP12F
 
             //ESP8266 Reset
-            CommonRes.SerialPort.RtsEnable = true;
-            Thread.Sleep(10);
-            CommonRes.SerialPort.DtrEnable = true;
-            Thread.Sleep(10);
-            CommonRes.SerialPort.DtrEnable = false;
-            Thread.Sleep(10);
+            //ESP8266 Reset
+            Parallel.Invoke(
+                () => CommonRes.SerialPort.RtsEnable = true,
+                () => CommonRes.SerialPort.DtrEnable = true
+            );
+
+            Thread.Sleep(50);
+
+            //ESP8266 Reset
             CommonRes.SerialPort.RtsEnable = false;
 
-            Thread.Sleep(150);
+            CommonRes.SerialPort.RtsEnable = true;
+
+            Thread.Sleep(100);
 
             CommonRes.SerialPort.BaudRate = SerialPortToolsPage.Baudrate;
 
@@ -812,9 +972,64 @@ foreach (var item in items)
             {
                 CommonRes.SerialPort.DtrEnable = true;
             }
+            else
+            {
+                CommonRes.SerialPort.DtrEnable = false;
+            }
             if (SerialPortToolsPage.Rts is 1)
             {
+                CommonRes.SerialPort.RtsEnable = true;
+            }
+            else
+            {
+                CommonRes.SerialPort.RtsEnable = false;
+            }
+            //RSTButton_ClickAsync(null, null);
+        });
+    }
+    public static void EspDownloadButtonRes()
+    {
+        Task.Run(() =>
+        {
+            CommonRes.SerialPort.BaudRate = 74880;// BANDComboBox.SelectedItem = "74880";//ESP12F
+
+            //ESP8266 Reset
+            //ESP8266 Reset
+            Parallel.Invoke(
+                () => CommonRes.SerialPort.RtsEnable = true,
+                () => CommonRes.SerialPort.DtrEnable = true
+            );
+
+            Thread.Sleep(50);
+
+            CommonRes.SerialPort.RtsEnable = false;
+            //ESP8266 Reset
+            Parallel.Invoke(
+                () => CommonRes.SerialPort.RtsEnable = true,
+                () => CommonRes.SerialPort.DtrEnable = false
+            );
+
+            CommonRes.SerialPort.DtrEnable = true;
+
+            Thread.Sleep(100);
+
+            CommonRes.SerialPort.BaudRate = SerialPortToolsPage.Baudrate;
+
+            if (SerialPortToolsPage.Dtr is 1)
+            {
                 CommonRes.SerialPort.DtrEnable = true;
+            }
+            else
+            {
+                CommonRes.SerialPort.DtrEnable = false;
+            }
+            if (SerialPortToolsPage.Rts is 1)
+            {
+                CommonRes.SerialPort.RtsEnable = true;
+            }
+            else
+            {
+                CommonRes.SerialPort.RtsEnable = false;
             }
             //RSTButton_ClickAsync(null, null);
         });
@@ -843,7 +1058,7 @@ foreach (var item in items)
     }
     */
 
-        
+
 
     private Task RXDATA_ClickAsync(object sender, RoutedEventArgs e)
     {
@@ -1060,12 +1275,14 @@ foreach (var item in items)
     {
         BorderBackRx.BorderBrush = (Brush)Application.Current.Resources["TextControlElevationBorderFocusedBrush"];
         RxTextBoxBorder.BorderBrush = (Brush)Application.Current.Resources["TextControlElevationBorderFocusedBrush"];
+        SerialPortIsConnect = true;
     }
 
     public void SerialPortClose()
     {
         BorderBackRx.BorderBrush = (Brush)Application.Current.Resources["TextControlElevationBorderBrush"];
         RxTextBoxBorder.BorderBrush = (Brush)Application.Current.Resources["TextControlElevationBorderBrush"];
+        SerialPortIsConnect = false;
     }
 
     private async void ViewModel_RxTextinfoChanged(object sender, EventArgs e)

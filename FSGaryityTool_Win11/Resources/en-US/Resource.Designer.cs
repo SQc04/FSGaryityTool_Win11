@@ -115,7 +115,7 @@ namespace FSGaryityTool_Win11.Resources.en_US {
         }
         
         /// <summary>
-        ///   查找类似 Hot plug 的本地化字符串。
+        ///   查找类似 Hot Swap 的本地化字符串。
         /// </summary>
         internal static string autoSerichComl {
             get {

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using static FSGaryityTool_Win11.SettingsPage;
 using System.Diagnostics;
@@ -418,4 +418,18 @@ internal class SettingsCoreServices
         SaveSetting(fsGravitySettings, SoftBackground, SoftBackgroundSetting);
     }
 
+    public static (int width, int height) GetDefaultWindow()
+    {
+        string widthStr = GetSetting(fsGravitySettings, "DefaultWindowWidth");
+        string heightStr = GetSetting(fsGravitySettings, "DefaultWindowHight");
+        int width = int.TryParse(widthStr, out var w) ? w : 1840;
+        int height = int.TryParse(heightStr, out var h) ? h : 960;
+        return (width, height);
+    }
+
+    public static void SetDefaultWindow(int width, int height)
+    {
+        SaveSetting(fsGravitySettings, "DefaultWindowWidth", width.ToString());
+        SaveSetting(fsGravitySettings, "DefaultWindowHight", height.ToString());
+    }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -64,8 +64,9 @@ public sealed partial class MainPage1 : Page
         {
             0 => typeof(Page1),
             1 => typeof(SerialPlotterPage),
-            2 => typeof(TestPage1),
-            3 => typeof(CopilotPage),
+            2 => typeof(Page2),
+            3 => typeof(TestPage1),
+            4 => typeof(CopilotPage),
             _ => typeof(Page2)
         };
 
@@ -164,6 +165,73 @@ public sealed partial class MainPage1 : Page
         SerialPortToolsSplitView.DisplayMode = mode;
     }
 
+    public enum ProgressState
+    {
+        Running,
+        Paused,
+        Error,
+        Value,
+        Stop
+    }
+
+    public void SetRunProgressBarValue(int? value, ProgressState state)
+    {
+        switch (state)
+        {
+            case ProgressState.Running:
+                RunProgressBar.IsIndeterminate = value is null;
+                RunProgressBar.ShowPaused = false;
+                RunProgressBar.ShowError = false;
+                RunProgressBar.Visibility = Visibility.Visible;
+                if (value is not null)
+                {
+                    RunProgressBar.Value = Math.Clamp(value.Value, 0, 100);
+                }
+                break;
+            case ProgressState.Paused:
+                RunProgressBar.IsIndeterminate = value is null;
+                RunProgressBar.ShowPaused = true;
+                RunProgressBar.ShowError = false;
+                RunProgressBar.Visibility = Visibility.Visible;
+                if (value is not null)
+                {
+                    RunProgressBar.Value = Math.Clamp(value.Value, 0, 100);
+                }
+                break;
+            case ProgressState.Error:
+                RunProgressBar.IsIndeterminate = value is null;
+                RunProgressBar.ShowPaused = false;
+                RunProgressBar.ShowError = true;
+                RunProgressBar.Visibility = Visibility.Visible;
+                RunProgressBar.Value = 0;
+                break;
+            case ProgressState.Value:
+                RunProgressBar.IsIndeterminate = false;
+                RunProgressBar.ShowPaused = false;
+                RunProgressBar.ShowError = false;
+                RunProgressBar.Visibility = Visibility.Visible;
+                if (value is not null)
+                {
+                    RunProgressBar.Value = Math.Clamp(value.Value, 0, 100);
+                }
+                break;
+            case ProgressState.Stop:
+                RunProgressBar.IsIndeterminate = false;
+                RunProgressBar.ShowPaused = false;
+                RunProgressBar.ShowError = false;
+                RunProgressBar.Value = 0;
+                RunProgressBar.Visibility = Visibility.Collapsed;
+                break;
+            default:
+                RunProgressBar.IsIndeterminate = false;
+                RunProgressBar.ShowPaused = false;
+                RunProgressBar.ShowError = false;
+                RunProgressBar.Value = 0;
+                RunProgressBar.Visibility = Visibility.Collapsed;
+                break;
+        }
+    }
+
     public void SerialPortConnectToggleButton_Click(object sender, RoutedEventArgs e)
     {
         var hWnd = (nint)App.MainWindowHandle;                // 获取主窗口的句柄
@@ -179,9 +247,8 @@ public sealed partial class MainPage1 : Page
                 SerialPortToolsPage.Current.SerialPortConnect();
                 SerialPortConnectToggleButtonText.Text = LanguageText("disconnectl");
                 SerialPortConnectToggleButton.IsChecked = true;
-                RunProgressBar.IsIndeterminate = true;
-                RunProgressBar.ShowPaused = false;
-                RunProgressBar.Visibility = Visibility.Visible;
+                SetRunProgressBarValue(null,ProgressState.Running);
+                Page1.Current.SerialPortFlowInfoBoxLogicAnalyzerToggle(true);
                 SerialPortToolsPage.Current.HideTimer.Start();
 
                 Page1.Current.SerialPortOpen();
@@ -195,9 +262,8 @@ public sealed partial class MainPage1 : Page
                 }
                 SerialPortConnectToggleButtonText.Text = LanguageText("connectl");
                 SerialPortConnectToggleButton.IsChecked = false;
-                RunProgressBar.IsIndeterminate = true;
-                RunProgressBar.ShowPaused = true;
-                RunProgressBar.Visibility = Visibility.Visible;
+                SetRunProgressBarValue(null, ProgressState.Error);
+                Page1.Current.SerialPortFlowInfoBoxLogicAnalyzerToggle(false);
                 SerialPortToolsToggleButton.IsChecked = true;
 
                 Page1.Current.SerialPortClose();
@@ -220,9 +286,9 @@ public sealed partial class MainPage1 : Page
             SerialPortConnectToggleButtonText.Text = LanguageText("connectl");
             SerialPortToolsPage.Current.SerialPortDisconnect();
             SerialPortConnectToggleButton.IsChecked = false;
-            RunProgressBar.IsIndeterminate = false;
-            RunProgressBar.ShowPaused = false;
-            RunProgressBar.Visibility = Visibility.Collapsed;
+
+            Page1.Current.SerialPortFlowInfoBoxLogicAnalyzerToggle(false);
+            SetRunProgressBarValue(null, ProgressState.Stop);
             SerialPortToolsToggleButton.IsChecked = true;
             Page1.Current.SerialPortClose();
         }

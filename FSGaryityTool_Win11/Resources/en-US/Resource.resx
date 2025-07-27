@@ -134,7 +134,7 @@
     <comment>Serial Port Page text</comment>
   </data>
   <data name="autoSerichComl" xml:space="preserve">
-    <value>Hot plug</value>
+    <value>Hot Swap</value>
     <comment>Serial Port Page text</comment>
   </data>
   <data name="BackgroundDescription" xml:space="preserve">

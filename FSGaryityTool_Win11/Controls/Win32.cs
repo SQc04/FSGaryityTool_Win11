@@ -32,6 +32,13 @@ namespace FSGaryityTool_Win11.Controls
 
         [DllImport("user32.dll")]
         internal static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, WindowMessage Msg, IntPtr wParam, IntPtr lParam);
+        
+        [DllImport("user32.dll")]
+        public static extern IntPtr LoadCursor(IntPtr hInstance, int lpCursorName);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetCursor(IntPtr hCursor);
+
 
         public const int WM_ACTIVATE = 0x0006;
         public const int WA_ACTIVE = 0x01;
@@ -40,6 +47,9 @@ namespace FSGaryityTool_Win11.Controls
         public const int WM_SETICON = 0x0080;
         public const int ICON_SMALL = 0;
         public const int ICON_BIG = 1;
+
+        public const int IDC_ARROW = 32512;
+        public const int IDC_IBEAM = 32513;
 
         internal delegate IntPtr WinProc(IntPtr hWnd, WindowMessage Msg, IntPtr wParam, IntPtr lParam);
 

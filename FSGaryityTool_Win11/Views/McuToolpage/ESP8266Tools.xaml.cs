@@ -1,4 +1,4 @@
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 namespace FSGaryityTool_Win11.McuToolpage;
@@ -14,5 +14,10 @@ public sealed partial class ESP8266Tools : Page
     {
 
         Page1.RstButtonRes();
+    }
+
+    private void DownloadButton_Click(object sender, RoutedEventArgs e)
+    {
+        Page1.EspDownloadButtonRes();
     }
 }

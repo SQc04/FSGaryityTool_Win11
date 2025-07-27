@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
+		<TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
         <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-		<WindowsSdkPackageVersion>10.0.26100.38</WindowsSdkPackageVersion>
+		<WindowsSdkPackageVersion>10.0.26100.57</WindowsSdkPackageVersion>
         <PublishAot>false</PublishAot>
 		<!--<AllowUnsafeBlocks>true</AllowUnsafeBlocks>-->
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -31,9 +31,19 @@
     <ItemGroup>
       <None Remove="Assets\CopilotV1.svg" />
       <None Remove="Assets\CopilotV2.svg" />
+      <None Remove="Assets\Fonts\GeosansLight.ttf" />
+      <None Remove="Controls\BeyondTextBox.xaml" />
+      <None Remove="Controls\DataPlotBox.xaml" />
       <None Remove="Controls\SerialPortFlowInfoBox.xaml" />
+      <None Remove="Controls\SerialPortMenuBox.xaml" />
       <None Remove="Controls\SerialPortTextListBox.xaml" />
+      <None Remove="Controls\WaveFormBox.xaml" />
+      <None Remove="Controls\WS64LedBoardBox.xaml" />
       <None Remove="Views\Pages\SerialPortPage\CopilotPage.xaml" />
+      <None Remove="Views\Pages\TestPage\AudioTestPage.xaml" />
+      <None Remove="Views\Pages\TestPage\LivePage.xaml" />
+      <None Remove="Views\Pages\TestPage\Star.xaml" />
+      <None Remove="Views\Pages\TestPage\StarWindow.xaml" />
     </ItemGroup>
     <ItemGroup>
         <Content Include="Assets\StoreLogo.png" />
@@ -57,29 +67,32 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.CameraPreview" Version="8.1.240916" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="8.1.240916" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.HeaderedControls" Version="8.1.240916" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.ImageCropper" Version="8.1.240916" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.LayoutTransformControl" Version="8.1.240916" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.MetadataControl" Version="8.1.240916" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.1.240916" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.RadialGauge" Version="8.1.240916" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.RangeSelector" Version="8.2.241112-preview1" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.RichSuggestBox" Version="8.1.240916" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.1.240916" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.1.240916" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.1.240916" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.TabbedCommandBar" Version="8.1.240916" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.1.240916" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.CameraPreview" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.HeaderedControls" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.ImageCropper" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.LayoutTransformControl" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.MetadataControl" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.RadialGauge" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.RangeSelector" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.RichSuggestBox" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.TabbedCommandBar" Version="8.2.250402" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.2.250402" />
+        <PackageReference Include="MathNet.Numerics" Version="6.0.0-beta1" />
         <PackageReference Include="MICA" Version="2.4.3" />
-        <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.3.1" />
-        <PackageReference Include="Microsoft.Win32.SystemEvents" Version="9.0.0" />
-        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.241114003" />
-        <PackageReference Include="System.IO.Ports" Version="8.0.0" />
-        <PackageReference Include="System.Management" Version="8.0.0" />
-        <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.3.2" />
+        <PackageReference Include="Microsoft.ML" Version="4.0.2" />
+        <PackageReference Include="Microsoft.Win32.SystemEvents" Version="9.0.5" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.3916" />
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
+        <PackageReference Include="NAudio" Version="2.2.1" />
+        <PackageReference Include="System.IO.Ports" Version="9.0.5" />
+        <PackageReference Include="System.Management" Version="9.0.5" />
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.5" />
         <PackageReference Include="Tommy" Version="3.1.2" />
         <Manifest Include="$(ApplicationManifest)" />
 
@@ -129,6 +142,60 @@
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>Resources.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Controls\SerialPortMenuBox.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Controls\BeyondTextBox.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Views\Pages\TestPage\LivePage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Views\Pages\TestPage\StarWindow.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Views\Pages\TestPage\Star.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Controls\WS64LedBoardBox.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Controls\DataPlotBox.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Views\Pages\TestPage\AudioTestPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Controls\WaveFormBox.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
 
     <ItemGroup>

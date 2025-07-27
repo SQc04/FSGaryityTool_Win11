@@ -1,4 +1,4 @@
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 
 namespace FSGaryityTool_Win11.Controls;

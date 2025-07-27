@@ -1,11 +1,13 @@
-<Page x:Class="FSGaryityTool_Win11.Views.Pages.SerialPortPage.SerialPortToolsPage"
+﻿<Page x:Class="FSGaryityTool_Win11.Views.Pages.SerialPortPage.SerialPortToolsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
       xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+      xmlns:controls2="using:FSGaryityTool_Win11.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="using:FSGaryityTool_Win11.Views.Pages.SerialPortPage"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
       mc:Ignorable="d">
     <Page.Resources>
         <ResourceDictionary>
@@ -15,6 +17,8 @@
                     <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="#F9F9F9" TintColor="#FCFCFC" TintOpacity="0.0" />
                     <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemControlBackgroundLightColor}" />
                     <SolidColorBrush x:Key="CustomComboBoxSolidColorBrush" Color="{ThemeResource SystemComboboxBackgroundLightColor}" />
+                    <SolidColorBrush x:Key="CustomBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundLightColor}" />
+                    <SolidColorBrush x:Key="CustomBoxElevationBorderBrush" Color="{StaticResource SystemBorderBrushLightColor}" />
                 </ResourceDictionary>
 
                 <!--  深色模式的AcrylicBrush  -->
@@ -23,6 +27,8 @@
                     <AcrylicBrush x:Key="CustomAcrylicBrush" FallbackColor="#2C2C2C" TintColor="#2C2C2C" TintOpacity="0.15" />
                     <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemControlBackgroundDarkColor}" />
                     <SolidColorBrush x:Key="CustomComboBoxSolidColorBrush" Color="{ThemeResource SystemComboboxBackgroundDarkColor}" />
+                    <SolidColorBrush x:Key="CustomBoxSolidColorBrush" Color="{StaticResource SystemControlBackgroundDarkColor}" />
+                    <SolidColorBrush x:Key="CustomBoxElevationBorderBrush" Color="{StaticResource SystemBorderBrushDarkColor}" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
@@ -30,6 +36,14 @@
             <Color x:Key="SystemComboboxBackgroundLightColor">#D3FFFFFF</Color>
             <Color x:Key="SystemControlBackgroundDarkColor">#44252525</Color>
             <Color x:Key="SystemComboboxBackgroundDarkColor">#D3252525</Color>
+
+            <Color x:Key="SystemBorderBrushLightColor">#15252525</Color>
+            <Color x:Key="SystemBorderBrushDarkColor">#15FFFFFF</Color>
+
+            <Color x:Key="RxBoxButtonBorderBackgroundLightColor">#1F252525</Color>
+            <Color x:Key="RxBoxButtonBorderBackgroundDarkColor">#248F8F8F</Color>
+
+            <controls2:SliderValueToVector3Converter x:Key="SliderToVector3Converter" />
 
             <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
                 <Setter Property="Padding" Value="{ThemeResource ComboBoxPadding}" />
@@ -125,7 +139,11 @@
                                         BorderThickness="{TemplateBinding BorderThickness}"
                                         Control.IsTemplateFocusTarget="True"
                                         CornerRadius="{TemplateBinding CornerRadius}"
-                                        Translation="0,0,1" />
+                                        Translation="0,0,1">
+                                    <Border.BackgroundTransition>
+                                        <BrushTransition />
+                                    </Border.BackgroundTransition>
+                                </Border>
                                 <Rectangle x:Name="Pill"
                                            Grid.Row="1"
                                            Grid.Column="0"
@@ -199,9 +217,9 @@
                                                   Content="{TemplateBinding Description}"
                                                   Foreground="{ThemeResource SystemControlDescriptionTextForegroundBrush}" />
                                 <Popup x:Name="Popup" ShouldConstrainToRootBounds="False">
-                                    <Popup.SystemBackdrop>
+                                    <!--<Popup.SystemBackdrop>
                                         <DesktopAcrylicBackdrop />
-                                    </Popup.SystemBackdrop>
+                                    </Popup.SystemBackdrop>-->
                                     <Border x:Name="PopupBorder"
                                             Margin="0,-0.5,0,-1"
                                             Padding="{ThemeResource ComboBoxDropdownBorderPadding}"
@@ -414,6 +432,596 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <Style x:Key="ProgressBarStyle" TargetType="controls:ProgressBar">
+                <Setter Property="Foreground" Value="{ThemeResource ProgressBarForeground}" />
+                <Setter Property="Background" Value="{ThemeResource ProgressBarBackground}" />
+                <Setter Property="BorderThickness" Value="{ThemeResource ProgressBarBorderThemeThickness}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource ProgressBarBorderBrush}" />
+                <Setter Property="MinHeight" Value="{StaticResource ProgressBarMinHeight}" />
+                <Setter Property="Maximum" Value="100" />
+                <Setter Property="IsTabStop" Value="False" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="CornerRadius" Value="{StaticResource ProgressBarCornerRadius}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="controls:ProgressBar">
+                            <Grid x:Name="LayoutRoot">
+                                <Border x:Name="ProgressBarRoot" Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
+                                    <Border Clip="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ClipRect}">
+                                        <Grid Height="{TemplateBinding MinHeight}">
+                                            <Rectangle x:Name="ProgressBarTrack"
+                                                       Width="{TemplateBinding Width}"
+                                                       Height="3"
+                                                       VerticalAlignment="Center"
+                                                       Fill="{TemplateBinding Background}"
+                                                       RadiusX="{Binding Source={StaticResource ProgressBarTrackCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                                       RadiusY="{Binding Source={StaticResource ProgressBarTrackCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}">
+                                                <Rectangle.RenderTransform>
+                                                    <CompositeTransform />
+                                                </Rectangle.RenderTransform>
+                                            </Rectangle>
+                                            <Rectangle x:Name="DeterminateProgressBarIndicator" HorizontalAlignment="Left" Fill="{TemplateBinding Foreground}" RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}" RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                            <Rectangle x:Name="IndeterminateProgressBarIndicator"
+                                                       HorizontalAlignment="Left"
+                                                       Fill="{TemplateBinding Foreground}"
+                                                       Opacity="0"
+                                                       RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                                       RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}">
+                                                <Rectangle.RenderTransform>
+                                                    <CompositeTransform />
+                                                </Rectangle.RenderTransform>
+                                            </Rectangle>
+                                            <Rectangle x:Name="IndeterminateProgressBarIndicator2"
+                                                       HorizontalAlignment="Left"
+                                                       Fill="{TemplateBinding Foreground}"
+                                                       Opacity="0"
+                                                       RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                                       RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}">
+                                                <Rectangle.RenderTransform>
+                                                    <CompositeTransform />
+                                                </Rectangle.RenderTransform>
+                                            </Rectangle>
+
+                                        </Grid>
+                                    </Border>
+                                </Border>
+
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+
+                                        <VisualStateGroup.Transitions>
+                                            <VisualTransition From="Updating" To="Determinate">
+
+                                                <Storyboard>
+                                                    <RepositionThemeAnimation FromHorizontalOffset="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IndicatorLengthDelta}" TargetName="DeterminateProgressBarIndicator" />
+                                                </Storyboard>
+                                            </VisualTransition>
+                                            <VisualTransition From="UpdatingError" To="Error">
+
+                                                <Storyboard>
+                                                    <RepositionThemeAnimation FromHorizontalOffset="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IndicatorLengthDelta}" TargetName="DeterminateProgressBarIndicator" />
+                                                </Storyboard>
+                                            </VisualTransition>
+                                            <VisualTransition From="Paused" To="Determinate">
+
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetName="DeterminateProgressBarIndicator" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" To="{TemplateBinding Foreground}" Duration="0:0:0.167" />
+                                                </Storyboard>
+                                            </VisualTransition>
+                                            <VisualTransition From="Error" To="Determinate">
+
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetName="DeterminateProgressBarIndicator" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" To="{TemplateBinding Foreground}" Duration="0:0:0.167" />
+                                                </Storyboard>
+                                            </VisualTransition>
+                                            <VisualTransition From="Indeterminate" To="Determinate">
+
+                                                <Storyboard>
+                                                    <FadeInThemeAnimation TargetName="IndeterminateProgressBarIndicator" />
+                                                    <FadeInThemeAnimation TargetName="IndeterminateProgressBarIndicator2" />
+                                                    <FadeInThemeAnimation TargetName="ProgressBarTrack" />
+                                                </Storyboard>
+                                            </VisualTransition>
+                                            <VisualTransition From="IndeterminatePaused" To="Indeterminate">
+
+                                                <Storyboard>
+                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndeterminateProgressBarIndicator" Storyboard.TargetProperty="Opacity">
+                                                        <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndeterminateProgressBarIndicator2" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                                                        <SplineDoubleKeyFrame KeySpline="1.0, 0.0, 1.0, 1.0" KeyTime="0:0:0.333" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ContainerAnimationEndPosition}" />
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBarTrack" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                                                        <SplineDoubleKeyFrame KeySpline="1.0, 0.0, 1.0, 1.0" KeyTime="0:0:0" Value="0" />
+                                                        <SplineDoubleKeyFrame KeySpline="1.0, 0.0, 1.0, 1.0" KeyTime="0:0:0.5" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ContainerAnimationEndPosition}" />
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualTransition>
+                                            <VisualTransition From="IndeterminateError" To="Indeterminate">
+
+                                                <Storyboard>
+                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndeterminateProgressBarIndicator" Storyboard.TargetProperty="Opacity">
+                                                        <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndeterminateProgressBarIndicator2" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                                                        <SplineDoubleKeyFrame KeySpline="1.0, 0.0, 1.0, 1.0" KeyTime="0:0:0.333" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ContainerAnimationEndPosition}" />
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBarTrack" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                                                        <SplineDoubleKeyFrame KeySpline="1.0, 0.0, 1.0, 1.0" KeyTime="0:0:0" Value="0" />
+                                                        <SplineDoubleKeyFrame KeySpline="1.0, 0.0, 1.0, 1.0" KeyTime="0:0:0.5" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ContainerAnimationEndPosition}" />
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualTransition>
+                                        </VisualStateGroup.Transitions>
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="Determinate" />
+                                        <VisualState x:Name="Updating" />
+                                        <VisualState x:Name="UpdatingError">
+                                            <VisualState.Setters>
+                                                <Setter Target="DeterminateProgressBarIndicator.(Shape.Fill).(SolidColorBrush.Color)" Value="{ThemeResource ProgressBarErrorForegroundColor}" />
+
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Error">
+
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="DeterminateProgressBarIndicator" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" To="{ThemeResource ProgressBarErrorForegroundColor}" Duration="0:0:0.167" />
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Paused">
+
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetName="DeterminateProgressBarIndicator" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" To="{ThemeResource ProgressBarPausedForegroundColor}" Duration="0:0:0.167" />
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Indeterminate">
+                                            <VisualState.Setters>
+                                                <Setter Target="IndeterminateProgressBarIndicator.Opacity" Value="1" />
+                                                <Setter Target="IndeterminateProgressBarIndicator2.Opacity" Value="1" />
+                                                <Setter Target="ProgressBarTrack.Opacity" Value="0" />
+
+                                            </VisualState.Setters>
+                                            <Storyboard RepeatBehavior="Forever">
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndeterminateProgressBarIndicator" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                                                    <DiscreteDoubleKeyFrame KeyTime="0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ContainerAnimationStartPosition}" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.4, 0.0, 0.6, 1.0" KeyTime="0:0:1.5" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ContainerAnimationEndPosition}" />
+                                                    <DiscreteDoubleKeyFrame KeyTime="0:0:2" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ContainerAnimationEndPosition}" />
+                                                </DoubleAnimationUsingKeyFrames>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndeterminateProgressBarIndicator2" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                                                    <DiscreteDoubleKeyFrame KeyTime="0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.Container2AnimationStartPosition}" />
+                                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.75" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.Container2AnimationStartPosition}" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.4, 0.0, 0.6, 1.0" KeyTime="0:0:2" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.Container2AnimationEndPosition}" />
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="IndeterminateError">
+                                            <VisualState.Setters>
+                                                <Setter Target="IndeterminateProgressBarIndicator.Opacity" Value="0" />
+                                                <Setter Target="DeterminateProgressBarIndicator.Opacity" Value="0" />
+                                                <Setter Target="IndeterminateProgressBarIndicator2.Opacity" Value="1" />
+                                                <Setter Target="ProgressBarTrack.Opacity" Value="0" />
+
+                                            </VisualState.Setters>
+
+                                            <Storyboard>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndeterminateProgressBarIndicator2" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                                                    <SplineDoubleKeyFrame KeySpline="1.0, 1.0, 0.0, 1.0" KeyTime="0:0:0.167" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.Container2AnimationEndPosition}" />
+                                                    <SplineDoubleKeyFrame KeySpline="1.0, 1.0, 0.0, 1.0" KeyTime="0:0:0.167" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.Container2AnimationStartPosition}" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.0, 0.0, 0.0, 1.0" KeyTime="0:0:0.75" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ContainerAnimationMidPosition}" />
+                                                </DoubleAnimationUsingKeyFrames>
+                                                <ColorAnimation Storyboard.TargetName="IndeterminateProgressBarIndicator2" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" To="{ThemeResource ProgressBarErrorForegroundColor}" Duration="0:0:0.167" />
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBarTrack" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                                                    <SplineDoubleKeyFrame KeySpline="0.0, 0.0, 0.0, 1.0" KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.Container2AnimationStartPosition}" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.0, 0.0, 0.0, 1.0" KeyTime="0:0:0.75" Value="0" />
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="IndeterminatePaused">
+                                            <VisualState.Setters>
+                                                <Setter Target="IndeterminateProgressBarIndicator.Opacity" Value="0" />
+                                                <Setter Target="DeterminateProgressBarIndicator.Opacity" Value="0" />
+                                                <Setter Target="IndeterminateProgressBarIndicator2.Opacity" Value="1" />
+                                                <Setter Target="ProgressBarTrack.Opacity" Value="0" />
+
+                                            </VisualState.Setters>
+
+                                            <Storyboard>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndeterminateProgressBarIndicator2" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                                                    <SplineDoubleKeyFrame KeySpline="1.0, 1.0, 0.0, 1.0" KeyTime="0:0:0.167" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.Container2AnimationEndPosition}" />
+                                                    <SplineDoubleKeyFrame KeySpline="1.0, 1.0, 0.0, 1.0" KeyTime="0:0:0.167" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.Container2AnimationStartPosition}" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.0, 0.0, 0.0, 1.0" KeyTime="0:0:0.75" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ContainerAnimationMidPosition}" />
+                                                </DoubleAnimationUsingKeyFrames>
+                                                <ColorAnimation Storyboard.TargetName="IndeterminateProgressBarIndicator2" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" To="{ThemeResource ProgressBarPausedForegroundColor}" Duration="0:0:0.167" />
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBarTrack" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                                                    <SplineDoubleKeyFrame KeySpline="0.0, 0.0, 0.0, 1.0" KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.Container2AnimationStartPosition}" />
+                                                    <SplineDoubleKeyFrame KeySpline="0.0, 0.0, 0.0, 1.0" KeyTime="0:0:0.75" Value="0" />
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+
+                                    </VisualStateGroup>
+
+                                </VisualStateManager.VisualStateGroups>
+                            </Grid>
+
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="SliderStyle" TargetType="Slider">
+                <Setter Property="Background" Value="{ThemeResource SliderTrackFill}" />
+                <Setter Property="BorderThickness" Value="{ThemeResource SliderBorderThemeThickness}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource SliderThumbBorderBrush}" />
+                <Setter Property="Foreground" Value="{ThemeResource SystemFillColorCriticalBrush}" />
+                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                <Setter Property="ManipulationMode" Value="None" />
+                <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+                <Setter Property="FocusVisualMargin" Value="-7,0,-7,0" />
+                <Setter Property="IsFocusEngagementEnabled" Value="True" />
+                <Setter Property="CornerRadius" Value="{ThemeResource SliderTrackCornerRadius}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Slider">
+                            <Grid Margin="{TemplateBinding Padding}">
+                                <Grid.Resources>
+                                    <Style x:Key="SliderThumbStyle" TargetType="Thumb">
+                                        <Setter Property="BorderThickness" Value="1" />
+                                        <Setter Property="Background" Value="{ThemeResource SliderThumbBackground}" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Thumb">
+                                                    <Border Margin="-2" Background="{ThemeResource SliderOuterThumbBackground}" BorderBrush="{ThemeResource SliderThumbBorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{ThemeResource SliderThumbCornerRadius}">
+                                                        <Ellipse x:Name="SliderInnerThumb" Width="{ThemeResource SliderInnerThumbWidth}" Height="{ThemeResource SliderInnerThumbHeight}" Fill="{TemplateBinding Foreground}" RenderTransformOrigin="0.5, 0.5">
+                                                            <Ellipse.RenderTransform>
+                                                                <CompositeTransform />
+                                                            </Ellipse.RenderTransform>
+                                                        </Ellipse>
+
+                                                        <VisualStateManager.VisualStateGroups>
+                                                            <VisualStateGroup x:Name="CommonStates">
+                                                                <VisualState x:Name="Normal">
+                                                                    <Storyboard>
+                                                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                                                            <!--  0.86 is relative scale from 14px to 12px  -->
+                                                                            <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" KeyTime="{StaticResource ControlFastAnimationDuration}" Value="0.86" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                                                            <!--  0.86 is relative scale from 14px to 12px  -->
+                                                                            <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" KeyTime="{StaticResource ControlFastAnimationDuration}" Value="0.86" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </VisualState>
+
+                                                                <VisualState x:Name="PointerOver">
+                                                                    <Storyboard>
+                                                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                                                            <!--  1.167 is relative scale from 12px to 14px  -->
+                                                                            <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" KeyTime="{StaticResource ControlNormalAnimationDuration}" Value="1.167" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                                                            <!--  1.167 is relative scale from 12px to 14px  -->
+                                                                            <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" KeyTime="{StaticResource ControlNormalAnimationDuration}" Value="1.167" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </VisualState>
+
+                                                                <VisualState x:Name="Pressed">
+                                                                    <Storyboard>
+                                                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                                                            <!--  0.71 is relative scale from 14px to 10px  -->
+                                                                            <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" KeyTime="{StaticResource ControlNormalAnimationDuration}" Value="0.71" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                                                            <!--  0.71 is relative scale from 14px to 10px  -->
+                                                                            <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" KeyTime="{StaticResource ControlNormalAnimationDuration}" Value="0.71" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </VisualState>
+
+                                                                <VisualState x:Name="Disabled">
+                                                                    <Storyboard>
+                                                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                                                            <!--  1.167 is relative scale from 12px to 14px  -->
+                                                                            <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" KeyTime="{StaticResource ControlFastAnimationDuration}" Value="1.167" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                                                            <!--  1.167 is relative scale from 12px to 14px  -->
+                                                                            <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" KeyTime="{StaticResource ControlFastAnimationDuration}" Value="1.167" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </VisualState>
+                                                            </VisualStateGroup>
+                                                        </VisualStateManager.VisualStateGroups>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Grid.Resources>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <ContentPresenter x:Name="HeaderContentPresenter"
+                                                  Grid.Row="0"
+                                                  Margin="{ThemeResource SliderTopHeaderMargin}"
+                                                  x:DeferLoadStrategy="Lazy"
+                                                  Content="{TemplateBinding Header}"
+                                                  ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                  FontWeight="{ThemeResource SliderHeaderThemeFontWeight}"
+                                                  Foreground="{ThemeResource SliderHeaderForeground}"
+                                                  TextWrapping="Wrap"
+                                                  Visibility="Collapsed" />
+                                <!--  This border exists only to draw the correct focus rect with rounded corners when element is focused.  -->
+                                <Border x:Name="FocusBorder" Grid.Row="1" Control.IsTemplateFocusTarget="True" CornerRadius="{ThemeResource ControlCornerRadius}" />
+                                <Grid x:Name="SliderContainer" Grid.Row="1" Background="{ThemeResource SliderContainerBackground}">
+                                    <Grid x:Name="HorizontalTemplate" MinHeight="{ThemeResource SliderHorizontalHeight}">
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="{ThemeResource SliderPreContentMargin}" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="{ThemeResource SliderPostContentMargin}" />
+                                        </Grid.RowDefinitions>
+                                        <Rectangle x:Name="HorizontalTrackRect"
+                                                   Grid.Row="1"
+                                                   Grid.ColumnSpan="3"
+                                                   Height="{ThemeResource SliderTrackThemeHeight}"
+                                                   Fill="{TemplateBinding Background}"
+                                                   RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                                   RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                        <Rectangle x:Name="HorizontalDecreaseRect" Grid.Row="1" Fill="{TemplateBinding Foreground}" RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}" RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                        <TickBar x:Name="TopTickBar"
+                                                 Grid.ColumnSpan="3"
+                                                 Height="{ThemeResource SliderOutsideTickBarThemeHeight}"
+                                                 Margin="0,0,0,4"
+                                                 VerticalAlignment="Bottom"
+                                                 Fill="{ThemeResource SliderTickBarFill}"
+                                                 Visibility="Collapsed" />
+                                        <TickBar x:Name="HorizontalInlineTickBar"
+                                                 Grid.Row="1"
+                                                 Grid.ColumnSpan="3"
+                                                 Height="{ThemeResource SliderTrackThemeHeight}"
+                                                 Fill="{ThemeResource SliderInlineTickBarFill}"
+                                                 Visibility="Collapsed" />
+                                        <TickBar x:Name="BottomTickBar"
+                                                 Grid.Row="2"
+                                                 Grid.ColumnSpan="3"
+                                                 Height="{ThemeResource SliderOutsideTickBarThemeHeight}"
+                                                 Margin="0,4,0,0"
+                                                 VerticalAlignment="Top"
+                                                 Fill="{ThemeResource SliderTickBarFill}"
+                                                 Visibility="Collapsed" />
+                                        <Thumb x:Name="HorizontalThumb"
+                                               Grid.Row="0"
+                                               Grid.RowSpan="3"
+                                               Grid.Column="1"
+                                               Width="{ThemeResource SliderHorizontalThumbWidth}"
+                                               Height="{ThemeResource SliderHorizontalThumbHeight}"
+                                               AutomationProperties.AccessibilityView="Raw"
+                                               CornerRadius="{StaticResource ControlCornerRadius}"
+                                               DataContext="{TemplateBinding Value}"
+                                               FocusVisualMargin="-14,-6,-14,-6"
+                                               Style="{StaticResource SliderThumbStyle}" />
+                                    </Grid>
+                                    <Grid x:Name="VerticalTemplate" MinWidth="{ThemeResource SliderVerticalWidth}" Visibility="Collapsed">
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="{ThemeResource SliderPreContentMargin}" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="{ThemeResource SliderPostContentMargin}" />
+                                        </Grid.ColumnDefinitions>
+                                        <Rectangle x:Name="VerticalTrackRect"
+                                                   Grid.RowSpan="3"
+                                                   Grid.Column="1"
+                                                   Width="{ThemeResource SliderTrackThemeHeight}"
+                                                   Fill="{TemplateBinding Background}"
+                                                   RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                                   RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                        <Rectangle x:Name="VerticalDecreaseRect"
+                                                   Grid.Row="2"
+                                                   Grid.Column="1"
+                                                   Fill="{TemplateBinding Foreground}"
+                                                   RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                                   RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                        <TickBar x:Name="LeftTickBar"
+                                                 Grid.RowSpan="3"
+                                                 Width="{ThemeResource SliderOutsideTickBarThemeHeight}"
+                                                 Margin="0,0,4,0"
+                                                 HorizontalAlignment="Right"
+                                                 Fill="{ThemeResource SliderTickBarFill}"
+                                                 Visibility="Collapsed" />
+                                        <TickBar x:Name="VerticalInlineTickBar"
+                                                 Grid.RowSpan="3"
+                                                 Grid.Column="1"
+                                                 Width="{ThemeResource SliderTrackThemeHeight}"
+                                                 Fill="{ThemeResource SliderInlineTickBarFill}"
+                                                 Visibility="Collapsed" />
+                                        <TickBar x:Name="RightTickBar"
+                                                 Grid.RowSpan="3"
+                                                 Grid.Column="2"
+                                                 Width="{ThemeResource SliderOutsideTickBarThemeHeight}"
+                                                 Margin="4,0,0,0"
+                                                 HorizontalAlignment="Left"
+                                                 Fill="{ThemeResource SliderTickBarFill}"
+                                                 Visibility="Collapsed" />
+                                        <Thumb x:Name="VerticalThumb"
+                                               Grid.Row="1"
+                                               Grid.Column="0"
+                                               Grid.ColumnSpan="3"
+                                               Width="{ThemeResource SliderVerticalThumbWidth}"
+                                               Height="{ThemeResource SliderVerticalThumbHeight}"
+                                               AutomationProperties.AccessibilityView="Raw"
+                                               CornerRadius="{StaticResource ControlCornerRadius}"
+                                               DataContext="{TemplateBinding Value}"
+                                               FocusVisualMargin="-6,-14,-6,-14"
+                                               Style="{StaticResource SliderThumbStyle}" />
+                                    </Grid>
+
+                                </Grid>
+
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumb" Storyboard.TargetProperty="Background">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderThumbBackground}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumb" Storyboard.TargetProperty="Background">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderThumbBackground}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SliderContainer" Storyboard.TargetProperty="Background">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderContainerBackground}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+
+                                        <VisualState x:Name="PointerOver">
+
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalTrackRect" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackFillPointerOver}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalTrackRect" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackFillPointerOver}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumb" Storyboard.TargetProperty="Background">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{TemplateBinding Foreground}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumb" Storyboard.TargetProperty="Background">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{TemplateBinding Foreground}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SliderContainer" Storyboard.TargetProperty="Background">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderContainerBackgroundPointerOver}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalDecreaseRect" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemFillColorCriticalBrush}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalDecreaseRect" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemFillColorCriticalBrush}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+
+                                        <VisualState x:Name="Pressed">
+
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalTrackRect" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackFillPressed}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalTrackRect" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackFillPressed}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumb" Storyboard.TargetProperty="Background">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{TemplateBinding Foreground}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumb" Storyboard.TargetProperty="Background">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{TemplateBinding Foreground}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SliderContainer" Storyboard.TargetProperty="Background">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderContainerBackgroundPressed}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalDecreaseRect" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemFillColorCriticalBrush}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalDecreaseRect" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemFillColorCriticalBrush}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+
+                                        <VisualState x:Name="Disabled">
+
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderHeaderForegroundDisabled}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalDecreaseRect" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackValueFillDisabled}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalTrackRect" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackFillDisabled}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalDecreaseRect" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackValueFillDisabled}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalTrackRect" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackFillDisabled}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumb" Storyboard.TargetProperty="Background">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderThumbBackgroundDisabled}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumb" Storyboard.TargetProperty="Background">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderThumbBackgroundDisabled}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopTickBar" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTickBarFillDisabled}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BottomTickBar" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTickBarFillDisabled}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LeftTickBar" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTickBarFillDisabled}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RightTickBar" Storyboard.TargetProperty="Fill">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTickBarFillDisabled}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SliderContainer" Storyboard.TargetProperty="Background">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderContainerBackgroundDisabled}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+
+                                    </VisualStateGroup>
+                                    <VisualStateGroup x:Name="FocusEngagementStates">
+                                        <VisualState x:Name="FocusDisengaged" />
+                                        <VisualState x:Name="FocusEngagedHorizontal">
+
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FocusBorder" Storyboard.TargetProperty="(Control.IsTemplateFocusTarget)">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="False" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumb" Storyboard.TargetProperty="(Control.IsTemplateFocusTarget)">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="True" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="FocusEngagedVertical">
+
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FocusBorder" Storyboard.TargetProperty="(Control.IsTemplateFocusTarget)">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="False" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumb" Storyboard.TargetProperty="(Control.IsTemplateFocusTarget)">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="True" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+
+                                    </VisualStateGroup>
+
+                                </VisualStateManager.VisualStateGroups>
+                            </Grid>
+
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
         </ResourceDictionary>
     </Page.Resources>
 
@@ -423,47 +1031,145 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <ScrollViewer Margin="0,8,0,6">
+            <ScrollViewer Margin="0,0,0,6">
+
                 <StackPanel Margin="6,0,0,0" HorizontalAlignment="Stretch" Orientation="Vertical">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <Border Width="32" Height="32" Margin="1,0,6,6" CornerRadius="4">
-                                <FontIcon Glyph="&#xF785;" />
-                            </Border>
-                            <ComboBox x:Name="ComComboBox" Width="120" Margin="6,0,6,6" SelectionChanged="COMComboBox_SelectionChanged">
-                                <ComboBoxItem Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" />
-                            </ComboBox>
-                            <Button x:Name="ClearComCombobox"
-                                    Width="42"
-                                    Height="32"
-                                    Margin="-49,0,0,6"
-                                    Click="ClearCOMCombobox_Click"
-                                    Style="{StaticResource AccentButtonStyle}">
-                                <FontIcon Margin="-1" VerticalAlignment="Center" FontSize="20" FontWeight="ExtraLight" Glyph="&#xED62;">
-                                    <!--  &#xE74D;  -->
-                                    <!--  &#xE8E6;  -->
-                                </FontIcon>
-                            </Button>
+                            <Border Width="32" Margin="1,0,6,0" Background="Transparent" CornerRadius="4">
+                                <Grid>
+                                    <Border Width="32" Height="32" Margin="0,0,0,9" VerticalAlignment="Bottom" CornerRadius="4">
+                                        <FontIcon Glyph="&#xE8C4;" />
+                                    </Border>
 
-                            <Button x:Name="ComButton" Width="60" Margin="6,0,6,6" Click="COMButton_Click">
-                                <FontIcon x:Name="ComButtonIcon" VerticalAlignment="Center" CenterPoint="10,10,0" Glyph="&#xE72C;">
-                                    <FontIcon.RotationTransition>
-                                        <ScalarTransition x:Name="ComButtonIconScalar" />
-                                    </FontIcon.RotationTransition>
-                                </FontIcon>
-                            </Button>
-                            <Border Width="36"
+                                </Grid>
+                            </Border>
+                            <Border Width="240"
+                                    Height="Auto"
                                     Margin="6,0,6,6"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    BorderBrush="{ThemeResource ControlElevationBorderBrush}"
-                                    BorderThickness="1"
+                                    BorderThickness="3"
                                     CornerRadius="4">
-                                <ProgressRing x:Name="AutoSerchComProgressRing" Width="24" Height="24" IsActive="False" />
+                                <Grid>
+                                    <StackPanel Margin="0" Orientation="Horizontal">
+                                        <ToggleButton Width="42" Height="32" Margin="0,0,6,0">
+                                            <Grid Margin="-10">
+                                                <FontIcon Margin="-16,-2,0,0" VerticalAlignment="Top" FontSize="18" Glyph="&#xEA49;" />
+                                                <TextBlock Margin="0,0,-6,-4" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" Text="AUTO" />
+                                            </Grid>
+                                        </ToggleButton>
+                                        
+                                        
+                                    </StackPanel>
+
+                                    <Button Width="32" Height="32" HorizontalAlignment="Right">
+                                        <FontIcon Glyph="&#xED0E;" Margin="-8"/>
+                                    </Button>
+                                </Grid>
+                            </Border>
+
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
+                                <Grid>
+                                    <Border Width="32" Height="32" Margin="0,3,0,6" VerticalAlignment="Bottom" CornerRadius="4">
+                                        <FontIcon Glyph="&#xF785;" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            <Border Width="240"
+                                    Height="Auto"
+                                    Margin="6,6,6,6"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="4">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Margin="0" Orientation="Horizontal">
+                                        <ComboBox x:Name="ComComboBox"
+                                                  Width="145"
+                                                  Margin="6,0,6,0"
+                                                  Background="Transparent"
+                                                  BorderThickness="0"
+                                                  SelectionChanged="COMComboBox_SelectionChanged"
+                                                  Visibility="Collapsed">
+                                            <ComboBoxItem Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" />
+                                        </ComboBox>
+
+                                    </StackPanel>
+
+                                    <ProgressBar x:Name="AutoSerchComProgressBar" Grid.Row="2" VerticalAlignment="Top" IsIndeterminate="True" Style="{StaticResource ProgressBarStyle}" />
+                                    <ListView x:Name="ComListview"
+                                              Grid.Row="1"
+                                              MinHeight="28"
+                                              MaxHeight="260"
+                                              Margin="2,4,2,4"
+                                              BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+                                              BorderThickness="0"
+                                              SelectionChanged="COMListview_SelectionChanged"
+                                              SelectionMode="Single">
+                                        <ListView.ItemContainerTransitions>
+                                            <TransitionCollection>
+                                                <AddDeleteThemeTransition />
+                                            </TransitionCollection>
+                                        </ListView.ItemContainerTransitions>
+                                    </ListView>
+
+                                    <StackPanel Grid.Row="2" Margin="1,8,0,4" Orientation="Horizontal">
+
+                                        <ToggleButton Width="42" Height="32" Margin="3,0,3,0" Click="AutoComButton_Click" IsChecked="{x:Bind AutoComButton.IsChecked, Mode=TwoWay}">
+                                            <Grid Margin="-10">
+                                                <FontIcon Margin="-18,0,0,0" VerticalAlignment="Top" FontSize="16" Glyph="&#xE895;" />
+                                                <TextBlock Margin="0,0,-6,-4" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" Text="SWAP" />
+                                            </Grid>
+                                        </ToggleButton>
+                                        <ToggleButton Width="42" Height="32" Margin="3,0,60,0" Click="AutoConnectButton_Click" IsChecked="{x:Bind AutoConnectButton.IsChecked, Mode=TwoWay}">
+                                            <Grid Margin="-10">
+                                                <FontIcon Margin="-16,-2,0,0" VerticalAlignment="Top" FontSize="18" Glyph="&#xE703;" />
+                                                <TextBlock Margin="0,0,-6,-4" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" Text="AUTO" />
+                                            </Grid>
+                                        </ToggleButton>
+                                        <Button x:Name="ClearComCombobox"
+                                                Grid.Row="2"
+                                                Width="32"
+                                                Height="32"
+                                                Margin="3,0,3,0"
+                                                Click="ClearCOMCombobox_Click"
+                                                Style="{StaticResource AccentButtonStyle}">
+                                            <!--  -49  -->
+                                            <FontIcon Margin="-10" VerticalAlignment="Center" FontSize="20" FontWeight="ExtraLight" Glyph="&#xED62;">
+                                                <!--  &#xE74D;  -->
+                                                <!--  &#xE8E6;  -->
+                                            </FontIcon>
+                                        </Button>
+                                        <Button x:Name="ComButton"
+                                                Grid.Row="2"
+                                                Width="32"
+                                                Height="32"
+                                                Margin="3,0,3,0"
+                                                BorderThickness="1"
+                                                Click="COMButton_Click">
+                                            <FontIcon x:Name="ComButtonIcon" Margin="-8" VerticalAlignment="Center" CenterPoint="10,10,0" Glyph="&#xE72C;">
+                                                <FontIcon.RotationTransition>
+                                                    <ScalarTransition x:Name="ComButtonIconScalar" />
+                                                </FontIcon.RotationTransition>
+                                            </FontIcon>
+                                        </Button>
+                                    </StackPanel>
+
+
+                                </Grid>
+                                <!--  MaxHeight="140"  -->
+                                <!--<ToggleSwitch Width="48" Margin="0,0,-106,0" HorizontalAlignment="Right" OffContent="" OnContent="" />-->
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Orientation="Horizontal">
-                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
+                        <StackPanel Orientation="Horizontal" Visibility="Collapsed">
+                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
                                 <FontIcon Glyph="&#xECF0;" />
                             </Border>
                             <ToggleButton x:Name="AutoComButton"
@@ -485,27 +1191,6 @@
 
                         </StackPanel>
 
-                        <StackPanel Orientation="Horizontal">
-                            <Border Width="32" Margin="1,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4" />
-                            <Border Width="240" Height="Auto" Margin="6,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
-                                <!--  MaxHeight="140"  -->
-                                <ListView x:Name="ComListview"
-                                          MinHeight="28"
-                                          MaxHeight="260"
-                                          Margin="2"
-                                          BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-                                          BorderThickness="0"
-                                          SelectionChanged="COMListview_SelectionChanged"
-                                          SelectionMode="Single">
-                                    <ListView.ItemContainerTransitions>
-                                        <TransitionCollection>
-                                            <AddDeleteThemeTransition />
-                                        </TransitionCollection>
-                                    </ListView.ItemContainerTransitions>
-                                </ListView>
-                            </Border>
-                        </StackPanel>
-
                         <StackPanel.ChildrenTransitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="True" />
@@ -516,38 +1201,315 @@
 
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
+                            <Border Width="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
                                 <FontIcon x:Name="BaudrateIcon" Glyph="&#xEC48;" />
                             </Border>
-                            <Border x:Name="BorderBack1"
+                            <Border Width="240"
+                                    Height="Auto"
                                     Margin="6"
-                                    Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
-                                    BorderBrush="{ThemeResource ControlElevationBorderBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="4">
-                                <Grid Width="118" HorizontalAlignment="Center">
-                                    <TextBlock x:Name="BaudTextBlock" Width="70" Margin="0" VerticalAlignment="Center" TextAlignment="Center">
-                                        BAUDRATE
-                                    </TextBlock>
-                                </Grid>
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="4"
+                                    Visibility="Visible">
+                                <StackPanel>
+                                    <StackPanel.Resources />
 
+                                    <Grid Margin="6,3,6,3" HorizontalAlignment="Stretch">
+                                        <StackPanel>
+                                            <TextBlock Margin="0" VerticalAlignment="Stretch" TextAlignment="Left">
+                                                <Run Text="{x:Bind BaudTextBlock.Text, Mode=OneWay}" />
+                                                <Run Text=":" />
+                                                <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind BandComboBox.SelectedValue, Mode=OneWay}" />
+                                            </TextBlock>
+                                            <ComboBox x:Name="BandComboBox"
+                                                      HorizontalAlignment="Stretch"
+                                                      Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                                      IsEditable="True"
+                                                      SelectionChanged="BANDComboBox_SelectionChanged"
+                                                      Style="{StaticResource ComboBoxStyle}" />
+                                        </StackPanel>
+                                        <TextBlock x:Name="BaudTextBlock" Visibility="Collapsed" />
+                                    </Grid>
+                                </StackPanel>
                             </Border>
-                            <ComboBox x:Name="BandComboBox"
-                                      Width="108"
-                                      Margin="7,6,6,6"
-                                      IsEditable="True"
-                                      SelectionChanged="BANDComboBox_SelectionChanged"
-                                      Style="{StaticResource ComboBoxStyle}" />
-
                         </StackPanel>
-
                         <StackPanel Orientation="Horizontal">
-                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
-                                <FontIcon Glyph="&#xEA18;" />
+                            <Border Width="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
+                                <StackPanel>
+                                    <Border Width="32" Margin="0,3,0,6" CornerRadius="4">
+                                        <StackPanel>
+                                            <Grid Height="32">
+                                                <FontIcon Glyph="&#xE950;" />
+                                                <InfoBadge x:Name="DatainfoBadge" Width="16" Margin="14,14,0,0" Value="8" />
+                                            </Grid>
+                                            <!--  &#xF785;  -->
+                                            <Grid Height="32" Margin="0,6,0,0">
+                                                <Border x:Name="StopBorder"
+                                                        Width="10"
+                                                        Height="13.5"
+                                                        Margin="5.5,-1,0,0"
+                                                        HorizontalAlignment="Left"
+                                                        Background="{ThemeResource AccentFillColorDefaultBrush}"
+                                                        CornerRadius="2"
+                                                        Opacity="0.9"
+                                                        Scale="{x:Bind ToolControlSerialPortMenuBox.SerialPortStopBits, Mode=OneWay, Converter={StaticResource SliderToVector3Converter}}">
+                                                    <Border.ScaleTransition>
+                                                        <Vector3Transition />
+                                                    </Border.ScaleTransition>
+                                                </Border>
+
+                                                <Border Width="27"
+                                                        Height="20"
+                                                        Margin="0,-1,0,0"
+                                                        HorizontalAlignment="Center"
+                                                        BorderBrush="{ThemeResource TextFillColorPrimaryBrush}"
+                                                        BorderThickness="1.5"
+                                                        CornerRadius="3"
+                                                        Opacity="0.9" />
+
+                                                <FontIcon FontSize="14" Foreground="White" Glyph="&#xE7FD;" />
+                                                <!--  &#xE81A;  -->
+                                            </Grid>
+                                            <FontIcon Height="32" Margin="0,20,0,0" Glyph="&#xEA18;" />
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
                             </Border>
+
+                            <controls2:SerialPortMenuBox x:Name="ToolControlSerialPortMenuBox" Width="240" Margin="6" />
+
+                            <Border Width="240"
+                                    Height="Auto"
+                                    Margin="6"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="4"
+                                    Visibility="Collapsed">
+                                <StackPanel>
+                                    <StackPanel.Resources />
+
+                                    <Grid Margin="6,3,6,3" HorizontalAlignment="Stretch">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto" />
+                                            <RowDefinition Height="auto" />
+                                            <RowDefinition Height="auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                        </Grid.ColumnDefinitions>
+
+
+                                        <Border Grid.Row="1"
+                                                Grid.RowSpan="2"
+                                                Grid.Column="0"
+                                                Width="1"
+                                                Margin="0,16,0,0"
+                                                HorizontalAlignment="Left"
+                                                Background="{ThemeResource TextFillColorDisabledBrush}"
+                                                CornerRadius="2" />
+                                        <Border Grid.Row="1"
+                                                Grid.RowSpan="2"
+                                                Grid.Column="1"
+                                                Width="1"
+                                                Margin="-2,16,0,0"
+                                                HorizontalAlignment="Left"
+                                                Background="{ThemeResource TextFillColorDisabledBrush}"
+                                                CornerRadius="2" />
+                                        <Border Grid.Row="1"
+                                                Grid.RowSpan="2"
+                                                Grid.Column="9"
+                                                Width="1"
+                                                Margin="-1,16,0,0"
+                                                HorizontalAlignment="Left"
+                                                Background="{ThemeResource TextFillColorDisabledBrush}"
+                                                CornerRadius="2" />
+                                        <Border Grid.Row="1"
+                                                Grid.RowSpan="2"
+                                                Grid.Column="10"
+                                                Width="1"
+                                                Margin="-1,16,0,0"
+                                                HorizontalAlignment="Left"
+                                                Background="{ThemeResource TextFillColorDisabledBrush}"
+                                                CornerRadius="2" />
+                                        <Border Grid.Row="1"
+                                                Grid.RowSpan="2"
+                                                Grid.Column="13"
+                                                Width="1"
+                                                Margin="-1,16,0,0"
+                                                HorizontalAlignment="Left"
+                                                Background="{ThemeResource TextFillColorDisabledBrush}"
+                                                CornerRadius="2" />
+
+                                        <TextBlock Grid.Row="1"
+                                                   Grid.RowSpan="2"
+                                                   Grid.Column="1"
+                                                   Grid.ColumnSpan="7"
+                                                   Margin="3,21,4,0"
+                                                   HorizontalAlignment="Left">
+                                            <Run Text="{x:Bind DataBitSlider.Value, Mode=OneWay}" />
+                                            <Run Text="Bit" />
+                                        </TextBlock>
+                                        <TextBlock Grid.Row="1"
+                                                   Grid.RowSpan="2"
+                                                   Grid.Column="11"
+                                                   Grid.ColumnSpan="2"
+                                                   Margin="-10,21,4,0"
+                                                   HorizontalAlignment="Left">
+                                            <Run Text="{x:Bind StopBitSlider.Value, Mode=OneWay}" />
+                                            <Run Text="Bit" />
+                                        </TextBlock>
+
+
+                                        <Border Grid.Row="1"
+                                                Grid.Column="0"
+                                                Width="18"
+                                                Height="4"
+                                                Margin="0,-0.5,0,0"
+                                                Background="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                                CornerRadius="2,0,0,2" />
+                                        <Border Grid.Row="1"
+                                                Grid.Column="1"
+                                                Grid.ColumnSpan="4"
+                                                Height="4"
+                                                Margin="-1,-0.5,-1,0"
+                                                Background="{ThemeResource AccentFillColorDefaultBrush}" />
+                                        <Border Grid.Row="1"
+                                                Grid.Column="9"
+                                                Width="18"
+                                                Height="4"
+                                                Margin="-1,-0.5,0,0"
+                                                Background="{ThemeResource SystemFillColorCautionBrush}"
+                                                CornerRadius="0" />
+                                        <Border Grid.Row="1"
+                                                Grid.Column="10"
+                                                Width="16"
+                                                Height="4"
+                                                Margin="-1,-0.5,-1,0"
+                                                Background="{ThemeResource SystemFillColorCriticalBrush}"
+                                                CornerRadius="0" />
+                                        <Slider x:Name="DataBitSlider"
+                                                Grid.Row="1"
+                                                Grid.Column="5"
+                                                Grid.ColumnSpan="4"
+                                                Width="80"
+                                                Margin="0,-0.5,-1,0"
+                                                Maximum="8"
+                                                Minimum="5"
+                                                SnapsTo="Ticks"
+                                                TickFrequency="1"
+                                                TickPlacement="Outside" />
+                                        <Slider x:Name="StopBitSlider"
+                                                Grid.Row="1"
+                                                Grid.Column="11"
+                                                Grid.ColumnSpan="2"
+                                                Width="54"
+                                                Margin="0,-0.5,0,0"
+                                                Maximum="2"
+                                                Minimum="1"
+                                                SnapsTo="Ticks"
+                                                Style="{StaticResource SliderStyle}"
+                                                TickFrequency="0.5"
+                                                TickPlacement="Outside"
+                                                Value="1" />
+
+                                        <FontIcon Grid.Row="2"
+                                                  Grid.Column="0"
+                                                  Grid.ColumnSpan="1"
+                                                  Margin="-2,6,1,0"
+                                                  FontSize="13"
+                                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                  Glyph="&#xE768;" />
+
+                                        <TextBlock Grid.Row="2"
+                                                   Grid.Column="1"
+                                                   Grid.ColumnSpan="8"
+                                                   Margin="0,4,0,0"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                   Text="{x:Bind DataTextBlock.Text, Mode=OneWay}" />
+
+
+                                        <TextBlock Grid.Row="2"
+                                                   Grid.Column="9"
+                                                   Grid.ColumnSpan="1"
+                                                   Margin="0,4,0,0"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                   Text="N" />
+                                        <TextBlock Grid.Row="2"
+                                                   Grid.Column="10"
+                                                   Grid.ColumnSpan="3"
+                                                   Margin="0,4,0,0"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                   Text="{x:Bind StopTextBlock.Text, Mode=OneWay}" />
+                                    </Grid>
+                                    <Grid Margin="6,3,6,6">
+                                        <Grid.Resources>
+                                            <Style TargetType="toolkit:Segmented">
+                                                <Setter Property="Margin" Value="0" />
+                                                <Setter Property="BorderThickness" Value="1" />
+                                                <Setter Property="Padding" Value="1" />
+                                                <Setter Property="BorderBrush" Value="{ThemeResource CustomBoxElevationBorderBrush}" />
+                                            </Style>
+                                        </Grid.Resources>
+                                        <StackPanel>
+                                            <TextBlock x:Name="ParitySegmentedTextBlock">
+                                                <Run Text="{x:Bind PartTextBlock.Text, Mode=OneWay}" />
+                                                <Run Text=":" />
+                                                <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ParComboBox.SelectedValue, Mode=OneWay}" />
+                                            </TextBlock>
+                                            <toolkit:Segmented x:Name="ParitySegmented" HorizontalAlignment="Stretch" Background="{ThemeResource CustomBoxSolidColorBrush}" SelectedIndex="{x:Bind ParComboBox.SelectedIndex, Mode=TwoWay}">
+                                                <toolkit:SegmentedItem Tag="None">
+                                                    <FontIcon Glyph="&#xF140;" />
+                                                </toolkit:SegmentedItem>
+                                                <toolkit:SegmentedItem Tag="Odd">
+                                                    <FontIcon Glyph="&#xECC8;" />
+                                                </toolkit:SegmentedItem>
+                                                <toolkit:SegmentedItem Tag="Even">
+                                                    <FontIcon Glyph="&#xECC9;" />
+                                                </toolkit:SegmentedItem>
+                                                <toolkit:SegmentedItem Tag="Mark">
+                                                    <FontIcon Glyph="&#xF16C;" />
+                                                </toolkit:SegmentedItem>
+                                                <toolkit:SegmentedItem Tag="Space">
+                                                    <FontIcon Glyph="&#xF16D;" />
+                                                </toolkit:SegmentedItem>
+                                            </toolkit:Segmented>
+                                            <TextBlock x:Name="EncodingSegmentedTextBlock">
+                                                <Run Text="{x:Bind EncodingTextBlock.Text, Mode=OneWay}" />
+                                                <Run Text=":" />
+                                                <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind EncodingComboBox.SelectedValue, Mode=OneWay}" />
+                                            </TextBlock>
+                                            <ComboBox x:Name="EncodingComboBox" HorizontalAlignment="Stretch" Background="{ThemeResource CustomBoxSolidColorBrush}" SelectionChanged="EncodingComboBox_SelectionChanged" Style="{StaticResource ComboBoxStyle}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4" />
                             <Border x:Name="BorderBack2"
                                     Margin="6"
-                                    Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                                    Background="{ThemeResource CustomBoxElevationBorderBrush}"
                                     BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4">
@@ -562,36 +1524,10 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal">
-                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
-                                <Grid>
-                                    <Border x:Name="StopBorder"
-                                            Width="10"
-                                            Height="13.5"
-                                            Margin="6,-1,0,0"
-                                            HorizontalAlignment="Left"
-                                            Background="{ThemeResource AccentTextFillColorTertiaryBrush}"
-                                            CornerRadius="2"
-                                            Opacity="0.9"
-                                            Scale="1,1,1">
-                                        <Border.ScaleTransition>
-                                            <Vector3Transition />
-                                        </Border.ScaleTransition>
-                                    </Border>
-                                    <Border Width="27"
-                                            Height="20"
-                                            Margin="1,-1,0,0"
-                                            HorizontalAlignment="Center"
-                                            BorderBrush="{ThemeResource TextFillColorPrimaryBrush}"
-                                            BorderThickness="1.5"
-                                            CornerRadius="3"
-                                            Opacity="0.9" />
-                                    <FontIcon FontSize="14" Glyph="&#xE7FD;" />
-                                    <!--  &#xE81A;  -->
-                                </Grid>
-                            </Border>
+                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4" />
                             <Border x:Name="BorderBack3"
                                     Margin="6"
-                                    Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                                    Background="{ThemeResource CustomBoxElevationBorderBrush}"
                                     BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4">
@@ -606,16 +1542,10 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal">
-                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
-                                <Grid>
-                                    <FontIcon Glyph="&#xE950;" />
-                                    <InfoBadge x:Name="DatainfoBadge" Width="16" Margin="14,14,0,0" Value="8" />
-                                </Grid>
-                                <!--  &#xF785;  -->
-                            </Border>
+                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4" />
                             <Border x:Name="BorderBack4"
                                     Margin="6"
-                                    Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                                    Background="{ThemeResource CustomBoxElevationBorderBrush}"
                                     BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4">
@@ -630,23 +1560,23 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal">
-                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
+                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
                                 <Grid>
                                     <FontIcon Glyph="&#xF2B7;" />
                                 </Grid>
                             </Border>
-                            <Border Margin="6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlElevationBorderBrush}" BorderThickness="1" CornerRadius="4">
+                            <Border Margin="6" Background="{ThemeResource CustomBoxElevationBorderBrush}" BorderBrush="{ThemeResource ControlElevationBorderBrush}" BorderThickness="1" CornerRadius="4">
                                 <Grid Width="118" HorizontalAlignment="Center">
                                     <TextBlock x:Name="EncodingTextBlock" Width="70" Margin="0" VerticalAlignment="Center" TextAlignment="Center">
                                         Encoding
                                     </TextBlock>
                                 </Grid>
                             </Border>
-                            <ComboBox x:Name="EncodingComboBox" Width="108" Margin="7,6,6,6" SelectionChanged="EncodingComboBox_SelectionChanged" Style="{StaticResource ComboBoxStyle}" />
+
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal">
-                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
+                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
                                 <FontIcon Glyph="&#xECF3;" />
                             </Border>
                             <Border x:Name="CdhBorder" Height="32" Margin="6" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4">
@@ -704,12 +1634,11 @@
                         </StackPanel.ChildrenTransitions>
                     </StackPanel>
 
-                    <StackPanel Height="0" Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal">
                         <NumberBox x:Name="DataNumberBox"
-                                   Width="108"
                                    Margin="6"
                                    LargeChange="1"
-                                   Maximum="9"
+                                   Maximum="8"
                                    Minimum="5"
                                    SmallChange="1"
                                    SpinButtonPlacementMode="Inline" />
@@ -725,7 +1654,7 @@
 
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
+                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
                                 <FontIcon Glyph="&#xE943;" />
                             </Border>
                             <ToggleButton x:Name="TxNewLineButton" Width="120" Margin="6" Click="TXNewLineButton_Click">
@@ -741,7 +1670,7 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal">
-                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
+                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
                                 <Grid>
                                     <FontIcon FontSize="9" Glyph="&#xF155;" />
                                     <FontIcon Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}" Glyph="&#xE943;" />
@@ -757,7 +1686,7 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal">
-                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
+                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
                                 <FontIcon Glyph="&#xF259;" />
                             </Border>
                             <ToggleButton x:Name="SaveSetButton"
@@ -783,19 +1712,24 @@
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <Border Margin="1,6,6,6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
+                        <Border Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="0" CornerRadius="4">
                             <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
                                 <FontIcon Margin="6,12,6,0" Glyph="&#xEC7A;" />
                             </StackPanel>
                         </Border>
 
-                        <Border x:Name="ChipToolKitBorder" Width="240" Margin="6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
+                        <Border x:Name="ChipToolKitBorder"
+                                Width="240"
+                                Margin="6"
+                                BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                BorderThickness="3"
+                                CornerRadius="4">
                             <StackPanel Orientation="Vertical">
                                 <StackPanel Orientation="Horizontal">
-                                    <Border Width="114" Margin="6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
+                                    <Border Width="110" Margin="6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
                                         <TextBlock Margin="6,6,9,6" HorizontalAlignment="Center" Text="MCU tools" />
                                     </Border>
-                                    <ComboBox x:Name="ChipToolKitComboBox" Width="102" Margin="6" SelectionChanged="ChipToolKitComboBox_SelectionChanged">
+                                    <ComboBox x:Name="ChipToolKitComboBox" Width="100" Margin="6" SelectionChanged="ChipToolKitComboBox_SelectionChanged">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal">
@@ -809,7 +1743,7 @@
                                     <!--  W226  -->
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <Frame x:Name="McuToolsFrame" Width="240" Margin="0" />
+                                    <Frame x:Name="McuToolsFrame" Width="234" Margin="0" />
                                 </StackPanel>
 
                             </StackPanel>
@@ -824,6 +1758,8 @@
                     <StackPanel Height="36" Orientation="Horizontal" />
                     <StackPanel Height="12" Orientation="Horizontal" />
                     <StackPanel Orientation="Horizontal" />
+
+                    <Border Height="600" />
 
                     <!--  弃用功能  -->
                     <StackPanel Height="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal">
