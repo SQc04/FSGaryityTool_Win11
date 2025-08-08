@@ -1,10 +1,12 @@
-﻿using Microsoft.UI.Xaml;
+﻿using FSGaryityTool_Win11.Views.Pages.SerialPortPage;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +15,8 @@ using System.IO.Ports;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -100,13 +104,13 @@ namespace FSGaryityTool_Win11.Controls
     }
     public sealed partial class SerialPortMenuBox : UserControl, INotifyPropertyChanged
     {
-        private int _serialPortBandRate;
+        private int _serialPortBaudRate;
         private int _serialPortDataBits;
         private Parity _serialPortParity;
         private StopBits _serialPortStopBits;
         private Encoding _serialPortEncoding;
 
-        private string _bandRateText;
+        private string _BaudRateText;
         private string _dataBitsText;
         private string _parityText;
         private string _stopBitsText;
@@ -116,17 +120,19 @@ namespace FSGaryityTool_Win11.Controls
         private string _encodingValueText;
         public List<string> EncodingItems { get; }
 
-        public int SerialPortBandRate
+        public int SerialPortBaudRate
         {
-            get => _serialPortBandRate;
+            get => _serialPortBaudRate;
             set
             {
-                if (_serialPortBandRate != value)
+                if (_serialPortBaudRate != value)
                 {
-                    _serialPortBandRate = value;
-                    OnPropertyChanged(nameof(SerialPortBandRate));
+                    _serialPortBaudRate = value;
+                    OnPropertyChanged(nameof(SerialPortBaudRate));
                     OnPropertyChanged(nameof(BitRate)); // 通知比特率变化
                     OnPropertyChanged(nameof(BitRateDisplay));
+                    OnPropertyChanged(nameof(ByteRateDisplay));
+                    DelayAddBaudRateComboboxItem(); // 延迟添加波特率到ComboBox
                 }
             }
         }
@@ -139,7 +145,7 @@ namespace FSGaryityTool_Win11.Controls
                 // 计算总位数
                 double totalBits = 1 + SerialPortDataBits + parityBit + (double)SerialPortStopBits;
                 // 计算比特率并四舍五入
-                double bitRate = SerialPortBandRate * SerialPortDataBits / totalBits;
+                double bitRate = SerialPortBaudRate * SerialPortDataBits / totalBits;
                 return Math.Round(bitRate);
             }
         }
@@ -147,10 +153,21 @@ namespace FSGaryityTool_Win11.Controls
         {
             get
             {
-                if (SerialPortBandRate > 9600)
+                if (SerialPortBaudRate > 9600)
                     return $"{(BitRate / 1000.0):F2} Kbit/s";
                 else
                     return $"{BitRate} bit/s";
+            }
+        }
+        public string ByteRateDisplay
+        {
+            get
+            {
+                double byteRate = BitRate / 8.0; // Convert bits to bytes
+                if (SerialPortBaudRate > 9600)
+                    return $"{(byteRate / 1000.0):F2} KB/s"; // Use KB/s for kilobytes per second
+                else
+                    return $"{byteRate:F2} B/s"; // Use B/s for bytes per second
             }
         }
 
@@ -165,6 +182,7 @@ namespace FSGaryityTool_Win11.Controls
                     OnPropertyChanged(nameof(SerialPortDataBits));
                     OnPropertyChanged(nameof(BitRate)); // 通知比特率变化
                     OnPropertyChanged(nameof(BitRateDisplay));
+                    OnPropertyChanged(nameof(ByteRateDisplay));
                 }
             }
         }
@@ -180,6 +198,7 @@ namespace FSGaryityTool_Win11.Controls
                     OnPropertyChanged(nameof(SerialPortParity));
                     OnPropertyChanged(nameof(BitRate)); // 通知比特率变化
                     OnPropertyChanged(nameof(BitRateDisplay));
+                    OnPropertyChanged(nameof(ByteRateDisplay));
                     // 同步到Segmented控件
                     if (ParitySegmented != null)
                         ParitySegmented.SelectedIndex = (int)value;
@@ -197,6 +216,7 @@ namespace FSGaryityTool_Win11.Controls
                     OnPropertyChanged(nameof(SerialPortStopBits));
                     OnPropertyChanged(nameof(BitRate)); // 通知比特率变化
                     OnPropertyChanged(nameof(BitRateDisplay));
+                    OnPropertyChanged(nameof(ByteRateDisplay));
                 }
             }
         }
@@ -214,15 +234,15 @@ namespace FSGaryityTool_Win11.Controls
             }
         }
 
-        public string BandRateText
+        public string BaudRateText
         {
-            get => _bandRateText;
+            get => _BaudRateText;
             set
             {
-                if (_bandRateText != value)
+                if (_BaudRateText != value)
                 {
-                    _bandRateText = value;
-                    OnPropertyChanged(nameof(BandRateText));
+                    _BaudRateText = value;
+                    OnPropertyChanged(nameof(BaudRateText));
                 }
             }
         }
@@ -312,8 +332,7 @@ namespace FSGaryityTool_Win11.Controls
             EncodingItems = Encoding.GetEncodings().Select(e => e.Name).OrderBy(x => x).ToList();
             ParitySegmented.Loaded += ParitySegmented_Loaded;
 
-            BandRateComboBox.SelectedItem = SerialPortBandRate.ToString();
-
+            
             if (SerialPortDataBits == 0 || SerialPortDataBits < 5 || SerialPortDataBits > 8)
             {
                 SerialPortDataBits = 8;
@@ -329,6 +348,15 @@ namespace FSGaryityTool_Win11.Controls
                 SerialPortEncoding = Encoding.UTF8;
                 _serialPortEncoding = Encoding.UTF8;
             }
+
+            if (SerialPortBaudRate == 0 || SerialPortBaudRate < 1 || SerialPortBaudRate > 10000000)
+            {
+                SerialPortBaudRate = 115200;
+                _serialPortBaudRate = 115200;
+            }
+
+            //BaudRateComboBox.SelectedItem = SerialPortBaudRate.ToString();
+            //AddBaudRateComboboxItem(BaudRateComboBox, SerialPortBaudRate);
 
         }
 
@@ -450,46 +478,123 @@ namespace FSGaryityTool_Win11.Controls
             }
         }
 
-        private void BandRateComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
+        private void BaudRateComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
         {
-            ValidateBandRateInput(sender, args.Text);
+            ValidateBaudRateInput(sender, args.Text);
         }
 
-        private void BandRateComboBox_LostFocus(object sender, RoutedEventArgs e)
+        private void BaudRateComboBox_LostFocus(object sender, RoutedEventArgs e)
         {
             if (sender is ComboBox comboBox)
             {
-                ValidateBandRateInput(comboBox, comboBox.Text);
+                ValidateBaudRateInput(comboBox, comboBox.Text);
             }
         }
 
-        private void ValidateBandRateInput(ComboBox comboBox, string text)
+        private CancellationTokenSource _BaudRateCts; // 用于取消之前的延迟
+
+        private async void DelayAddBaudRateComboboxItem()
+        {
+            // Cancel any previous delay (if exists)
+            _BaudRateCts?.Cancel();
+            _BaudRateCts = new CancellationTokenSource();
+
+            try
+            {
+                // Delay for 2 seconds, cancellable
+                await Task.Delay(3500, _BaudRateCts.Token);
+
+                // Enqueue the operation on the DispatcherQueue
+                bool enqueued = BaudRateComboBox.DispatcherQueue.TryEnqueue(() =>
+                {
+                    AddBaudRateComboboxItem(BaudRateComboBox, SerialPortBaudRate);
+                });
+
+                if (!enqueued)
+                {
+                    // Handle the case where enqueueing failed (optional)
+                    // For example, log an error or retry
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // Delay was cancelled, no further action needed
+            }
+            finally
+            {
+                // Clean up CancellationTokenSource
+                _BaudRateCts?.Dispose();
+                _BaudRateCts = null;
+            }
+        }
+
+        private async void AddBaudRateComboboxItem(ComboBox comboBox, int value)
+        {
+            // 检查是否需要将新值添加到 ComboBox 的 Items
+            int min = 1, max = 10000000;
+            if (!comboBox.Items.Contains(value) && value >= min && value <= max)
+            {
+                // 添加新值到 ComboBox 的 Items
+                comboBox.Items.Add(value);
+
+                await Task.Run(() =>
+                {
+                    Thread.Sleep(3000);
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        ///*
+                        // 可选：对 Items 进行排序（保持波特率升序）
+                        var sortedItems = comboBox.Items.Cast<int>().ToList();
+                        sortedItems.Sort();
+                        comboBox.Items.Clear();
+                        foreach (int item in sortedItems)
+                        {
+                            comboBox.Items.Add(item);
+                        }
+                        //*/
+                    });
+                });
+                
+
+                // 设置当前选中项为新添加的值
+                comboBox.SelectedItem = value;
+            }
+        }
+
+        private void ValidateBaudRateInput(ComboBox comboBox, string text)
         {
             // 允许的波特率范围
             int min = 1, max = 10000000;
-            // 只允许纯数字
-            int.TryParse(text, out int str);
 
-            if (str > max)
-            {
-                SerialPortBandRate = max;
-            }
+            // 验证输入是否为纯数字且在范围内
             if (!string.IsNullOrWhiteSpace(text) && text.All(char.IsDigit) && int.TryParse(text, out int value) && value >= min && value <= max)
             {
-                SerialPortBandRate = value;
+                // 更新绑定的属性
+                SerialPortBaudRate = value;
+
+                //AddBaudRateComboboxItem(comboBox, value);
             }
             else
             {
+                // 处理无效输入
                 if (text == "0")
                 {
-                    comboBox.Text = "1";
+                    comboBox.Text = min.ToString();
+                    SerialPortBaudRate = min; // 更新绑定的属性
+                }
+                else if(Convert.ToInt32(text) >= max)
+                {
+                    comboBox.Text = max.ToString();
+                    SerialPortBaudRate = max;
+
                 }
                 else
                 {
                     // 恢复为上次有效值或默认值
-                    comboBox.Text = SerialPortBandRate.ToString();
+                    comboBox.Text = SerialPortBaudRate.ToString();
                 }
-                
+
+                // 标记事件为已处理，防止 ComboBox 接受无效输入
             }
         }
     }

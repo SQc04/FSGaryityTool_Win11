@@ -235,7 +235,7 @@
                 </Grid>
             </ScrollViewer>
 
-            <TextBlock VerticalAlignment="Top" FontSize="{x:Bind FontSize, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Type your data here...&#x0a;Press Ctrl+Enter to send data." />
+            <TextBlock VerticalAlignment="Top" FontSize="{x:Bind FontSize, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind PlaceholderText, Mode=OneWay}" TextWrapping="Wrap" />
         </Grid>
 
         <StackPanel x:Name="BoxButtonStackPanel"

@@ -1044,11 +1044,7 @@
 
                                 </Grid>
                             </Border>
-                            <Border Width="240"
-                                    Height="Auto"
-                                    Margin="6,0,6,6"
-                                    BorderThickness="3"
-                                    CornerRadius="4">
+                            <Border Width="240" Height="Auto" Margin="6,0,6,6" BorderThickness="3" CornerRadius="4">
                                 <Grid>
                                     <StackPanel Margin="0" Orientation="Horizontal">
                                         <ToggleButton Width="42" Height="32" Margin="0,0,6,0">
@@ -1057,12 +1053,12 @@
                                                 <TextBlock Margin="0,0,-6,-4" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" Text="AUTO" />
                                             </Grid>
                                         </ToggleButton>
-                                        
-                                        
+
+
                                     </StackPanel>
 
                                     <Button Width="32" Height="32" HorizontalAlignment="Right">
-                                        <FontIcon Glyph="&#xED0E;" Margin="-8"/>
+                                        <FontIcon Margin="-8" Glyph="&#xED0E;" />
                                     </Button>
                                 </Grid>
                             </Border>
@@ -1121,16 +1117,16 @@
 
                                     <StackPanel Grid.Row="2" Margin="1,8,0,4" Orientation="Horizontal">
 
-                                        <ToggleButton Width="42" Height="32" Margin="3,0,3,0" Click="AutoComButton_Click" IsChecked="{x:Bind AutoComButton.IsChecked, Mode=TwoWay}">
+                                        <ToggleButton Width="48" Height="32" Margin="3,0,3,0" Click="AutoComButton_Click" IsChecked="{x:Bind AutoComButton.IsChecked, Mode=TwoWay}">
                                             <Grid Margin="-10">
-                                                <FontIcon Margin="-18,0,0,0" VerticalAlignment="Top" FontSize="16" Glyph="&#xE895;" />
-                                                <TextBlock Margin="0,0,-6,-4" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" Text="SWAP" />
+                                                <FontIcon Margin="-20,0,0,0" VerticalAlignment="Top" FontSize="16" Glyph="&#xE895;" />
+                                                <TextBlock Margin="0,0,-9,-5" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" Text="SWAP" />
                                             </Grid>
                                         </ToggleButton>
-                                        <ToggleButton Width="42" Height="32" Margin="3,0,60,0" Click="AutoConnectButton_Click" IsChecked="{x:Bind AutoConnectButton.IsChecked, Mode=TwoWay}">
+                                        <ToggleButton Width="48" Height="32" Margin="3,0,3,0" Click="AutoConnectButton_Click" IsChecked="{x:Bind AutoConnectButton.IsChecked, Mode=TwoWay}">
                                             <Grid Margin="-10">
-                                                <FontIcon Margin="-16,-2,0,0" VerticalAlignment="Top" FontSize="18" Glyph="&#xE703;" />
-                                                <TextBlock Margin="0,0,-6,-4" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" Text="AUTO" />
+                                                <FontIcon Margin="-20,-2,0,0" VerticalAlignment="Top" FontSize="18" Glyph="&#xE703;" />
+                                                <TextBlock Margin="0,0,-9,-5" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" Text="AUTO" />
                                             </Grid>
                                         </ToggleButton>
                                         <Button x:Name="ClearComCombobox"
@@ -1158,6 +1154,38 @@
                                                     <ScalarTransition x:Name="ComButtonIconScalar" />
                                                 </FontIcon.RotationTransition>
                                             </FontIcon>
+                                        </Button>
+                                        <Button x:Name="RotateButton"
+                                                Grid.Row="2"
+                                                Width="32"
+                                                Height="32"
+                                                Margin="3,0,3,0"
+                                                Click="RotateButton_Click"
+                                                PreviewKeyDown="RotateButton_PreviewKeyDown"
+                                                PreviewKeyUp="RotateButton_PreviewKeyUp">
+                                            <FontIcon x:Name="Icon" Margin="-8" VerticalAlignment="Center" CenterPoint="10,10,0" Glyph="&#xE72C;">
+                                                <FontIcon.RotationTransition>
+                                                    <ScalarTransition />
+                                                </FontIcon.RotationTransition>
+                                            </FontIcon>
+                                            <Button.Resources>
+                                                <!--  Storyboard for press (counterclockwise 30 degrees)  -->
+                                                <Storyboard x:Key="PressStoryboard">
+                                                    <DoubleAnimation AutoReverse="False" Storyboard.TargetName="Icon" Storyboard.TargetProperty="Rotation" To="-30" Duration="0:0:0.5">
+                                                        <DoubleAnimation.EasingFunction>
+                                                            <CubicEase EasingMode="EaseOut" />
+                                                        </DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                </Storyboard>
+                                                <!--  Storyboard for release (clockwise 360 degrees and reset)  -->
+                                                <Storyboard x:Key="ReleaseStoryboard">
+                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Icon" Storyboard.TargetProperty="Rotation">
+                                                        <SplineDoubleKeyFrame KeySpline="0,0,1,1" KeyTime="0:0:0" Value="-60" />
+                                                        <SplineDoubleKeyFrame KeySpline="0,0,1,1" KeyTime="0:0:0.3" Value="420" />
+                                                        <SplineDoubleKeyFrame KeySpline="0.3,0,0.7,1" KeyTime="0:0:0.5" Value="60" />
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </Button.Resources>
                                         </Button>
                                     </StackPanel>
 
@@ -1277,7 +1305,7 @@
                                 </StackPanel>
                             </Border>
 
-                            <controls2:SerialPortMenuBox x:Name="ToolControlSerialPortMenuBox" Width="240" Margin="6" />
+                            <controls2:SerialPortMenuBox x:Name="ToolControlSerialPortMenuBox" Width="240" Margin="6" SerialPortBaudRate="115200" />
 
                             <Border Width="240"
                                     Height="Auto"

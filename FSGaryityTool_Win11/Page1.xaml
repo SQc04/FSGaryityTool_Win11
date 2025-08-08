@@ -137,6 +137,7 @@
                                 Margin="0,0,0,6"
                                 EditorMode="Text"
                                 IsConnect="False"
+                                PlaceholderText="Type your data here...&#x0a;Press Ctrl+Enter to send data."
                                 Text="114"
                                 TextAlignment="Center" />
 

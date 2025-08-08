@@ -6,6 +6,7 @@
       xmlns:local="using:FSGaryityTool_Win11.Views.Pages.TestPage"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+      xmlns:labs="using:CommunityToolkit.Labs.WinUI"
       NavigationCacheMode="Enabled"
       mc:Ignorable="d">
 
@@ -73,7 +74,7 @@
 
             <Button x:Name="OpenStarWindowButton" Margin="12,12,6,6" Click="OpenStarWindowButton_Click" Content="OpenStarWindow" />
 
-            <Border Margin="12,12,6,6"
+            <Grid Margin="12,12,6,6"
                     HorizontalAlignment="Left"
                     Background="{ThemeResource CustomBoxSolidColorBrush}"
                     BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
@@ -90,8 +91,30 @@
                         <controls:WS64LedBoardBox x:Name="ledBoard3" Margin="6" />
                     </StackPanel>
                 </StackPanel>
-
-            </Border>
+                <labs:Shimmer x:Name="TestShimmer" Visibility="Collapsed"/>
+            </Grid>
+            <Grid Width="600" Height="300" Padding="12" Margin="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition  Width="12"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition  Width="12"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="12"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Border Grid.Column="0" Grid.RowSpan="3" Margin="9,9,-9,-9" Background="{ThemeResource SystemControlBackgroundDarkColor}" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{StaticResource ControlCornerRadius}" Opacity="0.2"/>
+                <Border Grid.Column="0" Grid.RowSpan="3" Background="{ThemeResource CustomBoxSolidColorBrush}" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{StaticResource ControlCornerRadius}" />
+                <Border Grid.Column="2" Grid.RowSpan="3" Margin="9,9,-9,-9" Background="{ThemeResource SystemControlBackgroundDarkColor}" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{StaticResource ControlCornerRadius}" Opacity="0.2"/>
+                <Border Grid.Column="2" Grid.RowSpan="3" Background="{ThemeResource CustomBoxSolidColorBrush}" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{StaticResource ControlCornerRadius}" />
+                <Border Grid.Column="4" Margin="9,9,-9,-9" Background="{ThemeResource SystemControlBackgroundDarkColor}" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{StaticResource ControlCornerRadius}" Opacity="0.2"/>
+                <Border Grid.Column="4" Background="{ThemeResource CustomBoxSolidColorBrush}" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{StaticResource ControlCornerRadius}" />
+                <Border Grid.Column="4" Grid.Row="2" Margin="9,9,-9,-9" Background="{ThemeResource SystemControlBackgroundDarkColor}" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{StaticResource ControlCornerRadius}" Opacity="0.2"/>
+                <Border Grid.Column="4" Grid.Row="2" Background="{ThemeResource CustomBoxSolidColorBrush}" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="{StaticResource ControlCornerRadius}" />
+            </Grid>
             <Grid Width="248" Height="248">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />

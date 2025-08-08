@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -144,7 +145,32 @@ namespace FSGaryityTool_Win11.Controls
                 control.UpdateCharItems();
             }
         }
-        
+
+        public static readonly DependencyProperty PlaceholderTextProperty =
+        DependencyProperty.Register(
+            nameof(PlaceholderText),
+            typeof(string),
+            typeof(BeyondTextBox),
+            new PropertyMetadata(string.Empty, OnPlaceholderTextChanged)
+        );
+
+        public string PlaceholderText
+        {
+            get => (string)GetValue(PlaceholderTextProperty);
+            set
+            {
+                if (PlaceholderText != value)
+                {
+                    SetValue(PlaceholderTextProperty, value);
+                    OnPropertyChanged(nameof(PlaceholderText));
+                }
+            }
+        }
+        private static void OnPlaceholderTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is BeyondTextBox control)
+                control.OnPropertyChanged(nameof(PlaceholderText));
+        }
 
         // TextAlignment
         public static readonly DependencyProperty TextAlignmentProperty =

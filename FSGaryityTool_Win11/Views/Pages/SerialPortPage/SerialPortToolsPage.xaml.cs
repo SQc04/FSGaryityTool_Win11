@@ -336,7 +336,7 @@ public sealed partial class SerialPortToolsPage : Page
         AutoComButton.Content = LanguageText("autoSerichComl");
         AutoConnectButton.Content = LanguageText("autoConnectl");
 
-        ToolControlSerialPortMenuBox.BandRateText = LanguageText("baudRatel");
+        ToolControlSerialPortMenuBox.BaudRateText = LanguageText("baudRatel");
         ToolControlSerialPortMenuBox.DataBitsText = LanguageText("dataBits");
         ToolControlSerialPortMenuBox.StopBitsText = LanguageText("stopBits");
         ToolControlSerialPortMenuBox.ParityText = LanguageText("parityl");
@@ -1069,4 +1069,25 @@ public sealed partial class SerialPortToolsPage : Page
         }
     }
 
+    private void RotateButton_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (RotateButton.Resources["PressStoryboard"] is Storyboard pressStoryboard)
+        {
+            pressStoryboard.Begin();
+        }
+    }
+
+    private void RotateButton_PreviewKeyUp(object sender, KeyRoutedEventArgs e)
+    {
+        if (RotateButton.Resources["ReleaseStoryboard"] is Storyboard releaseStoryboard)
+        {
+            releaseStoryboard.Begin();
+        }
+    }
+
+    private void RotateButton_Click(object sender, RoutedEventArgs e)
+    {
+        //var storyboard = (Storyboard)RotateButton.Resources["PressStoryboard"];
+        //storyboard.Begin();
+    }
 }

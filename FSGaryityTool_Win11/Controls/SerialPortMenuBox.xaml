@@ -991,7 +991,7 @@
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="{x:Bind StopBitsText, Mode=OneWay}" />
                 </Grid>
-                <Grid Margin="6,0,6,6">
+                <Grid Margin="6,6,6,6">
                     <Grid.Resources>
                         <Style TargetType="toolkit:Segmented">
                             <Setter Property="Margin" Value="0" />
@@ -1002,54 +1002,57 @@
                     </Grid.Resources>
                     <StackPanel>
                         <TextBlock Margin="0" VerticalAlignment="Stretch" TextAlignment="Left">
-                            <Run Text="{x:Bind BandRateText, Mode=OneWay}" />
+                            <Run Text="{x:Bind BaudRateText, Mode=OneWay}" />
                             <!--  {x:Bind BaudRateText, Mode=OneWay}  -->
                             <Run Text=":" />
-                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind SerialPortBandRate, Mode=OneWay}" />
+                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind SerialPortBaudRate, Mode=OneWay}" />
+                            <LineBreak/>
+                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ByteRateDisplay, Mode=OneWay}" />
                             <Run Text="|" />
                             <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind BitRateDisplay, Mode=OneWay}" />
                         </TextBlock>
-                        <ComboBox x:Name="BandRateComboBox"
+                        <ComboBox x:Name="BaudRateComboBox"
                                   HorizontalAlignment="Stretch"
                                   Background="{ThemeResource CustomBoxSolidColorBrush}"
                                   IsEditable="True"
-                                  LostFocus="BandRateComboBox_LostFocus"
+                                  LostFocus="BaudRateComboBox_LostFocus"
                                   Style="{ThemeResource ComboBoxStyle}"
-                                  Text="{x:Bind SerialPortBandRate, Mode=TwoWay}"
-                                  TextSubmitted="BandRateComboBox_TextSubmitted">
-                            <ComboBoxItem Content="75" />
-                            <ComboBoxItem Content="110" />
-                            <ComboBoxItem Content="134" />
-                            <ComboBoxItem Content="150" />
-                            <ComboBoxItem Content="300" />
-                            <ComboBoxItem Content="600" />
-                            <ComboBoxItem Content="1200" />
-                            <ComboBoxItem Content="1800" />
-                            <ComboBoxItem Content="2400" />
-                            <ComboBoxItem Content="4800" />
-                            <ComboBoxItem Content="7200" />
-                            <ComboBoxItem Content="9600" />
-                            <ComboBoxItem Content="14400" />
-                            <ComboBoxItem Content="19200" />
-                            <ComboBoxItem Content="38400" />
-                            <ComboBoxItem Content="57600" />
-                            <ComboBoxItem Content="74880" />
-                            <ComboBoxItem Content="115200" />
-                            <ComboBoxItem Content="128000" />
-                            <ComboBoxItem Content="230400" />
-                            <ComboBoxItem Content="250000" />
-                            <ComboBoxItem Content="256000" />
-                            <ComboBoxItem Content="460800" />
-                            <ComboBoxItem Content="500000" />
-                            <ComboBoxItem Content="512000" />
-                            <ComboBoxItem Content="750000" />
-                            <ComboBoxItem Content="921600" />
-                            <ComboBoxItem Content="1000000" />
-                            <ComboBoxItem Content="1500000" />
-                            <ComboBoxItem Content="2000000" />
+                                  Text="{x:Bind SerialPortBaudRate, Mode=TwoWay}"
+                                  SelectedItem="{x:Bind SerialPortBaudRate, Mode=OneTime}"
+                                  TextSubmitted="BaudRateComboBox_TextSubmitted">
+                            <x:Int32>75</x:Int32>
+                            <x:Int32>110</x:Int32>
+                            <x:Int32>134</x:Int32>
+                            <x:Int32>150</x:Int32>
+                            <x:Int32>300</x:Int32>
+                            <x:Int32>600</x:Int32>
+                            <x:Int32>1200</x:Int32>
+                            <x:Int32>1800</x:Int32>
+                            <x:Int32>2400</x:Int32>
+                            <x:Int32>4800</x:Int32>
+                            <x:Int32>7200</x:Int32>
+                            <x:Int32>9600</x:Int32>
+                            <x:Int32>14400</x:Int32>
+                            <x:Int32>19200</x:Int32>
+                            <x:Int32>38400</x:Int32>
+                            <x:Int32>57600</x:Int32>
+                            <x:Int32>74880</x:Int32>
+                            <x:Int32>115200</x:Int32>
+                            <x:Int32>128000</x:Int32>
+                            <x:Int32>230400</x:Int32>
+                            <x:Int32>250000</x:Int32>
+                            <x:Int32>256000</x:Int32>
+                            <x:Int32>460800</x:Int32>
+                            <x:Int32>500000</x:Int32>
+                            <x:Int32>512000</x:Int32>
+                            <x:Int32>750000</x:Int32>
+                            <x:Int32>921600</x:Int32>
+                            <x:Int32>1000000</x:Int32>
+                            <x:Int32>1500000</x:Int32>
+                            <x:Int32>2000000</x:Int32>
                         </ComboBox>
 
-                        <TextBlock x:Name="ParitySegmentedTextBlock" Margin="0,3,0,0">
+                        <TextBlock x:Name="ParitySegmentedTextBlock" Margin="0,12,0,3">
                             <Run Text="{x:Bind ParityText, Mode=OneWay}" />
                             <Run Text=":" />
                             <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind SerialPortParity, Mode=OneWay}" />
@@ -1076,7 +1079,7 @@
                             </ToolTipService.ToolTip>
                         </toolkit:Segmented>
 
-                        <TextBlock x:Name="EncodingTextBlock" Margin="0,3,0,0">
+                        <TextBlock x:Name="EncodingTextBlock" Margin="0,12,0,3">
                             <Run Text="{x:Bind EncodingText, Mode=OneWay}" />
                             <Run Text=":" />
                             <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind EncodingValueText, Mode=OneWay}" />
@@ -1092,7 +1095,7 @@
                                   LostFocus="EncodingComboBox_LostFocus"
                                   SelectedItem="{Binding SerialPortEncoding, Mode=TwoWay, Converter={StaticResource EncodingNameToEncodingConverter}}"
                                   Style="{StaticResource ComboBoxStyle}"
-                                  Text="{x:Bind EncodingValueText, Mode=TwoWay}"
+                                  Text="{x:Bind EncodingValueText, Mode=OneWay}"
                                   TextSubmitted="EncodingComboBox_TextSubmitted" />
                     </StackPanel>
                 </Grid>
