@@ -813,7 +813,8 @@
         <Border Height="Auto" Background="{ThemeResource CustomBoxSolidColorBrush}" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="4">
             <StackPanel>
                 <StackPanel.Resources />
-                <Grid Margin="6,3,6,3" HorizontalAlignment="Stretch">
+
+                <Grid Margin="6,6,6,3" HorizontalAlignment="Stretch">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
@@ -836,7 +837,13 @@
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
 
-
+                    <TextBlock Grid.Row="0"
+                               Grid.RowSpan="2"
+                               Grid.Column="0"
+                               Grid.ColumnSpan="3"
+                               Margin="0,-6,0,0"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               Text="{x:Bind PortText, Mode=OneWay}" />
                     <Border Grid.Row="1"
                             Grid.RowSpan="2"
                             Grid.Column="0"
@@ -1006,7 +1013,8 @@
                             <!--  {x:Bind BaudRateText, Mode=OneWay}  -->
                             <Run Text=":" />
                             <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind SerialPortBaudRate, Mode=OneWay}" />
-                            <LineBreak/>
+                            <Run Text="bit/s" />
+                            <LineBreak />
                             <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ByteRateDisplay, Mode=OneWay}" />
                             <Run Text="|" />
                             <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind BitRateDisplay, Mode=OneWay}" />
@@ -1016,9 +1024,9 @@
                                   Background="{ThemeResource CustomBoxSolidColorBrush}"
                                   IsEditable="True"
                                   LostFocus="BaudRateComboBox_LostFocus"
+                                  SelectedItem="{x:Bind SerialPortBaudRate, Mode=OneTime}"
                                   Style="{ThemeResource ComboBoxStyle}"
                                   Text="{x:Bind SerialPortBaudRate, Mode=TwoWay}"
-                                  SelectedItem="{x:Bind SerialPortBaudRate, Mode=OneTime}"
                                   TextSubmitted="BaudRateComboBox_TextSubmitted">
                             <x:Int32>75</x:Int32>
                             <x:Int32>110</x:Int32>
@@ -1050,6 +1058,18 @@
                             <x:Int32>1000000</x:Int32>
                             <x:Int32>1500000</x:Int32>
                             <x:Int32>2000000</x:Int32>
+                            <x:Int32>3000000</x:Int32>
+                            <x:Int32>4000000</x:Int32>
+                            <x:Int32>8000000</x:Int32>
+                            <x:Int32>10000000</x:Int32>
+                            <x:Int32>12000000</x:Int32>
+                            <x:Int32>15000000</x:Int32>
+                            <x:Int32>18000000</x:Int32>
+                            <x:Int32>20000000</x:Int32>
+                            <x:Int32>40000000</x:Int32>
+                            <x:Int32>50000000</x:Int32>
+                            <x:Int32>80000000</x:Int32>
+                            <x:Int32>100000000</x:Int32>
                         </ComboBox>
 
                         <TextBlock x:Name="ParitySegmentedTextBlock" Margin="0,12,0,3">
@@ -1082,7 +1102,7 @@
                         <TextBlock x:Name="EncodingTextBlock" Margin="0,12,0,3">
                             <Run Text="{x:Bind EncodingText, Mode=OneWay}" />
                             <Run Text=":" />
-                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind EncodingValueText, Mode=OneWay}" />
+                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{Binding SerialPortEncoding, Mode=OneWay, Converter={StaticResource EncodingNameToEncodingConverter}}" />
                         </TextBlock>
 
                         <!--  Background="{ThemeResource CustomBoxSolidColorBrush}"  -->
@@ -1095,8 +1115,69 @@
                                   LostFocus="EncodingComboBox_LostFocus"
                                   SelectedItem="{Binding SerialPortEncoding, Mode=TwoWay, Converter={StaticResource EncodingNameToEncodingConverter}}"
                                   Style="{StaticResource ComboBoxStyle}"
-                                  Text="{x:Bind EncodingValueText, Mode=OneWay}"
                                   TextSubmitted="EncodingComboBox_TextSubmitted" />
+
+
+                        <!--
+                        <ComboBox
+                            x:Name="HandshakeComboBox"
+                            HorizontalAlignment="Stretch"
+                            Background="{ThemeResource CustomBoxSolidColorBrush}"
+                            Style="{StaticResource ComboBoxStyle}">
+                            <x:String>None</x:String>
+                            <x:String>XOnXOff</x:String>
+                            <x:String>RequestToSend</x:String>
+                            <x:String>RequestToSendXOnXOff</x:String>
+                        </ComboBox>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <NumberBox
+                                Grid.Column="0"
+                                Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                LargeChange="1000"
+                                Minimum="1"
+                                SmallChange="500"
+                                SpinButtonPlacementMode="Compact"
+                                Value="1500" />
+                            <NumberBox
+                                Grid.Column="1"
+                                Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                LargeChange="1000"
+                                Minimum="1"
+                                SmallChange="500"
+                                SpinButtonPlacementMode="Compact"
+                                Value="1500" />
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <NumberBox
+                                Grid.Column="0"
+                                Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                LargeChange="1024"
+                                Maximum="2147483646"
+                                Minimum="4096"
+                                SmallChange="512"
+                                SpinButtonPlacementMode="Compact"
+                                Value="4096" />
+                            <NumberBox
+                                Grid.Column="1"
+                                Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                LargeChange="1024"
+                                Maximum="2147483646"
+                                Minimum="4096"
+                                SmallChange="512"
+                                SpinButtonPlacementMode="Compact"
+                                Value="4096" />
+                        </Grid>
+                        -->
                     </StackPanel>
                 </Grid>
             </StackPanel>

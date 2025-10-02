@@ -64,7 +64,7 @@ public sealed partial class MainPage1 : Page
         {
             0 => typeof(Page1),
             1 => typeof(SerialPlotterPage),
-            2 => typeof(Page2),
+            2 => typeof(SerialMultipltxerPage),
             3 => typeof(TestPage1),
             4 => typeof(CopilotPage),
             _ => typeof(Page2)

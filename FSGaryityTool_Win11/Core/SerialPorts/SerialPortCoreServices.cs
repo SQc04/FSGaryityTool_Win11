@@ -28,6 +28,7 @@ internal class SerialPortCoreServices
             private int dataBits;                       // 数据位
             private int timeout;                        // 超时时间
             private Encoding encoding;                  // 编码
+            private Handshake handshake;                // 握手协议
 
             private bool isOpen;                        // 是否打开
             private bool DCD;                           // 数据载波检测
@@ -37,8 +38,6 @@ internal class SerialPortCoreServices
             private bool DTR;                           // 数据终端准备
             private bool RTS;                           // 请求发送
 
-            private bool XOnXOffIsEnable;               // XOnXOff流控
-            private bool FlowControlIsEnabled;          // 硬件流控
 
             private string serialDeviceIcon;            // 设备图标
             private string serialDeviceName;            // 设备名

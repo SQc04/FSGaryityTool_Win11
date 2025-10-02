@@ -21,8 +21,11 @@ public class CustomWrapPanel : Panel
             child.Measure(availableSize);
             var feChild = child as FrameworkElement;
             double childWidth = double.IsNaN(feChild.Width) ? feChild.MinWidth : feChild.Width;
+            // 添加 Margin 的宽度
+            double marginWidth = feChild.Margin.Left + feChild.Margin.Right;
+            double marginHeight = feChild.Margin.Top + feChild.Margin.Bottom;
 
-            if (lineWidth + childWidth > availableSize.Width && lineWidth > 0)
+            if (lineWidth + childWidth + marginWidth > availableSize.Width && lineWidth > 0)
             {
                 totalSize.Height += lineHeight;
                 lineWidth = 0;
@@ -31,13 +34,13 @@ public class CustomWrapPanel : Panel
                 fixedWidthSum = 0;
             }
 
-            lineHeight = Math.Max(lineHeight, feChild.DesiredSize.Height);
-            lineWidth += childWidth;
+            lineHeight = Math.Max(lineHeight, feChild.DesiredSize.Height + marginHeight);
+            lineWidth += childWidth + marginWidth;
 
             if (double.IsNaN(feChild.Width))
                 flexibleChildren++;
             else
-                fixedWidthSum += childWidth;
+                fixedWidthSum += childWidth + marginWidth;
         }
 
         totalSize.Height += lineHeight;
@@ -53,15 +56,17 @@ public class CustomWrapPanel : Panel
         double lineWidth = 0;
         int flexibleChildren = 0;
         double fixedWidthSum = 0;
-        var lineChildren = new System.Collections.Generic.List<(UIElement Element, double Width, bool IsFlexible)>();
+        var lineChildren = new System.Collections.Generic.List<(UIElement Element, double Width, bool IsFlexible, Thickness Margin)>();
 
         foreach (var child in Children)
         {
             var feChild = child as FrameworkElement;
             double childWidth = double.IsNaN(feChild.Width) ? feChild.MinWidth : feChild.Width;
             bool isFlexible = double.IsNaN(feChild.Width);
+            Thickness margin = feChild.Margin;
+            double marginWidth = margin.Left + margin.Right;
 
-            if (lineWidth + childWidth > finalSize.Width && lineWidth > 0)
+            if (lineWidth + childWidth + marginWidth > finalSize.Width && lineWidth > 0)
             {
                 ArrangeLine(lineChildren, fixedWidthSum, finalSize.Width, lineHeight, currentRect.Y);
                 currentRect.Y += lineHeight;
@@ -72,14 +77,14 @@ public class CustomWrapPanel : Panel
                 lineChildren.Clear();
             }
 
-            lineHeight = Math.Max(lineHeight, feChild.DesiredSize.Height);
-            lineWidth += childWidth;
+            lineHeight = Math.Max(lineHeight, feChild.DesiredSize.Height + margin.Top + margin.Bottom);
+            lineWidth += childWidth + marginWidth;
             if (isFlexible)
                 flexibleChildren++;
             else
-                fixedWidthSum += childWidth;
+                fixedWidthSum += childWidth + marginWidth;
 
-            lineChildren.Add((child, childWidth, isFlexible));
+            lineChildren.Add((child, childWidth, isFlexible, margin));
         }
 
         if (lineChildren.Count > 0)
@@ -90,7 +95,7 @@ public class CustomWrapPanel : Panel
         return finalSize;
     }
 
-    private void ArrangeLine(System.Collections.Generic.List<(UIElement Element, double Width, bool IsFlexible)> lineChildren,
+    private void ArrangeLine(System.Collections.Generic.List<(UIElement Element, double Width, bool IsFlexible, Thickness Margin)> lineChildren,
                            double fixedWidthSum, double availableWidth, double lineHeight, double yOffset)
     {
         double xOffset = 0;
@@ -102,9 +107,17 @@ public class CustomWrapPanel : Panel
             // 无未限定宽度控件，按原宽度排列
             foreach (var child in lineChildren)
             {
-                var rect = new Rect(xOffset, yOffset, child.Width, lineHeight);
+                var feChild = child.Element as FrameworkElement;
+                // 控件宽度包含 Margin
+                double finalWidth = child.Width + child.Margin.Left + child.Margin.Right;
+                var rect = new Rect(
+                    xOffset,
+                    yOffset + child.Margin.Top,
+                    finalWidth,
+                    lineHeight - child.Margin.Top - child.Margin.Bottom);
                 child.Element.Arrange(rect);
-                xOffset += child.Width;
+                // xOffset 只使用控件宽度加 Margin，不额外偏移 Margin
+                xOffset += finalWidth;
             }
         }
         else
@@ -120,13 +133,13 @@ public class CustomWrapPanel : Panel
                 }
             }
 
-            // 重新计算剩余宽度，排除非最后一个未限定宽度控件的 MinWidth
+            // 重新计算剩余宽度，排除非最后一个未限定宽度控件的 MinWidth 和 Margin
             double nonLastFlexibleWidthSum = 0;
             for (int i = 0; i < lineChildren.Count; i++)
             {
                 if (lineChildren[i].IsFlexible && i != lastFlexibleIndex)
                 {
-                    nonLastFlexibleWidthSum += lineChildren[i].Width; // Width 是 MinWidth
+                    nonLastFlexibleWidthSum += lineChildren[i].Width + lineChildren[i].Margin.Left + lineChildren[i].Margin.Right;
                 }
             }
             remainingWidth -= nonLastFlexibleWidthSum;
@@ -142,15 +155,22 @@ public class CustomWrapPanel : Panel
                 {
                     // 最后一个未限定宽度控件填充剩余空间
                     finalWidth = Math.Clamp(remainingWidth, feChild.MinWidth, feChild.MaxWidth);
+                    // 包含 Margin
+                    finalWidth += child.Margin.Left + child.Margin.Right;
                 }
                 else
                 {
-                    // 固定宽度控件或其他未限定宽度控件使用 MinWidth
-                    finalWidth = child.IsFlexible ? feChild.MinWidth : child.Width;
+                    // 固定宽度控件或其他未限定宽度控件使用 MinWidth，包含 Margin
+                    finalWidth = (child.IsFlexible ? feChild.MinWidth : child.Width) + child.Margin.Left + child.Margin.Right;
                 }
 
-                var rect = new Rect(xOffset, yOffset, finalWidth, lineHeight);
+                var rect = new Rect(
+                    xOffset,
+                    yOffset + child.Margin.Top,
+                    finalWidth,
+                    lineHeight - child.Margin.Top - child.Margin.Bottom);
                 child.Element.Arrange(rect);
+                // xOffset 只使用 finalWidth，不额外偏移 Margin
                 xOffset += finalWidth;
             }
         }

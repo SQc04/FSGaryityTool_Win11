@@ -249,8 +249,7 @@ public sealed partial class SerialPortToolsPage : Page
                 DataComboBox.Items.Add(j);
             }
             DataComboBox.SelectedItem = defaultData;
-            DataNumberBox.Value = defaultData;
-            DataBitSlider.Value = defaultData;
+            //DataBitSlider.Value = defaultData;
 
             ToolControlSerialPortMenuBox.SerialPortDataBits = defaultData;
 
@@ -261,12 +260,11 @@ public sealed partial class SerialPortToolsPage : Page
             // 将编码名称添加到 List<string> 中
             encodings.AddRange(Encoding.GetEncodings().Select(encodingInfo => encodingInfo.Name));
 
-            EncodingComboBox.ItemsSource = encodings;
-            EncodingComboBox.SelectedItem = defaultEncoding;
+            //EncodingComboBox.ItemsSource = encodings;
+            //EncodingComboBox.SelectedItem = defaultEncoding;
 
-            ToolControlSerialPortMenuBox.SerialPortEncoding = Encoding.GetEncoding(defaultEncoding);
+            //ToolControlSerialPortMenuBox.SerialPortEncoding = Encoding.GetEncoding(defaultEncoding);
 
-            COMButton_Click(this, new());
 
             ToggleButtonIsChecked(RxHex, RxhexButton);
             ToggleButtonIsChecked(TxHex, TxhexButton);
@@ -278,23 +276,15 @@ public sealed partial class SerialPortToolsPage : Page
             CommonRes.SerialPort.RtsEnable = Rts is 1;
 
             ToggleButtonIsChecked(ShTime, ShowTimeButton);
-            ToggleButtonIsChecked(AutoTr, AutoScrollButton);
 
             //BorderBackRX.Background = backgroundColor;
 
             ToggleButtonIsChecked(AutoSaveSet, SaveSetButton);
-            ToggleButtonIsChecked(AutoConnect, AutoConnectButton);
             ToggleButtonIsChecked(TxNewLine, TxNewLineButton);
 
-            ToggleButtonIsChecked(AutoSerCom, AutoComButton);
-            if (AutoSerCom is 1)
-            {
-                TimerSerialPort = new(TimerSerialPortTick, null, 0, 1500);
-                SetAutoSerchComProgressBarValue(null, ProgressState.Running);
-            }
-            else SetAutoSerchComProgressBarValue(null, ProgressState.Stop);
+            
+            MainSerialPortLIstBox.AutoConnectSetting = AutoConnect is 1;
 
-            ToggleButtonIsChecked(AutoConnect, AutoConnectButton);
             //ToggleButtonIsChecked();
 
             //EncodingTest();
@@ -327,14 +317,13 @@ public sealed partial class SerialPortToolsPage : Page
         PartTextBlock.Text = LanguageText("parityl");
         StopTextBlock.Text = LanguageText("stopBits");
         DataTextBlock.Text = LanguageText("dataBits");
-        EncodingTextBlock.Text = LanguageText("encoding");
         RxhexButton.Content = LanguageText("rxHexl");
         TxhexButton.Content = LanguageText("txHexl");
         TxNewLineButton.Content = LanguageText("txNewLinel");// + "\uE751"
         SaveSetButton.Content = LanguageText("autoSaveSetl");
         AutoScrollButton.Content = LanguageText("autoScrolll");
-        AutoComButton.Content = LanguageText("autoSerichComl");
-        AutoConnectButton.Content = LanguageText("autoConnectl");
+        //AutoComButton.Content = LanguageText("autoSerichComl");
+        //AutoConnectButton.Content = LanguageText("autoConnectl");
 
         ToolControlSerialPortMenuBox.BaudRateText = LanguageText("baudRatel");
         ToolControlSerialPortMenuBox.DataBitsText = LanguageText("dataBits");
@@ -452,6 +441,7 @@ public sealed partial class SerialPortToolsPage : Page
         }
     }
 
+    /*
     public void TimerSerialPortTick(object stateInfo) // 串口热插拔检测
     {
         if (GetPortInfo == 0) return; //用于控制检测逻辑
@@ -527,11 +517,11 @@ public sealed partial class SerialPortToolsPage : Page
             });
         }
     }
-    
+    */
+    /*
     private async void COMButton_Click(object sender, RoutedEventArgs e)
     {
-        var comButtonIconRotation = new Thread(COMButtonIcon_Rotation);
-        comButtonIconRotation.Start();
+        VisualStateManager.GoToState(ComButton, "Released", true);  // 播放释放动画
 
         MainPage1.Current.SetRunProgressBarValue(null, MainPage1.ProgressState.Running);
 
@@ -555,7 +545,6 @@ public sealed partial class SerialPortToolsPage : Page
             foreach (var t in ArryPort)
             {
                 myBox.Items.Add(t);                           //将所有的可用串口号添加到端口对应的组合框中
-                ComListview.Items.Add(t/* + (portDescription is not null ? " | " + portDescription : "")*/);
                 var info = await Task.Run(() => SerialPortInfo.GetPort(t));
                 if (info is not null)
                 {
@@ -575,40 +564,15 @@ public sealed partial class SerialPortToolsPage : Page
         MainPage1.Current.SetRunProgressBarValue(null, MainPage1.ProgressState.Stop);
 
     }
-
-    private void COMButtonIcon_Rotation(object name)
-    {
-        DispatcherQueue.TryEnqueue(() =>
-        {
-            ComButtonIcon.Rotation = -60;
-            ComButtonIconScalar.Duration = TimeSpan.FromMilliseconds(250);
-        });
-        Thread.Sleep(300);
-        DispatcherQueue.TryEnqueue(() =>
-        {
-            ComButtonIcon.Rotation = 420;
-        });
-        Thread.Sleep(250);
-        DispatcherQueue.TryEnqueue(() =>
-        {
-            ComButtonIconScalar.Duration = TimeSpan.FromMilliseconds(0);
-            ComButtonIcon.Rotation = 60;
-            ComButtonIconScalar.Duration = TimeSpan.FromMilliseconds(250);
-        });
-        Thread.Sleep(60);
-        DispatcherQueue.TryEnqueue(() =>
-        {
-            ComButtonIcon.Rotation = 0;
-        });
-    }
+    */
 
     private string OpenSerialPortInfo;
 
     public void SerialPortConnect()
     {
-        ConCom = (string)ComComboBox.SelectedItem;
+        ConCom = MainSerialPortLIstBox.SelectedPortSingle;
 
-        var portName = (string)ComComboBox.SelectedItem;
+        var portName = MainSerialPortLIstBox.SelectedPortSingle;
         var bandRate = Convert.ToInt32(BandComboBox.SelectedItem);
         var parity = ToolControlSerialPortMenuBox.SerialPortParity;
         var stopBits = ToolControlSerialPortMenuBox.SerialPortStopBits;
@@ -628,7 +592,7 @@ public sealed partial class SerialPortToolsPage : Page
         Page1.Current._viewModel.AppendToRxTextinfo("StopBits = " + ToolControlSerialPortMenuBox.SerialPortStopBits + "\r\n");
         Page1.Current._viewModel.AppendToRxTextinfo("DataBits = " + ToolControlSerialPortMenuBox.SerialPortDataBits + "\r\n");
         Page1.Current._viewModel.AppendToRxTextinfo("Encoding = " + ToolControlSerialPortMenuBox.SerialPortEncoding?.WebName + "\r\n");
-        Page1.Current._viewModel.AppendToRxTextinfo(LanguageText("serialPortl") + " " + ComComboBox.SelectedItem + LanguageText("spConnect") + "\r\n");
+        Page1.Current._viewModel.AppendToRxTextinfo(LanguageText("serialPortl") + " " + MainSerialPortLIstBox.SelectedPortSingle + LanguageText("spConnect") + "\r\n");
 
         // 同步引脚状态
         var sp = CommonRes.SerialPort;
@@ -656,7 +620,7 @@ public sealed partial class SerialPortToolsPage : Page
         });
 
         RunTProgressBar.Value = 100;
-        OpenSerialPortInfo = (string)ComComboBox.SelectedItem;
+        OpenSerialPortInfo = MainSerialPortLIstBox.SelectedPortSingle;
         PortIsConnect = 1;
     }
 
@@ -696,24 +660,6 @@ public sealed partial class SerialPortToolsPage : Page
         PortIsConnect = 0;
     }
 
-    private void COMComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        var comIs = (string)ComComboBox.SelectedItem;
-        ComListview.SelectedItem = comIs;
-        if (PortIsConnect is 1)
-        {
-            if (ConCom != comIs)
-                Page1.Current.ComRstInfoBar.IsOpen = true;
-            else
-                Page1.Current.ComRstInfoBar.IsOpen = false;
-        }
-    }
-    private void ClearCOMCombobox_Click(object sender, RoutedEventArgs e)
-    {
-        ComComboBox.SelectedItem = null;
-        ComListview.SelectedItem = null;
-    }
-
     private void ComboboxSaveSetting(string menuName, string name, string settingItem)
     {
         //打开TOML文件
@@ -734,7 +680,7 @@ public sealed partial class SerialPortToolsPage : Page
         Value,
         Stop
     }
-
+    /*
     public void SetAutoSerchComProgressBarValue(int? value, ProgressState state)
     {
         switch (state)
@@ -792,39 +738,7 @@ public sealed partial class SerialPortToolsPage : Page
                 break;
         }
     }
-
-    private void AutoComButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (AutoSerCom is 0)
-        {
-            TimerSerialPort = new(TimerSerialPortTick, null, 0, 1500);
-            SetAutoSerchComProgressBarValue(null, ProgressState.Running);
-            AutoSerCom = 1;
-        }
-        else
-        {
-            TimerSerialPort.Dispose();
-            SetAutoSerchComProgressBarValue(null, ProgressState.Stop);
-            AutoSerCom = 0;
-        }
-        if (AutoSaveSet is 1)
-        {
-            ComboboxSaveSetting("SerialPortSettings", "AutoSerichCom", Convert.ToString(AutoSerCom));
-        }
-    }
-    private void AutoConnectButton_Click(object sender, RoutedEventArgs e)
-    {
-        AutoConnect = AutoConnect is 0 ? 1 : 0;
-        if (AutoSaveSet is 1)
-        {
-            ComboboxSaveSetting("SerialPortSettings", "AutoConnect", Convert.ToString(AutoConnect));
-        }
-    }
-    private void COMListview_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        var comIs = (string)ComListview.SelectedItem;
-        ComComboBox.SelectedItem = comIs;
-    }
+    */
     private void BANDComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // 检查输入的是否为数字
@@ -914,8 +828,10 @@ public sealed partial class SerialPortToolsPage : Page
 
     public static string EncodingSelectedItem = "utf-8";
 
+
     private void EncodingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        /*
         if (AutoSaveSet is 1)
         {
             ComboboxSaveSetting("SerialPortSettings", "DefaultEncoding", (string)EncodingComboBox.SelectedItem);
@@ -926,6 +842,7 @@ public sealed partial class SerialPortToolsPage : Page
             EncodingSelectedItem = (string)EncodingComboBox.SelectedItem;
             Page1.Current._viewModel.AppendToRxTextinfo("Encoding = " + (string)EncodingComboBox.SelectedItem + "\r\n");
         }
+        */
     }
 
     private void RXHEXButton_Click(object sender, RoutedEventArgs e)    //接收以十六进制数显示
@@ -1069,25 +986,28 @@ public sealed partial class SerialPortToolsPage : Page
         }
     }
 
-    private void RotateButton_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+    private void MainSerialPortLIstBox_PortInserted(object sender, Controls.SerialPortEventArgs e)
     {
-        if (RotateButton.Resources["PressStoryboard"] is Storyboard pressStoryboard)
+        Page1.Current._viewModel.AppendToRxTextinfo($"{e.PortName}: {e.PortDeviceDescription}{LanguageText("spPlogin")}\r\n");
+        if(PortIsConnect == 0 && MainSerialPortLIstBox.AutoConnectSetting && MainSerialPortLIstBox.SelectedPortSingle == null)
         {
-            pressStoryboard.Begin();
+            Task.Run(() =>
+            {
+                Thread.Sleep(500);
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    MainPage1.Current.SerialPortConnectToggleButton_Click(null, null);
+                });
+            });
         }
     }
 
-    private void RotateButton_PreviewKeyUp(object sender, KeyRoutedEventArgs e)
+    private void MainSerialPortLIstBox_PortRemoved(object sender, Controls.SerialPortEventArgs e)
     {
-        if (RotateButton.Resources["ReleaseStoryboard"] is Storyboard releaseStoryboard)
+        Page1.Current._viewModel.AppendToRxTextinfo($"{e.PortName}: {e.PortDeviceDescription}{LanguageText("spPullout")}\r\n");
+        if (PortIsConnect == 1 && e.PortName == OpenSerialPortInfo)
         {
-            releaseStoryboard.Begin();
+            MainPage1.Current.SerialPortConnectToggleButton_Click(null, null);
         }
-    }
-
-    private void RotateButton_Click(object sender, RoutedEventArgs e)
-    {
-        //var storyboard = (Storyboard)RotateButton.Resources["PressStoryboard"];
-        //storyboard.Begin();
     }
 }

@@ -191,6 +191,7 @@
           BorderThickness="3"
           CornerRadius="6"
           GotFocus="BoxRootGrid_GotFocus"
+          LosingFocus="BoxRootGrid_LosingFocus"
           LostFocus="BoxRootGrid_LostFocus"
           PointerEntered="BoxRootGrid_PointerEntered"
           PointerExited="BoxRootGrid_PointerExited"
@@ -249,15 +250,6 @@
             <StackPanel.BackgroundTransition>
                 <BrushTransition />
             </StackPanel.BackgroundTransition>
-            <ToggleButton Width="32" Height="32" Margin="2" Background="Transparent" BorderBrush="Transparent">
-                <Grid>
-                    <FontIcon Margin="-5,-6,0,0" VerticalAlignment="Top" FontSize="12" Glyph="&#xE943;" />
-                    <TextBlock Margin="-12,0,-10,-10" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" Text="HEX" />
-                </Grid>
-            </ToggleButton>
-            <ToggleButton Width="32" Height="32" Margin="2" Background="Transparent" BorderBrush="Transparent">
-                <FontIcon Margin="-4" FontSize="16" Glyph="&#xE823;" />
-            </ToggleButton>
             <Button Width="32" Height="32" Margin="2" Background="Transparent" BorderBrush="Transparent">
                 <FontIcon Margin="-4" FontSize="16" Glyph="&#xE74D;" />
             </Button>
@@ -276,7 +268,7 @@
                                 <StackPanel.Resources>
                                     <Style TargetType="toolkit:Segmented">
                                         <Setter Property="Margin" Value="3" />
-                                        <Setter Property="BorderThickness" Value="3" />
+                                        <Setter Property="BorderThickness" Value="2" />
                                         <Setter Property="Padding" Value="4" />
                                         <Setter Property="BorderBrush" Value="{ThemeResource CustomBoxElevationBorderBrush}" />
                                         <Setter Property="Background" Value="Transparent" />
@@ -313,6 +305,32 @@
                                         <FontIcon Glyph="&#xE8E2;" />
                                     </toolkit:SegmentedItem>
                                 </toolkit:Segmented>
+                                <StackPanel Orientation="Horizontal">
+
+                                    <ToggleButton Width="32"
+                                                  Height="32"
+                                                  Margin="2">
+                                        <Grid>
+                                            <FontIcon Margin="-5,-6,0,0"
+                                                      VerticalAlignment="Top"
+                                                      FontSize="12"
+                                                      Glyph="&#xE943;" />
+                                            <TextBlock Margin="-12,0,-10,-10"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Bottom"
+                                                       FontSize="9"
+                                                       Text="HEX" />
+                                        </Grid>
+                                    </ToggleButton>
+                                    <ToggleButton Width="32"
+                                                  Height="32"
+                                                  Margin="2">
+                                        <FontIcon Margin="-4"
+                                                  FontSize="16"
+                                                  Glyph="&#xE823;" />
+                                    </ToggleButton>
+                                </StackPanel>
+                                
                             </StackPanel>
                         </Grid>
                     </Flyout>

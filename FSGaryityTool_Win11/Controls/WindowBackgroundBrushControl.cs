@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -34,6 +35,31 @@ namespace FSGaryityTool_Win11.Controls
         private const int LWA_COLORKEY = 0x1;
         private const int LWA_ALPHA = 0x2;
 
+        // P/Invoke 声明
+        [DllImport("gdi32.dll")]
+        private static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmEnableBlurBehindWindow(IntPtr hWnd, ref DWM_BLURBEHIND pBlurBehind);
+
+        // DWM_BLURBEHIND 结构
+        [StructLayout(LayoutKind.Sequential)]
+        private struct DWM_BLURBEHIND
+        {
+            public DWM_BLURBEHIND_Mask dwFlags;
+            public bool fEnable;
+            public IntPtr hRgnBlur;
+            public bool fTransitionOnMaximized;
+        }
+
+        // DWM_BLURBEHIND_Mask 枚举
+        [Flags]
+        private enum DWM_BLURBEHIND_Mask
+        {
+            DWM_BB_ENABLE = 0x00000001,
+            DWM_BB_BLURREGION = 0x00000002,
+            DWM_BB_TRANSITIONONMAXIMIZED = 0x00000004
+        }
 
         public enum WindowBackgroundBrushKind
         {
@@ -170,14 +196,28 @@ namespace FSGaryityTool_Win11.Controls
                     break;
 
                 case WindowBackgroundBrushKind.Transparent:
-                    //titleBar.ExtendsContentIntoTitleBar = true;
-                    //titleBar.BackgroundColor = Colors.Transparent;
-                    //titleBar.ButtonBackgroundColor = Colors.Transparent;
-                    //titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-                    // 设置窗口背景为透明
+                    micaController?.Dispose();
+                    acrylicController?.Dispose();
+                    micaController = null;
+                    acrylicController = null;
+
+                    // 移除分层窗口样式，确保内容可见
                     extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-                    SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_LAYERED);
-                    SetLayeredWindowAttributes(hwnd, 0, 0, LWA_ALPHA);
+                    SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle & ~WS_EX_LAYERED);
+
+                    // 启用 DWM 模糊并设置为空区域，实现完全透明背景
+                    var rgn = CreateRectRgn(-2, -2, -1, -1); // 空区域，使整个窗口透明
+                    var dmw = new DWM_BLURBEHIND()
+                    {
+                        dwFlags = DWM_BLURBEHIND_Mask.DWM_BB_ENABLE | DWM_BLURBEHIND_Mask.DWM_BB_BLURREGION,
+                        fEnable = true,
+                        hRgnBlur = rgn,
+                    };
+                    DwmEnableBlurBehindWindow(hwnd, ref dmw);
+                    // 设置 SystemBackdrop 为透明颜色刷子
+                    ICompositionSupportsSystemBackdrop brushHolder = window.As<ICompositionSupportsSystemBackdrop>();
+                    var colorBrush = WindowsCompositionHelper.Compositor.CreateColorBrush(Windows.UI.Color.FromArgb(0, 255, 255, 255));
+                    brushHolder.SystemBackdrop = colorBrush;
                     break;
                 default:
                     

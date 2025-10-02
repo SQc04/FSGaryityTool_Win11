@@ -108,7 +108,7 @@
                     <toolkit:SettingsExpander Margin="0,2,0,3" Description="List of Producers / Special Thanks" Header="FairingStudio" IsExpanded="True">
                         <toolkit:SettingsExpander.Resources>
                             <Style TargetType="TextBlock">
-                                <Setter Property="FontSize" Value="18"/>
+                                <Setter Property="FontSize" Value="18" />
                             </Style>
                         </toolkit:SettingsExpander.Resources>
                         <toolkit:SettingsExpander.HeaderIcon>
@@ -124,35 +124,42 @@
 
                                     <StackPanel Grid.Column="0" Orientation="Vertical">
                                         <TextBlock Margin="0,6,0,1" HorizontalAlignment="Right" TextAlignment="Right">
-                                            <Run FontWeight="Normal" Text="Production / Visual Design" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontWeight="Normal" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Production / Visual Design" />
                                             <LineBreak />
-                                            <Run FontSize="22" FontWeight="Black" Text="WillowKoishi" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"/>
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="WillowKoishi" />
                                             <LineBreak /><LineBreak />
-                                            <Run FontWeight="Normal" Text="Programming Director / UI Layout Design" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontWeight="Normal" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Programming Director / UI Layout Design" />
                                             <LineBreak />
-                                            <Run FontSize="22" FontWeight="Black" Text="SQc04" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"/>
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="SQc04" />
                                             <LineBreak />
-                                            <Run FontSize="22" FontWeight="Black" Text="Poker-sang" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"/>
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="Poker-sang" />
                                             <LineBreak /><LineBreak />
-                                            <Run FontWeight="Normal" Text="AI Programming Assistant / Consultant" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontWeight="Normal" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="AI Programming Assistant / Consultant" />
                                             <LineBreak />
-                                            <Run FontSize="22" FontWeight="Black" Text="Grok" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"/>
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="Grok" />
                                             <LineBreak />
-                                            <Run FontSize="22" FontWeight="Black" Text="Chat-GPT" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"/>
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="Chat-GPT" />
                                             <LineBreak />
-                                            <Run FontSize="22" FontWeight="Black" Text="Deepseek" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"/>
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="Deepseek" />
                                             <LineBreak />
-                                            <Run FontSize="22" FontWeight="Black" Text="Copilot" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"/>
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="Copilot" />
                                             <LineBreak />
-                                            <Run FontSize="22" FontWeight="Black" Text="Github Copilot" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"/>
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="Github Copilot" />
+                                            <LineBreak />
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="Gemini" />
+                                            <LineBreak />
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="Claude" />
+                                            <LineBreak />
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="Qwen" />
+                                            <LineBreak />
+                                            <LineBreak />
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontWeight="Normal" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Payload" />
+                                            <LineBreak />
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="Asumoyz" />
                                             <LineBreak /><LineBreak />
-                                            <Run FontWeight="Normal" Text="Payload" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontWeight="Normal" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Software Framework" />
                                             <LineBreak />
-                                            <Run FontSize="22" FontWeight="Black" Text="Asumoyz" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"/>
-                                            <LineBreak /><LineBreak />
-                                            <Run FontWeight="Normal" Text="Software Framework" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                            <LineBreak />
-                                            <Run FontSize="22" FontWeight="Black" Text="lfky" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"/>
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="lfky" />
                                             <LineBreak />
                                             <Run FontWeight="Medium" Text="ㅤㅤㅤㅤ" />
                                         </TextBlock>
@@ -194,7 +201,7 @@
                                     <TextBlock Text="" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
                                         -->
                                         <TextBlock Margin="0,12,0,1" HorizontalAlignment="Right" TextAlignment="Right">
-                                            <Run FontWeight="Normal" Text="Special Thanks" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontWeight="Normal" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Special Thanks" />
                                             <LineBreak />
                                             <Run FontWeight="Medium" Text="二月 喵～" />
                                             <LineBreak />
@@ -208,7 +215,9 @@
                                             <LineBreak />
                                             <Run FontWeight="Medium" Text="游悦电子DIY" />
                                             <LineBreak />
-                                            <Run FontSize="22" FontWeight="Black" Text="You!" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"/>
+                                            <Run FontWeight="Medium" Text="晓游" />
+                                            <LineBreak />
+                                            <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="You!" />
                                             <LineBreak />
                                         </TextBlock>
                                         <StackPanel.ChildrenTransitions>

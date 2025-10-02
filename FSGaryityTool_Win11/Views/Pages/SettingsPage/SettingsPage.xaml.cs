@@ -153,7 +153,7 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
             Page1.LanguageText("base"), 
             Page1.LanguageText("mica"), 
             Page1.LanguageText("micaAlt"),
-            //Page1.LanguageText("transparent"),
+            Page1.LanguageText("transparent"),
             //, ""
         };
         SoftBackgroundCombobox.ItemsSource = pageBackGround;

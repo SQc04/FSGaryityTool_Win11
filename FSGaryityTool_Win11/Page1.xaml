@@ -45,8 +45,8 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0" />
-            <ColumnDefinition Width="*" MinWidth="160" />
-            <ColumnDefinition x:Name="RxInfo" Width="250" MinWidth="120" MaxWidth="{Binding RxInfoWidth}" />
+            <ColumnDefinition Width="3*" MinWidth="120" />
+            <ColumnDefinition x:Name="RxInfo" Width="*" MinWidth="120" MaxWidth="{Binding RxInfoWidth}" />
             <ColumnDefinition Width="64" />
         </Grid.ColumnDefinitions>
 

@@ -32,14 +32,17 @@
       <None Remove="Assets\CopilotV1.svg" />
       <None Remove="Assets\CopilotV2.svg" />
       <None Remove="Assets\Fonts\GeosansLight.ttf" />
+      <None Remove="Controls\AppTitleBar.xaml" />
       <None Remove="Controls\BeyondTextBox.xaml" />
       <None Remove="Controls\DataPlotBox.xaml" />
       <None Remove="Controls\SerialPortFlowInfoBox.xaml" />
+      <None Remove="Controls\SerialPortLIstBox.xaml" />
       <None Remove="Controls\SerialPortMenuBox.xaml" />
       <None Remove="Controls\SerialPortTextListBox.xaml" />
       <None Remove="Controls\WaveFormBox.xaml" />
       <None Remove="Controls\WS64LedBoardBox.xaml" />
       <None Remove="Views\Pages\SerialPortPage\CopilotPage.xaml" />
+      <None Remove="Views\Pages\SerialPortPage\SerialMultipltxerPage.xaml" />
       <None Remove="Views\Pages\TestPage\AudioTestPage.xaml" />
       <None Remove="Views\Pages\TestPage\LivePage.xaml" />
       <None Remove="Views\Pages\TestPage\Star.xaml" />
@@ -86,14 +89,13 @@
         <PackageReference Include="MathNet.Numerics" Version="6.0.0-beta1" />
         <PackageReference Include="MICA" Version="2.4.3" />
         <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.3.2" />
-        <PackageReference Include="Microsoft.ML" Version="4.0.2" />
-        <PackageReference Include="Microsoft.Win32.SystemEvents" Version="9.0.5" />
-        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.3916" />
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
+        <PackageReference Include="Microsoft.Win32.SystemEvents" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.6584" />
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250916003" />
         <PackageReference Include="NAudio" Version="2.2.1" />
-        <PackageReference Include="System.IO.Ports" Version="9.0.5" />
-        <PackageReference Include="System.Management" Version="9.0.5" />
-        <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.5" />
+        <PackageReference Include="System.IO.Ports" Version="9.0.9" />
+        <PackageReference Include="System.Management" Version="9.0.9" />
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.9" />
         <PackageReference Include="Tommy" Version="3.1.2" />
         <Manifest Include="$(ApplicationManifest)" />
 
@@ -143,6 +145,24 @@
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>Resources.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Views\Pages\SerialPortPage\SerialMultipltxerPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Controls\AppTitleBar.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Controls\SerialPortLIstBox.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
 
     <ItemGroup>

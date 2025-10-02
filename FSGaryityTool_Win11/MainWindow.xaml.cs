@@ -16,23 +16,24 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Tommy;
 using Windows.UI;          // Needed for XAML/HWND interop.
 using WinRT;
 using WinRT.Interop;
+using static FSGaryityTool_Win11.Controls.AppTitleBar;
 
 namespace FSGaryityTool_Win11;
 
 public sealed partial class MainWindow : Window
 {
-    public const string FSSoftVersion = "0.3.16";
+    public const string FSSoftVersion = "0.3.19";
     public const string FSSoftName = "FSGravityTool";
 
     public static int FsPage { get; set; }
@@ -105,8 +106,10 @@ public sealed partial class MainWindow : Window
     private static Win32WindowHelper win32WindowHelper;
 
     // 窗口的最小宽度和高度
-    private const int MinWidth = 515;
-    private const int MinHeight = 328;
+    //private const int MinWidth = 515;
+    //private const int MinHeight = 328;
+    private const int MinWidth = 643;
+    private const int MinHeight = 410;
 
     public bool Resize(Window window, int width, int height)
     {
@@ -141,6 +144,7 @@ public sealed partial class MainWindow : Window
         {
             // 取消上一次的延迟任务
             _windowSizeCts?.Cancel();
+            _windowSizeCts?.Dispose(); // 确保正确释放资源
             _windowSizeCts = new CancellationTokenSource();
 
             var token = _windowSizeCts.Token;
@@ -151,31 +155,35 @@ public sealed partial class MainWindow : Window
                 try
                 {
                     await Task.Delay(1000, token);
+
                     // 获取窗口句柄
                     var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+
+                    // 检查是否已取消
+                    token.ThrowIfCancellationRequested();
+
                     if (IsIconic(hWnd))
                     {
-                        _windowSizeCts?.Cancel();
                         return; // 最小化时不处理
                     }
 
-                    if (!token.IsCancellationRequested)
+                    await DispatcherQueue.EnqueueAsync(() =>
                     {
-                        await DispatcherQueue.EnqueueAsync(() =>
-                        {
-                            SettingsCoreServices.SetDefaultWindow(size.Width, size.Height);
-                        });
-                    }
+                        SettingsCoreServices.SetDefaultWindow(size.Width, size.Height);
+                    });
                 }
-                catch (TaskCanceledException)
+                catch (OperationCanceledException)
                 {
+                    // 任务被取消是正常的，静默处理
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    // 记录其他异常
+                    Debug.WriteLine($"Window size change error: {ex}");
                 }
             }, token);
-        }/*
-        if (args.DidPositionChange)
-        {
-            // 窗口位置发生变化
-        }*/
+        }
     }
 
     public WindowBackgroundBrushControl windowBackgroundBrushControl;
@@ -191,16 +199,29 @@ public sealed partial class MainWindow : Window
         var mainContent = Content;
 
         var (width, height) = SettingsCoreServices.GetDefaultWindow();
-        Resize(this, width, height);
+
+        //Resize(this, width, height);
+
 
         // 将窗口的标题栏设置为自定义标题栏
         ExtendsContentIntoTitleBar = true;
-        SetTitleBar(AppTitleBara);
-
+        SetTitleBar(AppTitleBars);
         AppWindow.Title = FSSoftName;//Set AppWindow
+        AppWindow.Resize(new Windows.Graphics.SizeInt32(width, height));
+        OverlappedPresenter presenter = OverlappedPresenter.Create();
+        presenter.PreferredMinimumHeight = MinHeight;
+        presenter.PreferredMinimumWidth = MinWidth;
+        AppWindow.SetPresenter(presenter);
         AppWindow.SetIcon("FSFSoftH.ico");
-
         AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
+        AppTitleBars.AppTitleName = FSSoftName;
+#if DEBUG
+        AppTitleBars.CurrentBuildType = TieleBadgeBuildType.Debug;
+#else
+            AppTitleBars.CurrentBuildType = TieleBadgeBuildType.None;
+    
+#endif
+
 
         // 在窗口激活后注册 SizeChanged 事件处理器
         Activated += (sender, e) =>
@@ -239,8 +260,6 @@ public sealed partial class MainWindow : Window
                 var defPageBackground = int.Parse(SettingsCoreServices.GetSoftBackgroundSetting());
                 DefWindowBackGround = defPageBackground;
                 _lastDefWindowBackGround = defPageBackground;
-
-                TitleBarTextBlock.Text = FSSoftName;
 
                 if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
                 {
@@ -317,9 +336,7 @@ public sealed partial class MainWindow : Window
             m_TitleBar.ButtonInactiveBackgroundColor = Color.FromArgb(255, 22, 22, 22);
         }*/
 
-
-        TitleDev.Visibility = Visibility.Visible;
-        //TitleBeta.Visibility = Visibility.Visible;
+        //SetAppTitleBadge
 
         ((FrameworkElement)Content).ActualThemeChanged += Window_ThemeChanged;
         
@@ -465,6 +482,7 @@ public sealed partial class MainWindow : Window
         }
     }
 
+
     private void Window_Activated(object sender, WindowActivatedEventArgs args)
     {
         SetConfigurationSourceTheme();
@@ -509,7 +527,7 @@ public sealed partial class MainWindow : Window
 
     private void NavigationView_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
     {
-        AppTitleBara.Margin =
+        AppTitleBars.Margin =
             args.DisplayMode == NavigationViewDisplayMode.Minimal ? new(48, 0, 0, 0) : new(0, 0, 0, 0);
 
         UpdateSplitViewDisplayMode();

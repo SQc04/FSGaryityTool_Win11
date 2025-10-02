@@ -1072,150 +1072,14 @@
                                     </Border>
                                 </Grid>
                             </Border>
-                            <Border Width="240"
-                                    Height="Auto"
-                                    Margin="6,6,6,6"
-                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
-                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
-                                    BorderThickness="3"
-                                    CornerRadius="4">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                    </Grid.RowDefinitions>
-                                    <StackPanel Margin="0" Orientation="Horizontal">
-                                        <ComboBox x:Name="ComComboBox"
-                                                  Width="145"
-                                                  Margin="6,0,6,0"
-                                                  Background="Transparent"
-                                                  BorderThickness="0"
-                                                  SelectionChanged="COMComboBox_SelectionChanged"
-                                                  Visibility="Collapsed">
-                                            <ComboBoxItem Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" />
-                                        </ComboBox>
-
-                                    </StackPanel>
-
-                                    <ProgressBar x:Name="AutoSerchComProgressBar" Grid.Row="2" VerticalAlignment="Top" IsIndeterminate="True" Style="{StaticResource ProgressBarStyle}" />
-                                    <ListView x:Name="ComListview"
-                                              Grid.Row="1"
-                                              MinHeight="28"
-                                              MaxHeight="260"
-                                              Margin="2,4,2,4"
-                                              BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-                                              BorderThickness="0"
-                                              SelectionChanged="COMListview_SelectionChanged"
-                                              SelectionMode="Single">
-                                        <ListView.ItemContainerTransitions>
-                                            <TransitionCollection>
-                                                <AddDeleteThemeTransition />
-                                            </TransitionCollection>
-                                        </ListView.ItemContainerTransitions>
-                                    </ListView>
-
-                                    <StackPanel Grid.Row="2" Margin="1,8,0,4" Orientation="Horizontal">
-
-                                        <ToggleButton Width="48" Height="32" Margin="3,0,3,0" Click="AutoComButton_Click" IsChecked="{x:Bind AutoComButton.IsChecked, Mode=TwoWay}">
-                                            <Grid Margin="-10">
-                                                <FontIcon Margin="-20,0,0,0" VerticalAlignment="Top" FontSize="16" Glyph="&#xE895;" />
-                                                <TextBlock Margin="0,0,-9,-5" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" Text="SWAP" />
-                                            </Grid>
-                                        </ToggleButton>
-                                        <ToggleButton Width="48" Height="32" Margin="3,0,3,0" Click="AutoConnectButton_Click" IsChecked="{x:Bind AutoConnectButton.IsChecked, Mode=TwoWay}">
-                                            <Grid Margin="-10">
-                                                <FontIcon Margin="-20,-2,0,0" VerticalAlignment="Top" FontSize="18" Glyph="&#xE703;" />
-                                                <TextBlock Margin="0,0,-9,-5" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" Text="AUTO" />
-                                            </Grid>
-                                        </ToggleButton>
-                                        <Button x:Name="ClearComCombobox"
-                                                Grid.Row="2"
-                                                Width="32"
-                                                Height="32"
-                                                Margin="3,0,3,0"
-                                                Click="ClearCOMCombobox_Click"
-                                                Style="{StaticResource AccentButtonStyle}">
-                                            <!--  -49  -->
-                                            <FontIcon Margin="-10" VerticalAlignment="Center" FontSize="20" FontWeight="ExtraLight" Glyph="&#xED62;">
-                                                <!--  &#xE74D;  -->
-                                                <!--  &#xE8E6;  -->
-                                            </FontIcon>
-                                        </Button>
-                                        <Button x:Name="ComButton"
-                                                Grid.Row="2"
-                                                Width="32"
-                                                Height="32"
-                                                Margin="3,0,3,0"
-                                                BorderThickness="1"
-                                                Click="COMButton_Click">
-                                            <FontIcon x:Name="ComButtonIcon" Margin="-8" VerticalAlignment="Center" CenterPoint="10,10,0" Glyph="&#xE72C;">
-                                                <FontIcon.RotationTransition>
-                                                    <ScalarTransition x:Name="ComButtonIconScalar" />
-                                                </FontIcon.RotationTransition>
-                                            </FontIcon>
-                                        </Button>
-                                        <Button x:Name="RotateButton"
-                                                Grid.Row="2"
-                                                Width="32"
-                                                Height="32"
-                                                Margin="3,0,3,0"
-                                                Click="RotateButton_Click"
-                                                PreviewKeyDown="RotateButton_PreviewKeyDown"
-                                                PreviewKeyUp="RotateButton_PreviewKeyUp">
-                                            <FontIcon x:Name="Icon" Margin="-8" VerticalAlignment="Center" CenterPoint="10,10,0" Glyph="&#xE72C;">
-                                                <FontIcon.RotationTransition>
-                                                    <ScalarTransition />
-                                                </FontIcon.RotationTransition>
-                                            </FontIcon>
-                                            <Button.Resources>
-                                                <!--  Storyboard for press (counterclockwise 30 degrees)  -->
-                                                <Storyboard x:Key="PressStoryboard">
-                                                    <DoubleAnimation AutoReverse="False" Storyboard.TargetName="Icon" Storyboard.TargetProperty="Rotation" To="-30" Duration="0:0:0.5">
-                                                        <DoubleAnimation.EasingFunction>
-                                                            <CubicEase EasingMode="EaseOut" />
-                                                        </DoubleAnimation.EasingFunction>
-                                                    </DoubleAnimation>
-                                                </Storyboard>
-                                                <!--  Storyboard for release (clockwise 360 degrees and reset)  -->
-                                                <Storyboard x:Key="ReleaseStoryboard">
-                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Icon" Storyboard.TargetProperty="Rotation">
-                                                        <SplineDoubleKeyFrame KeySpline="0,0,1,1" KeyTime="0:0:0" Value="-60" />
-                                                        <SplineDoubleKeyFrame KeySpline="0,0,1,1" KeyTime="0:0:0.3" Value="420" />
-                                                        <SplineDoubleKeyFrame KeySpline="0.3,0,0.7,1" KeyTime="0:0:0.5" Value="60" />
-                                                    </DoubleAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </Button.Resources>
-                                        </Button>
-                                    </StackPanel>
-
-
-                                </Grid>
-                                <!--  MaxHeight="140"  -->
-                                <!--<ToggleSwitch Width="48" Margin="0,0,-106,0" HorizontalAlignment="Right" OffContent="" OnContent="" />-->
-                            </Border>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal" Visibility="Collapsed">
-                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
-                                <FontIcon Glyph="&#xECF0;" />
-                            </Border>
-                            <ToggleButton x:Name="AutoComButton"
-                                          Width="120"
-                                          Margin="6"
-                                          Click="AutoComButton_Click"
-                                          IsChecked="False"
-                                          IsThreeState="False">
-                                AutoSerichCom
-                            </ToggleButton>
-                            <ToggleButton x:Name="AutoConnectButton"
-                                          Width="108"
-                                          Margin="6"
-                                          Click="AutoConnectButton_Click"
-                                          IsChecked="False"
-                                          IsThreeState="False">
-                                Auto Connect
-                            </ToggleButton>
+                            <controls2:SerialPortLIstBox x:Name="MainSerialPortLIstBox"
+                                                         Width="240"
+                                                         MaxHeight="300"
+                                                         Margin="6"
+                                                         HorizontalAlignment="Right"
+                                                         PortInserted="MainSerialPortLIstBox_PortInserted"
+                                                         PortRemoved="MainSerialPortLIstBox_PortRemoved"
+                                                         SelectionMode="Extended" />
 
                         </StackPanel>
 
@@ -1228,40 +1092,6 @@
                     </StackPanel>
 
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Border Width="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
-                                <FontIcon x:Name="BaudrateIcon" Glyph="&#xEC48;" />
-                            </Border>
-                            <Border Width="240"
-                                    Height="Auto"
-                                    Margin="6"
-                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
-                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
-                                    BorderThickness="3"
-                                    CornerRadius="4"
-                                    Visibility="Visible">
-                                <StackPanel>
-                                    <StackPanel.Resources />
-
-                                    <Grid Margin="6,3,6,3" HorizontalAlignment="Stretch">
-                                        <StackPanel>
-                                            <TextBlock Margin="0" VerticalAlignment="Stretch" TextAlignment="Left">
-                                                <Run Text="{x:Bind BaudTextBlock.Text, Mode=OneWay}" />
-                                                <Run Text=":" />
-                                                <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind BandComboBox.SelectedValue, Mode=OneWay}" />
-                                            </TextBlock>
-                                            <ComboBox x:Name="BandComboBox"
-                                                      HorizontalAlignment="Stretch"
-                                                      Background="{ThemeResource CustomBoxSolidColorBrush}"
-                                                      IsEditable="True"
-                                                      SelectionChanged="BANDComboBox_SelectionChanged"
-                                                      Style="{StaticResource ComboBoxStyle}" />
-                                        </StackPanel>
-                                        <TextBlock x:Name="BaudTextBlock" Visibility="Collapsed" />
-                                    </Grid>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Border Width="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
                                 <StackPanel>
@@ -1304,9 +1134,82 @@
                                     </Border>
                                 </StackPanel>
                             </Border>
+                            <controls2:SerialPortMenuBox x:Name="ToolControlSerialPortMenuBox"
+                                                         Width="240"
+                                                         Margin="6"
+                                                         PortText="{x:Bind MainSerialPortLIstBox.SelectedPortSingle, Mode=OneWay}"
+                                                         SerialPortBaudRate="115200"
+                                                         SerialPortEncodingName="gbk" />
+                        </StackPanel>
+                        
+                        
+                        
 
-                            <controls2:SerialPortMenuBox x:Name="ToolControlSerialPortMenuBox" Width="240" Margin="6" SerialPortBaudRate="115200" />
+                        <StackPanel Orientation="Horizontal">
+                            <Border Margin="1,6,6,6"
+                                    Background="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="0"
+                                    CornerRadius="4">
+                                <StackPanel VerticalAlignment="Top"
+                                            Orientation="Horizontal">
+                                    <FontIcon Margin="6,12,6,0"
+                                              Glyph="&#xEC7A;" />
+                                </StackPanel>
+                            </Border>
 
+                            <Border x:Name="ChipToolKitBorder"
+                                    Width="240"
+                                    Margin="6"
+                                    Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                    BorderThickness="3"
+                                    CornerRadius="4">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Width="110"
+                                                Margin="6"
+                                                Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
+                                                CornerRadius="4">
+                                            <TextBlock Margin="6,6,9,6"
+                                                       HorizontalAlignment="Center"
+                                                       Text="MCU tools" />
+                                        </Border>
+                                        <ComboBox x:Name="ChipToolKitComboBox"
+                                                  Width="100"
+                                                  Margin="6"
+                                                  SelectionChanged="ChipToolKitComboBox_SelectionChanged">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Width="64"
+                                                                   Text="{Binding Name}" />
+                                                        <TextBlock Margin="24,0,24,0"
+                                                                   Text="   " />
+                                                        <TextBlock FontStyle="Italic"
+                                                                   Foreground="Gray"
+                                                                   Text="{Binding Description}" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <!--  W226  -->
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Frame x:Name="McuToolsFrame"
+                                               Width="234"
+                                               Margin="0" />
+                                    </StackPanel>
+
+                                </StackPanel>
+                            </Border>
+
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
+                                <FontIcon x:Name="BaudrateIcon" Glyph="&#xEC48;" />
+                            </Border>
                             <Border Width="240"
                                     Height="Auto"
                                     Margin="6"
@@ -1314,222 +1217,30 @@
                                     BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
                                     BorderThickness="3"
                                     CornerRadius="4"
-                                    Visibility="Collapsed">
+                                    Visibility="Visible">
                                 <StackPanel>
                                     <StackPanel.Resources />
 
                                     <Grid Margin="6,3,6,3" HorizontalAlignment="Stretch">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="auto" />
-                                            <RowDefinition Height="auto" />
-                                            <RowDefinition Height="auto" />
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="auto" />
-                                        </Grid.ColumnDefinitions>
-
-
-                                        <Border Grid.Row="1"
-                                                Grid.RowSpan="2"
-                                                Grid.Column="0"
-                                                Width="1"
-                                                Margin="0,16,0,0"
-                                                HorizontalAlignment="Left"
-                                                Background="{ThemeResource TextFillColorDisabledBrush}"
-                                                CornerRadius="2" />
-                                        <Border Grid.Row="1"
-                                                Grid.RowSpan="2"
-                                                Grid.Column="1"
-                                                Width="1"
-                                                Margin="-2,16,0,0"
-                                                HorizontalAlignment="Left"
-                                                Background="{ThemeResource TextFillColorDisabledBrush}"
-                                                CornerRadius="2" />
-                                        <Border Grid.Row="1"
-                                                Grid.RowSpan="2"
-                                                Grid.Column="9"
-                                                Width="1"
-                                                Margin="-1,16,0,0"
-                                                HorizontalAlignment="Left"
-                                                Background="{ThemeResource TextFillColorDisabledBrush}"
-                                                CornerRadius="2" />
-                                        <Border Grid.Row="1"
-                                                Grid.RowSpan="2"
-                                                Grid.Column="10"
-                                                Width="1"
-                                                Margin="-1,16,0,0"
-                                                HorizontalAlignment="Left"
-                                                Background="{ThemeResource TextFillColorDisabledBrush}"
-                                                CornerRadius="2" />
-                                        <Border Grid.Row="1"
-                                                Grid.RowSpan="2"
-                                                Grid.Column="13"
-                                                Width="1"
-                                                Margin="-1,16,0,0"
-                                                HorizontalAlignment="Left"
-                                                Background="{ThemeResource TextFillColorDisabledBrush}"
-                                                CornerRadius="2" />
-
-                                        <TextBlock Grid.Row="1"
-                                                   Grid.RowSpan="2"
-                                                   Grid.Column="1"
-                                                   Grid.ColumnSpan="7"
-                                                   Margin="3,21,4,0"
-                                                   HorizontalAlignment="Left">
-                                            <Run Text="{x:Bind DataBitSlider.Value, Mode=OneWay}" />
-                                            <Run Text="Bit" />
-                                        </TextBlock>
-                                        <TextBlock Grid.Row="1"
-                                                   Grid.RowSpan="2"
-                                                   Grid.Column="11"
-                                                   Grid.ColumnSpan="2"
-                                                   Margin="-10,21,4,0"
-                                                   HorizontalAlignment="Left">
-                                            <Run Text="{x:Bind StopBitSlider.Value, Mode=OneWay}" />
-                                            <Run Text="Bit" />
-                                        </TextBlock>
-
-
-                                        <Border Grid.Row="1"
-                                                Grid.Column="0"
-                                                Width="18"
-                                                Height="4"
-                                                Margin="0,-0.5,0,0"
-                                                Background="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                                                CornerRadius="2,0,0,2" />
-                                        <Border Grid.Row="1"
-                                                Grid.Column="1"
-                                                Grid.ColumnSpan="4"
-                                                Height="4"
-                                                Margin="-1,-0.5,-1,0"
-                                                Background="{ThemeResource AccentFillColorDefaultBrush}" />
-                                        <Border Grid.Row="1"
-                                                Grid.Column="9"
-                                                Width="18"
-                                                Height="4"
-                                                Margin="-1,-0.5,0,0"
-                                                Background="{ThemeResource SystemFillColorCautionBrush}"
-                                                CornerRadius="0" />
-                                        <Border Grid.Row="1"
-                                                Grid.Column="10"
-                                                Width="16"
-                                                Height="4"
-                                                Margin="-1,-0.5,-1,0"
-                                                Background="{ThemeResource SystemFillColorCriticalBrush}"
-                                                CornerRadius="0" />
-                                        <Slider x:Name="DataBitSlider"
-                                                Grid.Row="1"
-                                                Grid.Column="5"
-                                                Grid.ColumnSpan="4"
-                                                Width="80"
-                                                Margin="0,-0.5,-1,0"
-                                                Maximum="8"
-                                                Minimum="5"
-                                                SnapsTo="Ticks"
-                                                TickFrequency="1"
-                                                TickPlacement="Outside" />
-                                        <Slider x:Name="StopBitSlider"
-                                                Grid.Row="1"
-                                                Grid.Column="11"
-                                                Grid.ColumnSpan="2"
-                                                Width="54"
-                                                Margin="0,-0.5,0,0"
-                                                Maximum="2"
-                                                Minimum="1"
-                                                SnapsTo="Ticks"
-                                                Style="{StaticResource SliderStyle}"
-                                                TickFrequency="0.5"
-                                                TickPlacement="Outside"
-                                                Value="1" />
-
-                                        <FontIcon Grid.Row="2"
-                                                  Grid.Column="0"
-                                                  Grid.ColumnSpan="1"
-                                                  Margin="-2,6,1,0"
-                                                  FontSize="13"
-                                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                  Glyph="&#xE768;" />
-
-                                        <TextBlock Grid.Row="2"
-                                                   Grid.Column="1"
-                                                   Grid.ColumnSpan="8"
-                                                   Margin="0,4,0,0"
-                                                   HorizontalAlignment="Center"
-                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                   Text="{x:Bind DataTextBlock.Text, Mode=OneWay}" />
-
-
-                                        <TextBlock Grid.Row="2"
-                                                   Grid.Column="9"
-                                                   Grid.ColumnSpan="1"
-                                                   Margin="0,4,0,0"
-                                                   HorizontalAlignment="Center"
-                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                   Text="N" />
-                                        <TextBlock Grid.Row="2"
-                                                   Grid.Column="10"
-                                                   Grid.ColumnSpan="3"
-                                                   Margin="0,4,0,0"
-                                                   HorizontalAlignment="Center"
-                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                   Text="{x:Bind StopTextBlock.Text, Mode=OneWay}" />
-                                    </Grid>
-                                    <Grid Margin="6,3,6,6">
-                                        <Grid.Resources>
-                                            <Style TargetType="toolkit:Segmented">
-                                                <Setter Property="Margin" Value="0" />
-                                                <Setter Property="BorderThickness" Value="1" />
-                                                <Setter Property="Padding" Value="1" />
-                                                <Setter Property="BorderBrush" Value="{ThemeResource CustomBoxElevationBorderBrush}" />
-                                            </Style>
-                                        </Grid.Resources>
                                         <StackPanel>
-                                            <TextBlock x:Name="ParitySegmentedTextBlock">
-                                                <Run Text="{x:Bind PartTextBlock.Text, Mode=OneWay}" />
+                                            <TextBlock Margin="0" VerticalAlignment="Stretch" TextAlignment="Left">
+                                                <Run Text="{x:Bind BaudTextBlock.Text, Mode=OneWay}" />
                                                 <Run Text=":" />
-                                                <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ParComboBox.SelectedValue, Mode=OneWay}" />
+                                                <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind BandComboBox.SelectedValue, Mode=OneWay}" />
                                             </TextBlock>
-                                            <toolkit:Segmented x:Name="ParitySegmented" HorizontalAlignment="Stretch" Background="{ThemeResource CustomBoxSolidColorBrush}" SelectedIndex="{x:Bind ParComboBox.SelectedIndex, Mode=TwoWay}">
-                                                <toolkit:SegmentedItem Tag="None">
-                                                    <FontIcon Glyph="&#xF140;" />
-                                                </toolkit:SegmentedItem>
-                                                <toolkit:SegmentedItem Tag="Odd">
-                                                    <FontIcon Glyph="&#xECC8;" />
-                                                </toolkit:SegmentedItem>
-                                                <toolkit:SegmentedItem Tag="Even">
-                                                    <FontIcon Glyph="&#xECC9;" />
-                                                </toolkit:SegmentedItem>
-                                                <toolkit:SegmentedItem Tag="Mark">
-                                                    <FontIcon Glyph="&#xF16C;" />
-                                                </toolkit:SegmentedItem>
-                                                <toolkit:SegmentedItem Tag="Space">
-                                                    <FontIcon Glyph="&#xF16D;" />
-                                                </toolkit:SegmentedItem>
-                                            </toolkit:Segmented>
-                                            <TextBlock x:Name="EncodingSegmentedTextBlock">
-                                                <Run Text="{x:Bind EncodingTextBlock.Text, Mode=OneWay}" />
-                                                <Run Text=":" />
-                                                <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind EncodingComboBox.SelectedValue, Mode=OneWay}" />
-                                            </TextBlock>
-                                            <ComboBox x:Name="EncodingComboBox" HorizontalAlignment="Stretch" Background="{ThemeResource CustomBoxSolidColorBrush}" SelectionChanged="EncodingComboBox_SelectionChanged" Style="{StaticResource ComboBoxStyle}" />
+                                            <ComboBox x:Name="BandComboBox"
+                                                      HorizontalAlignment="Stretch"
+                                                      Background="{ThemeResource CustomBoxSolidColorBrush}"
+                                                      IsEditable="True"
+                                                      SelectionChanged="BANDComboBox_SelectionChanged"
+                                                      Style="{StaticResource ComboBoxStyle}" />
                                         </StackPanel>
+                                        <TextBlock x:Name="BaudTextBlock" Visibility="Collapsed" />
                                     </Grid>
                                 </StackPanel>
                             </Border>
                         </StackPanel>
+
                     </StackPanel>
 
                     <StackPanel>
@@ -1586,22 +1297,7 @@
                             <ComboBox x:Name="DataComboBox" Width="108" Margin="7,6,6,6" SelectionChanged="DATAComboBox_SelectionChanged" />
 
                         </StackPanel>
-
-                        <StackPanel Orientation="Horizontal">
-                            <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
-                                <Grid>
-                                    <FontIcon Glyph="&#xF2B7;" />
-                                </Grid>
-                            </Border>
-                            <Border Margin="6" Background="{ThemeResource CustomBoxElevationBorderBrush}" BorderBrush="{ThemeResource ControlElevationBorderBrush}" BorderThickness="1" CornerRadius="4">
-                                <Grid Width="118" HorizontalAlignment="Center">
-                                    <TextBlock x:Name="EncodingTextBlock" Width="70" Margin="0" VerticalAlignment="Center" TextAlignment="Center">
-                                        Encoding
-                                    </TextBlock>
-                                </Grid>
-                            </Border>
-
-                        </StackPanel>
+ 
 
                         <StackPanel Orientation="Horizontal">
                             <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
@@ -1660,17 +1356,6 @@
                                 <RepositionThemeTransition IsStaggeringEnabled="False" />
                             </TransitionCollection>
                         </StackPanel.ChildrenTransitions>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal">
-                        <NumberBox x:Name="DataNumberBox"
-                                   Margin="6"
-                                   LargeChange="1"
-                                   Maximum="8"
-                                   Minimum="5"
-                                   SmallChange="1"
-                                   SpinButtonPlacementMode="Inline" />
-
                     </StackPanel>
 
                     <ProgressBar x:Name="RunTProgressBar"
@@ -1739,45 +1424,7 @@
                         </StackPanel.ChildrenTransitions>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal">
-                        <Border Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="0" CornerRadius="4">
-                            <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
-                                <FontIcon Margin="6,12,6,0" Glyph="&#xEC7A;" />
-                            </StackPanel>
-                        </Border>
-
-                        <Border x:Name="ChipToolKitBorder"
-                                Width="240"
-                                Margin="6"
-                                BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
-                                BorderThickness="3"
-                                CornerRadius="4">
-                            <StackPanel Orientation="Vertical">
-                                <StackPanel Orientation="Horizontal">
-                                    <Border Width="110" Margin="6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
-                                        <TextBlock Margin="6,6,9,6" HorizontalAlignment="Center" Text="MCU tools" />
-                                    </Border>
-                                    <ComboBox x:Name="ChipToolKitComboBox" Width="100" Margin="6" SelectionChanged="ChipToolKitComboBox_SelectionChanged">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Width="64" Text="{Binding Name}" />
-                                                    <TextBlock Margin="24,0,24,0" Text="   " />
-                                                    <TextBlock FontStyle="Italic" Foreground="Gray" Text="{Binding Description}" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                    </ComboBox>
-                                    <!--  W226  -->
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Frame x:Name="McuToolsFrame" Width="234" Margin="0" />
-                                </StackPanel>
-
-                            </StackPanel>
-                        </Border>
-
-                    </StackPanel>
+                    
 
                     <StackPanel Height="36" Orientation="Horizontal" />
 

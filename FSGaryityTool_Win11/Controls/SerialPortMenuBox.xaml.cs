@@ -6,10 +6,10 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -51,27 +51,43 @@ namespace FSGaryityTool_Win11.Controls
     }
     public class EncodingNameToEncodingConverter : IValueConverter
     {
+        private readonly List<string> _encodingItems;
+
+        public EncodingNameToEncodingConverter()
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            _encodingItems = Encoding.GetEncodings().Select(e => e.Name).OrderBy(x => x).ToList();
+        }
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             if (value is Encoding encoding)
                 return encoding.WebName;
-            return "utf-8";
+            return "us-ascii";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             if (value is string name)
             {
-                try
+                // 只允许 EncodingItems 中的编码
+                var match = _encodingItems
+                    .FirstOrDefault(e => e.Equals(name, StringComparison.OrdinalIgnoreCase));
+                if (match != null)
                 {
-                    return Encoding.GetEncoding(name);
-                }
-                catch
-                {
-                    return Encoding.UTF8;
+                    try
+                    {
+                        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                        return Encoding.GetEncoding(match);
+                    }
+                    catch
+                    {
+                        return Encoding.ASCII;
+                    }
                 }
             }
-            return Encoding.UTF8;
+            return Encoding.ASCII;
         }
     }
     public class ParityToCharConverter : IValueConverter
@@ -110,6 +126,7 @@ namespace FSGaryityTool_Win11.Controls
         private StopBits _serialPortStopBits;
         private Encoding _serialPortEncoding;
 
+        private string _portText;
         private string _BaudRateText;
         private string _dataBitsText;
         private string _parityText;
@@ -117,7 +134,6 @@ namespace FSGaryityTool_Win11.Controls
         private string _encodingText;
 
         private string _parityValueText;
-        private string _encodingValueText;
         public List<string> EncodingItems { get; }
 
         public int SerialPortBaudRate
@@ -167,7 +183,7 @@ namespace FSGaryityTool_Win11.Controls
                 if (SerialPortBaudRate > 9600)
                     return $"{(byteRate / 1000.0):F2} KB/s"; // Use KB/s for kilobytes per second
                 else
-                    return $"{byteRate:F2} B/s"; // Use B/s for bytes per second
+                    return $"{byteRate:F2} Byte/s"; // Use B/s for bytes per second
             }
         }
 
@@ -246,6 +262,18 @@ namespace FSGaryityTool_Win11.Controls
                 }
             }
         }
+        public string PortText
+        {
+            get => _portText;
+            set
+            {
+                if (_portText != value)
+                {
+                    _portText = value;
+                    OnPropertyChanged(nameof(PortText));
+                }
+            }
+        }
         public string DataBitsText
         {
             get => _dataBitsText;
@@ -309,18 +337,39 @@ namespace FSGaryityTool_Win11.Controls
                 }
             }
         }
-        public string EncodingValueText
+
+        public static readonly DependencyProperty SerialPortEncodingNameProperty =
+            DependencyProperty.Register(
+                nameof(SerialPortEncodingName),
+                typeof(string),
+                typeof(SerialPortMenuBox),
+                new PropertyMetadata(null, OnSerialPortEncodingNameChanged));
+
+        public string SerialPortEncodingName
         {
-            get => _encodingValueText;
-            set
+            get => (string)GetValue(SerialPortEncodingNameProperty);
+            set => SetValue(SerialPortEncodingNameProperty, value);
+        }
+
+        private static void OnSerialPortEncodingNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as SerialPortMenuBox;
+            var name = e.NewValue as string;
+            if (!string.IsNullOrWhiteSpace(name))
             {
-                if (_encodingValueText != value)
+                var match = control.FindBestEncodingMatch(name);
+                if (match != null)
                 {
-                    _encodingValueText = value;
-                    OnPropertyChanged(nameof(EncodingValueText));
+                    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                    control.SerialPortEncoding = Encoding.GetEncoding(match);
+                }
+                else
+                {
+                    control.SerialPortEncoding = Encoding.UTF8;
                 }
             }
         }
+
 
         public SerialPortMenuBox()
         {
@@ -328,11 +377,19 @@ namespace FSGaryityTool_Win11.Controls
             this.DataContext = this;
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            var allEncodings = Encoding.GetEncodings().Select(e => e.Name).ToList();
+            EncodingItems = GetSortedEncodingItems(allEncodings);
 
-            EncodingItems = Encoding.GetEncodings().Select(e => e.Name).OrderBy(x => x).ToList();
             ParitySegmented.Loaded += ParitySegmented_Loaded;
 
-            
+            // 输出 EncodingItems 到 Debug 命令行
+            Debug.WriteLine("EncodingItems 列表：");
+            foreach (var item in EncodingItems)
+            {
+                Debug.WriteLine(item);
+            }
+
+
             if (SerialPortDataBits == 0 || SerialPortDataBits < 5 || SerialPortDataBits > 8)
             {
                 SerialPortDataBits = 8;
@@ -349,7 +406,7 @@ namespace FSGaryityTool_Win11.Controls
                 _serialPortEncoding = Encoding.UTF8;
             }
 
-            if (SerialPortBaudRate == 0 || SerialPortBaudRate < 1 || SerialPortBaudRate > 10000000)
+            if (SerialPortBaudRate == 0 || SerialPortBaudRate < 1 || SerialPortBaudRate > 100000000)
             {
                 SerialPortBaudRate = 115200;
                 _serialPortBaudRate = 115200;
@@ -358,6 +415,82 @@ namespace FSGaryityTool_Win11.Controls
             //BaudRateComboBox.SelectedItem = SerialPortBaudRate.ToString();
             //AddBaudRateComboboxItem(BaudRateComboBox, SerialPortBaudRate);
 
+        }
+        private List<string> GetSortedEncodingItems(List<string> allEncodings)
+        {
+            // 编码分类，按常见类别分组
+            var encodingCategories = new Dictionary<string, List<string>>
+            {
+                ["ASCII"] = new List<string> { "us-ascii", "ascii" },
+                ["Unicode"] = new List<string> { "utf-8", "utf-16", "utf-16BE", "utf-32", "utf-32BE", "unicode" },
+                ["GB"] = new List<string> { "gb2312", "gbk", "gb18030" },
+                ["ISO"] = allEncodings.Where(x => x.StartsWith("iso-", StringComparison.OrdinalIgnoreCase)).ToList(),
+                ["Big5"] = new List<string> { "big5" },
+                ["Japanese"] = new List<string> { "shift_jis", "EUC-JP", "x-mac-japanese" },
+                ["Korean"] = new List<string> { "ks_c_5601-1987", "Johab", "x-ebcdic-koreanextended" },
+                ["Russian"] = new List<string> { "koi8-r", "koi8-u" },
+                ["Windows"] = allEncodings.Where(x => x.StartsWith("windows-", StringComparison.OrdinalIgnoreCase)).ToList(),
+                ["IBM/CP/DOS"] = allEncodings.Where(x =>
+                    x.StartsWith("IBM", StringComparison.OrdinalIgnoreCase) ||
+                    x.StartsWith("ibm", StringComparison.OrdinalIgnoreCase) ||
+                    x.StartsWith("cp", StringComparison.OrdinalIgnoreCase) ||
+                    x.StartsWith("DOS", StringComparison.OrdinalIgnoreCase)
+                ).ToList(),
+                ["Mac"] = allEncodings.Where(x => x.StartsWith("mac", StringComparison.OrdinalIgnoreCase) || x.StartsWith("x-mac", StringComparison.OrdinalIgnoreCase)).ToList(),
+                ["Other"] = allEncodings.ToList()
+            };
+
+            // 移除已分类的编码，避免重复
+            var categorized = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var kv in encodingCategories)
+            {
+                categorized.UnionWith(kv.Value);
+            }
+            encodingCategories["Other"] = allEncodings
+                .Where(x => !categorized.Contains(x))
+                .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            // 自然排序比较器：优先按字母，数字按数值排序
+            int NaturalCompare(string a, string b)
+            {
+                int i = 0, j = 0;
+                while (i < a.Length && j < b.Length)
+                {
+                    if (char.IsDigit(a[i]) && char.IsDigit(b[j]))
+                    {
+                        // 提取数字
+                        int startI = i, startJ = j;
+                        while (i < a.Length && char.IsDigit(a[i])) i++;
+                        while (j < b.Length && char.IsDigit(b[j])) j++;
+                        var numA = int.Parse(a.Substring(startI, i - startI));
+                        var numB = int.Parse(b.Substring(startJ, j - startJ));
+                        if (numA != numB)
+                            return numA.CompareTo(numB);
+                    }
+                    else
+                    {
+                        char ca = char.ToLower(a[i]);
+                        char cb = char.ToLower(b[j]);
+                        if (ca != cb)
+                            return ca.CompareTo(cb);
+                        i++; j++;
+                    }
+                }
+                return a.Length.CompareTo(b.Length);
+            }
+
+            // 按类别合并排序
+            var sortedList = new List<string>();
+            foreach (var category in new[] { "Unicode", "ASCII", "GB", "ISO", "Big5", "Japanese", "Korean", "Russian", "Windows", "IBM/CP/DOS", "Mac", "Other" })
+            {
+                var items = encodingCategories[category]
+                    .Where(x => allEncodings.Contains(x, StringComparer.OrdinalIgnoreCase))
+                    .OrderBy(x => x, Comparer<string>.Create(NaturalCompare))
+                    .ToList();
+                sortedList.AddRange(items);
+            }
+            return sortedList;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -372,15 +505,13 @@ namespace FSGaryityTool_Win11.Controls
             var match = FindBestEncodingMatch(text);
             if (match != null)
             {
-                EncodingValueText = match;
                 _lastValidEncoding = match;
                 sender.Text = match;
             }
             else
             {
                 // 恢复上次有效项或默认utf-8
-                EncodingValueText = string.IsNullOrEmpty(_lastValidEncoding) ? "utf-8" : _lastValidEncoding;
-                sender.Text = EncodingValueText;
+                sender.Text = string.IsNullOrEmpty(_lastValidEncoding) ? "utf-8" : _lastValidEncoding;
             }
         }
 
@@ -392,17 +523,26 @@ namespace FSGaryityTool_Win11.Controls
                 var match = FindBestEncodingMatch(text);
                 if (match != null)
                 {
-                    EncodingValueText = match;
                     _lastValidEncoding = match;
                     comboBox.Text = match;
                 }
                 else
                 {
-                    EncodingValueText = string.IsNullOrEmpty(_lastValidEncoding) ? "utf-8" : _lastValidEncoding;
-                    comboBox.Text = EncodingValueText;
+                    comboBox.Text = string.IsNullOrEmpty(_lastValidEncoding) ? "utf-8" : _lastValidEncoding;
                 }
             }
         }
+        private static readonly Dictionary<string, string> EncodingAliasMap = new()
+        {
+            // 常见关联：用户习惯输入 => 实际编码名称
+            { "gbk", "gb2312" }, // gbk 实际对应 gb2312
+            { "unicode8", "utf-8" },
+            { "unicode16", "utf-16" },
+            { "latin1", "iso-8859-1" },
+            { "ascii", "us-ascii" },
+            // 可继续扩展更多别名
+        };
+
         private string FindBestEncodingMatch(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -411,30 +551,36 @@ namespace FSGaryityTool_Win11.Controls
             // 统一小写并去除非字母数字
             string normInput = new string(input.ToLowerInvariant().Where(char.IsLetterOrDigit).ToArray());
 
-            // 先精确查找
+            // 1. 先查别名映射
+            if (EncodingAliasMap.TryGetValue(normInput, out var alias))
+            {
+                var aliasExact = EncodingItems.FirstOrDefault(e => e.Equals(alias, StringComparison.OrdinalIgnoreCase));
+                if (aliasExact != null)
+                    return aliasExact;
+            }
+
+            // 2. 精确查找
             var exact = EncodingItems.FirstOrDefault(e => e.Equals(input, StringComparison.OrdinalIgnoreCase));
             if (exact != null)
                 return exact;
 
-            // 再模糊查找
-            foreach (var item in EncodingItems)
+            // 3. 模糊查找（长度>=2）
+            if (normInput.Length >= 2)
             {
-                string normItem = new string(item.ToLowerInvariant().Where(char.IsLetterOrDigit).ToArray());
-                if (normItem == normInput)
-                    return item;
-            }
+                foreach (var item in EncodingItems)
+                {
+                    string normItem = new string(item.ToLowerInvariant().Where(char.IsLetterOrDigit).ToArray());
+                    if (normItem == normInput)
+                        return item;
+                }
 
-            // 支持部分匹配（如输入utf8能匹配utf-8）
-            foreach (var item in EncodingItems)
-            {
-                string normItem = new string(item.ToLowerInvariant().Where(char.IsLetterOrDigit).ToArray());
-                if (normItem.Contains(normInput))
-                    return item;
-            }
+                foreach (var item in EncodingItems)
+                {
+                    string normItem = new string(item.ToLowerInvariant().Where(char.IsLetterOrDigit).ToArray());
+                    if (normItem.Contains(normInput))
+                        return item;
+                }
 
-            // 顺序缩写匹配（如ut8能匹配utf-8），最少3个字符
-            if (normInput.Length >= 3)
-            {
                 foreach (var item in EncodingItems)
                 {
                     string normItem = new string(item.ToLowerInvariant().Where(char.IsLetterOrDigit).ToArray());
@@ -531,7 +677,7 @@ namespace FSGaryityTool_Win11.Controls
         private async void AddBaudRateComboboxItem(ComboBox comboBox, int value)
         {
             // 检查是否需要将新值添加到 ComboBox 的 Items
-            int min = 1, max = 10000000;
+            int min = 1, max = 100000000;
             if (!comboBox.Items.Contains(value) && value >= min && value <= max)
             {
                 // 添加新值到 ComboBox 的 Items
@@ -564,7 +710,7 @@ namespace FSGaryityTool_Win11.Controls
         private void ValidateBaudRateInput(ComboBox comboBox, string text)
         {
             // 允许的波特率范围
-            int min = 1, max = 10000000;
+            int min = 1, max = 100000000;
 
             // 验证输入是否为纯数字且在范围内
             if (!string.IsNullOrWhiteSpace(text) && text.All(char.IsDigit) && int.TryParse(text, out int value) && value >= min && value <= max)

@@ -2,8 +2,11 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Hosting;
 using System;
+using System.Numerics;
+using Windows.Foundation;
 using Windows.Graphics;
 using Windows.UI;
 
@@ -36,6 +39,7 @@ public sealed partial class TestPage1 : Page
         Webview3.Source = uri3;
         Webview4.Source = uri4;
         */
+
     }
 
     private void Timer_Tick(object sender, object e)
@@ -153,4 +157,95 @@ public sealed partial class TestPage1 : Page
             _starWindow.Activate();
         }
     }
+
+    private void ScrollViewer_PointerPressed(object sender, PointerRoutedEventArgs e)
+    {
+        var scrollViewer = sender as ScrollViewer;
+        if (scrollViewer != null)
+        {
+            // 开始拖动
+            isDragging = true;
+            currentScrollViewer = scrollViewer;
+            lastMousePosition = e.GetCurrentPoint(scrollViewer).Position;
+            scrollViewer.CapturePointer(e.Pointer); // 捕获指针
+            e.Handled = true;
+        }
+    }
+
+    private void ScrollViewer_PointerMoved(object sender, PointerRoutedEventArgs e)
+    {
+        if (isDragging && currentScrollViewer != null)
+        {
+            var currentPosition = e.GetCurrentPoint(currentScrollViewer).Position;
+            // 计算鼠标移动的偏移量
+            double deltaX = lastMousePosition.X - currentPosition.X;
+            double deltaY = lastMousePosition.Y - currentPosition.Y;
+
+            // 更新 ScrollViewer 的偏移量
+            currentScrollViewer.ChangeView(
+                currentScrollViewer.HorizontalOffset + deltaX,
+                currentScrollViewer.VerticalOffset + deltaY,
+                null, // 保持当前缩放比例
+                true // 禁用动画以提高流畅度
+            );
+
+            // 更新上一次鼠标位置
+            lastMousePosition = currentPosition;
+            e.Handled = true;
+        }
+    }
+
+    private void ScrollViewer_PointerReleased(object sender, PointerRoutedEventArgs e)
+    {
+        if (isDragging)
+        {
+            isDragging = false;
+            currentScrollViewer?.ReleasePointerCapture(e.Pointer); // 释放指针
+            currentScrollViewer = null;
+            e.Handled = true;
+        }
+    }
+
+    private bool isDragging;
+    private Point lastMousePosition;
+    private ScrollViewer currentScrollViewer;
+    private enum SyncSource { None, ScrollViewer1, ScrollViewer2 }
+    private SyncSource syncSource = SyncSource.None;
+
+    private void ScrollViewer1_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+    {
+        if (syncSource == SyncSource.ScrollViewer2) return;
+
+        float zoomDelta = Math.Abs(scrollViewer2.ZoomFactor - scrollViewer1.ZoomFactor);
+        float hOffsetDelta = (float)Math.Abs(scrollViewer2.HorizontalOffset - scrollViewer1.HorizontalOffset);
+        float vOffsetDelta = (float)Math.Abs(scrollViewer1.VerticalOffset - scrollViewer2.VerticalOffset);
+
+        if (zoomDelta < 0.01f && hOffsetDelta < 1f && vOffsetDelta < 1f) return;
+
+        syncSource = SyncSource.ScrollViewer1;
+
+        var centerPoint = new Point(scrollViewer1.ActualWidth / 2, scrollViewer1.ActualHeight / 2);
+        scrollViewer2.ChangeView(scrollViewer1.HorizontalOffset, scrollViewer1.VerticalOffset, scrollViewer1.ZoomFactor, true);
+
+        syncSource = SyncSource.None;
+    }
+
+    private void ScrollViewer2_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+    {
+        if (syncSource == SyncSource.ScrollViewer1) return;
+
+        float zoomDelta = Math.Abs(scrollViewer1.ZoomFactor - scrollViewer2.ZoomFactor);
+        float hOffsetDelta = (float)Math.Abs(scrollViewer1.HorizontalOffset - scrollViewer2.HorizontalOffset);
+        float vOffsetDelta = (float)Math.Abs(scrollViewer2.VerticalOffset - scrollViewer1.VerticalOffset);
+
+        if (zoomDelta < 0.01f && hOffsetDelta < 1f && vOffsetDelta < 1f) return;
+
+        syncSource = SyncSource.ScrollViewer2;
+
+        var centerPoint = new Point(scrollViewer2.ActualWidth / 2, scrollViewer2.ActualHeight / 2);
+        scrollViewer1.ChangeView(scrollViewer2.HorizontalOffset, scrollViewer2.VerticalOffset, scrollViewer2.ZoomFactor, true);
+
+        syncSource = SyncSource.None;
+    }
+
 }

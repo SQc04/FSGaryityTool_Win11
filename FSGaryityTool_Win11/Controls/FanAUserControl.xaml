@@ -119,6 +119,11 @@
                                 <Grid />
                             </Border>
                         </Grid>
+                        <fsControl:CustomWrapPanel.ChildrenTransitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition IsStaggeringEnabled="False" />
+                            </TransitionCollection>
+                        </fsControl:CustomWrapPanel.ChildrenTransitions>
                     </fsControl:CustomWrapPanel>
                 </Grid>
             </Border>

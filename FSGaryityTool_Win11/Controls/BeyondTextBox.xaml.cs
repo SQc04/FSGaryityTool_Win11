@@ -8,10 +8,10 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Win32;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Windows.Foundation;
@@ -381,48 +381,71 @@ namespace FSGaryityTool_Win11.Controls
 
 
         private bool _isFocused = false;
+        private bool _shouldHandleLostFocus = false;
         private InputCursor? OriginalInputCursor { get; set; }
 
         private void BoxRootGrid_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
+            _shouldHandleLostFocus = true;
+            Debug.WriteLine("PointEnter = " + _shouldHandleLostFocus);
             if (!_isFocused)
                 VisualStateManager.GoToState(this, "PointerOver", true);
 
             OriginalInputCursor = InputCursor ?? InputSystemCursor.Create(InputSystemCursorShape.Arrow);
             InputCursor = InputSystemCursor.Create(InputSystemCursorShape.IBeam);
+            
         }
 
         private void BoxRootGrid_PointerExited(object sender, PointerRoutedEventArgs e)
         {
+            _shouldHandleLostFocus = false;
+            Debug.WriteLine("PointEnter = " + _shouldHandleLostFocus);
             if (!_isFocused)
+            {
                 VisualStateManager.GoToState(this, "Normal", true);
+            }
+
             if (OriginalInputCursor != null)
             {
                 InputCursor = OriginalInputCursor;
             }
+            
         }
         private void BoxRootGrid_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             BoxRootGrid.Focus(FocusState.Programmatic);
             e.Handled = true;
+
         }
         private void BoxRootGrid_GotFocus(object sender, RoutedEventArgs e)
         {
             _isFocused = true;
             VisualStateManager.GoToState(this, "Focused", true);
+
             UpdateBorderBrush(IsConnect);
             LostCaretBorder(_isFocused);
             UpdateCaretWidthByMode();
             BeginCaretBlinkStoryboard();
+            Debug.WriteLine("GotFocus");
+        }
+        private void BoxRootGrid_LosingFocus(UIElement sender, LosingFocusEventArgs args)
+        {
+            Debug.WriteLine("LosingFocus");
         }
 
         private void BoxRootGrid_LostFocus(object sender, RoutedEventArgs e)
         {
             _isFocused = false;
             VisualStateManager.GoToState(this, "Normal", true);
-            UpdateBorderBrush(IsConnect);
-            UpdateCaretWidthByMode();
-            LostCaretBorder(_isFocused);
+
+            if (!_shouldHandleLostFocus)
+            {
+                UpdateBorderBrush(IsConnect);
+                UpdateCaretWidthByMode();
+                LostCaretBorder(_isFocused);
+            }
+
+            Debug.WriteLine("LostFocus");
         }
         private void BeginCaretBlinkStoryboard()
         {
@@ -494,7 +517,5 @@ namespace FSGaryityTool_Win11.Controls
                 CharItems[i].IsCaret = (i == CaretIndex);
             OnPropertyChanged(nameof(CharItems));
         }
-
-
     }
 }

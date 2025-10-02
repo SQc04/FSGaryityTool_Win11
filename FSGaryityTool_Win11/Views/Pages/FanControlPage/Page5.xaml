@@ -318,19 +318,24 @@
                         </Border>
                     </StackPanel>
                     <fsControl:CustomWrapPanel Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <Border Width="300" Height="30" Background="LightBlue" />
+                        <Border Width="300" Height="30" Margin="3,3,3,3" Background="LightBlue" />
                         <Border Height="30" MinWidth="200" Background="BlueViolet" />
                         <Border Width="200" Height="30" Background="Blue" />
                         <Border Height="30" MinWidth="240" Background="Aqua" />
                         <Border Height="30" MinWidth="526" Background="Azure" />
                         <Border Height="30" MinWidth="400" Background="SkyBlue" />
+                        <fsControl:CustomWrapPanel.ChildrenTransitions>
+                            <TransitionCollection>
+                                <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="True" />
+                                <RepositionThemeTransition IsStaggeringEnabled="False" />
+                            </TransitionCollection>
+                        </fsControl:CustomWrapPanel.ChildrenTransitions>
                     </fsControl:CustomWrapPanel>
                     <StackPanel Margin="0,48,0,0" />
                 </StackPanel>
 
                 <StackPanel.ChildrenTransitions>
                     <TransitionCollection>
-                        <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="False" />
                         <RepositionThemeTransition IsStaggeringEnabled="False" />
                     </TransitionCollection>
                 </StackPanel.ChildrenTransitions>

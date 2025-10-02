@@ -518,7 +518,7 @@ public sealed partial class Page5 : Page
         }
         if (GpuFanControlToggleButton.IsChecked == true)
         {
-            GpuFanRadialGauge.Value = CalculateFanSpeed(ViewModel.GpumTemp, 0.014, 2, 2.2, -15);
+            GpuFanRadialGauge.Value = CalculateFanSpeed(ViewModel.GpumTemp, 0.014, 2, 2.2, -25);
         }
     }
     private int CalculateFanSpeed(double temperature, double math0, double math1, double math2, double math3)
