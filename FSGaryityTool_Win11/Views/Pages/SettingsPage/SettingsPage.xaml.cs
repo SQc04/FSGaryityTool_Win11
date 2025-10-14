@@ -18,8 +18,6 @@ namespace FSGaryityTool_Win11;
 
 public sealed partial class SettingsPage : Page, INotifyPropertyChanged
 {
-    public static int Fro1 { get; set; }
-
     public static TomlTable SettingsTomlr { get; set; }
 
     public static string DefaultStartPage { get; set; }
@@ -30,11 +28,6 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
     public static bool DefaultSoftBackgroundToggleSwitch { get; set; }
     public static int DefaultTomlPageBackGround { get; set; }
 
-    public static string RedirectedFilePath { get; set; }
-
-    public static string AppFilepath { get; set; }
-
-    public static string AppFolderPath { get; set; }
 
     private WallpaperChangeListener _wallpaperChangeListener = new();
     public class Folder
@@ -62,7 +55,6 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
         }
     }
 
-
     private void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -88,29 +80,7 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
 
     public void LanguageSetting()
     {
-        var localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var packageName = string.Empty;
-        try
-        {
-            packageName = Package.Current.Id.FamilyName;
-        }
-        catch (Exception ex)
-        {
-            // 处理异常，例如记录日志或显示错误消息
-            Debug.WriteLine($"获取包名时发生错误: {ex.Message}");
-        }
-
-        AppFolderPath = Path.Combine(localAppDataPath, "Packages", packageName, "LocalCache", "Local");
-        // 获取被重定向的文件夹路径
-        //ApplicationData.Current.LocalFolder.Path
-        var redirectedFolderPath = AppFolderPath;
-        var fsFolder = Path.Combine(redirectedFolderPath, "FAIRINGSTUDIO");
-        var fsGravif = Path.Combine(fsFolder, "FSGravityTool");
-        // 获取被重定向的文件路径
-        AppFilepath = fsGravif;
-        RedirectedFilePath = Path.Combine(fsGravif, "Settings.toml");
-
-        using (var reader = File.OpenText(Page1.FsSetToml))        //打开TOML文件
+        using (var reader = File.OpenText(SettingsCoreServices.FSGravityToolsSettingsToml))        //打开TOML文件
         {
             var settingstomlr = TOML.Parse(reader);
             DefaultTomlStartPage = int.Parse(settingstomlr["FSGravitySettings"]["DefaultNvPage"]);
@@ -216,40 +186,6 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
         //AboutFrame.Navigate(typeof(AboutPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
     }
 
-    /*
-    private void Settingsbar_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
-    {
-
-        var items = Settingsbar.ItemsSource as ObservableCollection<Folder>;
-        for (int i = items.Count - 1; i >= args.Index + 1; i--)
-        {
-            items.RemoveAt(i);
-        }
-        //AboutFrame.Opacity = 0;
-        //AboutFrame.Visibility = Visibility.Collapsed;
-    }
-    */
-
-    /*
-    private void Aboutq_Click(object sender, RoutedEventArgs e)
-    {
-        if(fro1 is 0)
-        {
-            Fro1.Rotation = 180;
-            Fro1.Translation = new Vector3(12, 20, 12);
-
-            fro1 = 1;
-        }
-        else
-        {
-            Fro1.Rotation = 0;
-            Fro1.Translation = new Vector3(0, 0, 0);
-
-            fro1 = 0;
-        }
-    }
-    */
-
     private void SPSettings_Click(object sender, RoutedEventArgs e)
     {
     }
@@ -272,22 +208,30 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
         SettingsCoreServices.SetStartPageSetting(StartPageSetting);
     }
 
-    private void OpenToml_click(object sender, RoutedEventArgs e)
+    private void OpenAppFolder_Click(object sender, RoutedEventArgs e)
     {
-        //Debug.WriteLine(appFolderPath);
-        Debug.WriteLine(AppFilepath);
-        if (Directory.Exists(AppFilepath))
+        if (Directory.Exists(SettingsCoreServices.FairingStudioRedirectFolder))
         {
-            //Debug.WriteLine("找到文件夹,跳过新建文件夹");
-            Process.Start("explorer.exe", RedirectedFilePath);
+            Process.Start("explorer.exe", SettingsCoreServices.FairingStudioRedirectFolder);
         }
         else
         {
-            Process.Start("explorer.exe", Page1.FsSetToml);
-            //Debug.WriteLine("没有找到文件夹");
+            Process.Start("explorer.exe", SettingsCoreServices.FSGravityToolsFolder);
         }
-        //System.Diagnostics.Process.Start("explorer.exe", Page1.FSSetToml);
-        //System.Diagnostics.Process.Start("explorer.exe", redirectedFilePath);
+    }
+    private void OpenToml_click(object sender, RoutedEventArgs e)
+    {
+        //Debug.WriteLine(SettingsCoreServices.FSGravityToolsFolder);
+        //Debug.WriteLine(SettingsCoreServices.FairingStudioRedirectFolder);
+
+        if (Directory.Exists(SettingsCoreServices.FairingStudioRedirectFolder))
+        {
+            Process.Start("explorer.exe", SettingsCoreServices.FSGravityToolsRedirectSettingsToml);
+        }
+        else
+        {
+            Process.Start("explorer.exe", SettingsCoreServices.FSGravityToolsSettingsToml);
+        }
     }
 
     private void SoftBackgroundCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -337,5 +281,4 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
     {
     }
 
-    
 }

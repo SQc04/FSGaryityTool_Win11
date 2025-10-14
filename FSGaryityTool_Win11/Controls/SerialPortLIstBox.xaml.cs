@@ -220,9 +220,42 @@ public sealed partial class SerialPortLIstBox : UserControl, INotifyPropertyChan
         set { if (_selectedPorts != value) { _selectedPorts = value; OnPropertyChanged(nameof(SelectedPorts)); } }
     }
 
+    public static readonly DependencyProperty SelectedPortProperty =
+        DependencyProperty.Register(nameof(SelectedPort), typeof(string), typeof(SerialPortLIstBox),
+            new PropertyMetadata(null, OnSelectedPortChanged));
+
+    public string? SelectedPort
+    {
+        get => (string?)GetValue(SelectedPortProperty);
+        set => SetValue(SelectedPortProperty, value);
+    }
+
+    private static void OnSelectedPortChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var control = (SerialPortLIstBox)d;
+        control.OnSelectedPortChanged(e.OldValue as string, e.NewValue as string);
+    }
+
+    private void OnSelectedPortChanged(string? oldValue, string? newValue)
+    {
+        // 外部设置 SelectedPort 时，同步到内部选中项
+        if (newValue != SelectedPortSingle)
+        {
+            var portInfo = PortList.FirstOrDefault(p => p.PortName == newValue);
+            if (portInfo != null)
+            {
+                ComListview.SelectedItem = portInfo;
+            }
+            else
+            {
+                ComListview.SelectedItem = null;
+            }
+        }
+    }
+
     public string SelectedPortSingle => SelectedPorts.FirstOrDefault();
 
-    public event PropertyChangedEventHandler? PropertyChanged;
+    public event PropertyChangedEventHandler PropertyChanged;
     private void OnPropertyChanged(string propertyName)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
@@ -281,7 +314,8 @@ public sealed partial class SerialPortLIstBox : UserControl, INotifyPropertyChan
         }
         OnPropertyChanged(nameof(SelectedPortSingle));
         ClearSeledItemButton.IsEnabled = ComListview.SelectedItem != null;
-        AutoConnectButton.IsEnabled = ComListview.SelectedItem == null;
+        AutoConnectButton.IsEnabled = ComListview.SelectedItem == null; 
+        SelectedPort = SelectedPortSingle;
     }
 
 

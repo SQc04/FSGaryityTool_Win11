@@ -23,6 +23,7 @@ using System.ComponentModel;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static FSGaryityTool_Win11.Page1;
 using FSGaryityTool_Win11.Controls;
+using FSGaryityTool_Win11.Core.Settings;
 
 namespace FSGaryityTool_Win11;
 
@@ -304,7 +305,7 @@ public sealed partial class Page1 : Page, INotifyPropertyChanged
             string defaultStop;
             int defaultData;
 
-            using (var reader = File.OpenText(FsSetToml))
+            using (var reader = File.OpenText(SettingsCoreServices.FSGravityToolsSettingsToml))
             {
                 var sPsettingstomlr = TOML.Parse(reader);             //读取TOML
                 //Debug.WriteLine("Print:" + SPsettingstomlr["FSGravitySettings"]["DefaultNvPage"]);

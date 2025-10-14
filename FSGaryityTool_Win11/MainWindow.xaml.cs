@@ -33,7 +33,7 @@ namespace FSGaryityTool_Win11;
 
 public sealed partial class MainWindow : Window
 {
-    public const string FSSoftVersion = "0.3.19";
+    public const string FSSoftVersion = "0.3.21";
     public const string FSSoftName = "FSGravityTool";
 
     public static int FsPage { get; set; }
@@ -187,6 +187,9 @@ public sealed partial class MainWindow : Window
     }
 
     public WindowBackgroundBrushControl windowBackgroundBrushControl;
+
+    public TaskbarProgress taskbarProgress = new();
+    
     public MainWindow()
     {
         InitializeComponent();
@@ -338,8 +341,11 @@ public sealed partial class MainWindow : Window
 
         //SetAppTitleBadge
 
+        taskbarProgress._taskbarInstance.HrInit();
+        taskbarProgress.hWnd = WindowNative.GetWindowHandle(this);
+
         ((FrameworkElement)Content).ActualThemeChanged += Window_ThemeChanged;
-        
+
         Activated += (sender, e) =>
         {
             AppWindow.Changed += AppWindow_Changed;

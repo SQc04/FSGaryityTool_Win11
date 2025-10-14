@@ -1,12 +1,13 @@
-﻿using System;
+﻿using FSGaryityTool_Win11.Controls;
+using FSGaryityTool_Win11.Views.Pages.FlashDownloadPage;
+using FSGaryityTool_Win11.Views.Pages.TestPage;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FSGaryityTool_Win11.Views.Pages.FlashDownloadPage;
-using FSGaryityTool_Win11.Views.Pages.TestPage;
 using static FSGaryityTool_Win11.Page1;
 using static FSGaryityTool_Win11.Views.Pages.SerialPortPage.SerialPortToolsPage;
 
@@ -232,15 +233,16 @@ public sealed partial class MainPage1 : Page
         }
     }
 
+    
+
     public void SerialPortConnectToggleButton_Click(object sender, RoutedEventArgs e)
     {
-        var hWnd = (nint)App.MainWindowHandle;                // 获取主窗口的句柄
         if (PortIsConnect is 0)
         {
             var app = Application.Current as App;             // 尝试将当前应用程序实例转换为App类型
             if (app is not null)                                    // 检查转换是否成功
             {
-                _taskbarInstance.SetProgressState(hWnd, TBPFLAG.TBPF_INDETERMINATE);//开始任务栏加载动画
+                MainWindow.Instance.taskbarProgress.SetTaskbarProgressValue(null, TaskbarProgress.TaskbarProgressState.Indeterminate);
             }
             try
             {
@@ -258,7 +260,7 @@ public sealed partial class MainPage1 : Page
                 SerialPortToolsPage.Current.SerialPortConnectCatch();
                 if (app is not null)
                 {
-                    _taskbarInstance.SetProgressState(hWnd, TBPFLAG.TBPF_NOPROGRESS);//停止任务栏加载动画
+                    MainWindow.Instance.taskbarProgress.SetTaskbarProgressValue(null, TaskbarProgress.TaskbarProgressState.NoProgress);
                 }
                 SerialPortConnectToggleButtonText.Text = LanguageText("connectl");
                 SerialPortConnectToggleButton.IsChecked = false;
@@ -273,7 +275,7 @@ public sealed partial class MainPage1 : Page
         {
             if (Application.Current is App app)
             {
-                _taskbarInstance.SetProgressState(hWnd, TBPFLAG.TBPF_NOPROGRESS);//停止任务栏加载动画
+                MainWindow.Instance.taskbarProgress.SetTaskbarProgressValue(null, TaskbarProgress.TaskbarProgressState.NoProgress);
             }
             try
             {

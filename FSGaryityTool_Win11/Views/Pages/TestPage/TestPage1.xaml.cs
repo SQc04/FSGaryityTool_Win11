@@ -39,7 +39,6 @@ public sealed partial class TestPage1 : Page
         Webview3.Source = uri3;
         Webview4.Source = uri4;
         */
-
     }
 
     private void Timer_Tick(object sender, object e)

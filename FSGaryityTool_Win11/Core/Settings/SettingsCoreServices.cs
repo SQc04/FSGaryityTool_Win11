@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using static FSGaryityTool_Win11.SettingsPage;
+using Windows.ApplicationModel;
 using System.Diagnostics;
 using Tommy;
 
@@ -11,10 +12,19 @@ internal class SettingsCoreServices
 
     public static TomlTable settingstomlSp;
 
+
+    public static string APPPACKAGENAME = GetAppPackageName();
+
     public static string SYSAPLOCAL = Environment.GetFolderPath(folder: Environment.SpecialFolder.LocalApplicationData);
+    public static string SYSREDIRECTLOCA = Path.Combine(SYSAPLOCAL, "Packages", APPPACKAGENAME, "LocalCache", "Local");
+
     public static string FairingStudioFolder = Path.Combine(SYSAPLOCAL, "FAIRINGSTUDIO");
     public static string FSGravityToolsFolder = Path.Combine(FairingStudioFolder, "FSGravityTool");
+    public static string FairingStudioRedirectFolder = Path.Combine(SYSREDIRECTLOCA, "FAIRINGSTUDIO");
+    public static string FSGravityToolsRedirectFolder = Path.Combine(FairingStudioRedirectFolder, "FSGravityTool");
+
     public static string FSGravityToolsSettingsToml = Path.Combine(FSGravityToolsFolder, "Settings.toml");
+    public static string FSGravityToolsRedirectSettingsToml = Path.Combine(FSGravityToolsRedirectFolder, "Settings.toml");
 
     public static string fsGravitySettings = "FSGravitySettings";
     public static string serialPortSettings = "SerialPortSettings";
@@ -25,6 +35,21 @@ internal class SettingsCoreServices
     public static string StartPage = "DefaultNvPage";
     public static string SoftBackgroundActivatedEnable = "SoftBackgroundActivatedEnable";
     public static string SoftBackground = "SoftBackground";
+
+    public static string GetAppPackageName()
+    {
+        string AppPackageName;
+        try
+        {
+            AppPackageName = Package.Current.Id.FamilyName;
+        }
+        catch (Exception ex)
+        {
+            AppPackageName = ""; 
+            Debug.WriteLine($"获取包名时发生错误: {ex.Message}");
+        }
+        return AppPackageName;
+    }
 
     public static void CheckSettingFolder()
     {
@@ -54,16 +79,18 @@ internal class SettingsCoreServices
         }
     }
 
-    public static void AddTomlFile()
+    public static void AddTomlFile(bool IsReset = false)
     {
-        if (File.Exists(FSGravityToolsSettingsToml))             //生成TOML
+        if (File.Exists(FSGravityToolsSettingsToml) && !IsReset)             //生成TOML
         {
             Debug.WriteLine("找到TOML文件,跳过新建文件");
             return;
         }
         else
         {
-            Debug.WriteLine("没有找到TOML文件");
+            if (IsReset) Debug.WriteLine("重置TOML文件");
+            else Debug.WriteLine("没有找到TOML文件,新建文件");
+
             string[] cOMSaveDeviceinf = { "0" };
             var settingstoml = new TomlTable
             {
@@ -173,28 +200,37 @@ internal class SettingsCoreServices
     {
         string TomlfsVersion;       //版本号比较
 
-        using (var reader = File.OpenText(FSGravityToolsSettingsToml))
+        try
         {
-            var settingstomlr = TOML.Parse(reader);
-            TomlfsVersion = settingstomlr["Version"];
-        }
+            using (var reader = File.OpenText(FSGravityToolsSettingsToml))
+            {
+                var settingstomlr = TOML.Parse(reader);
+                TomlfsVersion = settingstomlr["Version"];
+            }
 
-        var TomlVersion = new Version(TomlfsVersion);
-        var FSGrVersion = new Version(MainWindow.FSSoftVersion);
+            var TomlVersion = new Version(TomlfsVersion);
+            var FSGrVersion = new Version(MainWindow.FSSoftVersion);
 
-        if (FSGrVersion > TomlVersion)
-        {
-            UpdateSettingsFile();
+            if (FSGrVersion > TomlVersion)
+            {
+                UpdateSettingsFile();
+            }
+            else if (FSGrVersion < TomlVersion)
+            {
+                DowngradeSettingsFile();
+            }
+            else if (FSGrVersion == TomlVersion)
+            {
+                CheckSettingsFile();
+            }
         }
-        else if (FSGrVersion < TomlVersion)
+        catch (Exception ex)
         {
-            DowngradeSettingsFile();
-        }
-        else
-        {
-            CheckSettingsFile();
+            Debug.WriteLine($"设置文件已损坏: {ex.Message}");
+            ResetSettingsFile();
         }
     }
+
 
     private static void UpdateSettingsFile()
     {
@@ -348,37 +384,96 @@ internal class SettingsCoreServices
     {
         Debug.WriteLine("=");
     }
+    private static void DeleteSettingsFile()
+    {
+        Debug.WriteLine("X");
+        try
+        {
+            File.Delete(FSGravityToolsSettingsToml);
+            Debug.WriteLine("删除设置文件");
+            AddTomlFile();
+            Debug.WriteLine("重建设置文件");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"删除设置文件时发生错误: {ex.Message}");
+        }
+    }
+    private static void ResetSettingsFile()
+    {
+        Debug.WriteLine("R");
+        try
+        {
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+            File.Copy(FSGravityToolsSettingsToml, FSGravityToolsSettingsToml + $"_{timestamp}.corrupted", true);
+            Debug.WriteLine("备份设置文件");
+            AddTomlFile(true);
+            Debug.WriteLine("重建设置文件");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"重置设置文件时发生错误: {ex.Message}");
+        }
+    }
 
     private static string GetSetting(string menuName, string name)
     {
         string settingItem;
-        using (var reader = File.OpenText(FSGravityToolsSettingsToml))                    //打开TOML文件
+        try
         {
-            SettingsTomlr = TOML.Parse(reader);
-            settingItem = SettingsTomlr[menuName][name];
+            
+            using (var reader = File.OpenText(FSGravityToolsSettingsToml))                    //打开TOML文件
+            {
+                SettingsTomlr = TOML.Parse(reader);
+                settingItem = SettingsTomlr[menuName][name];
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"获取设置时发生错误: {ex.Message}");
+            ResetSettingsFile();
+            settingItem = "Error";
         }
         return settingItem;
     }
     private static void SaveSetting(string menuName, string name, string settingItem)
     {
-        using (var reader = File.OpenText(FSGravityToolsSettingsToml))                    //打开TOML文件
+        try
         {
-            SettingsTomlr = TOML.Parse(reader);
+            using (var reader = File.OpenText(FSGravityToolsSettingsToml))                    //打开TOML文件
+            {
+                SettingsTomlr = TOML.Parse(reader);
 
-            SettingsTomlr[menuName][name] = settingItem;
+                SettingsTomlr[menuName][name] = settingItem;
+            }
+
+            using (var writer = File.CreateText(FSGravityToolsSettingsToml))                  //将设置写入TOML文件
+            {
+                SettingsTomlr.WriteTo(writer);
+                writer.Flush();
+            }
         }
-
-        using (var writer = File.CreateText(FSGravityToolsSettingsToml))                  //将设置写入TOML文件
+        catch (Exception ex)
         {
-            SettingsTomlr.WriteTo(writer);
-            writer.Flush();
+            Debug.WriteLine($"保存设置时发生错误: {ex.Message}");
+            ResetSettingsFile();
         }
     }
 
     //MainWindow's settings
     public static bool GetMainWindowNavigationPaneInfo()
     {
-        bool DefaultNavigationPaneIsOpen = Convert.ToBoolean(GetSetting(fsGravitySettings, "DefaultNavigationViewPaneOpen"));
+        bool DefaultNavigationPaneIsOpen;
+        try
+        {
+            DefaultNavigationPaneIsOpen = Convert.ToBoolean(GetSetting(fsGravitySettings, "DefaultNavigationViewPaneOpen"));
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"获取导航栏设置时发生错误: {ex.Message}");
+            DefaultNavigationPaneIsOpen = true;
+            ResetSettingsFile();
+        }
         return DefaultNavigationPaneIsOpen;
     }
     public static void SetMainWindowNavigationPaneInfo(bool DefaultNavigationPaneIsOpen)
@@ -388,7 +483,17 @@ internal class SettingsCoreServices
 
     public static string GetStartPageSetting()
     {
-        string StartPageSetting = GetSetting(fsGravitySettings, StartPage);
+        string StartPageSetting;
+        try
+        {
+            StartPageSetting = GetSetting(fsGravitySettings, StartPage);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"获取默认页面设置时发生错误: {ex.Message}");
+            StartPageSetting = "0";
+            ResetSettingsFile();
+        }
         return StartPageSetting;
     }
     public static void SetStartPageSetting(string StartPageSetting)
@@ -398,7 +503,17 @@ internal class SettingsCoreServices
 
     public static string GetSoftBackgroundActivatedEnableSetting()
     {
-        string SoftBackgroundActivatedEnableSetting = GetSetting(fsGravitySettings, SoftBackgroundActivatedEnable);
+        string SoftBackgroundActivatedEnableSetting;
+        try
+        {
+            SoftBackgroundActivatedEnableSetting = GetSetting(fsGravitySettings, SoftBackgroundActivatedEnable);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"获取背景设置时发生错误: {ex.Message}");
+            SoftBackgroundActivatedEnableSetting = "false";
+            ResetSettingsFile();
+        }
         return SoftBackgroundActivatedEnableSetting;
     }
 
@@ -409,7 +524,17 @@ internal class SettingsCoreServices
 
     public static string GetSoftBackgroundSetting()
     {
-        string SoftBackgroundSetting = GetSetting(fsGravitySettings, SoftBackground);
+        string SoftBackgroundSetting;
+        try
+        {
+            SoftBackgroundSetting = GetSetting(fsGravitySettings, SoftBackground);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"获取背景设置时发生错误: {ex.Message}");
+            SoftBackgroundSetting = "0";
+            ResetSettingsFile();
+        }
         return SoftBackgroundSetting;
     }
 
