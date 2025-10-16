@@ -134,7 +134,8 @@ namespace FSGaryityTool_Win11.Controls
         private string _encodingText;
 
         private string _parityValueText;
-        public List<string> EncodingItems { get; }
+        // 初始化为空列表以避免在UI绑定时为null，使用私有setter以便在后台线程完成后赋值
+        public List<string> EncodingItems { get; private set; } = new List<string>();
 
         public int SerialPortBaudRate
         {
@@ -376,18 +377,19 @@ namespace FSGaryityTool_Win11.Controls
             InitializeComponent();
             this.DataContext = this;
 
+            // 注册编码提供器（必须先注册以便 GetEncodings 正常工作）
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            var allEncodings = Encoding.GetEncodings().Select(e => e.Name).ToList();
-            EncodingItems = GetSortedEncodingItems(allEncodings);
+            // 异步加载并排序编码，避免在构造期间阻塞 UI 线程
+            _ = LoadEncodingItemsAsync();
 
             ParitySegmented.Loaded += ParitySegmented_Loaded;
 
             // 输出 EncodingItems 到 Debug 命令行
-            Debug.WriteLine("EncodingItems 列表：");
-            foreach (var item in EncodingItems)
-            {
-                Debug.WriteLine(item);
-            }
+            //Debug.WriteLine("EncodingItems 列表：");
+            //foreach (var item in EncodingItems)
+            //{
+            //    Debug.WriteLine(item);
+            //}
 
 
             if (SerialPortDataBits == 0 || SerialPortDataBits < 5 || SerialPortDataBits > 8)
@@ -491,6 +493,41 @@ namespace FSGaryityTool_Win11.Controls
                 sortedList.AddRange(items);
             }
             return sortedList;
+        }
+
+        private async Task LoadEncodingItemsAsync()
+        {
+            try
+            {
+                // 在后台线程获取并处理编码列表，避免阻塞 UI
+                var allEncodings = await Task.Run(() =>
+                {
+                    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                    return Encoding.GetEncodings().Select(e => e.Name).ToList();
+                });
+
+                var sorted = GetSortedEncodingItems(allEncodings);
+
+                // 将结果分派回 UI 线程
+                try
+                {
+                    this.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        EncodingItems = sorted;
+                        OnPropertyChanged(nameof(EncodingItems));
+                    });
+                }
+                catch
+                {
+                    // 如果分派失败，则直接赋值（在极少数情况下）
+                    EncodingItems = sorted;
+                    OnPropertyChanged(nameof(EncodingItems));
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"LoadEncodingItemsAsync failed: {ex}");
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -897,15 +897,25 @@ foreach (var item in items)
     // 对输入的十六进制字符串进行预处理
     private string PrepareHexString()
     {
-        // 获取要发送的十六进制字符串，并去除所有空格
-        var input = TxTextBox.Text.Trim().Replace(" ", "");
-        input = input.Replace("\r", "").Replace("\t", "");
-        // 如果长度为奇数，前面添加一个 '0'
-        if (input.Length % 2 != 0)
+        var sb = new System.Text.StringBuilder();
+        foreach (char c in TxTextBox.Text)
         {
-            input = "0" + input;
+            if ((c >= '0' && c <= '9') ||
+                (c >= 'a' && c <= 'f') ||
+                (c >= 'A' && c <= 'F'))
+            {
+                sb.Append(c);
+            }
         }
-        return input;
+
+        string hexOnly = sb.ToString();
+
+        if (hexOnly.Length % 2 != 0)
+        {
+            hexOnly = "0" + hexOnly;
+        }
+
+        return hexOnly.ToUpper(); // 可选：转大写
     }
 
     // 将十六进制字符串转换为字节数组
