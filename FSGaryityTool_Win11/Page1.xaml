@@ -165,10 +165,10 @@
                         <Setter Property="LogicAnalyzerBoxMaxTime" Value="5" />
                     </Style>
                 </StackPanel.Resources>
-                <controls:SerialPortFlowInfoBox x:Name="SerialPortFlowInfoBoxDCD" InfoName="DCD" LogicAnalyzer="{Binding SerialPortFlowInfoBoxLogicAnalyzer}" LogicalValue="False" />
-                <controls:SerialPortFlowInfoBox x:Name="SerialPortFlowInfoBoxRING" InfoName="RI" LogicAnalyzer="{Binding SerialPortFlowInfoBoxLogicAnalyzer}" LogicalValue="False" />
-                <controls:SerialPortFlowInfoBox x:Name="SerialPortFlowInfoBoxDSR" InfoName="DSR" LogicAnalyzer="{Binding SerialPortFlowInfoBoxLogicAnalyzer}" LogicalValue="False" />
-                <controls:SerialPortFlowInfoBox x:Name="SerialPortFlowInfoBoxCTS" InfoName="CTS" LogicAnalyzer="{Binding SerialPortFlowInfoBoxLogicAnalyzer}" LogicalValue="False" />
+                <controls:SerialPortFlowInfoBox x:Name="SerialPortFlowInfoBoxDCD" InfoName="DCD" LogicAnalyzer="{Binding SerialPortFlowInfoBoxLogicAnalyzer}" LogicAnalyzerBoxMaxTime="5" LogicalValue="False" />
+                <controls:SerialPortFlowInfoBox x:Name="SerialPortFlowInfoBoxRING" InfoName="RI" LogicAnalyzer="{Binding SerialPortFlowInfoBoxLogicAnalyzer}" LogicAnalyzerBoxMaxTime="5" LogicalValue="False" />
+                <controls:SerialPortFlowInfoBox x:Name="SerialPortFlowInfoBoxDSR" InfoName="DSR" LogicAnalyzer="{Binding SerialPortFlowInfoBoxLogicAnalyzer}" LogicAnalyzerBoxMaxTime="5" LogicalValue="False" />
+                <controls:SerialPortFlowInfoBox x:Name="SerialPortFlowInfoBoxCTS" InfoName="CTS" LogicAnalyzer="{Binding SerialPortFlowInfoBoxLogicAnalyzer}" LogicAnalyzerBoxMaxTime="5" LogicalValue="False" />
             </StackPanel>
 
             <Border x:Name="RxTextBoxBorder"

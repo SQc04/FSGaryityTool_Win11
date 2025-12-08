@@ -2,12 +2,16 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
 using System;
 using System.Numerics;
+using Windows.Devices.Bluetooth;
+using Windows.Devices.Enumeration;
+using Windows.Devices.HumanInterfaceDevice;
 using Windows.Foundation;
 using Windows.Graphics;
+using Windows.Storage.Streams;
 using Windows.UI;
 
 namespace FSGaryityTool_Win11.Views.Pages.TestPage;
@@ -39,6 +43,7 @@ public sealed partial class TestPage1 : Page
         Webview3.Source = uri3;
         Webview4.Source = uri4;
         */
+        InitLampArrayDevice();
     }
 
     private void Timer_Tick(object sender, object e)
@@ -247,4 +252,52 @@ public sealed partial class TestPage1 : Page
         syncSource = SyncSource.None;
     }
 
+    private HidDevice lampArrayDevice;
+    private async void InitLampArrayDevice()
+    {
+        // 替换为你的设备 VID/PID
+        string selector = HidDevice.GetDeviceSelector(0x03, 0x00); // HID Class
+        var devices = await DeviceInformation.FindAllAsync(selector);
+
+        foreach (var dev in devices)
+        {
+            if (dev.Id.Contains("VID_2E8A") && dev.Id.Contains("PID_F401"))
+            {
+                lampArrayDevice = await HidDevice.FromIdAsync(dev.Id, Windows.Storage.FileAccessMode.ReadWrite);
+                if (lampArrayDevice != null)
+                {
+                    System.Diagnostics.Debug.WriteLine("✅ LampArray HID 已连接");
+                }
+            }
+        }
+    }
+
+    private async void LampArrayHIDTestButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (lampArrayDevice == null)
+        {
+            System.Diagnostics.Debug.WriteLine("❌ HID 设备未连接");
+            return;
+        }
+
+        // 构造一个 HID Output Report
+        // 格式: [ReportID, LampId, R, G, B]
+        byte reportId = 0x04;   // 对应 LampArray_HandleSetReport
+        byte lampId = 0x00;   // 第 0 号灯
+        byte red = 0xFF;
+        byte green = 0x00;
+        byte blue = 0x00;
+
+        HidOutputReport outReport = lampArrayDevice.CreateOutputReport(reportId);
+        DataWriter writer = new DataWriter();
+        writer.WriteByte(lampId);
+        writer.WriteByte(red);
+        writer.WriteByte(green);
+        writer.WriteByte(blue);
+
+        outReport.Data = writer.DetachBuffer();
+
+        await lampArrayDevice.SendOutputReportAsync(outReport);
+        System.Diagnostics.Debug.WriteLine("✅ 已发送 HID 报告: LampId=0 红色");
+    }
 }

@@ -45,7 +45,7 @@
 
                 <StackPanel Visibility="Visible">
                     <StackPanel x:Name="FanControlStackPanel" Margin="0" VerticalAlignment="Top" Orientation="Vertical">
-                        <fsControl:FanAUserControl FanName="CPU" FanRpm="1000" Temperature="90" />
+                        <fsControl:FanAUserControl FanName="CPU" FanRpm="1000" Temperature="90" Visibility="Collapsed" />
                         <StackPanel.ChildrenTransitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="False" />
@@ -56,8 +56,6 @@
                 </StackPanel>
 
                 <StackPanel>
-
-                    <fsControl:FanAUserControl FanName="CPU" FanRpm="1000" Temperature="90" />
                     <TextBlock Margin="0" Text="CPU FAN" />
                     <Border x:Name="CpuFanControlRadialGauge"
                             Height="300"
@@ -139,7 +137,33 @@
                                     BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
                                     BorderThickness="3"
                                     CornerRadius="4">
-                                <Grid />
+                                <Grid>
+                                    <fsControl:WaveformView x:Name="CpuWaveformView"
+                                                            Margin="4"
+                                                            ColumnGridBorderSubTickCount="10"
+                                                            ColumnTickCount="5"
+                                                            ColumnTickLineWidth="0.4"
+                                                            CrossSize="12"
+                                                            Data="{x:Bind CpuWaveformData}"
+                                                            MaxHorizontalValue="100"
+                                                            MaxVerticalValue="100"
+                                                            MinHorizontalValue="0"
+                                                            MinVerticalValue="0"
+                                                            PointerIndicatorBrush="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                                            PointerIndicatorLineStyle="Dot"
+                                                            PointerIndicatorLineWidth="2"
+                                                            PointerIndicatorMode="VerticalData"
+                                                            RowGridBorderSubTickCount="5"
+                                                            RowSubTickLineWidth="1"
+                                                            RowTickCount="5"
+                                                            RowTickLineWidth="0.4"
+                                                            ViewCenterPointMode="Auto"
+                                                            WaveGridBorderSubTickThickness="4"
+                                                            WaveGridBorderThickness="0"
+                                                            WaveGridBorderTickThickness="8"
+                                                            WaveGridTickLineStyle="Dash"
+                                                            WaveGridTickMode="Cross" />
+                                </Grid>
                             </Border>
 
                         </Grid>
@@ -222,7 +246,34 @@
                                     BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
                                     BorderThickness="3"
                                     CornerRadius="4">
-                                <Grid />
+                                <Grid>
+                                    <fsControl:WaveformView x:Name="GpuWaveformView"
+                                                            Margin="4"
+                                                            ColumnGridBorderSubTickCount="10"
+                                                            ColumnTickCount="5"
+                                                            ColumnTickLineWidth="0.4"
+                                                            CrossSize="12"
+                                                            Data="{x:Bind GpuWaveformData}"
+                                                            MaxHorizontalValue="100"
+                                                            MaxVerticalValue="100"
+                                                            MinHorizontalValue="0"
+                                                            MinVerticalValue="0"
+                                                            PointerIndicatorBrush="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                                            PointerIndicatorLineStyle="Dot"
+                                                            PointerIndicatorLineWidth="2"
+                                                            PointerIndicatorMode="VerticalData"
+                                                            RowGridBorderSubTickCount="5"
+                                                            RowSubTickLineWidth="1"
+                                                            RowTickCount="5"
+                                                            ZoomMode="Both"
+                                                            RowTickLineWidth="0.4"
+                                                            ViewCenterPointMode="Auto"
+                                                            WaveGridBorderSubTickThickness="4"
+                                                            WaveGridBorderThickness="0"
+                                                            WaveGridBorderTickThickness="8"
+                                                            WaveGridTickLineStyle="Dash"
+                                                            WaveGridTickMode="Cross" />
+                                </Grid>
                             </Border>
 
                         </Grid>

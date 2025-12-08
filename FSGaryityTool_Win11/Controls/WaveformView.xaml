@@ -6,18 +6,93 @@
              xmlns:local="using:FSGaryityTool_Win11.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:win2Dcanvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
+             Loaded="UserControl_Loaded"
+             PointerExited="UserControl_PointerExited"
+             PointerMoved="UserControl_PointerMoved"
+             PointerPressed="UserControl_PointerPressed"
+             PointerReleased="UserControl_PointerReleased"
+             PointerWheelChanged="UserControl_PointerWheelChanged"
+             SizeChanged="UserControl_SizeChanged"
              Unloaded="UserControl_Unloaded"
              mc:Ignorable="d">
+    <UserControl.Resources />
 
     <Grid x:Name="RootGrid">
         <Border x:Name="WaveformViewBackgroundBorder" Background="{x:Bind Background, Mode=OneWay}" BorderBrush="{x:Bind BorderBrush, Mode=OneWay}" BorderThickness="{x:Bind BorderThickness, Mode=OneWay}" CornerRadius="{x:Bind CornerRadius, Mode=OneWay}">
             <Grid>
-                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Text="" />
-                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Top" Text="" />
-                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="" />
-                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="" />
-                <win2Dcanvas:CanvasControl x:Name="LineDemonstratorCanvasControl" Margin="{x:Bind ControlBorderMargin, Mode=OneWay}" Draw="LineDemonstratorCanvasControl_Draw" />
-                <win2Dcanvas:CanvasControl x:Name="WaveformDemonstratorCanvasControl" Margin="{x:Bind ControlBorderMargin, Mode=OneWay}" Draw="WaveformDemonstratorCanvasControl_Draw" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <win2Dcanvas:CanvasControl x:Name="LineDemonstratorCanvasControl"
+                                           Grid.Row="1"
+                                           Grid.Column="1"
+                                           Margin="{x:Bind ControlBorderMargin, Mode=OneWay}"
+                                           Draw="LineDemonstratorCanvasControl_Draw"
+                                           Opacity="{x:Bind WaveGridBorderOpacity, Mode=OneWay}" />
+                <win2Dcanvas:CanvasVirtualControl x:Name="WaveformDemonstratorCanvasControl"
+                                                  Grid.Row="1"
+                                                  Grid.Column="1"
+                                                  Margin="{x:Bind ControlBorderMargin, Mode=OneWay}"
+                                                  Opacity="{x:Bind WaveDemonstratorOpacity, Mode=OneWay}"
+                                                  RegionsInvalidated="WaveformDemonstratorCanvasControl_RegionsInvalidated" />
+
+                <Button x:Name="ResetViewButton"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Width="36"
+                        Height="36"
+                        Margin="4"
+                        Padding="6,2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
+                        Click="ResetViewButton_Click"
+                        Visibility="{x:Bind ResetViewVisibility, Mode=OneWay}">
+                    <Grid>
+                        <FontIcon Glyph="&#xECE9;" />
+                    </Grid>
+                </Button>
+                <Grid Grid.Row="3" Grid.Column="1" Visibility="Collapsed">
+                    <local:ScrollViewBar x:Name="HorizontalScrollViewBar" Orientation="Horizontal" WaveGridBorderOpacity="1" />
+                    <ScrollBar x:Name="HorizontalScrollBar" Margin="2" IndicatorMode="MouseIndicator" Orientation="Horizontal" Visibility="Collapsed" />
+                </Grid>
+
+                <Grid Grid.Row="1" Grid.Column="3" Visibility="Collapsed">
+                    <local:ScrollViewBar x:Name="VerticalScrollViewBar" Orientation="Vertical" WaveGridBorderOpacity="1" />
+                    <ScrollBar x:Name="VerticalScrollBar" Margin="2" IndicatorMode="MouseIndicator" Orientation="Vertical" Visibility="Collapsed" />
+                </Grid>
+                <TextBlock Grid.Row="1"
+                           Grid.Column="1"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Bottom"
+                           FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
+                           FontSize="22"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                    <Run Text="Zoom:" />
+                    <LineBreak />
+                    <Run Text="H:" />
+                    <Run Foreground="#7B68EE" Text="{x:Bind HorizontalZoomScale, Mode=OneWay}" />
+                    <LineBreak />
+                    <Run Text="V:" />
+                    <Run Foreground="DeepSkyBlue" Text="{x:Bind VerticalZoomScale, Mode=OneWay}" />
+                    <LineBreak />
+                    <Run Text="ZoomPoint:" />
+                    <LineBreak />
+                    <Run Text="X:" />
+                    <Run Foreground="Lime" Text="{x:Bind RuntimeCenter.X, Mode=OneWay}" />
+                    <LineBreak />
+                    <Run Text="Y:" />
+                    <Run Foreground="Red" Text="{x:Bind RuntimeCenter.Y, Mode=OneWay}" />
+                </TextBlock>
             </Grid>
         </Border>
     </Grid>

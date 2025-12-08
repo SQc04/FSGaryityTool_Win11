@@ -9,7 +9,6 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Tommy;
 using static FSGaryityTool_Win11.Page1;
-using static FSGaryityTool_Win11.Views.Pages.SerialPortPage.MainPage1;
 using System.IO.Ports;
 using System.Management;
 using Application = Microsoft.UI.Xaml.Application;
@@ -54,11 +53,6 @@ public sealed partial class SerialPortToolsPage : Page
     /// RTS
     /// </summary>
     public static int Rts { get; set; }
-
-    /// <summary>
-    /// ShowTime
-    /// </summary>
-    public static int ShTime { get; set; }
 
     /// <summary>
     /// AUTOScroll
@@ -182,7 +176,6 @@ public sealed partial class SerialPortToolsPage : Page
                 RxHex = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultRXHEX", "0"));
                 Dtr = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultDTR", "1"));
                 Rts = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultRTS", "0"));
-                ShTime = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultSTime", "0"));
                 AutoTr = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "DefaultAUTOSco", "1"));
                 AutoSaveSet = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "AutoDaveSet", "1"));
                 AutoSerCom = int.Parse(TomlGetValueOrDefault(sPsettingstomlr, spSettings, "AutoSerichCom", "1"));
@@ -204,7 +197,7 @@ public sealed partial class SerialPortToolsPage : Page
             }
             LanguageSetting();
 
-
+            ///*
             // 在你的代码后台，定义一个List<string>作为数据源
             var baudRates = new List<string>
             {
@@ -250,21 +243,11 @@ public sealed partial class SerialPortToolsPage : Page
             }
             DataComboBox.SelectedItem = defaultData;
             //DataBitSlider.Value = defaultData;
+            //*/
 
             ToolControlSerialPortMenuBox.SerialPortDataBits = defaultData;
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            // 创建一个 List<string> 来存储编码名称
-            var encodings = new List<string> {};
-
-            // 将编码名称添加到 List<string> 中
-            encodings.AddRange(Encoding.GetEncodings().Select(encodingInfo => encodingInfo.Name));
-
-            //EncodingComboBox.ItemsSource = encodings;
-            //EncodingComboBox.SelectedItem = defaultEncoding;
-
-            //ToolControlSerialPortMenuBox.SerialPortEncoding = Encoding.GetEncoding(defaultEncoding);
-
 
             ToggleButtonIsChecked(RxHex, RxhexButton);
             ToggleButtonIsChecked(TxHex, TxhexButton);
@@ -275,39 +258,12 @@ public sealed partial class SerialPortToolsPage : Page
             ToggleButtonIsChecked(Rts, RtsButton);
             CommonRes.SerialPort.RtsEnable = Rts is 1;
 
-            ToggleButtonIsChecked(ShTime, ShowTimeButton);
-
-            //BorderBackRX.Background = backgroundColor;
-
-            ToggleButtonIsChecked(AutoSaveSet, SaveSetButton);
+            //ToggleButtonIsChecked(AutoSaveSet, SaveSetButton);
             ToggleButtonIsChecked(TxNewLine, TxNewLineButton);
 
             
             MainSerialPortLIstBox.AutoConnectSetting = AutoConnect is 1;
 
-            //ToggleButtonIsChecked();
-
-            //EncodingTest();
-        }
-    }
-
-    public void EncodingTest()
-    {
-        // Print the header.
-        Debug.Write("CodePage identifier and name     ");
-        Debug.Write("BrDisp   BrSave   ");
-        Debug.Write("MNDisp   MNSave   ");
-        Debug.WriteLine("1-Byte   ReadOnly ");
-
-        // For every encoding, get the property values.
-        foreach (var ei in Encoding.GetEncodings())
-        {
-            var e = ei.GetEncoding();
-
-            Debug.Write($"{ei.CodePage,-6} {ei.Name,-25} ");
-            Debug.Write($"{e.IsBrowserDisplay,-8} {e.IsBrowserSave,-8} ");
-            Debug.Write($"{e.IsMailNewsDisplay,-8} {e.IsMailNewsSave,-8} ");
-            Debug.WriteLine($"{e.IsSingleByte,-8} {e.IsReadOnly,-8} ");
         }
     }
 
@@ -320,8 +276,8 @@ public sealed partial class SerialPortToolsPage : Page
         RxhexButton.Content = LanguageText("rxHexl");
         TxhexButton.Content = LanguageText("txHexl");
         TxNewLineButton.Content = LanguageText("txNewLinel");// + "\uE751"
-        SaveSetButton.Content = LanguageText("autoSaveSetl");
-        AutoScrollButton.Content = LanguageText("autoScrolll");
+        //SaveSetButton.Content = LanguageText("autoSaveSetl");
+        //AutoScrollButton.Content = LanguageText("autoScrolll");
         //AutoComButton.Content = LanguageText("autoSerichComl");
         //AutoConnectButton.Content = LanguageText("autoConnectl");
 
@@ -385,187 +341,6 @@ public sealed partial class SerialPortToolsPage : Page
                 // 根据需要添加其他情况
         }
     }
-
-    public class SerialPortInfo
-    {
-        public string Name { get; protected set; }
-
-        public string Description { get; protected set; }
-
-        public string Manufacturer { get; protected set; }
-
-        private static Dictionary<string, SerialPortInfo> _portInfoDictionary = new();
-
-        static SerialPortInfo()
-        {
-            // 在应用程序启动时获取所有串口的设备描述
-            RefreshPortInfo();
-            GetPortInfo = 1;
-        }
-
-        public static void RefreshPortInfo(string portName = null)
-        {
-            var queryString = "SELECT * FROM Win32_PnPEntity";
-            if (portName is not null)
-            {
-                queryString += $" WHERE Name LIKE '%{portName}%'";
-            }
-
-            using var searcher = new ManagementObjectSearcher(queryString);
-            var hardInfos = searcher.Get();
-            foreach (var hardInfo in hardInfos)
-            {
-                if (hardInfo.Properties["Name"].Value is not null &&
-                    hardInfo.Properties["Name"].Value.ToString().Contains("COM"))
-                {
-                    var temp = new SerialPortInfo();
-                    var s = hardInfo.Properties["Name"].Value.ToString();
-                    var p = s.IndexOf('(');
-                    temp.Description = s[..p];
-                    temp.Name = s.Substring(p + 1, s.Length - p - 2);
-                    temp.Manufacturer = hardInfo.Properties[nameof(Manufacturer)].Value.ToString();
-                    _portInfoDictionary[temp.Name] = temp;
-                }
-            }
-        }
-
-        public static SerialPortInfo GetPort(string portName)
-        {
-            if (!_portInfoDictionary.ContainsKey(portName))
-            {
-                // 如果字典中没有指定的串口名称，刷新串口信息
-                RefreshPortInfo(portName);
-            }
-
-            return _portInfoDictionary.GetValueOrDefault(portName);  // 如果没有找到匹配的串口，返回null
-        }
-    }
-
-    /*
-    public void TimerSerialPortTick(object stateInfo) // 串口热插拔检测
-    {
-        if (GetPortInfo == 0) return; //用于控制检测逻辑
-        var nowPort = SerialPort.GetPortNames(); // 获取当前所有可用的串口名称
-        nowPort = new HashSet<string>(nowPort).ToArray(); // 移除可能的重复项
-
-        var lastPort = ArryPort ?? nowPort; // 获取上一次检测到的串口名称，如果没有则使用当前串口名称
-        ArryPort = nowPort; // 更新上一次检测到的串口名称
-
-        var lastPortSet = new HashSet<string>(lastPort); // 创建上一次串口名称的 HashSet
-        var nowPortSet = new HashSet<string>(nowPort); // 创建当前串口名称的 HashSet
-
-        var insertedPorts = nowPortSet.Except(lastPortSet).ToArray(); // 找出新插入的串口
-        var removedPorts = lastPortSet.Except(nowPortSet).ToArray(); // 找出被拔出的串口
-
-        if (insertedPorts.Length > 0 || removedPorts.Length > 0) // 如果有新插入或拔出的串口
-        {
-            DispatcherQueue.TryEnqueue(() => // 在 UI 线程中执行
-            {
-                var selectedPort = (string)ComComboBox.SelectedItem; // 获取当前选中的串口
-                try
-                {
-                    foreach (var port in insertedPorts) // 遍历新插入的串口
-                    {
-                        var info = SerialPortInfo.GetPort(port); // 获取串口信息
-                                                                 // 如果 SerialPortInfo.GetPort 无法处理非标准名称，可能需要额外处理
-                        string description = info?.Description ?? port; // 使用端口名作为默认描述
-                        Page1.Current._viewModel.AppendToRxTextinfo($"{port}: {description}{LanguageText("spPlogin")}\r\n");
-                    }
-
-                    foreach (var port in removedPorts) // 遍历被拔出的串口
-                    {
-                        var info = SerialPortInfo.GetPort(port); // 获取串口信息
-                        string description = info?.Description ?? port; // 使用端口名作为默认描述
-                        Page1.Current._viewModel.AppendToRxTextinfo($"{port}: {description}{LanguageText("spPullout")}\r\n");
-                        if (PortIsConnect == 1 && port == selectedPort) // 如果当前连接的串口被拔出
-                        {
-                            MainPage1.Current.SerialPortConnectToggleButton_Click(null, null);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Page1.Current._viewModel.AppendToRxTextinfo($"Error processing ports: {ex.Message}\r\n");
-                }
-
-                ComComboBox.Items.Clear(); // 清空组合框
-                ComListview.Items.Clear(); // 清空列表视图
-
-                foreach (var port in nowPort) // 遍历当前所有可用串口
-                {
-                    ComComboBox.Items.Add(port); // 添加到组合框
-                    ComListview.Items.Add(port); // 添加到列表视图
-                }
-
-                // 恢复之前选中的串口（如果仍然存在）
-                if (nowPortSet.Contains(selectedPort))
-                {
-                    ComComboBox.SelectedItem = selectedPort;
-                    ComListview.SelectedItem = selectedPort;
-                }
-
-                // 如果没有选中的串口且有新插入的串口，自动选择第一个
-                if (PortIsConnect == 0 && ComComboBox.SelectedItem == null && insertedPorts.Length > 0)
-                {
-                    ComComboBox.SelectedItem = insertedPorts[0];
-                    ComListview.SelectedItem = insertedPorts[0];
-                    if (AutoConnectButton.IsChecked == true) // 自动连接
-                    {
-                        MainPage1.Current.SerialPortConnectToggleButton_Click(null, null);
-                    }
-                }
-            });
-        }
-    }
-    */
-    /*
-    private async void COMButton_Click(object sender, RoutedEventArgs e)
-    {
-        VisualStateManager.GoToState(ComButton, "Released", true);  // 播放释放动画
-
-        MainPage1.Current.SetRunProgressBarValue(null, MainPage1.ProgressState.Running);
-
-        //COMButton.Content = "Clicked";
-        await SearchAndAddSerialToComboBoxAsync(CommonRes.SerialPort, ComComboBox);           //扫描并将串口添加至下拉列表
-
-        async Task SearchAndAddSerialToComboBoxAsync(SerialPort myPort, ComboBox myBox)
-        {
-            Page1.Current._viewModel.AppendToRxTextinfo(LanguageText("startSerichSP") + "\r\n");
-            await Task.Run(() => SerialPortInfo.RefreshPortInfo());
-            var comMem = (string)ComComboBox.SelectedItem;           //记忆串口名
-            ArryPort = SerialPort.GetPortNames();                       //SerialPort.GetPortNames()函数功能为获取计算机所有可用串口，以字符串数组形式输出
-            ArryPort = new HashSet<string>(ArryPort).ToArray(); // 移除可能的重复项
-            var scom = string.Join("\r\n", ArryPort);
-            //RXTextBox.Text = RXTextBox.Text + scom + "\r\n";
-            myBox.Items.Clear();                                        //清除当前组合框下拉菜单内容
-            ComListview.Items.Clear();
-            //COMListview.ItemsSource = null;
-            //COMListview.ItemsSource = new ObservableCollection<ComDataItem>();
-
-            foreach (var t in ArryPort)
-            {
-                myBox.Items.Add(t);                           //将所有的可用串口号添加到端口对应的组合框中
-                var info = await Task.Run(() => SerialPortInfo.GetPort(t));
-                if (info is not null)
-                {
-                    Page1.Current._viewModel.AppendToRxTextinfo(t + ": " + info.Description + "\r\n");
-                }
-                else
-                {
-                    Page1.Current._viewModel.AppendToRxTextinfo(t + "\r\n");
-                }
-                //RXTextBox.Text += t + "\r\n" + GetPortDescription(t) + "\r\n";
-            }
-            //MyBox.Items.Add("COM0");
-            Page1.Current._viewModel.AppendToRxTextinfo(LanguageText("overSerichSP") + "\r\n");
-            ComComboBox.SelectedItem = comMem;
-            ComListview.SelectedItem = comMem;
-        }
-        MainPage1.Current.SetRunProgressBarValue(null, MainPage1.ProgressState.Stop);
-
-    }
-    */
-
     private string OpenSerialPortInfo;
 
     public void SerialPortConnect()
@@ -672,73 +447,7 @@ public sealed partial class SerialPortToolsPage : Page
         SettingsTomlr.WriteTo(writer);
         writer.Flush();
     }
-    public enum ProgressState
-    {
-        Running,
-        Paused,
-        Error,
-        Value,
-        Stop
-    }
-    /*
-    public void SetAutoSerchComProgressBarValue(int? value, ProgressState state)
-    {
-        switch (state)
-        {
-            case ProgressState.Running:
-                AutoSerchComProgressBar.IsIndeterminate = value is null;
-                AutoSerchComProgressBar.ShowPaused = false;
-                AutoSerchComProgressBar.ShowError = false;
-                AutoSerchComProgressBar.Visibility = Visibility.Visible;
-                if (value is not null)
-                {
-                    AutoSerchComProgressBar.Value = Math.Clamp(value.Value, 0, 100);
-                }
-                break;
-            case ProgressState.Paused:
-                AutoSerchComProgressBar.IsIndeterminate = value is null;
-                AutoSerchComProgressBar.ShowPaused = true;
-                AutoSerchComProgressBar.ShowError = false;
-                AutoSerchComProgressBar.Visibility = Visibility.Visible;
-                if (value is not null)
-                {
-                    AutoSerchComProgressBar.Value = Math.Clamp(value.Value, 0, 100);
-                }
-                break;
-            case ProgressState.Error:
-                AutoSerchComProgressBar.IsIndeterminate = value is null;
-                AutoSerchComProgressBar.ShowPaused = false;
-                AutoSerchComProgressBar.ShowError = true;
-                AutoSerchComProgressBar.Visibility = Visibility.Visible;
-                AutoSerchComProgressBar.Value = 0;
-                break;
-            case ProgressState.Value:
-                AutoSerchComProgressBar.IsIndeterminate = false;
-                AutoSerchComProgressBar.ShowPaused = false;
-                AutoSerchComProgressBar.ShowError = false;
-                AutoSerchComProgressBar.Visibility = Visibility.Visible;
-                if (value is not null)
-                {
-                    AutoSerchComProgressBar.Value = Math.Clamp(value.Value, 0, 100);
-                }
-                break;
-            case ProgressState.Stop:
-                AutoSerchComProgressBar.IsIndeterminate = false;
-                AutoSerchComProgressBar.ShowPaused = false;
-                AutoSerchComProgressBar.ShowError = false;
-                AutoSerchComProgressBar.Value = 0;
-                AutoSerchComProgressBar.Visibility = Visibility.Collapsed;
-                break;
-            default:
-                AutoSerchComProgressBar.IsIndeterminate = false;
-                AutoSerchComProgressBar.ShowPaused = false;
-                AutoSerchComProgressBar.ShowError = false;
-                AutoSerchComProgressBar.Value = 0;
-                AutoSerchComProgressBar.Visibility = Visibility.Collapsed;
-                break;
-        }
-    }
-    */
+    
     private void BANDComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // 检查输入的是否为数字
@@ -829,21 +538,6 @@ public sealed partial class SerialPortToolsPage : Page
     public static string EncodingSelectedItem = "utf-8";
 
 
-    private void EncodingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        /*
-        if (AutoSaveSet is 1)
-        {
-            ComboboxSaveSetting("SerialPortSettings", "DefaultEncoding", (string)EncodingComboBox.SelectedItem);
-        }
-        if (PortIsConnect is 1)
-        {
-            CommonRes.SerialPort.Encoding = Encoding.GetEncoding((string)EncodingComboBox.SelectedItem);
-            EncodingSelectedItem = (string)EncodingComboBox.SelectedItem;
-            Page1.Current._viewModel.AppendToRxTextinfo("Encoding = " + (string)EncodingComboBox.SelectedItem + "\r\n");
-        }
-        */
-    }
 
     private void RXHEXButton_Click(object sender, RoutedEventArgs e)    //接收以十六进制数显示
     {
@@ -892,6 +586,7 @@ public sealed partial class SerialPortToolsPage : Page
             ComboboxSaveSetting("SerialPortSettings", "DefaultTXNewLine", Convert.ToString(TxNewLine));
         }
     }
+    /*
     private void SaveSetButton_Click(object sender, RoutedEventArgs e)
     {
         AutoSaveSet = AutoSaveSet is 0 ? 1 : 0;
@@ -907,6 +602,7 @@ public sealed partial class SerialPortToolsPage : Page
             ComboboxSaveSetting("SerialPortSettings", "DefaultAUTOSco", Convert.ToString(AutoTr));
         }
     }
+    */
     private void ChipToolKitComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
 
@@ -935,28 +631,6 @@ public sealed partial class SerialPortToolsPage : Page
         }
     }
 
-    private void RXDataButton_Click(object sender, RoutedEventArgs e)
-    {
-    }
-    private Task RXDATA_ClickAsync(object sender, RoutedEventArgs e)
-    {
-        // 在这里添加你的异步代码
-        // 例如：await SomeAsyncMethod();
-            
-        //RXTextBox.Text = RXTextBox.Text + current_time.ToString("HH:mm:ss") + "  ";
-        //Timesr = current_time.ToString("HH:mm:ss");
-
-        //rxpstr = System.Text.Encoding.UTF8.GetString(datapwate);
-        //rxpstr = datapwate.ToString();                          //将缓冲区赋值到输出
-        //page1.RXTextBox.Text = page1.RXTextBox.Text + rxpstr + "";          //输出接收的数据
-        //datapwate.Clear();                                      //清空缓冲区
-
-        return Task.CompletedTask;
-    }
-
-    private void ShowTimeButton_Click(object sender, RoutedEventArgs e)
-    {
-    }
 
     public DispatcherTimer HideTimer { get; }
 

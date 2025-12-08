@@ -24,17 +24,19 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Tommy;
+using Windows.Graphics.Display;
 using Windows.UI;          // Needed for XAML/HWND interop.
 using WinRT;
 using WinRT.Interop;
 using static FSGaryityTool_Win11.Controls.AppTitleBar;
+using static FSGaryityTool_Win11.Controls.WindowBackgroundBrushControl;
 
 namespace FSGaryityTool_Win11;
 
 public sealed partial class MainWindow : Window
 {
-    public const string FSSoftVersion = "0.3.22";
-    public const string FSSoftName = "FSGravityTool";
+    public const string FSSoftVersion = "0.3.28";
+    public string FSSoftName = "FSGravityTool";
 
     public static int FsPage { get; set; }
 
@@ -106,10 +108,8 @@ public sealed partial class MainWindow : Window
     private static Win32WindowHelper win32WindowHelper;
 
     // 窗口的最小宽度和高度
-    //private const int MinWidth = 515;
-    //private const int MinHeight = 328;
-    private const int MinWidth = 643;
-    private const int MinHeight = 410;
+    private const int MinWidth = 515;
+    private const int MinHeight = 328;
 
     public bool Resize(Window window, int width, int height)
     {
@@ -137,6 +137,8 @@ public sealed partial class MainWindow : Window
     // Win32 API 判断窗口最小化
     [DllImport("user32.dll")]
     private static extern bool IsIconic(IntPtr hWnd);
+    [DllImport("user32.dll")]
+    private static extern int GetDpiForWindow(IntPtr hWnd);
 
     private void AppWindow_Changed(AppWindow sender, AppWindowChangedEventArgs args)
     {
@@ -209,15 +211,14 @@ public sealed partial class MainWindow : Window
         // 将窗口的标题栏设置为自定义标题栏
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBars);
-        AppWindow.Title = FSSoftName;//Set AppWindow
         AppWindow.Resize(new Windows.Graphics.SizeInt32(width, height));
         OverlappedPresenter presenter = OverlappedPresenter.Create();
-        presenter.PreferredMinimumHeight = MinHeight;
-        presenter.PreferredMinimumWidth = MinWidth;
+        double scale = GetDpiScale();
+        presenter.PreferredMinimumHeight = (int)(MinHeight * scale);
+        presenter.PreferredMinimumWidth = (int)(MinWidth * scale);
         AppWindow.SetPresenter(presenter);
         AppWindow.SetIcon("FSFSoftH.ico");
         AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
-        AppTitleBars.AppTitleName = FSSoftName;
 #if DEBUG
         AppTitleBars.CurrentBuildType = TieleBadgeBuildType.Debug;
 #else
@@ -274,7 +275,7 @@ public sealed partial class MainWindow : Window
 
                     // 初始配置状态。
                     
-                    SetConfigurationSourceTheme();  // 设置配置源主题。
+                    SetConfigurationSourceTheme(WindowTheme.System);  // 设置配置源主题。
                     WindowBackgroundBrushControl.WindowBackgroundBrushKind BackgroundBrushKind;
                     // 根据defWindowBackGround的值选择背景效果的类型。
                     switch (DefWindowBackGround)
@@ -305,9 +306,8 @@ public sealed partial class MainWindow : Window
                             break;
 
                     }
-                    WindowBackgroundBrushControl.SetWindowBackgroundBrush(BackgroundBrushKind);
-
-                    WindowBackgroundBrushControl.WindowBackgroundBrushActivatedEnable = bool.Parse(SettingsCoreServices.GetSoftBackgroundActivatedEnableSetting());
+                    SetWindowBackgroundBrush(BackgroundBrushKind);
+                    WindowBackgroundBrushActivatedEnable = bool.Parse(SettingsCoreServices.GetSoftBackgroundActivatedEnableSetting());
                 }
 
             });
@@ -364,6 +364,14 @@ public sealed partial class MainWindow : Window
     {
         throw new NotImplementedException();
     }
+
+    private double GetDpiScale()
+    {
+        IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this); // 获取当前窗口句柄
+        int dpi = GetDpiForWindow(hWnd);
+        return dpi / 96.0;
+    }
+
 
     private int _lastDefWindowBackGround;
 
@@ -443,7 +451,7 @@ public sealed partial class MainWindow : Window
         MouseI.Content = Page1.LanguageText("mouse");
     }
 
-    public void WindowBackSetting()
+    public void WindowBackSetting(WindowTheme windowTheme)
     {
         if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
         {
@@ -491,7 +499,7 @@ public sealed partial class MainWindow : Window
 
     private void Window_Activated(object sender, WindowActivatedEventArgs args)
     {
-        SetConfigurationSourceTheme();
+        SetConfigurationSourceTheme(SettingsPage.windowTheme);
     }
 
     // 当窗口被关闭时，此方法会被调用
@@ -504,18 +512,17 @@ public sealed partial class MainWindow : Window
     // 当窗口的主题改变时，此方法会被调用
     private void Window_ThemeChanged(FrameworkElement sender, object args)
     {
-        SetConfigurationSourceTheme();
-        // 如果配置对象不为null，则根据当前的主题来更新m_configurationSource.Theme的值
-        WindowBackSetting();
+        SetConfigurationSourceTheme(SettingsPage.windowTheme);
     }
 
     // 根据当前的主题来设置m_configurationSource.Theme的值
-    private void SetConfigurationSourceTheme()
+    public void SetConfigurationSourceTheme(WindowTheme windowTheme)
     {
         try
         {
-            WindowBackgroundBrushControl.ApplyTheme(((FrameworkElement)Content), WindowBackgroundBrushControl.WindowTheme.System);
-            WindowBackgroundBrushControl.SetAppTitleBar(((FrameworkElement)Content), WindowBackgroundBrushControl.WindowTheme.System);
+            SetWindowTheme(windowTheme);
+            WindowBackgroundBrushControl.ApplyTheme(((FrameworkElement)Content), windowTheme);
+            WindowBackgroundBrushControl.SetAppTitleBar(((FrameworkElement)Content), windowTheme);
         }
         catch (Exception ex)
         {

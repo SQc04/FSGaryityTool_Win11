@@ -30,40 +30,57 @@
 
     <Grid Margin="0,0,12,12">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" MinWidth="180" />
+            <ColumnDefinition Width="*" MinWidth="180" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions />
 
         <toolkit:GridSplitter Grid.Column="0" Margin="0,-6.05,0,0" HorizontalAlignment="Right" />
 
-        <controls:WaveformView Grid.Column="0"
+        <controls:WaveformView x:Name="PlotterWaveformView"
+                               Grid.Column="0"
                                Margin="0,0,12,0"
                                Background="{ThemeResource CustomRxBoxSolidColorBrush}"
                                BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}"
                                BorderThickness="3"
+                               ColumnAutoGridMode="PowerOfN"
+                               ColumnAutoGridMultiple="2"
                                ColumnCenterTickLineBrush="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                ColumnGridBorderSubTickCount="5"
-                               ColumnTickCount="12"
+                               ColumnTickCount="auto"
                                ColumnTickLineBrush="{ThemeResource TextFillColorTertiaryBrush}"
+                               ColumnTickLineWidth="1.5"
                                CornerRadius="6"
                                CrossSize="8"
-                               MaxColumnTickCount="8"
-                               MaxRowTickCount="8"
-                               MinColumnTickCount="4"
+                               IsEnabled="True"
+                               MaxColumnTickCount="16"
+                               MaxHorizontalValue="300"
+                               MaxRowTickCount="16"
+                               MaxVerticalValue="300"
+                               MinColumnTickCount="2"
+                               MinColumnTickWidth="80"
+                               MinHorizontalValue="-300"
                                MinRowTickCount="4"
+                               MinVerticalValue="-300"
+                               PointerIndicatorCursorMode="Full"
+                               PointerIndicatorLineStyle="Dot"
+                               PointerIndicatorMode="ClosestData"
+                               RowAutoGridMode="Even"
                                RowCenterTickLineBrush="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                RowGridBorderSubTickCount="5"
                                RowTickCount="4"
                                RowTickLineBrush="{ThemeResource TextFillColorTertiaryBrush}"
+                               ViewCenterPointMode="Center"
                                WaveGridBorderBrush="{ThemeResource TextFillColorTertiaryBrush}"
                                WaveGridBorderLineStyle="Solid"
                                WaveGridBorderMargin="20"
+                               WaveGridBorderOpacity="0.7"
                                WaveGridBorderSubTickThickness="-6,-6,-6,-6"
                                WaveGridBorderThickness="2,2,2,2"
                                WaveGridBorderTickThickness="-12,-12,-12,-12"
                                WaveGridTickLineStyle="Dash"
-                               WaveGridTickMode="Cross" />
+                               WaveGridTickMode="Intersection"
+                               ZoomMode="Both" />
 
         <controls:BeyondTextBox Grid.Column="1" Margin="0,0,0,0" HorizontalAlignment="Stretch" />
     </Grid>

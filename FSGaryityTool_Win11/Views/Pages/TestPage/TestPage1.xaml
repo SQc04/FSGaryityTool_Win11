@@ -103,9 +103,7 @@
             <Run Text="{x:Bind testSerialPortMenuBox.SerialPortEncoding, Mode=OneWay}" />
         </TextBlock>
 
-        <StackPanel Grid.Row="1"
-                    Grid.Column="0"
-                    Visibility="Visible">
+        <StackPanel Grid.Row="1" Grid.Column="0" Visibility="Visible">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -128,6 +126,8 @@
 
 
             <Button x:Name="OpenStarWindowButton" Margin="12,12,6,6" Click="OpenStarWindowButton_Click" Content="OpenStarWindow" />
+
+            <Button x:Name="LampArrayHIDTestButton" Click="LampArrayHIDTestButton_Click" Content="LampArrayHIDTest" />
 
             <Grid Margin="12,12,6,6"
                   HorizontalAlignment="Left"
@@ -213,7 +213,7 @@
                         BorderThickness="3"
                         CornerRadius="{StaticResource ControlCornerRadius}" />
             </Grid>
-            <Grid Width="248" Height="248" Visibility="Collapsed">
+            <Grid Width="248" Height="248" Visibility="Visible">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
@@ -411,7 +411,7 @@
                 BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
                 BorderThickness="3"
                 CornerRadius="{StaticResource ControlCornerRadius}"
-                Visibility="Collapsed">
+                Visibility="Visible">
             <Grid Padding="3">
                 <Grid.Resources>
                     <Color x:Key="HighSoundColor">#FFFF0000</Color>

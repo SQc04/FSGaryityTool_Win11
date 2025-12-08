@@ -1,10 +1,15 @@
 ﻿using ClevoEcControlinfo;
+using FSGaryityTool_Win11.Controls;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Numerics;
@@ -42,6 +47,13 @@ public sealed partial class Page5 : Page
     public static int GpuDutySet { get; set; } = 166;
 
     public TempViewModel ViewModel { get; set; }
+
+    // Temp indicator waveform sources
+    private WaveformDataSource cpuTempLineSource;
+    private WaveformDataSource gpuTempLineSource;
+
+    public ObservableCollection<WaveformDataSource> CpuWaveformData { get; set; } = new();
+    public ObservableCollection<WaveformDataSource> GpuWaveformData { get; set; } = new();
 
     public class TempViewModel : INotifyPropertyChanged
     {
@@ -86,6 +98,74 @@ public sealed partial class Page5 : Page
     {
         this.InitializeComponent();
         _ = InitializeAsync();
+
+        // 假设温度区间为0~100
+        float minTemp = 0f;
+        float maxTemp = 100f;
+
+        Func<float, float> CpuFanFunction = t =>
+        {
+            float temp = minTemp + t * (maxTemp - minTemp);
+            double result = 0.014 * Math.Pow(temp, 2) - 15;
+            return (float)result;
+        };
+
+        Func<float, float> GpuFanFunction = t =>
+        {
+            float temp = minTemp + t * (maxTemp - minTemp);
+            double result = 0.014 * Math.Pow(temp, 2) + 25;
+            return (float)result;
+        };
+
+        var cpuFanCurve = new WaveformDataSource
+        {
+            Name = "CPU风扇控制曲线",
+            StrokeBrush = new SolidColorBrush(Color.FromArgb(255, 237, 28, 36)),
+            StrokeThickness = 2f,
+            LineStyle = LineStyle.Solid,
+            TickMode = TickModeStyle.None,
+            OffSetY = 0f,
+            FunctionFormulaData = CpuFanFunction
+        };
+
+        var gpuFanCurve = new WaveformDataSource
+        {
+            Name = "GPU风扇控制曲线",
+            StrokeBrush = new SolidColorBrush(Color.FromArgb(255, 118, 185, 0)),
+            StrokeThickness = 2f,
+            LineStyle = LineStyle.Solid,
+            TickMode = TickModeStyle.None,
+            OffSetY = 0f,
+            FunctionFormulaData = GpuFanFunction
+        };
+
+        // create temperature indicator line sources (horizontal lines across the logical X range)
+        cpuTempLineSource = new WaveformDataSource
+        {
+            Name = "CPU Temp Line",
+            StrokeBrush = new SolidColorBrush(Colors.Orange),
+            StrokeThickness = 1f,
+            LineStyle = LineStyle.Solid,
+            TickMode = TickModeStyle.None,
+            OffSetY = 0f,
+            PolylinePointsData = new ObservableCollection<(float x, float y)>()
+        };
+
+        gpuTempLineSource = new WaveformDataSource
+        {
+            Name = "GPU Temp Line",
+            StrokeBrush = new SolidColorBrush(Colors.Lime),
+            StrokeThickness = 1f,
+            LineStyle = LineStyle.Solid,
+            TickMode = TickModeStyle.None,
+            OffSetY = 0f,
+            PolylinePointsData = new ObservableCollection<(float x, float y)>()
+        };
+
+        CpuWaveformData.Add(cpuFanCurve);
+        CpuWaveformData.Add(cpuTempLineSource);
+        GpuWaveformData.Add(gpuFanCurve);
+        GpuWaveformData.Add(gpuTempLineSource);
     }
 
     private async Task InitializeAsync()
@@ -520,6 +600,10 @@ public sealed partial class Page5 : Page
         {
             GpuFanRadialGauge.Value = CalculateFanSpeed(ViewModel.GpumTemp, 0.014, 2, 2.2, -25);
         }
+
+        // update temp indicator lines on waveform views
+        UpdateCpuTempLine(ViewModel.CpumTemp);
+        UpdateGpuTempLine(ViewModel.GpumTemp);
     }
     private int CalculateFanSpeed(double temperature, double math0, double math1, double math2, double math3)
     {
@@ -529,5 +613,39 @@ public sealed partial class Page5 : Page
         return math;
     }
 
+    private void UpdateCpuTempLine(double temp)
+    {
+        if (cpuTempLineSource == null || CpuWaveformView == null) return;
+        try
+        {
+            // Use logical horizontal range of the waveform view
+            var bottom = 0f;
+            var top = 100f;
+            var x = (float)temp;
+            cpuTempLineSource.PolylinePointsData = new ObservableCollection<(float x, float y)>
+            {
+                (x, bottom),
+                (x, top)
+            };
+        }
+        catch { }
+    }
+
+    private void UpdateGpuTempLine(double temp)
+    {
+        if (gpuTempLineSource == null || GpuWaveformView == null) return;
+        try
+        {
+            var bottom = 0f;
+            var top = 100f;
+            var x = (float)temp;
+            gpuTempLineSource.PolylinePointsData = new ObservableCollection<(float x, float y)>
+            {
+                (x, bottom),
+                (x, top)
+            };
+        }
+        catch { }
+    }
 
 }

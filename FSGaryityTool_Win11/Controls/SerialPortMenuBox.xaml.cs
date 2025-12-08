@@ -588,7 +588,7 @@ namespace FSGaryityTool_Win11.Controls
             // 统一小写并去除非字母数字
             string normInput = new string(input.ToLowerInvariant().Where(char.IsLetterOrDigit).ToArray());
 
-            // 1. 先查别名映射
+            // 查别名映射
             if (EncodingAliasMap.TryGetValue(normInput, out var alias))
             {
                 var aliasExact = EncodingItems.FirstOrDefault(e => e.Equals(alias, StringComparison.OrdinalIgnoreCase));
@@ -596,12 +596,12 @@ namespace FSGaryityTool_Win11.Controls
                     return aliasExact;
             }
 
-            // 2. 精确查找
+            // 精确查找
             var exact = EncodingItems.FirstOrDefault(e => e.Equals(input, StringComparison.OrdinalIgnoreCase));
             if (exact != null)
                 return exact;
 
-            // 3. 模糊查找（长度>=2）
+            // 模糊查找
             if (normInput.Length >= 2)
             {
                 foreach (var item in EncodingItems)

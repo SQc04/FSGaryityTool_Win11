@@ -116,7 +116,9 @@
 
                         <Grid Height="312" MinWidth="390" Padding="6">
                             <Border Background="{ThemeResource CustomBoxSolidColorBrush}" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="3" CornerRadius="4">
-                                <Grid />
+                                <Grid>
+                                    <fsControl:WaveformView />
+                                </Grid>
                             </Border>
                         </Grid>
                         <fsControl:CustomWrapPanel.ChildrenTransitions>

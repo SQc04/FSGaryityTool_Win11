@@ -7,6 +7,7 @@
              xmlns:local="using:FSGaryityTool_Win11.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+             xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
              mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -207,6 +208,7 @@
         <Grid x:Name="TextPresenterRootGrid" Padding="10,6,0,6">
             <ScrollViewer>
                 <Grid>
+                    <win2d:CanvasControl x:Name="TextPresenterCanvasControl" Draw="TextPresenterCanvasControl_Draw" />
                     <Border x:Name="CaretBorder"
                             Width="{x:Bind CaretWidth, Mode=OneWay}"
                             Height="{x:Bind FontSize, Mode=OneWay, Converter={StaticResource FontSizeToCaretHeightConverter}}"
@@ -262,8 +264,8 @@
                     PointerEntered="BoxSettingsButton_PointerEntered"
                     PointerExited="BoxSettingsButton_PointerExited">
                 <Button.Flyout>
-                    <Flyout Placement="BottomEdgeAlignedRight">
-                        <Grid Margin="-9,-8">
+                    <Flyout x:Name="BoxSettingsButtonFlyout" Placement="BottomEdgeAlignedRight">
+                        <Grid x:Name="FlyoutContentGrid" Margin="-9,-8">
                             <StackPanel>
                                 <StackPanel.Resources>
                                     <Style TargetType="toolkit:Segmented">
@@ -279,7 +281,27 @@
                                         <Setter Property="Margin" Value="-5,0" />
                                     </Style>
                                 </StackPanel.Resources>
-                                <toolkit:Segmented x:Name="BeyondTextBoxEditorModeSegmented" SelectedIndex="{x:Bind EditorMode, Mode=TwoWay, Converter={StaticResource EditorModeToIndexConverter}}">
+
+                                <StackPanel Orientation="Horizontal">
+
+                                    <ToggleButton x:Name="BeyondTextBoxHexadecimalDisplayToggleButton" Width="32" Height="32" Margin="2">
+                                        <Grid>
+                                            <FontIcon Margin="-5,-6,0,0" VerticalAlignment="Top" FontSize="12" Glyph="&#xE943;" />
+                                            <TextBlock Margin="-12,0,-10,-10" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="9" Text="HEX" />
+                                        </Grid>
+                                    </ToggleButton>
+                                    <ToggleButton x:Name="BeyondTextBoxDisplayTimeToggleButton" Width="32" Height="32" Margin="2">
+                                        <FontIcon Margin="-4" FontSize="16" Glyph="&#xE823;" />
+                                    </ToggleButton>
+
+                                    <StackPanel.ChildrenTransitions>
+                                        <TransitionCollection>
+                                            <EntranceThemeTransition FromVerticalOffset="-10" IsStaggeringEnabled="True" />
+                                            <RepositionThemeTransition IsStaggeringEnabled="False" />
+                                        </TransitionCollection>
+                                    </StackPanel.ChildrenTransitions>
+                                </StackPanel>
+                                <toolkit:Segmented x:Name="BeyondTextBoxEditorModeSegmented" SelectedIndex="{x:Bind EditorMode, Mode=TwoWay, Converter={StaticResource EditorModeToIndexConverter}}" SelectionChanged="BeyondTextBoxEditorModeSegmented_SelectionChanged">
                                     <toolkit:SegmentedItem>
                                         <FontIcon Glyph="&#xE8BC;" />
                                     </toolkit:SegmentedItem>
@@ -305,32 +327,12 @@
                                         <FontIcon Glyph="&#xE8E2;" />
                                     </toolkit:SegmentedItem>
                                 </toolkit:Segmented>
-                                <StackPanel Orientation="Horizontal">
-
-                                    <ToggleButton Width="32"
-                                                  Height="32"
-                                                  Margin="2">
-                                        <Grid>
-                                            <FontIcon Margin="-5,-6,0,0"
-                                                      VerticalAlignment="Top"
-                                                      FontSize="12"
-                                                      Glyph="&#xE943;" />
-                                            <TextBlock Margin="-12,0,-10,-10"
-                                                       HorizontalAlignment="Right"
-                                                       VerticalAlignment="Bottom"
-                                                       FontSize="9"
-                                                       Text="HEX" />
-                                        </Grid>
-                                    </ToggleButton>
-                                    <ToggleButton Width="32"
-                                                  Height="32"
-                                                  Margin="2">
-                                        <FontIcon Margin="-4"
-                                                  FontSize="16"
-                                                  Glyph="&#xE823;" />
-                                    </ToggleButton>
-                                </StackPanel>
-                                
+                                <StackPanel.ChildrenTransitions>
+                                    <TransitionCollection>
+                                        <EntranceThemeTransition FromVerticalOffset="-200" IsStaggeringEnabled="True" />
+                                        <RepositionThemeTransition IsStaggeringEnabled="False" />
+                                    </TransitionCollection>
+                                </StackPanel.ChildrenTransitions>
                             </StackPanel>
                         </Grid>
                     </Flyout>

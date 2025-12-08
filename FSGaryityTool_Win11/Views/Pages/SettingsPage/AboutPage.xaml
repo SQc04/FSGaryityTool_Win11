@@ -70,6 +70,7 @@
                         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                             <TextBlock HorizontalTextAlignment="Right" Text="Version : " />
                             <TextBlock HorizontalTextAlignment="Right" Text="{x:Bind local:MainWindow.FSSoftVersion}" />
+                            <TextBlock HorizontalTextAlignment="Right" Text="-251129_d2" />
                         </StackPanel>
 
                         <toolkit:SettingsExpander.Items>
@@ -200,7 +201,7 @@
                                     <TextBlock Text="Software Tester" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1"/>
                                     <TextBlock Text="" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>
                                         -->
-                                        <TextBlock Margin="0,12,0,1" HorizontalAlignment="Right" TextAlignment="Right">
+                                        <TextBlock Margin="0,12,0,1" HorizontalAlignment="Right" FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" TextAlignment="Right">
                                             <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontWeight="Normal" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Special Thanks" />
                                             <LineBreak />
                                             <Run FontWeight="Medium" Text="二月 喵～" />
@@ -216,6 +217,10 @@
                                             <Run FontWeight="Medium" Text="游悦电子DIY" />
                                             <LineBreak />
                                             <Run FontWeight="Medium" Text="晓游" />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text=" ζั͡溡漪ั͡" />
+                                            <LineBreak />
+                                            <Run FontWeight="Medium" Text="雪琳Sherlyn" />
                                             <LineBreak />
                                             <Run FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight" FontSize="22" FontWeight="Black" Text="You!" />
                                             <LineBreak />

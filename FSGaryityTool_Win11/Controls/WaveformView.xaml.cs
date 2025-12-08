@@ -1,5 +1,7 @@
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -9,386 +11,684 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using static FSGaryityTool_Win11.Controls.WaveformView;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace FSGaryityTool_Win11.Controls
 {
-    public enum GridLineStyle
-    {
-        None,
-        Dot,
-        Dash,
-        Solid,
-    }
-    public enum GridTickModeStyle
-    {
-        None,
-        Intersection,
-        Cross
-    }
+
     public sealed partial class WaveformView : UserControl, INotifyPropertyChanged
     {
-        
 
-        public static readonly DependencyProperty MinRowTickCountProperty =
-            DependencyProperty.Register(nameof(MinRowTickCount), typeof(int), typeof(WaveformView), new PropertyMetadata(0, OnVisualPropertyChanged));
+        public double ViewMinX { get; set; }
+        public double ViewMaxX { get; set; }
+        public double ViewMinY { get; set; }
+        public double ViewMaxY { get; set; }
 
-        public int MinRowTickCount
+        private bool _isDragging = false;
+        private Point _lastDragPosition;
+        private Vector2 _inertiaVelocity;
+        private DispatcherTimer? _inertiaTimer;
+
+        private const double DragSensitivity = 1.0;     // 拖动灵敏度，可调
+        private const double InertiaFriction = 0.94;    // 惯性衰减（0.9~0.95 手感好）
+        private const double MinInertiaSpeed = 1.0;
+
+        private Visibility _resetViewVisibility = Visibility.Collapsed;
+        public Visibility ResetViewVisibility
         {
-            get => (int)GetValue(MinRowTickCountProperty);
-            set => SetValue(MinRowTickCountProperty, value);
-        }
-
-        public static readonly DependencyProperty MinColumnTickCountProperty =
-            DependencyProperty.Register(nameof(MinColumnTickCount), typeof(int), typeof(WaveformView), new PropertyMetadata(0, OnVisualPropertyChanged));
-
-        public int MinColumnTickCount
-        {
-            get => (int)GetValue(MinColumnTickCountProperty);
-            set => SetValue(MinColumnTickCountProperty, value);
-        }
-
-        public static readonly DependencyProperty MaxRowTickCountProperty =
-            DependencyProperty.Register(nameof(MaxRowTickCount), typeof(int), typeof(WaveformView), new PropertyMetadata(16, OnVisualPropertyChanged));
-
-        public int MaxRowTickCount
-        {
-            get => (int)GetValue(MaxRowTickCountProperty);
-            set => SetValue(MaxRowTickCountProperty, value);
-        }
-
-        public static readonly DependencyProperty MaxColumnTickCountProperty =
-            DependencyProperty.Register(nameof(MaxColumnTickCount), typeof(int), typeof(WaveformView), new PropertyMetadata(16, OnVisualPropertyChanged));
-
-        public int MaxColumnTickCount
-        {
-            get => (int)GetValue(MaxColumnTickCountProperty);
-            set => SetValue(MaxColumnTickCountProperty, value);
-        }
-
-        public static readonly DependencyProperty RowTickCountProperty =
-            DependencyProperty.Register(nameof(RowTickCount), typeof(string), typeof(WaveformView), new PropertyMetadata("8", OnVisualPropertyChanged));
-
-        public string RowTickCount
-        {
-            get => (string)GetValue(RowTickCountProperty);
-            set => SetValue(RowTickCountProperty, value);
-        }
-
-        public static readonly DependencyProperty ColumnTickCountProperty =
-            DependencyProperty.Register(nameof(ColumnTickCount), typeof(string), typeof(WaveformView), new PropertyMetadata("8", OnVisualPropertyChanged));
-
-        public string ColumnTickCount
-        {
-            get => (string)GetValue(ColumnTickCountProperty);
-            set => SetValue(ColumnTickCountProperty, value);
-        }
-
-        public static readonly DependencyProperty WaveGridBorderMarginProperty =
-            DependencyProperty.Register(nameof(WaveGridBorderMargin), typeof(Thickness), typeof(WaveformView), new PropertyMetadata(default(Thickness), OnVisualPropertyChanged));
-
-        public Thickness WaveGridBorderMargin
-        {
-            get => (Thickness)GetValue(WaveGridBorderMarginProperty);
-            set => SetValue(WaveGridBorderMarginProperty, value);
-        }
-
-        public static readonly DependencyProperty ControlBorderMarginProperty =
-            DependencyProperty.Register(nameof(ControlBorderMargin), typeof(Thickness), typeof(WaveformView), new PropertyMetadata(new Thickness(3), OnVisualPropertyChanged));
-
-        public Thickness ControlBorderMargin
-        {
-            get => (Thickness)GetValue(ControlBorderMarginProperty);
-            set => SetValue(ControlBorderMarginProperty, value);
-        }
-
-        public static readonly DependencyProperty WaveGridBorderThicknessProperty =
-        DependencyProperty.Register(nameof(WaveGridBorderThickness), typeof(Thickness), typeof(WaveformView), new PropertyMetadata(new Thickness(2), OnVisualPropertyChanged));
-
-        public Thickness WaveGridBorderThickness
-        {
-            get => (Thickness)GetValue(WaveGridBorderThicknessProperty);
-            set => SetValue(WaveGridBorderThicknessProperty, value);
-        }
-
-        public static readonly DependencyProperty RowTickLineWidthProperty =
-            DependencyProperty.Register(nameof(RowTickLineWidth), typeof(double), typeof(WaveformView), new PropertyMetadata(1.0, OnVisualPropertyChanged));
-
-        public double RowTickLineWidth
-        {
-            get => (double)GetValue(RowTickLineWidthProperty);
-            set => SetValue(RowTickLineWidthProperty, value);
-        }
-
-        public static readonly DependencyProperty ColumnTickLineWidthProperty =
-            DependencyProperty.Register(nameof(ColumnTickLineWidth), typeof(double), typeof(WaveformView), new PropertyMetadata(1.0, OnVisualPropertyChanged));
-
-        public double ColumnTickLineWidth
-        {
-            get => (double)GetValue(ColumnTickLineWidthProperty);
-            set => SetValue(ColumnTickLineWidthProperty, value);
-        }
-
-        public static readonly DependencyProperty WaveGridBorderBrushProperty =
-            DependencyProperty.Register(nameof(WaveGridBorderBrush), typeof(Brush), typeof(WaveformView),
-                new PropertyMetadata(null, OnVisualPropertyChanged));
-        public Brush WaveGridBorderBrush
-        {
-            get => (Brush)GetValue(WaveGridBorderBrushProperty);
-            set => SetValue(WaveGridBorderBrushProperty, value);
-        }
-
-        public static readonly DependencyProperty RowTickLineBrushProperty =
-            DependencyProperty.Register(nameof(RowTickLineBrush), typeof(Brush), typeof(WaveformView),
-                new PropertyMetadata(null, OnVisualPropertyChanged));
-        public Brush RowTickLineBrush
-        {
-            get => (Brush)GetValue(RowTickLineBrushProperty);
-            set => SetValue(RowTickLineBrushProperty, value);
-        }
-
-        public static readonly DependencyProperty ColumnTickLineBrushProperty =
-            DependencyProperty.Register(nameof(ColumnTickLineBrush), typeof(Brush), typeof(WaveformView),
-                new PropertyMetadata(null, OnVisualPropertyChanged));
-        public Brush ColumnTickLineBrush
-        {
-            get => (Brush)GetValue(ColumnTickLineBrushProperty);
-            set => SetValue(ColumnTickLineBrushProperty, value);
-        }
-
-        public static readonly DependencyProperty RowCenterTickLineBrushProperty =
-            DependencyProperty.Register(nameof(RowCenterTickLineBrush), typeof(Brush), typeof(WaveformView),
-                new PropertyMetadata(null, OnVisualPropertyChanged));
-        public Brush RowCenterTickLineBrush
-        {
-            get => (Brush)GetValue(RowCenterTickLineBrushProperty);
-            set => SetValue(RowCenterTickLineBrushProperty, value);
-        }
-
-        public static readonly DependencyProperty ColumnCenterTickLineBrushProperty =
-            DependencyProperty.Register(nameof(ColumnCenterTickLineBrush), typeof(Brush), typeof(WaveformView),
-                new PropertyMetadata(null, OnVisualPropertyChanged));
-        public Brush ColumnCenterTickLineBrush
-        {
-            get => (Brush)GetValue(ColumnCenterTickLineBrushProperty);
-            set => SetValue(ColumnCenterTickLineBrushProperty, value);
-        }
-
-        public static readonly DependencyProperty WaveGridBorderLineStyleProperty =
-            DependencyProperty.Register(nameof(WaveGridBorderLineStyle), typeof(GridLineStyle), typeof(WaveformView), new PropertyMetadata(GridLineStyle.Solid, OnVisualPropertyChanged));
-
-        public GridLineStyle WaveGridBorderLineStyle
-        {
-            get => (GridLineStyle)GetValue(WaveGridBorderLineStyleProperty);
-            set => SetValue(WaveGridBorderLineStyleProperty, value);
-        }
-
-        public static readonly DependencyProperty WaveGridTickLineStyleProperty =
-            DependencyProperty.Register(nameof(WaveGridTickLineStyle), typeof(GridLineStyle), typeof(WaveformView), new PropertyMetadata(GridLineStyle.Solid, OnVisualPropertyChanged));
-
-        public GridLineStyle WaveGridTickLineStyle
-        {
-            get => (GridLineStyle)GetValue(WaveGridTickLineStyleProperty);
-            set => SetValue(WaveGridTickLineStyleProperty, value);
-        }
-
-        public static readonly DependencyProperty WaveGridTickModeStyleProperty =
-            DependencyProperty.Register(nameof(WaveGridTickMode), typeof(GridTickModeStyle), typeof(WaveformView), new PropertyMetadata(GridTickModeStyle.None, OnVisualPropertyChanged));
-        public GridTickModeStyle WaveGridTickMode
-        {
-            get => (GridTickModeStyle)GetValue(WaveGridTickModeStyleProperty);
-            set => SetValue(WaveGridTickModeStyleProperty, value);
-        }
-        public static readonly DependencyProperty WaveGridBorderTickThicknessProperty =
-            DependencyProperty.Register(nameof(WaveGridBorderTickThickness), typeof(Thickness), typeof(WaveformView), new PropertyMetadata(new Thickness(4), OnVisualPropertyChanged));
-
-        public Thickness WaveGridBorderTickThickness
-        {
-            get => (Thickness)GetValue(WaveGridBorderTickThicknessProperty);
-            set => SetValue(WaveGridBorderTickThicknessProperty, value);
-        }
-
-        public static readonly DependencyProperty WaveGridBorderSubTickThicknessProperty =
-            DependencyProperty.Register(nameof(WaveGridBorderSubTickThickness), typeof(Thickness), typeof(WaveformView), new PropertyMetadata(new Thickness(2), OnVisualPropertyChanged));
-        public Thickness WaveGridBorderSubTickThickness
-        {
-            get => (Thickness)GetValue(WaveGridBorderSubTickThicknessProperty);
-            set => SetValue(WaveGridBorderSubTickThicknessProperty, value);
-        }
-        public static readonly DependencyProperty RowGridBorderSubTickCountProperty =
-            DependencyProperty.Register(nameof(RowGridBorderSubTickCount), typeof(int), typeof(WaveformView), new PropertyMetadata(0, OnVisualPropertyChanged));
-        public int RowGridBorderSubTickCount
-        {
-            get => (int)GetValue(RowGridBorderSubTickCountProperty);
-            set => SetValue(RowGridBorderSubTickCountProperty, value);
-        }
-        public static readonly DependencyProperty ColumnGridBorderSubTickCountProperty =
-            DependencyProperty.Register(nameof(ColumnGridBorderSubTickCount), typeof(int), typeof(WaveformView), new PropertyMetadata(0, OnVisualPropertyChanged));
-        public int ColumnGridBorderSubTickCount
+            get => _resetViewVisibility;
+            set
             {
-            get => (int)GetValue(ColumnGridBorderSubTickCountProperty);
-            set => SetValue(ColumnGridBorderSubTickCountProperty, value);
-        }
-
-        public static readonly DependencyProperty CrossSizeProperty =
-            DependencyProperty.Register(nameof(CrossSize), typeof(double), typeof(WaveformView), new PropertyMetadata(6.0, OnVisualPropertyChanged));
-
-        public double CrossSize
-        {
-            get => (double)GetValue(CrossSizeProperty);
-            set => SetValue(CrossSizeProperty, value);
-        }
-
-        public static readonly DependencyProperty WaveGridBorderTickLineStyleProperty =
-            DependencyProperty.Register(nameof(WaveGridBorderTickLineStyle), typeof(GridLineStyle), typeof(WaveformView), new PropertyMetadata(GridLineStyle.Solid, OnVisualPropertyChanged));
-
-        public GridLineStyle WaveGridBorderTickLineStyle
-        {
-            get => (GridLineStyle)GetValue(WaveGridBorderTickLineStyleProperty);
-            set => SetValue(WaveGridBorderTickLineStyleProperty, value);
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private static void OnVisualPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is WaveformView view)
-            {
-                view.InvalidateVisual();
+                if (_resetViewVisibility != value)
+                {
+                    _resetViewVisibility = value;
+                    OnPropertyChanged(nameof(ResetViewVisibility));
+                }
             }
         }
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private Point RuntimeCenter
+        {
+            get => (Point)GetValue(RuntimeCenterProperty);
+            set
+            {
+                SetValue(RuntimeCenterProperty, value);
+                UpdateVisibleRange();
+                InvalidateCanvas();
+            }
+        }
+        private Point DefaultCenter => CalculateDefaultCenter();
+        public ObservableCollection<WaveformDataSource> Data
+        {
+            get => (ObservableCollection<WaveformDataSource>)GetValue(DataProperty);
+            set => SetValue(DataProperty, value);
+        }
+
+        public static readonly DependencyProperty DataProperty =
+            DependencyProperty.Register(nameof(Data), typeof(ObservableCollection<WaveformDataSource>), typeof(WaveformView), new PropertyMetadata(null, OnDataChanged));
+
+        private static void OnDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (WaveformView)d;
+
+            if (e.OldValue is ObservableCollection<WaveformDataSource> oldCollection)
+                oldCollection.CollectionChanged -= control.OnDataCollectionChanged;
+
+            if (e.NewValue is ObservableCollection<WaveformDataSource> newCollection)
+                newCollection.CollectionChanged += control.OnDataCollectionChanged;
+
+            control.SubscribeToDataSourceChanges();
+            control.InvalidateCanvas(); // 初次绑定时触发重绘
+        }
+
+        private void OnDataCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            SubscribeToDataSourceChanges();
+            InvalidateCanvas(); // 集合变更时重绘
+        }
+
+        private void SubscribeToDataSourceChanges()
+        {
+            if (Data == null) return;
+
+            foreach (var source in Data)
+            {
+                source.PropertyChanged -= OnDataSourceChanged;
+                source.PropertyChanged += OnDataSourceChanged;
+                source.Owner = this;
+            }
+        }
+
+        private void OnDataSourceChanged(object sender, PropertyChangedEventArgs e)
+        {
+            // 可根据属性名过滤是否需要重绘
+            if (e.PropertyName is nameof(WaveformDataSource.FunctionFormulaData) or
+                nameof(WaveformDataSource.PolylinePointsData) or
+                nameof(WaveformDataSource.Count) or
+                nameof(WaveformDataSource.StrokeBrush))
+            {
+                InvalidateCanvas();
+            }
+        }
+
+        public void WaveformView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            InvalidateVisual();
+        }
+        public void InvalidateCanvas()
+        {
+            WaveformDemonstratorCanvasControl?.Invalidate(); // 控件内部 CanvasControl 的重绘方法
+        }
+
         private void InvalidateVisual()
         {
             LineDemonstratorCanvasControl?.Invalidate();
             WaveformDemonstratorCanvasControl?.Invalidate();
         }
 
-        private void OnPropertyChanged(string propertyName)
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private static void OnVisualPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        private int GetActualRowTickCount(double height)
-        {
-            if (string.Equals(RowTickCount, "Auto", StringComparison.OrdinalIgnoreCase))
+            if (d is not WaveformView view) return;
+
+            view.InvalidateVisual();
+
+            // 处理默认中心逻辑
+            if (e.Property == MinHorizontalValueProperty ||
+                e.Property == MaxHorizontalValueProperty ||
+                e.Property == MinVerticalValueProperty ||
+                e.Property == MaxVerticalValueProperty ||
+                e.Property == ViewCenterPointModeProperty ||
+                e.Property == ViewCenterPointProperty)
             {
-                // 自动计算，示例：每40像素一格，最少2格
-                return Math.Max(2, (int)(height / 40));
-            }
-            else if (int.TryParse(RowTickCount, out int val))
-            {
-                return val; // 不受min/max限制
-            }
-            else
-            {
-                return 8; // 默认
-            }
-        }
-        private int GetActualColumnTickCount(double width)
-        {
-            if (string.Equals(ColumnTickCount, "Auto", StringComparison.OrdinalIgnoreCase))
-            {
-                return Math.Max(2, (int)(width / 40));
-            }
-            else if (int.TryParse(ColumnTickCount, out int val))
-            {
-                return val;
-            }
-            else
-            {
-                return 8;
+                // 实时计算的默认中心
+                Point newDefaultCenter = view.DefaultCenter;
+
+                // 判断用户当前是否处于“默认视图”（未手动缩放且未平移）
+                bool isDefaultZoom =
+                    Math.Abs(view.HorizontalZoomScale - 1.0) < 0.0001 &&
+                    Math.Abs(view.VerticalZoomScale - 1.0) < 0.0001;
+
+                bool isDefaultCenter = view.RuntimeCenter.Equals(newDefaultCenter);
+
+                if (isDefaultZoom && isDefaultCenter)
+                {
+                    // 用户当前就是默认视图 → 自动跟随新的默认中心（带动画）
+                    view.RuntimeCenter = newDefaultCenter;
+                }
+
+                // 更新 Reset 按钮的可见性
+                view.UpdateResetViewVisibility();
             }
         }
 
+        private int GetActualRowTickCount(double height)
+        {
+            return GetActualTickCount(RowTickCount, height, MinRowTickHeight, MaxRowTickHeight,
+                MinRowTickCount, MaxRowTickCount, RowAutoGridMode, RowAutoGridMultiple);
+        }
+
+        private int GetActualColumnTickCount(double width)
+        {
+            return GetActualTickCount(ColumnTickCount, width, MinColumnTickWidth, MaxColumnTickWidth,
+                MinColumnTickCount, MaxColumnTickCount, ColumnAutoGridMode, ColumnAutoGridMultiple);
+        }
+
+
+        private int GetActualTickCount(string tickCountSetting, double length, double minTickSize, double maxTickSize, int minTickCount, int maxTickCount, AutoGridMode mode, int multiple)
+        {
+            if (string.Equals(tickCountSetting, "Auto", StringComparison.OrdinalIgnoreCase))
+            {
+                double clampedTickSize = Math.Clamp(minTickSize, 1.0, maxTickSize);
+                int rawCount = (int)(length / clampedTickSize);
+                int clampedCount = Math.Clamp(rawCount, minTickCount, maxTickCount);
+
+                return mode switch
+                {
+                    AutoGridMode.Even => (clampedCount % 2 == 0) ? clampedCount : clampedCount + 1,
+                    AutoGridMode.Odd => (clampedCount % 2 == 1) ? clampedCount : clampedCount + 1,
+                    AutoGridMode.MultipleOfN => Math.Max(multiple, (clampedCount / multiple) * multiple),
+                    AutoGridMode.PowerOfN => GetNearestPowerOfN(clampedCount, multiple),
+                    _ => clampedCount
+                };
+            }
+
+            if (int.TryParse(tickCountSetting, out int manualCount))
+                return manualCount;
+
+            return 8;
+        }
+        private int GetNearestPowerOfN(int target, int baseN)
+        {
+            if (baseN < 2) baseN = 2; // 最小底数为2
+            int power = 1;
+            while (power < target)
+                power *= baseN;
+            return power;
+        }
+
+
+
         private float? _cursorX = null;
+        private float? _cursorY = null;
 
         private void OnWaveformPointerMoved(object sender, PointerRoutedEventArgs e)
         {
             var point = e.GetCurrentPoint(WaveformDemonstratorCanvasControl).Position;
             _cursorX = (float)point.X;
-            WaveformDemonstratorCanvasControl.Invalidate(); // 触发重绘
+            _cursorY = (float)point.Y;
+            InvalidateCanvas();
         }
 
-
-        private void SetDefaultColors()
-        {
-        }
         private void OnActualThemeChanged(FrameworkElement sender, object args)
         {
-            SetDefaultColors();
+            InvalidateVisual();
+
         }
 
         public WaveformView()
         {
-            InitializeComponent(); 
-            SetDefaultColors();
+            InitializeComponent();
             ActualThemeChanged += OnActualThemeChanged;
             WaveformDemonstratorCanvasControl.PointerMoved += OnWaveformPointerMoved;
+            RootGrid.SizeChanged += WaveformView_SizeChanged;
 
+            Loaded += WaveformView_Loaded;
         }
-
-        private void WaveformDemonstratorCanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+        private void WaveformView_Loaded(object sender, RoutedEventArgs e)
         {
-            var ds = args.DrawingSession;
-            float width = (float)sender.ActualWidth;
-            float height = (float)sender.ActualHeight;
+            // 此时 XAML 属性已经全部应用完毕
+            RuntimeCenter = DefaultCenter;  // 触发更新
+            UpdateVisibleRange();
+            InvalidateCanvas();
+        }
 
-            var margin = WaveGridBorderMargin;
-            float gridLeft = (float)margin.Left;
-            float gridTop = (float)margin.Top;
-            float gridRight = width - (float)margin.Right;
-            float gridBottom = height - (float)margin.Bottom;
-            float gridWidth = gridRight - gridLeft;
-            float gridHeight = gridBottom - gridTop;
+        private Point CalculateDefaultCenter()
+        {
+            double minX = MinHorizontalValue;
+            double maxX = MaxHorizontalValue;
+            double minY = MinVerticalValue;
+            double maxY = MaxVerticalValue;
 
-            var accentColor = GetThemeColor("AccentTextFillColorTertiaryBrush", Microsoft.UI.Colors.DeepSkyBlue);
-            var cautionColor = GetThemeColor("SystemFillColorSuccessBrush", Microsoft.UI.Colors.Orange);
+            // 先用Auto方式计算中心
+            Point autoCenter = new Point((minX + maxX) / 2, (minY + maxY) / 2);
 
-            // 绘制正弦波
-            int sampleCount = 1000;
-            float amplitude = gridHeight / 2f;
-            float centerY = gridTop + amplitude;
-
-            float prevX = gridLeft;
-            float prevY = centerY;
-
-            for (int i = 0; i < sampleCount; i++)
+            if (ViewCenterPointMode == ViewCenterMode.Auto)
             {
-                float x = gridLeft + i * gridWidth / (sampleCount - 1);
-                float phase = (i / (float)(sampleCount - 1)) * 2 * MathF.PI * 2; // 两周期
-                float y = centerY - MathF.Sin(phase) * amplitude;
-
-                if (i > 0)
-                    ds.DrawLine(prevX, prevY, x, y, accentColor, 2f);
-
-                prevX = x;
-                prevY = y;
+                // 只用范围中心
+                return autoCenter;
             }
 
-            // 绘制贯穿十字虚线（如果鼠标位置有效）
-            if (_cursorX.HasValue && _cursorX.Value >= gridLeft && _cursorX.Value <= gridRight)
+            // 其它模式先用autoCenter再根据模式调整
+            return ViewCenterPointMode switch
             {
-                float normalizedX = (_cursorX.Value - gridLeft) / gridWidth;
-                float phase = normalizedX * 2 * MathF.PI * 2;
-                float y = centerY - MathF.Sin(phase) * amplitude;
+                ViewCenterMode.LeftTop => new Point(minX, maxY),
+                ViewCenterMode.Top => new Point(autoCenter.X, maxY),
+                ViewCenterMode.RightTop => new Point(maxX, maxY),
+                ViewCenterMode.Left => new Point(minX, autoCenter.Y),
+                ViewCenterMode.Center => autoCenter,
+                ViewCenterMode.Right => new Point(maxX, autoCenter.Y),
+                ViewCenterMode.LeftBottom => new Point(minX, minY),
+                ViewCenterMode.Bottom => new Point(autoCenter.X, minY),
+                ViewCenterMode.RightBottom => new Point(maxX, minY),
+                ViewCenterMode.ManualPoint => ViewCenterPoint,
+                _ => autoCenter,
+            };
+        }
+        private int GetOptimalSampleCount(WaveformDataSource source)
+        {
+            // 1. 手动模式
+            if (!source.Count.Equals("Auto", StringComparison.OrdinalIgnoreCase) &&
+                int.TryParse(source.Count, out int manual))
+            {
+                return Math.Clamp(manual, 200, 100000);
+            }
 
-                float dashWidth = 1.5f;
+            // 2. Auto 模式：基础计算
+            var margin = WaveGridBorderMargin;
+            double drawableWidth = ActualWidth - margin.Left - margin.Right;
+            if (drawableWidth <= 10) return 1000;
 
-                // 横向虚线
-                DrawDottedLine(ds, gridLeft, y, gridRight, y, cautionColor, dashWidth);
+            double viewRangeX = ViewMaxX - ViewMinX;
+            if (viewRangeX <= 0) return 1000;
 
-                // 纵向虚线
-                DrawDottedLine(ds, _cursorX.Value, gridTop, _cursorX.Value, gridBottom, cautionColor, dashWidth);
+            double pixelsPerUnit = drawableWidth / viewRangeX;
+            int desired = (int)Math.Ceiling(pixelsPerUnit * 3.0);
+
+            // 关键！LOD 上限控制（解决 2000 倍卡死）
+            const int MaxReasonablePoints = 16000;   // 16000 是 Win2D 舒适上限
+            const int UltraZoomThreshold = 2000;     // 放大倍数阈值
+
+            double currentZoom = (MaxHorizontalValue - MinHorizontalValue) / viewRangeX;
+
+            if (currentZoom > UltraZoomThreshold)
+            {
+                // 超大放大：强制降采样，但保证每像素至少 1 个点
+                int minPoints = (int)Math.Ceiling(drawableWidth * 1.5); // 每像素 1.5 点，防锯齿
+                desired = Math.Max(minPoints, desired);
+                desired = Math.Min(desired, MaxReasonablePoints);
+            }
+            else
+            {
+                // 正常放大：允许高密度
+                desired = Math.Min(desired, MaxReasonablePoints * 2);
+            }
+
+            return Math.Clamp(desired, 500, MaxReasonablePoints);
+        }
+        private void WaveformDemonstratorCanvasControl_RegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs args)
+        {
+            foreach (var region in args.InvalidatedRegions)
+            {
+                using var ds = sender.CreateDrawingSession(region);
+
+                float width = (float)sender.ActualWidth;
+                float height = (float)sender.ActualHeight;
+
+                var margin = WaveGridBorderMargin;
+                float gridLeft = (float)margin.Left;
+                float gridTop = (float)margin.Top;
+                float gridRight = width - (float)margin.Right;
+                float gridBottom = height - (float)margin.Bottom;
+
+                var grid = new GridBounds(gridLeft, gridTop, gridRight, gridBottom);
+
+                // 计算逻辑中心点和缩放后的可视范围
+                var center = CurrentLogicalCenter;
+
+                double zoomX = ZoomMode is WaveformZoomMode.Horizontal or WaveformZoomMode.Both ? HorizontalZoomScale : 1.0;
+                double zoomY = ZoomMode is WaveformZoomMode.Vertical or WaveformZoomMode.Both ? VerticalZoomScale : 1.0;
+
+                double rangeX = (MaxHorizontalValue - MinHorizontalValue) / zoomX;
+                double rangeY = (MaxVerticalValue - MinVerticalValue) / zoomY;
+
+                ViewMinX = center.X - rangeX / 2;
+                ViewMaxX = center.X + rangeX / 2;
+                ViewMinY = center.Y - rangeY / 2;
+                ViewMaxY = center.Y + rangeY / 2;
+
+                // 绘制所有数据源
+                if (Data != null)
+                {
+                    foreach (var source in Data)
+                    {
+                        var brush = source.StrokeBrush;
+                        var thickness = source.StrokeThickness;
+                        var style = source.LineStyle;
+                        var color = GetBrushColor(brush);
+
+                        CanvasPathBuilder builder = null;
+                        bool hasValidPoints = false;
+
+                        if (source.PolylinePointsData is { Count: > 1 } points)
+                        {
+                            builder = new CanvasPathBuilder(sender.Device);
+                            bool first = true;
+
+                            foreach (var rawPt in points)
+                            {
+                                // 原始数据点 + 偏移 = 最终逻辑坐标
+                                var logicalPoint = ApplyOffset(new Point(rawPt.x, rawPt.y), source);
+
+                                var canvasPt = MapToCanvas(logicalPoint, grid, ViewMinX, ViewMaxX, ViewMinY, ViewMaxY);
+
+                                if (first)
+                                {
+                                    builder.BeginFigure(canvasPt);
+                                    first = false;
+                                }
+                                else
+                                {
+                                    builder.AddLine(canvasPt);
+                                }
+                            }
+
+                            if (!first)
+                                builder.EndFigure(CanvasFigureLoop.Open);
+
+                            hasValidPoints = true;
+                        }
+                        else if (source.FunctionFormulaData is not null)
+                        {
+                            int count = source.IsAutoCount ? GetOptimalSampleCount(source) : source.EffectiveCount;
+
+                            double viewRangeX = ViewMaxX - ViewMinX;
+                            double overdraw = viewRangeX * 0.3;
+                            double drawMinX = ViewMinX - overdraw;
+                            double drawMaxX = ViewMaxX + overdraw;
+
+                            double fullRangeX = MaxHorizontalValue - MinHorizontalValue;
+                            if (fullRangeX <= 0) fullRangeX = 1.0;
+
+                            double originX = source.OffSetX;  // 函数原点
+
+                            builder = new CanvasPathBuilder(sender.Device);
+                            bool first = true;
+
+                            for (int i = 0; i < count; i++)
+                            {
+                                // 1. 屏幕比例
+                                float tScreen = i / (float)(count - 1);
+                                float xScreen = (float)(drawMinX + tScreen * (drawMaxX - drawMinX));
+
+                                // 2. 计算相对偏移 → 归一化参数
+                                double offsetFromOrigin = xScreen - originX;
+                                float tNorm = (float)(offsetFromOrigin / fullRangeX);
+
+                                // 3. 计算函数值
+                                float yRaw = source.FunctionFormulaData(tNorm);
+
+                                // 关键！真实逻辑坐标（必须用这个！）
+                                double trueLogicX = originX + tNorm * fullRangeX;   // 正确 X
+                                double trueLogicY = yRaw + source.OffSetY;         // 正确 Y
+
+                                var trueLogicalPoint = new Point(trueLogicX, trueLogicY);
+
+                                // 4. 映射到画布（使用你完美的 MapToCanvas）
+                                var canvasPt = MapToCanvas(trueLogicalPoint, grid, ViewMinX, ViewMaxX, ViewMinY, ViewMaxY);
+
+                                // 防极端跳跃（可选）
+                                if (float.IsInfinity(canvasPt.X) || float.IsInfinity(canvasPt.Y) ||
+                                    canvasPt.X < -50000 || canvasPt.X > ActualWidth + 50000 ||
+                                    canvasPt.Y < -50000 || canvasPt.Y > ActualHeight + 50000)
+                                {
+                                    if (!first) { builder.EndFigure(CanvasFigureLoop.Open); first = true; }
+                                    continue;
+                                }
+
+                                if (first)
+                                {
+                                    builder.BeginFigure(canvasPt);
+                                    first = false;
+                                }
+                                else
+                                {
+                                    builder.AddLine(canvasPt);
+                                }
+                            }
+
+                            if (!first)
+                                builder.EndFigure(CanvasFigureLoop.Open);
+
+                            hasValidPoints = true;
+                        }
+
+                        if (hasValidPoints && builder != null)
+                        {
+                            using var geometry = CanvasGeometry.CreatePath(builder);
+                            DrawGeometryStyle(ds, geometry, color, thickness, style);
+                        }
+
+                        // 十字标记（TickMode.Cross）
+                        // TickMode 绘制（必须偏移！）
+                        if (source.TickMode != TickModeStyle.None && source.PolylinePointsData is { Count: > 0 } pts)
+                        {
+                            foreach (var rawPt in pts)
+                            {
+                                var logicalPoint = ApplyOffset(new Point(rawPt.x, rawPt.y), source);
+                                var canvasPt = MapToCanvas(logicalPoint, grid, ViewMinX, ViewMaxX, ViewMinY, ViewMaxY);
+
+                                if (source.TickMode == TickModeStyle.Cross)
+                                {
+                                    float s = (float)CrossSize;
+                                    ds.DrawLine(canvasPt.X - s, canvasPt.Y, canvasPt.X + s, canvasPt.Y, color, 1.5f);
+                                    ds.DrawLine(canvasPt.X, canvasPt.Y - s, canvasPt.X, canvasPt.Y + s, color, 1.5f);
+                                }
+                                else if (source.TickMode == TickModeStyle.Intersection)
+                                {
+                                    ds.FillCircle(canvasPt.X, canvasPt.Y, 4f, color);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 绘制指针指示线（十字光标）
+                DrawPointerIndicatorLines(ds, grid);
             }
         }
 
+        private Point ApplyOffset(Point logicalPoint, WaveformDataSource source)
+        {
+            return new Point(
+                logicalPoint.X + source.OffSetX,
+                logicalPoint.Y + source.OffSetY
+            );
+        }
+
+        private Point CurrentLogicalCenter => RuntimeCenter;
+        private void UpdateVisibleRange()
+        {
+            double zoomX = ZoomMode is WaveformZoomMode.Horizontal or WaveformZoomMode.Both ? HorizontalZoomScale : 1.0;
+            double zoomY = ZoomMode is WaveformZoomMode.Vertical or WaveformZoomMode.Both ? VerticalZoomScale : 1.0;
+
+            double rangeX = (MaxHorizontalValue - MinHorizontalValue) / zoomX;
+            double rangeY = (MaxVerticalValue - MinVerticalValue) / zoomY;
+
+            ViewMinX = RuntimeCenter.X - rangeX / 2;
+            ViewMaxX = RuntimeCenter.X + rangeX / 2;
+            ViewMinY = RuntimeCenter.Y - rangeY / 2;
+            ViewMaxY = RuntimeCenter.Y + rangeY / 2;
+        }
+
+        private static Vector2 MapToCanvas(Point logical, GridBounds grid, double viewMinX, double viewMaxX, double viewMinY, double viewMaxY)
+        {
+            double viewW = viewMaxX - viewMinX;
+            double viewH = viewMaxY - viewMinY;
+
+            if (viewW <= 0 || viewH <= 0) return new Vector2(0, 0);
+
+            float x = grid.Left + (float)((logical.X - viewMinX) / viewW * grid.Width);
+            float y = grid.Bottom - (float)((logical.Y - viewMinY) / viewH * grid.Height);
+
+            return new Vector2(x, y);
+        }
+
+        public static Point MapToLogical(Point pixel, GridBounds grid, double minX, double maxX, double minY, double maxY)
+        {
+            double logicalX = minX;
+            double logicalY = minY;
+
+            if (grid.Width > 0 && maxX != minX)
+            {
+                logicalX = minX + Math.Clamp((pixel.X - grid.Left) / grid.Width, 0, 1) * (maxX - minX);
+            }
+
+            if (grid.Height > 0 && maxY != minY)
+            {
+                logicalY = maxY - Math.Clamp((pixel.Y - grid.Top) / grid.Height, 0, 1) * (maxY - minY);
+            }
+
+            return new Point(logicalX, logicalY);
+        }
+
+
+        private DispatcherTimer _zoomTimer;
+
+        private void StartZoomAnimation(double centerX, double centerY, double targetScaleX, double targetScaleY, TimeSpan duration)
+        {
+            var startCenter = RuntimeCenter;
+            var startScaleX = HorizontalZoomScale;
+            var startScaleY = VerticalZoomScale;
+
+            targetScaleX = Math.Clamp(targetScaleX, 0.001, 80000);
+            targetScaleY = Math.Clamp(targetScaleY, 0.001, 80000);
+
+            _zoomTimer?.Stop();
+            _zoomTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1) };
+            var startTime = DateTime.Now;
+
+            _zoomTimer.Tick += (_, _) =>
+            {
+                double elapsed = (DateTime.Now - startTime).TotalMilliseconds;
+                double progress = Math.Min(elapsed / duration.TotalMilliseconds, 1.0);
+                double eased = 1 - Math.Pow(1 - progress, 3); // EaseOutCubic
+
+                // 只更新运行时中心和缩放
+                RuntimeCenter = new Point(
+                    startCenter.X + (centerX - startCenter.X) * eased,
+                    startCenter.Y + (centerY - startCenter.Y) * eased);
+
+                HorizontalZoomScale = startScaleX + (targetScaleX - startScaleX) * eased;
+                VerticalZoomScale = startScaleY + (targetScaleY - startScaleY) * eased;
+                UpdateResetViewVisibility();
+                if (progress >= 1.0) _zoomTimer.Stop();
+            };
+
+            _zoomTimer.Start();
+        }
+
+        private void UpdateSampleCountFromSize()
+        {
+            int pixelWidth = (int)Math.Max(1, WaveformDemonstratorCanvasControl.ActualWidth);
+            if (Data == null)
+                return;
+
+            foreach (var source in Data)
+            {
+                // 只更新函数模式，忽略已设置 PolylinePointsData 的源，且 Count 为 Auto
+                if (source.FunctionFormulaData != null &&
+                    source.PolylinePointsData == null &&
+                    source.IsAutoCount)
+                {
+                    source.Count = pixelWidth.ToString();
+                }
+            }
+
+            WaveformDemonstratorCanvasControl.Invalidate(); // 触发重绘
+        }
+        private void DrawGeometryStyle(CanvasDrawingSession ds, CanvasGeometry geometry, Windows.UI.Color color, float thickness, LineStyle style)
+        {
+            if (style == LineStyle.None) return;
+
+            var strokeStyle = style switch
+            {
+                LineStyle.Solid => new CanvasStrokeStyle(),
+                LineStyle.Dash => new CanvasStrokeStyle { DashStyle = CanvasDashStyle.Dash },
+                LineStyle.Dot => new CanvasStrokeStyle
+                {
+                    DashStyle = CanvasDashStyle.Solid,
+                    CustomDashStyle = new float[] { 0.1f, 4f }, // 点线
+                    DashCap = CanvasCapStyle.Round
+                },
+                _ => new CanvasStrokeStyle()
+            };
+
+            ds.DrawGeometry(geometry, color, thickness, strokeStyle);
+        }
+        private void DrawPointerIndicatorLines(CanvasDrawingSession ds, GridBounds grid)
+        {
+            if (PointerIndicatorMode == IndicatorMode.None ||
+                PointerIndicatorCursorMode == CrosshairCursorMode.Disabled ||
+                !_cursorX.HasValue || !_cursorY.HasValue)
+                return;
+
+            float cursorX = _cursorX.Value;
+            float cursorY = _cursorY.Value;
+
+            if (!grid.Contains(cursorX, cursorY))
+                return;
+
+            var lineBrush = PointerIndicatorBrush ?? new SolidColorBrush(Microsoft.UI.Colors.DeepSkyBlue);
+            var lineColor = GetBrushColor(lineBrush, GetThemeColor("AccentTextFillColorPrimaryBrush", Microsoft.UI.Colors.DeepSkyBlue));
+            float lineWidth = (float)PointerIndicatorLineWidth;
+
+            // 默认使用鼠标位置（像素坐标）
+            float verticalX = cursorX;
+            float horizontalY = cursorY;
+
+            // 吸附器（返回的是像素坐标）
+            var snappingProvider = GetSnappingProvider(PointerIndicatorMode);
+            if (snappingProvider != null && Data?.Count > 0)
+            {
+                var snapped = snappingProvider.GetSnappedPoint(
+                    cursorX, cursorY, grid,
+                    Data,
+                    ViewMinX, ViewMaxX,
+                    ViewMinY, ViewMaxY);
+
+                if (snapped is (float px, float py))
+                {
+                    verticalX = px;
+                    horizontalY = py;
+                }
+            }
+
+            // 绘制十字线（像素坐标）
+            if (PointerIndicatorCursorMode is CrosshairCursorMode.Full or CrosshairCursorMode.VerticalOnly)
+                DrawLineStyle(ds, verticalX, grid.Top, verticalX, grid.Bottom, lineColor, lineWidth, PointerIndicatorLineStyle);
+
+            if (PointerIndicatorCursorMode is CrosshairCursorMode.Full or CrosshairCursorMode.HorizontalOnly)
+                DrawLineStyle(ds, grid.Left, horizontalY, grid.Right, horizontalY, lineColor, lineWidth, PointerIndicatorLineStyle);
+        }
+
+        private IDataSnappingProvider? GetSnappingProvider(IndicatorMode mode)
+        {
+            return mode switch
+            {
+                IndicatorMode.ClosestData => new UnifiedSnappingProvider(SnappingAxis.Closest),
+                IndicatorMode.HorizontalData => new UnifiedSnappingProvider(SnappingAxis.Horizontal),
+                IndicatorMode.VerticalData => new UnifiedSnappingProvider(SnappingAxis.Vertical),
+                _ => null
+            };
+        }
 
 
         private void LineDemonstratorCanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
@@ -413,12 +713,38 @@ namespace FSGaryityTool_Win11.Controls
             DrawIntersections(ds, rowPositions, colPositions, rowCenterIndex, colCenterIndex, colors);
         }
 
-        private struct GridBounds
+        public struct GridBounds
         {
-            public float Left, Top, Right, Bottom;
+            public float Left { get; set; }
+            public float Top { get; set; }
+            public float Right { get; set; }
+            public float Bottom { get; set; }
+
             public float Width => Right - Left;
             public float Height => Bottom - Top;
+
+            public float CenterX => (Left + Right) / 2f;
+            public float CenterY => (Top + Bottom) / 2f;
+
+            public GridBounds(float left, float top, float right, float bottom)
+            {
+                Left = left;
+                Top = top;
+                Right = right;
+                Bottom = bottom;
+            }
+
+            public bool Contains(float x, float y)
+            {
+                return x >= Left && x <= Right && y >= Top && y <= Bottom;
+            }
+
+            public override string ToString()
+            {
+                return $"GridBounds({Left}, {Top}, {Right}, {Bottom})";
+            }
         }
+
 
         private struct TickColors
         {
@@ -460,19 +786,19 @@ namespace FSGaryityTool_Win11.Controls
         }
 
         // 根据线型绘制线
-        private void DrawLineStyle(CanvasDrawingSession ds, float x1, float y1, float x2, float y2, Windows.UI.Color color, float width, GridLineStyle style)
+        private void DrawLineStyle(CanvasDrawingSession ds, float x1, float y1, float x2, float y2, Windows.UI.Color color, float width, LineStyle style)
         {
             switch (style)
             {
-                case GridLineStyle.None:
+                case LineStyle.None:
                     return;
-                case GridLineStyle.Solid:
+                case LineStyle.Solid:
                     ds.DrawLine(x1, y1, x2, y2, color, width);
                     return;
-                case GridLineStyle.Dot:
+                case LineStyle.Dot:
                     DrawDottedLine(ds, x1, y1, x2, y2, color, width);
                     return;
-                case GridLineStyle.Dash:
+                case LineStyle.Dash:
                     DrawDashedLine(ds, x1, y1, x2, y2, color, width);
                     return;
             }
@@ -548,12 +874,12 @@ namespace FSGaryityTool_Win11.Controls
         }
         private void DrawIntersections(CanvasDrawingSession ds, List<float> rowPositions, List<float> colPositions, int rowCenterIndex, int colCenterIndex, TickColors colors)
         {
-            if (WaveGridTickMode == GridTickModeStyle.None)
+            if (WaveGridTickMode == TickModeStyle.None)
                 return;
 
             float crossSize = (float)CrossSize;
             float lineWidth = 1.5f;
-            float dotRadius = 1f;
+            float dotRadius = (float)DotRadius;
 
             foreach (var (y, rowIdx) in rowPositions.Select((v, i) => (v, i)))
             {
@@ -566,11 +892,11 @@ namespace FSGaryityTool_Win11.Controls
                                               isColCenter ? colors.ColCenterColor :
                                               colors.ColColor;
 
-                    if (WaveGridTickMode == GridTickModeStyle.Intersection)
+                    if (WaveGridTickMode == TickModeStyle.Intersection)
                     {
                         ds.FillCircle(x, y, dotRadius, color);
                     }
-                    else if (WaveGridTickMode == GridTickModeStyle.Cross)
+                    else if (WaveGridTickMode == TickModeStyle.Cross)
                     {
                         float half = crossSize / 2;
                         ds.DrawLine(x - half, y, x + half, y, color, lineWidth);
@@ -598,8 +924,6 @@ namespace FSGaryityTool_Win11.Controls
         private void DrawBorderTicks(CanvasDrawEventArgs args, GridBounds grid, List<float> rowPositions, List<float> colPositions, int rowCenterIndex, int colCenterIndex, TickColors colors)
         {
             var ds = args.DrawingSession;
-            float tickLineWidth = 1.5f;
-            float subTickLineWidth = Math.Max(0.5f, tickLineWidth * 0.75f);
 
             // 主刻度线
             DrawTickSegments(ds, rowPositions, grid.Left, grid.Left + (float)WaveGridBorderTickThickness.Left, rowCenterIndex, colors.RowColor, colors.RowCenterColor, true);
@@ -608,9 +932,9 @@ namespace FSGaryityTool_Win11.Controls
             DrawTickSegments(ds, colPositions, grid.Bottom, grid.Bottom - (float)WaveGridBorderTickThickness.Bottom, colCenterIndex, colors.ColColor, colors.ColCenterColor, false);
 
             // 子刻度线
-            DrawSubTicks(ds, grid, rowPositions, colPositions, subTickLineWidth, colors);
+            DrawSubTicks(ds, grid, rowPositions, colPositions, colors);
         }
-        private void DrawSubTicks(CanvasDrawingSession ds, GridBounds grid, List<float> rowPositions, List<float> colPositions, float subTickLineWidth, TickColors colors)
+        private void DrawSubTicks(CanvasDrawingSession ds, GridBounds grid, List<float> rowPositions, List<float> colPositions, TickColors colors)
         {
             int rowSubCells = Math.Max(0, RowGridBorderSubTickCount);
             int colSubCells = Math.Max(0, ColumnGridBorderSubTickCount);
@@ -634,8 +958,8 @@ namespace FSGaryityTool_Win11.Controls
                 for (int j = 1; j <= rowSubTicksPerSegment; j++)
                 {
                     float y = start + (end - start) * j / rowSubCells;
-                    DrawLineStyle(ds, grid.Left, y, grid.Left + subTickLeft, y, colors.RowColor, subTickLineWidth, WaveGridBorderTickLineStyle);
-                    DrawLineStyle(ds, grid.Right, y, grid.Right - subTickRight, y, colors.RowColor, subTickLineWidth, WaveGridBorderTickLineStyle);
+                    DrawLineStyle(ds, grid.Left, y, grid.Left + subTickLeft, y, colors.RowColor, (float)RowSubTickLineWidth, WaveGridBorderTickLineStyle);
+                    DrawLineStyle(ds, grid.Right, y, grid.Right - subTickRight, y, colors.RowColor, (float)RowSubTickLineWidth, WaveGridBorderTickLineStyle);
                 }
             }
 
@@ -651,8 +975,8 @@ namespace FSGaryityTool_Win11.Controls
                 for (int j = 1; j <= colSubTicksPerSegment; j++)
                 {
                     float x = start + (end - start) * j / colSubCells;
-                    DrawLineStyle(ds, x, grid.Top, x, grid.Top + subTickTop, colors.ColColor, subTickLineWidth, WaveGridBorderTickLineStyle);
-                    DrawLineStyle(ds, x, grid.Bottom, x, grid.Bottom - subTickBottom, colors.ColColor, subTickLineWidth, WaveGridBorderTickLineStyle);
+                    DrawLineStyle(ds, x, grid.Top, x, grid.Top + subTickTop, colors.ColColor, (float)ColumnSubTickLineWidth, WaveGridBorderTickLineStyle);
+                    DrawLineStyle(ds, x, grid.Bottom, x, grid.Bottom - subTickBottom, colors.ColColor, (float)ColumnSubTickLineWidth, WaveGridBorderTickLineStyle);
                 }
             }
         }
@@ -674,18 +998,255 @@ namespace FSGaryityTool_Win11.Controls
         {
             if (brush is SolidColorBrush solid)
                 return solid.Color;
+
             return fallback;
         }
+
+        // 默认版本使用系统主题色
+        private Windows.UI.Color GetBrushColor(Brush brush)
+        {
+            return GetBrushColor(brush, GetThemeColor("AccentTextFillColorTertiaryBrush", Microsoft.UI.Colors.DeepSkyBlue));
+        }
+
         private Windows.UI.Color GetThemeColor(string resourceKey, Windows.UI.Color fallback)
         {
             if (Application.Current.Resources.TryGetValue(resourceKey, out var brushObj) && brushObj is SolidColorBrush brush)
                 return brush.Color;
             return fallback;
         }
+
+
+
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
             //if(LineDemonstratorCanvasControl != null) LineDemonstratorCanvasControl.RemoveFromVisualTree();
             //if(WaveformDemonstratorCanvasControl != null) WaveformDemonstratorCanvasControl.RemoveFromVisualTree();
+        }
+
+        private void UserControl_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            _cursorX = null;
+            _cursorY = null;
+            WaveformDemonstratorCanvasControl.Invalidate();
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateSampleCountFromSize();
+            InvalidateCanvas();
+        }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateSampleCountFromSize();
+        }
+
+        private void ResetViewButton_Click(object sender, RoutedEventArgs e)
+        {
+            ZoomControlToReset();
+        }
+
+        private void UpdateResetViewVisibility()
+        {
+            bool isZoomed = Math.Abs(HorizontalZoomScale - 1.0) > 0.001 ||
+                            Math.Abs(VerticalZoomScale - 1.0) > 0.001;
+            bool isPanned = RuntimeCenter != DefaultCenter;  // 实时比较
+
+            // 判断是否在原点 (0,0)
+            bool isNotOrigin = !RuntimeCenter.Equals(DefaultCenter);
+
+            ResetViewVisibility = (ZoomMode != WaveformZoomMode.Disabled && (isZoomed || isPanned || isNotOrigin))
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        public void ZoomControlToSet(Point point, double zoomSize)
+        {
+            if (zoomSize <= 0) zoomSize = 1.0;
+
+            double targetScaleX = HorizontalZoomScale;
+            double targetScaleY = VerticalZoomScale;
+
+            if (ZoomMode is WaveformZoomMode.Horizontal or WaveformZoomMode.Both)
+                targetScaleX = zoomSize;
+            if (ZoomMode is WaveformZoomMode.Vertical or WaveformZoomMode.Both)
+                targetScaleY = zoomSize;
+
+            // 关键：调用 5 参数版本，传入 point.X 和 point.Y
+            UpdateResetViewVisibility();
+            StartZoomAnimation(
+                centerX: point.X,
+                centerY: point.Y,
+                targetScaleX: targetScaleX,
+                targetScaleY: targetScaleY,
+                duration: TimeSpan.FromMilliseconds(280));
+        }
+        private void ZoomControlToReset()
+        {
+            StartZoomAnimation(
+                centerX: DefaultCenter.X,   // 这里直接用计算属性
+                centerY: DefaultCenter.Y,
+                targetScaleX: 1.0,
+                targetScaleY: 1.0,
+                duration: TimeSpan.FromMilliseconds(350));
+        }
+
+        private void UserControl_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        {
+            if (ZoomMode == WaveformZoomMode.Disabled) return;
+
+            var pointerPoint = e.GetCurrentPoint(WaveformDemonstratorCanvasControl);
+            var position = pointerPoint.Position; // 鼠标像素坐标
+            int delta = pointerPoint.Properties.MouseWheelDelta;
+            if (delta == 0) return;
+
+            double factor = delta > 0 ? 1.18 : 1.0 / 1.18;
+            double targetScaleX = HorizontalZoomScale * (ZoomMode is WaveformZoomMode.Horizontal or WaveformZoomMode.Both ? factor : 1.0);
+            double targetScaleY = VerticalZoomScale * (ZoomMode is WaveformZoomMode.Vertical or WaveformZoomMode.Both ? factor : 1.0);
+
+            // 1. 获取当前画布的 grid 区域
+            var grid = GetGridBounds(WaveformDemonstratorCanvasControl.ActualWidth, WaveformDemonstratorCanvasControl.ActualHeight);
+
+            // 2. 记录缩放前鼠标像素坐标对应的逻辑坐标
+            var logicalBefore = MapToLogical(position, grid, ViewMinX, ViewMaxX, ViewMinY, ViewMaxY);
+
+            // 3. 计算缩放后的显示范围
+            double zoomX = targetScaleX;
+            double zoomY = targetScaleY;
+            double rangeX = (MaxHorizontalValue - MinHorizontalValue) / zoomX;
+            double rangeY = (MaxVerticalValue - MinVerticalValue) / zoomY;
+
+            // 4. 计算新的中心点，使得缩放后鼠标像素坐标对应的逻辑坐标和缩放前一致
+            double newCenterX = logicalBefore.X;
+            double newCenterY = logicalBefore.Y;
+
+            // 让鼠标位置在缩放后依然对应 logicalBefore
+            // 反推新的中心点
+            double percentX = (position.X - grid.Left) / grid.Width;
+            double percentY = 1.0 - (position.Y - grid.Top) / grid.Height;
+
+            newCenterX = logicalBefore.X - (percentX - 0.5) * rangeX;
+            newCenterY = logicalBefore.Y - (percentY - 0.5) * rangeY;
+            UpdateResetViewVisibility();
+            StartZoomAnimation(newCenterX, newCenterY, targetScaleX, targetScaleY, TimeSpan.FromMilliseconds(160));
+            e.Handled = true;
+        }
+
+
+
+        private void UserControl_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            // 只处理鼠标
+            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+                return;
+
+            var props = e.GetCurrentPoint(this).Properties;
+
+            if (props.IsLeftButtonPressed)
+            {
+                _isDragging = true;
+                _lastDragPosition = e.GetCurrentPoint(this).Position;
+                _inertiaTimer?.Stop();
+
+                this.CapturePointer(e.Pointer);   // 防止鼠标移出控件后丢失事件
+                e.Handled = true;
+            }
+        }
+
+        private void UserControl_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            if (!_isDragging || ZoomMode == WaveformZoomMode.Disabled) return;
+
+            var curPos = e.GetCurrentPoint(this).Position;
+
+            // 手动计算像素偏移（Point 不支持 - 运算）
+            double deltaX = curPos.X - _lastDragPosition.X;
+            double deltaY = curPos.Y - _lastDragPosition.Y;
+
+            if (Math.Abs(deltaX) < 1 && Math.Abs(deltaY) < 1) return;
+
+            // 关键：计算实际绘图区域（排除 WaveGridBorderMargin）
+            var margin = WaveGridBorderMargin;
+            double drawableWidth = ActualWidth - margin.Left - margin.Right;
+            double drawableHeight = ActualHeight - margin.Top - margin.Bottom;
+
+            if (drawableWidth <= 0 || drawableHeight <= 0) return;
+
+            // 像素偏移 → 逻辑偏移
+            double viewW = ViewMaxX - ViewMinX;
+            double viewH = ViewMaxY - ViewMinY;
+
+            double logicDeltaX = deltaX * viewW / drawableWidth;
+            double logicDeltaY = -deltaY * viewH / drawableHeight;  // Y 轴反向
+
+            RuntimeCenter = new Point(
+                RuntimeCenter.X - logicDeltaX * DragSensitivity,
+                RuntimeCenter.Y - logicDeltaY * DragSensitivity);
+
+            // 实时更新速度（用于惯性）
+            _inertiaVelocity = new Vector2((float)deltaX, (float)deltaY) * 0.95f;
+
+            _lastDragPosition = curPos;
+            InvalidateCanvas();
+            e.Handled = true;
+        }
+
+        private void UserControl_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            if (!_isDragging) return;
+
+            _isDragging = false;
+            this.ReleasePointerCapture(e.Pointer);
+
+            // 速度够大才开惯性
+            if (_inertiaVelocity.Length() > 0.1)
+            {
+                StartInertiaAnimation();
+            }
+
+            e.Handled = true;
+        }
+
+        private void StartInertiaAnimation()
+        {
+            _inertiaTimer?.Stop();
+            _inertiaTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(0.5) };
+
+            _inertiaTimer.Tick += (_, _) =>
+            {
+                if (_inertiaVelocity.Length() < MinInertiaSpeed)
+                {
+                    _inertiaTimer.Stop();
+                    return;
+                }
+
+                var margin = WaveGridBorderMargin;
+                double drawableWidth = ActualWidth - margin.Left - margin.Right;
+                double drawableHeight = ActualHeight - margin.Top - margin.Bottom;
+
+                if (drawableWidth <= 0 || drawableHeight <= 0)
+                {
+                    _inertiaTimer.Stop();
+                    return;
+                }
+
+                double viewW = ViewMaxX - ViewMinX;
+                double viewH = ViewMaxY - ViewMinY;
+
+                double deltaX = _inertiaVelocity.X * viewW / drawableWidth;
+                double deltaY = -_inertiaVelocity.Y * viewH / drawableHeight;
+
+                RuntimeCenter = new Point(
+                    RuntimeCenter.X - deltaX * DragSensitivity,
+                    RuntimeCenter.Y - deltaY * DragSensitivity);
+
+                _inertiaVelocity *= (float)InertiaFriction;
+
+                InvalidateCanvas();
+                UpdateResetViewVisibility();
+            };
+
+            _inertiaTimer.Start();
         }
     }
 }

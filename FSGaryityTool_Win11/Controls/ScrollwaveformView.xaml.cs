@@ -169,28 +169,28 @@ public sealed partial class ScrollwaveformView : UserControl
     }
 
     public static readonly DependencyProperty WaveGridBorderLineStyleProperty =
-        DependencyProperty.Register(nameof(WaveGridBorderLineStyle), typeof(GridLineStyle), typeof(ScrollwaveformView), new PropertyMetadata(GridLineStyle.Solid, OnVisualPropertyChanged));
+        DependencyProperty.Register(nameof(WaveGridBorderLineStyle), typeof(LineStyle), typeof(ScrollwaveformView), new PropertyMetadata(LineStyle.Solid, OnVisualPropertyChanged));
 
-    public GridLineStyle WaveGridBorderLineStyle
+    public LineStyle WaveGridBorderLineStyle
     {
-        get => (GridLineStyle)GetValue(WaveGridBorderLineStyleProperty);
+        get => (LineStyle)GetValue(WaveGridBorderLineStyleProperty);
         set => SetValue(WaveGridBorderLineStyleProperty, value);
     }
 
     public static readonly DependencyProperty GridTickLineStyleProperty =
-        DependencyProperty.Register(nameof(GridTickLineStyle), typeof(GridLineStyle), typeof(ScrollwaveformView), new PropertyMetadata(GridLineStyle.Solid, OnVisualPropertyChanged));
+        DependencyProperty.Register(nameof(GridTickLineStyle), typeof(LineStyle), typeof(ScrollwaveformView), new PropertyMetadata(LineStyle.Solid, OnVisualPropertyChanged));
 
-    public GridLineStyle GridTickLineStyle
+    public LineStyle GridTickLineStyle
     {
-        get => (GridLineStyle)GetValue(GridTickLineStyleProperty);
+        get => (LineStyle)GetValue(GridTickLineStyleProperty);
         set => SetValue(GridTickLineStyleProperty, value);
     }
 
     public static readonly DependencyProperty GridTickModeStyleProperty =
-        DependencyProperty.Register(nameof(GridTickMode), typeof(GridTickModeStyle), typeof(ScrollwaveformView), new PropertyMetadata(GridTickModeStyle.None, OnVisualPropertyChanged));
-    public GridTickModeStyle GridTickMode
+        DependencyProperty.Register(nameof(GridTickMode), typeof(TickModeStyle), typeof(ScrollwaveformView), new PropertyMetadata(TickModeStyle.None, OnVisualPropertyChanged));
+    public TickModeStyle GridTickMode
     {
-        get => (GridTickModeStyle)GetValue(GridTickModeStyleProperty);
+        get => (TickModeStyle)GetValue(GridTickModeStyleProperty);
         set => SetValue(GridTickModeStyleProperty, value);
     }
     public static readonly DependencyProperty WaveGridBorderTickThicknessProperty =
@@ -234,11 +234,11 @@ public sealed partial class ScrollwaveformView : UserControl
     }
 
     public static readonly DependencyProperty WaveGridBorderTickLineStyleProperty =
-        DependencyProperty.Register(nameof(WaveGridBorderTickLineStyle), typeof(GridLineStyle), typeof(ScrollwaveformView), new PropertyMetadata(GridLineStyle.Solid, OnVisualPropertyChanged));
+        DependencyProperty.Register(nameof(WaveGridBorderTickLineStyle), typeof(LineStyle), typeof(ScrollwaveformView), new PropertyMetadata(LineStyle.Solid, OnVisualPropertyChanged));
 
-    public GridLineStyle WaveGridBorderTickLineStyle
+    public LineStyle WaveGridBorderTickLineStyle
     {
-        get => (GridLineStyle)GetValue(WaveGridBorderTickLineStyleProperty);
+        get => (LineStyle)GetValue(WaveGridBorderTickLineStyleProperty);
         set => SetValue(WaveGridBorderTickLineStyleProperty, value);
     }
 

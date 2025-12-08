@@ -31,12 +31,12 @@ internal class SerialPortCoreServices
             private Handshake handshake;                // 握手协议
 
             private bool isOpen;                        // 是否打开
-            private bool DCD;                           // 数据载波检测
-            private bool RI;                            // 振铃指示
-            private bool CTS;                           // 清除发送
-            private bool DSR;                           // 数据发送准备
-            private bool DTR;                           // 数据终端准备
-            private bool RTS;                           // 请求发送
+            private bool _DCD;                           // 数据载波检测
+            private bool _RI;                            // 振铃指示
+            private bool _CTS;                           // 清除发送
+            private bool _DSR;                           // 数据发送准备
+            private bool _DTR;                           // 数据终端准备
+            private bool _RTS;                           // 请求发送
 
 
             private string serialDeviceIcon;            // 设备图标
@@ -61,6 +61,7 @@ internal class SerialPortCoreServices
                 get => baudRate;
                 set
                 {
+                    if (baudRate != value)
                     if (baudRate != value)
                     {
                         baudRate = value;
@@ -130,6 +131,18 @@ internal class SerialPortCoreServices
                     {
                         encoding = value;
                         OnPropertyChanged(nameof(Encoding));
+                    }
+                }
+            }
+            public Handshake Handshake
+            {
+                get => handshake;
+                set
+                {
+                    if (handshake != value)
+                    {
+                        handshake = value;
+                        OnPropertyChanged(nameof(Handshake));
                     }
                 }
             }
@@ -236,6 +249,91 @@ internal class SerialPortCoreServices
                     }
                 }
             }
+            public bool IsOpen
+            {
+                get => isOpen;
+                set
+                {
+                    if (isOpen != value)
+                    {
+                        isOpen = value;
+                        OnPropertyChanged(nameof(IsOpen));
+                    }
+                }
+            }
+            public bool DCD
+            {
+                get => _DCD;
+                set
+                {
+                    if (_DCD != value)
+                    {
+                        _DCD = value;
+                        OnPropertyChanged(nameof(DCD));
+                    }
+                }
+            }
+            public bool RI
+            {
+                get => _RI;
+                set
+                {
+                    if (_RI != value)
+                    {
+                        _RI = value;
+                        OnPropertyChanged(nameof(RI));
+                    }
+                }
+            }
+            public bool CTS
+            {
+                get => _CTS;
+                set
+                {
+                    if (_CTS != value)
+                    {
+                        _CTS = value;
+                        OnPropertyChanged(nameof(CTS));
+                    }
+                }
+            }
+            public bool DSR
+            {
+                get => _DSR;
+                set
+                {
+                    if (_DSR != value)
+                    {
+                        _DSR = value;
+                        OnPropertyChanged(nameof(DSR));
+                    }
+                }
+            }
+            public bool DTR
+            {
+                get => _DTR;
+                set
+                {
+                    if (_DTR != value)
+                    {
+                        _DTR = value;
+                        OnPropertyChanged(nameof(DTR));
+                    }
+                }
+            }
+            public bool RTS
+            {
+                get => _RTS;
+                set
+                {
+                    if (_RTS != value)
+                    {
+                        _RTS = value;
+                        OnPropertyChanged(nameof(RTS));
+                    }
+                }
+            }
+
         }
 
         /// <summary>

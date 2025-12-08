@@ -517,5 +517,33 @@ namespace FSGaryityTool_Win11.Controls
                 CharItems[i].IsCaret = (i == CaretIndex);
             OnPropertyChanged(nameof(CharItems));
         }
+
+        private void TextPresenterCanvasControl_Draw(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
+        {
+
+        }
+
+        private void BeyondTextBoxEditorModeSegmented_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (EditorMode == BeyondTextBoxEditorMode.Binary)
+            {
+                BeyondTextBoxHexadecimalDisplayToggleButton.Visibility = Visibility.Collapsed;
+                BeyondTextBoxDisplayTimeToggleButton.Visibility = Visibility.Collapsed;
+                BeyondTextBoxTextAlignmentSegmented.IsEnabled = false;
+            }
+            else if (EditorMode == BeyondTextBoxEditorMode.Text)
+            {
+                BeyondTextBoxHexadecimalDisplayToggleButton.Visibility = Visibility.Visible;
+                BeyondTextBoxDisplayTimeToggleButton.Visibility = Visibility.Visible;
+                BeyondTextBoxTextAlignmentSegmented.IsEnabled = true;
+            }
+            else // Entry
+            {
+                BeyondTextBoxHexadecimalDisplayToggleButton.Visibility = Visibility.Collapsed;
+                BeyondTextBoxDisplayTimeToggleButton.Visibility = Visibility.Visible;
+                BeyondTextBoxTextAlignmentSegmented.IsEnabled = false;
+            }
+
+        }
     }
 }

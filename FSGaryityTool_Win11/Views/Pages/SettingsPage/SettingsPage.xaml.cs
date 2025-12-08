@@ -1,18 +1,19 @@
-﻿using Microsoft.UI.Xaml;
+﻿using FSGaryityTool_Win11.Controls;
+using FSGaryityTool_Win11.Core.Settings;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using Tommy;
-using System.Diagnostics;
 using Windows.ApplicationModel;
-using FSGaryityTool_Win11.Controls;
-using Microsoft.UI.Xaml.Media.Imaging;
-using FSGaryityTool_Win11.Core.Settings;
-using System.ComponentModel;
-using Microsoft.UI.Xaml.Media;
+using static FSGaryityTool_Win11.Controls.WindowBackgroundBrushControl;
 
 namespace FSGaryityTool_Win11;
 
@@ -27,6 +28,8 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
     public static string DefaultPageBackGround { get; set; }
     public static bool DefaultSoftBackgroundToggleSwitch { get; set; }
     public static int DefaultTomlPageBackGround { get; set; }
+
+    public static WindowTheme windowTheme { get; set; }
 
 
     private WallpaperChangeListener _wallpaperChangeListener = new();
@@ -64,6 +67,7 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
     {
         InitializeComponent();
         Current = this;
+        windowTheme = WindowTheme.System;
         /*
         Settingsbar.ItemsSource = new ObservableCollection<Folder>
         {
@@ -253,7 +257,7 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
         var mainWindow = MainWindow.Instance;
 
         // 更新窗口的背景
-        mainWindow.WindowBackSetting();
+        mainWindow.WindowBackSetting(windowTheme);
     }
 
     private void SetDesktopBackground()
@@ -281,4 +285,21 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
     {
     }
 
+    private void SoftWindowThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (SoftWindowThemeComboBox.SelectedIndex == 0)
+        {
+            windowTheme = WindowTheme.System;
+        }
+        else if (SoftWindowThemeComboBox.SelectedIndex == 1)
+        {
+            windowTheme = WindowTheme.Light;
+        }
+        else if (SoftWindowThemeComboBox.SelectedIndex == 2)
+        {
+            windowTheme = WindowTheme.Dark;
+        }
+
+        MainWindow.Instance.SetConfigurationSourceTheme(windowTheme);
+    }
 }

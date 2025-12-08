@@ -1141,20 +1141,14 @@
                                                          SerialPortBaudRate="115200"
                                                          SerialPortEncodingName="gbk" />
                         </StackPanel>
-                        
-                        
-                        
+
+
+
 
                         <StackPanel Orientation="Horizontal">
-                            <Border Margin="1,6,6,6"
-                                    Background="{ThemeResource CustomBoxElevationBorderBrush}"
-                                    BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
-                                    BorderThickness="0"
-                                    CornerRadius="4">
-                                <StackPanel VerticalAlignment="Top"
-                                            Orientation="Horizontal">
-                                    <FontIcon Margin="6,12,6,0"
-                                              Glyph="&#xEC7A;" />
+                            <Border Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="0" CornerRadius="4">
+                                <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
+                                    <FontIcon Margin="6,12,6,0" Glyph="&#xEC7A;" />
                                 </StackPanel>
                             </Border>
 
@@ -1167,28 +1161,16 @@
                                     CornerRadius="4">
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
-                                        <Border Width="110"
-                                                Margin="6"
-                                                Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
-                                                CornerRadius="4">
-                                            <TextBlock Margin="6,6,9,6"
-                                                       HorizontalAlignment="Center"
-                                                       Text="MCU tools" />
+                                        <Border Width="110" Margin="6" Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}" CornerRadius="4">
+                                            <TextBlock Margin="6,6,9,6" HorizontalAlignment="Center" Text="MCU tools" />
                                         </Border>
-                                        <ComboBox x:Name="ChipToolKitComboBox"
-                                                  Width="100"
-                                                  Margin="6"
-                                                  SelectionChanged="ChipToolKitComboBox_SelectionChanged">
+                                        <ComboBox x:Name="ChipToolKitComboBox" Width="100" Margin="6" SelectionChanged="ChipToolKitComboBox_SelectionChanged">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Width="64"
-                                                                   Text="{Binding Name}" />
-                                                        <TextBlock Margin="24,0,24,0"
-                                                                   Text="   " />
-                                                        <TextBlock FontStyle="Italic"
-                                                                   Foreground="Gray"
-                                                                   Text="{Binding Description}" />
+                                                        <TextBlock Width="64" Text="{Binding Name}" />
+                                                        <TextBlock Margin="24,0,24,0" Text="   " />
+                                                        <TextBlock FontStyle="Italic" Foreground="Gray" Text="{Binding Description}" />
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
@@ -1196,9 +1178,7 @@
                                         <!--  W226  -->
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
-                                        <Frame x:Name="McuToolsFrame"
-                                               Width="234"
-                                               Margin="0" />
+                                        <Frame x:Name="McuToolsFrame" Width="234" Margin="0" />
                                     </StackPanel>
 
                                 </StackPanel>
@@ -1297,7 +1277,7 @@
                             <ComboBox x:Name="DataComboBox" Width="108" Margin="7,6,6,6" SelectionChanged="DATAComboBox_SelectionChanged" />
 
                         </StackPanel>
- 
+
 
                         <StackPanel Orientation="Horizontal">
                             <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
@@ -1397,7 +1377,7 @@
                             </ToggleButton>
 
                         </StackPanel>
-
+                        <!--
                         <StackPanel Orientation="Horizontal">
                             <Border Width="32" Height="32" Margin="1,6,6,6" Background="{ThemeResource CustomBoxElevationBorderBrush}" CornerRadius="4">
                                 <FontIcon Glyph="&#xF259;" />
@@ -1414,8 +1394,7 @@
                                 AUTOScroll
                             </ToggleButton>
 
-                        </StackPanel>
-
+                        </StackPanel>                        -->
                         <StackPanel.ChildrenTransitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="True" />
@@ -1424,7 +1403,7 @@
                         </StackPanel.ChildrenTransitions>
                     </StackPanel>
 
-                    
+
 
                     <StackPanel Height="36" Orientation="Horizontal" />
 
@@ -1437,14 +1416,7 @@
                     <Border Height="600" />
 
                     <!--  弃用功能  -->
-                    <StackPanel Height="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal">
-                        <Button x:Name="RxDataButton" Width="120" Margin="6" Click="RXDataButton_Click">
-                            RX
-                        </Button>
-                        <ToggleButton x:Name="ShowTimeButton" Width="108" Margin="6" Click="ShowTimeButton_Click">
-                            Showtimestamp
-                        </ToggleButton>
-                    </StackPanel>
+
                     <!--  弃用功能  -->
                     <StackPanel.ChildrenTransitions>
                         <TransitionCollection>

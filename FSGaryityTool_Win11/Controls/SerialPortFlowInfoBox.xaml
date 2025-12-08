@@ -97,13 +97,28 @@
                     </Border.BackgroundTransition>
                 </Border>
                 <Border Grid.Column="1" Width="1" Margin="1,3,1,3" Background="{ThemeResource ControlStrongStrokeColorDisabledBrush}" />
-                <Border Grid.Column="2" Margin="3" BorderBrush="{ThemeResource CustomBoxElevationBorderBrush}" BorderThickness="1" CornerRadius="4">
-                    <Canvas x:Name="OscilloscopeCanvas">
-                        <Polyline x:Name="OscilloscopePolyline" Points="{x:Bind OscilloscopePoints, Mode=OneWay}" Stroke="{ThemeResource AccentFillColorSecondaryBrush}" StrokeThickness="2" />
-                        <Polygon x:Name="OscilloscopePolygon" Fill="{ThemeResource AccentFillColorTertiaryBrush}" Opacity="0.2" Points="{x:Bind OscilloscopePolygonPoints, Mode=OneWay}" />
-                    </Canvas>
-
+                <Border Grid.Column="2" Margin="0" CornerRadius="4">
+                    <local:WaveformView x:Name="OscilloscopeWaveformView"
+                                        ColumnTickCount="6"
+                                        Data="{x:Bind WaveformSources, Mode=OneWay}"
+                                        MaxColumnTickCount="16"
+                                        MaxHorizontalValue="{x:Bind WaveViewWidth, Mode=OneWay}"
+                                        MaxRowTickCount="16"
+                                        MaxVerticalValue="1"
+                                        MinColumnTickCount="0"
+                                        MinHorizontalValue="0"
+                                        MinRowTickCount="0"
+                                        MinVerticalValue="0"
+                                        RowTickCount="2"
+                                        RowTickLineWidth="0"
+                                        ViewCenterPointMode="Auto"
+                                        WaveGridBorderBrush="{ThemeResource CustomBoxElevationBorderBrush}"
+                                        WaveGridBorderMargin="0"
+                                        WaveGridBorderOpacity="1"
+                                        WaveGridBorderThickness="1"
+                                        WaveGridBorderTickThickness="0" />
                 </Border>
+
                 <win2dcanvas:CanvasControl />
 
                 <Button x:Name="ClearSerialInfoButton"

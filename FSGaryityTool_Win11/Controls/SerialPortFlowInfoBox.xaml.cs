@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -30,37 +31,23 @@ namespace FSGaryityTool_Win11.Controls
     {
         private DispatcherTimer _timer;
         private Queue<(bool Value, DateTime Timestamp)> _logicalValues;
-        private double _canvasHeight;
-        private double _canvasWidth;
-        private int LogicAnalyzerBoxTimems = 6;
+        private int LogicAnalyzerBoxTimems = 1;
 
-        private PointCollection _oscilloscopePoints = new PointCollection();
-        public PointCollection OscilloscopePoints
+        private double _waveViewWidth;
+        public double WaveViewWidth
         {
-            get => _oscilloscopePoints;
+            get => _waveViewWidth;
             set
             {
-                if (_oscilloscopePoints != value)
+                if (_waveViewWidth != value)
                 {
-                    _oscilloscopePoints = value;
-                    OnPropertyChanged(nameof(OscilloscopePoints));
+                    _waveViewWidth = value;
+                    OnPropertyChanged(nameof(WaveViewWidth));
                 }
             }
         }
 
-        private PointCollection _oscilloscopePolygonPoints = new PointCollection();
-        public PointCollection OscilloscopePolygonPoints
-        {
-            get => _oscilloscopePolygonPoints;
-            set
-            {
-                if (_oscilloscopePolygonPoints != value)
-                {
-                    _oscilloscopePolygonPoints = value;
-                    OnPropertyChanged(nameof(OscilloscopePolygonPoints));
-                }
-            }
-        }
+        public ObservableCollection<WaveformDataSource> WaveformSources { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
@@ -116,7 +103,11 @@ namespace FSGaryityTool_Win11.Controls
         public int LogicAnalyzerBoxMaxTime
         {
             get => (int)GetValue(LogicAnalyzerBoxMaxTimeProperty);
-            set => SetValue(LogicAnalyzerBoxMaxTimeProperty, value);
+            set
+            {
+                SetValue(LogicAnalyzerBoxMaxTimeProperty, value);
+                WaveViewWidth = LogicAnalyzerBoxMaxTime * 1000.0;
+            }
         }
 
         public bool LogicalValue
@@ -143,19 +134,24 @@ namespace FSGaryityTool_Win11.Controls
         public SerialPortFlowInfoBox()
         {
             this.InitializeComponent();
-            InfoNameTextBlock.DataContext = this;
             _logicalValues = new Queue<(bool, DateTime)>();
 
-            this.ActualThemeChanged += OnActualThemeChanged;
-
-            UpdateMaxValues();
-            _timer = new DispatcherTimer
+            WaveformSources = new ObservableCollection<WaveformDataSource>
             {
-                Interval = TimeSpan.FromMilliseconds(LogicAnalyzerBoxTimems)
+                new WaveformDataSource
+                {
+                    Name = "SerialFlow",
+                    StrokeBrush = (Brush)Application.Current.Resources["AccentFillColorSecondaryBrush"],
+                    StrokeThickness = 2f
+                }
             };
+
+            this.ActualThemeChanged += OnActualThemeChanged;
+            _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(LogicAnalyzerBoxTimems) };
             _timer.Tick += Timer_Tick;
-            OscilloscopeCanvas.SizeChanged += OscilloscopeCanvas_SizeChanged;
+            WaveViewWidth = LogicAnalyzerBoxMaxTime * 1000.0;
         }
+
 
         private static void OnLogicAnalyzerBoxMaxTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -187,12 +183,25 @@ namespace FSGaryityTool_Win11.Controls
         private void UpdateOscilloscope(bool? newValue = null)
         {
             DateTime now = DateTime.Now;
-            // 添加新值
             _logicalValues.Enqueue((newValue ?? LogicalValue, now));
-
             RemoveExpiredLogicalValues(now);
-            RedrawCanvas(now);
+
+            var points = new ObservableCollection<(float x, float y)>();
+            double totalTimeSpan = LogicAnalyzerBoxMaxTime * 1000.0; // 毫秒范围
+
+            foreach (var value in _logicalValues)
+            {
+                double elapsedTime = (now - value.Timestamp).TotalMilliseconds;
+                // 横坐标直接用毫秒值（0 ~ totalTimeSpan）
+                float x = (float)(totalTimeSpan - elapsedTime);
+                // 纵坐标归一化到 0/1
+                float y = value.Value ? 1f : 0f;
+                points.Add((x, y));
+            }
+
+            WaveformSources[0].PolylinePointsData = points;
         }
+
         private void RemoveExpiredLogicalValues(DateTime now)
         {
             DateTime cutoffTime = now.AddSeconds(-LogicAnalyzerBoxMaxTime);
@@ -230,67 +239,10 @@ namespace FSGaryityTool_Win11.Controls
             UpdateOscilloscope();
         }
 
-        private void OscilloscopeCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            _canvasHeight = e.NewSize.Height;
-            _canvasWidth = e.NewSize.Width;
-            DateTime now = DateTime.Now;
-            RedrawCanvas(now);
-        }
-
         private double startPront = 0;//_canvasWidth
         private double strokeThickness = 2;
 
-
-        private void RedrawCanvas(DateTime now)
-        {
-            double totalTimeSpan = LogicAnalyzerBoxMaxTime * 1000; // 转换为毫秒
-
-            Task.Run(() =>
-            {
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    if (_logicalValues.Count == 0)
-                    {
-
-                        OscilloscopePoints?.Clear();
-                        OscilloscopePolygonPoints?.Clear();
-                        return;
-                    }
-                    RemoveExpiredLogicalValues(now);
-                    if (_logicalValues.Count == 0)
-                    {
-                        return;
-                    }
-                });
-
-                var logicalValuesSnapshot = _logicalValues.ToArray();
-
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    OscilloscopePoints.Clear();
-                    OscilloscopePolygonPoints.Clear();
-                    OscilloscopePolygonPoints.Add(new Windows.Foundation.Point(_canvasWidth, _canvasHeight));
-                    OscilloscopePolygonPoints.Add(new Windows.Foundation.Point(0, _canvasHeight));
-                });
-
-                foreach (var value in logicalValuesSnapshot)
-                {
-                    double elapsedTime = (now - value.Timestamp).TotalMilliseconds;
-                    double x = _canvasWidth - (elapsedTime / totalTimeSpan * _canvasWidth);
-                    double y = value.Value ? 0 : _canvasHeight;
-
-                    if (x >= 0 && x <= _canvasWidth)
-                    {
-                        DispatcherQueue.TryEnqueue(() =>
-                        {
-                            OscilloscopePoints.Add(new Windows.Foundation.Point(x, y));
-                            OscilloscopePolygonPoints.Add(new Windows.Foundation.Point(x, y));
-                        });
-                    }
-                }
-            });
-        }
+        
         
         private void FsBorderIsChecked(int isChecked, Border border, TextBlock textBlock)
         {
@@ -312,6 +264,7 @@ namespace FSGaryityTool_Win11.Controls
         private void ClearSerialInfoButton_Click(object sender, RoutedEventArgs e)
         {
             _logicalValues.Clear();
+            WaveformSources[0].PolylinePointsData = new ObservableCollection<(float x, float y)>();
         }
     }
 }

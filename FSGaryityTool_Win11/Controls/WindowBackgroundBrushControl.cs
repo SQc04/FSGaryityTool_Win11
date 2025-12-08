@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Windows.UI;
 using WinRT;
 using WinRT.Interop;
+using static FSGaryityTool_Win11.Controls.WindowBackgroundBrushControl;
 
 namespace FSGaryityTool_Win11.Controls
 {
@@ -76,9 +77,9 @@ namespace FSGaryityTool_Win11.Controls
 
         public enum WindowTheme
         {
+            System,
             Light,
-            Dark,
-            System
+            Dark
         }
         
         private static DesktopAcrylicController acrylicController;
@@ -96,10 +97,28 @@ namespace FSGaryityTool_Win11.Controls
             ApplyBackgroundBrush();
         }
 
-        public static void SetWindowTheme(WindowTheme theme)
+        public static void SetWindowTheme(WindowTheme windowTheme)
         {
-            //currentTheme = theme;
-            //ApplyTheme();
+            try
+            {
+                Debug.WriteLine("SetWindowTheme: " + windowTheme.ToString());
+                switch (windowTheme)
+                {
+                    case WindowTheme.System:
+                        configurationSource.Theme = SystemBackdropTheme.Default;
+                        break;
+                    case WindowTheme.Light:
+                        configurationSource.Theme = SystemBackdropTheme.Light;
+                        break;
+                    case WindowTheme.Dark:
+                        configurationSource.Theme = SystemBackdropTheme.Dark;
+                        break;
+                    default:
+                        configurationSource.Theme = SystemBackdropTheme.Default;
+                        break;
+                }
+            }
+            catch { }
         }
 
         private static void ApplyBackgroundBrush()
@@ -147,7 +166,6 @@ namespace FSGaryityTool_Win11.Controls
                     acrylicController = null;
                     break;
             }
-
             // 根据 windowBackgroundBrushKind 设置窗口背景
             switch (windowBackgroundBrushKind)
             {
