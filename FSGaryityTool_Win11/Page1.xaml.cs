@@ -760,6 +760,7 @@ foreach (var item in items)
             DispatcherQueue.TryEnqueue(() =>
             {
                 MainPage1.Current.SetRunProgressBarValue(null, MainPage1.ProgressState.Paused);
+                MainWindow.Instance.SetTaskbarProgressValue(null, MainWindow.TaskbarProgressState.Paused);
             });
         }
     }
@@ -793,6 +794,7 @@ foreach (var item in items)
                     DispatcherQueue.TryEnqueue(() =>
                     {
                         MainPage1.Current.SetRunProgressBarValue(percent, MainPage1.ProgressState.Value);
+                        MainWindow.Instance.SetTaskbarProgressValue(percent, MainWindow.TaskbarProgressState.Normal);
                     });
                 }
 
@@ -807,6 +809,7 @@ foreach (var item in items)
                     }
                     else _viewModel.AppendToRxTextinfo($"Send Succeed - {total} bytes\r\n");
                     MainPage1.Current.SetRunProgressBarValue(100, MainPage1.ProgressState.Value);
+                    MainWindow.Instance.SetTaskbarProgressValue(100, MainWindow.TaskbarProgressState.Normal);
                     SendEnd();
 
                 });
@@ -847,6 +850,7 @@ foreach (var item in items)
                     DispatcherQueue.TryEnqueue(() =>
                     {
                         MainPage1.Current.SetRunProgressBarValue(percent, MainPage1.ProgressState.Value);
+                        MainWindow.Instance.SetTaskbarProgressValue(percent, MainWindow.TaskbarProgressState.Normal);
                     });
                 }
 
@@ -860,6 +864,7 @@ foreach (var item in items)
                     }
                     else _viewModel.AppendToRxTextinfo($"Send Succeed ({total} bytes)\r\n");
                     MainPage1.Current.SetRunProgressBarValue(100, MainPage1.ProgressState.Value); // 发送完成
+                    MainWindow.Instance.SetTaskbarProgressValue(100, MainWindow.TaskbarProgressState.Normal);
                     SendEnd();
                 });
                 input = "";
@@ -888,6 +893,7 @@ foreach (var item in items)
             DispatcherQueue.TryEnqueue(() =>
             {
                 MainPage1.Current.SetRunProgressBarValue(null, MainPage1.ProgressState.Running);
+                MainWindow.Instance.SetTaskbarProgressValue(null, MainWindow.TaskbarProgressState.Indeterminate);
             });
         });
 

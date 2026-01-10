@@ -22,10 +22,41 @@ public sealed partial class TestPage1 : Page
     private int _currentStep;
     private Random _random = new Random();
 
+    //====================
+    private const int WIDTH = 8;
+    private const int HEIGHT = 8;
+    private const int NUM_PIXELS = 64;
+
+    private const int STAR_COUNT = 8;
+    private const float STAR_RING_INNER_RADIUS = 1.8f;
+    private const float STAR_RING_OUTER_RADIUS = 0.8f; // 原代码如此（外环实际上更靠近中心）
+    private const float LIGHT_VALUE = 4.0f;
+    private const float ANIMATION_SPEED = 60.0f;
+    private const int blur_samples = 2;
+    private const float exposure_time = 0.2f;
+    private const float STAR_RADIUS = 1.1f;
+
+    private float camera_center_x = WIDTH / 2.0f;
+    private float camera_center_y = HEIGHT / 2.0f;
+
+    private Star[] stars;
+    private Random rand = new Random(42); // 固定种子便于调试，可去掉
+
+    private class Star
+    {
+        public float x, y;
+        public float speed;
+        public float angle;
+        public float distance;
+        public float brightness = 1.0f;
+    }
+    //====================
+
     public TestPage1()
     {
         InitializeComponent();
         SetLedBoardColors();
+        InitStars();
         // 初始化定时器
         _timer = new DispatcherTimer();
         _timer.Interval = TimeSpan.FromMilliseconds(100);
@@ -83,12 +114,17 @@ public sealed partial class TestPage1 : Page
         ledBoard3.Colors = colors3;
     }
 
+    private DateTime lastTime = DateTime.UtcNow;
     private void UpdateLedBoardColors()
     {
         var colors1 = new Color[8, 8];
         var colors2 = new Color[8, 8];
         var colors3 = new Color[8, 8];
 
+        DateTime now = DateTime.UtcNow;
+        float deltaTime = (float)(now - lastTime).TotalSeconds;
+        lastTime = now;
+        UpdateStars(deltaTime);
         // 更新颜色数据
         for (int row = 0; row < 8; row++)
         {
@@ -103,7 +139,7 @@ public sealed partial class TestPage1 : Page
                 colors2[row, col] = GetRainbowColor(position2, 15);
 
                 // 第三个控件随机渲染
-                colors3[row, col] = GetRandomColor();
+                colors3 = RenderStars();
             }
         }
 
@@ -145,6 +181,159 @@ public sealed partial class TestPage1 : Page
         int b = (int)(Math.Sin(ratio * Math.PI * 2 + 4 * Math.PI / 3) * 127 + 128);
         return Color.FromArgb(255, (byte)r, (byte)g, (byte)b);
     }
+
+    private void InitStars()
+    {
+        stars = new Star[STAR_COUNT];
+        for (int i = 0; i < STAR_COUNT; i++)
+        {
+            float r = STAR_RING_INNER_RADIUS + (float)rand.NextDouble() * (STAR_RING_OUTER_RADIUS - STAR_RING_INNER_RADIUS);
+            float angle = (float)(rand.NextDouble() * Math.PI * 2);
+            stars[i] = new Star
+            {
+                x = r * (float)Math.Cos(angle),
+                y = r * (float)Math.Sin(angle),
+                distance = r,
+                angle = angle,
+                brightness = 1.0f
+            };
+
+            float speed_factor = (STAR_RING_OUTER_RADIUS - r) / (STAR_RING_OUTER_RADIUS - STAR_RING_INNER_RADIUS);
+            stars[i].speed = 0.01f + speed_factor * 0.10f; // 0.01 ~ 0.11
+        }
+    }
+
+    private void UpdateStars(float deltaTime)
+    {
+        const float fade_in_rate = 2.5f;
+        const float fade_out_rate = 2.0f;
+
+        foreach (var s in stars)
+        {
+            s.distance += s.speed * deltaTime * ANIMATION_SPEED;
+            s.x = s.distance * (float)Math.Cos(s.angle);
+            s.y = s.distance * (float)Math.Sin(s.angle);
+
+            float global_x = s.x + camera_center_x;
+            float global_y = s.y + camera_center_y;
+
+            bool nearBoundary = global_x < 1 || global_x > WIDTH - 1 ||
+                                global_y < 1 || global_y > HEIGHT - 1;
+
+            if (nearBoundary)
+            {
+                s.brightness -= fade_out_rate * deltaTime;
+                if (s.brightness <= 0)
+                {
+                    // 重生
+                    float r = STAR_RING_INNER_RADIUS + (float)rand.NextDouble() * (STAR_RING_OUTER_RADIUS - STAR_RING_INNER_RADIUS);
+                    float angle = (float)(rand.NextDouble() * Math.PI * 2);
+                    s.x = r * (float)Math.Cos(angle);
+                    s.y = r * (float)Math.Sin(angle);
+                    s.distance = r;
+                    s.angle = angle;
+                    float speed_factor = (STAR_RING_OUTER_RADIUS - r) / (STAR_RING_OUTER_RADIUS - STAR_RING_INNER_RADIUS);
+                    s.speed = 0.01f + speed_factor * 0.10f;
+                    s.brightness = 0f; // 从暗开始淡入
+                }
+            }
+            else if (s.brightness < 1.0f)
+            {
+                s.brightness += fade_in_rate * deltaTime;
+                if (s.brightness > 1.0f) s.brightness = 1.0f;
+            }
+        }
+    }
+    private Color[,] RenderStars()
+    {
+        float[] r_buffer = new float[NUM_PIXELS];
+        float[] g_buffer = new float[NUM_PIXELS];
+        float[] b_buffer = new float[NUM_PIXELS];
+
+        foreach (var s in stars)
+        {
+            float base_x = s.x;
+            float base_y = s.y;
+
+            float trail_length_factor = Math.Max(s.speed / 0.11f, 0.5f);
+            float dx = s.speed * (float)Math.Cos(s.angle) * exposure_time * trail_length_factor / blur_samples;
+            float dy = s.speed * (float)Math.Sin(s.angle) * exposure_time * trail_length_factor / blur_samples;
+
+            for (int sample = 0; sample < blur_samples; sample++)
+            {
+                float sx = base_x + sample * dx;
+                float sy = base_y + sample * dy;
+                float trail_weight = 1.0f - (float)sample / blur_samples;
+
+                float global_x = sx + camera_center_x;
+                float global_y = sy + camera_center_y;
+
+                int center_x = (int)Math.Floor(global_x);
+                int center_y = (int)Math.Floor(global_y);
+
+                // 基础颜色（近中心：偏绿深蓝）
+                float r = 0f;
+                float g = 50f;
+                float b = 87f;
+
+                // 根据速度插值到蓝紫（速度越快越紫）
+                float speed_factor = 1.0f - (s.speed - 0.01f) / 0.10f;
+                speed_factor = Math.Clamp(speed_factor, 0f, 1f);
+                r += (58f - r) * speed_factor;
+                g += (0f - g) * speed_factor;
+                b += (128f - b) * speed_factor;
+
+                r *= LIGHT_VALUE * s.brightness * trail_weight;
+                g *= LIGHT_VALUE * s.brightness * trail_weight;
+                b *= LIGHT_VALUE * s.brightness * trail_weight;
+
+                /// 次像素渲染：改用 offsetX / offsetY 避免变量名冲突
+                for (int offsetY = -1; offsetY <= 1; offsetY++)
+                {
+                    for (int offsetX = -1; offsetX <= 1; offsetX++)
+                    {
+                        int px = center_x + offsetX;
+                        int py = center_y + offsetY;
+
+                        if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
+                        {
+                            float dist = (float)Math.Sqrt(
+                                Math.Pow(px + 0.5f - global_x, 2) +
+                                Math.Pow(py + 0.5f - global_y, 2));
+
+                            float weight = Math.Max(0f, 1f - dist / STAR_RADIUS);
+
+                            // 蛇形走线索引
+                            int local_x = (py % 2 == 0) ? px : (WIDTH - 1 - px);
+                            int index = py * WIDTH + local_x;
+
+                            r_buffer[index] += r * weight;
+                            g_buffer[index] += g * weight;
+                            b_buffer[index] += b * weight;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 归一化并转换为 Color[,]
+        Color[,] colors = new Color[HEIGHT, WIDTH];
+        for (int i = 0; i < NUM_PIXELS; i++)
+        {
+            int r_final = (int)Math.Min(255, r_buffer[i] / blur_samples);
+            int g_final = (int)Math.Min(255, g_buffer[i] / blur_samples);
+            int b_final = (int)Math.Min(255, b_buffer[i] / blur_samples);
+
+            int y = i / WIDTH;
+            int local_x = i % WIDTH;
+            int x = (y % 2 == 0) ? local_x : (WIDTH - 1 - local_x);
+
+            colors[y, x] = Color.FromArgb(255, (byte)r_final, (byte)g_final, (byte)b_final);
+        }
+
+        return colors;
+    }
+
 
     private Window _starWindow;
 

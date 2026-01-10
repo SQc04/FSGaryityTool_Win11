@@ -44,6 +44,7 @@
         </Grid.ColumnDefinitions>
 
         <ProgressBar x:Name="RunProgressBar"
+                     Background="{ThemeResource CustomSolidColorBrush}"
                      Grid.Row="2"
                      Grid.Column="0"
                      Grid.ColumnSpan="2"

@@ -239,29 +239,23 @@ public sealed partial class MainPage1 : Page
     {
         if (PortIsConnect is 0)
         {
-            var app = Application.Current as App;             // 尝试将当前应用程序实例转换为App类型
-            if (app is not null)                                    // 检查转换是否成功
-            {
-                MainWindow.Instance.taskbarProgress.SetTaskbarProgressValue(null, TaskbarProgress.TaskbarProgressState.Indeterminate);
-            }
             try
             {
                 SerialPortToolsPage.Current.SerialPortConnect();
+
+                MainWindow.Instance.SetTaskbarProgressValue(null, MainWindow.TaskbarProgressState.Indeterminate);
                 SerialPortConnectToggleButtonText.Text = LanguageText("disconnectl");
                 SerialPortConnectToggleButton.IsChecked = true;
                 SetRunProgressBarValue(null,ProgressState.Running);
                 Page1.Current.SerialPortFlowInfoBoxLogicAnalyzerToggle(true);
                 SerialPortToolsPage.Current.HideTimer.Start();
-
                 Page1.Current.SerialPortOpen();
             }
             catch 
             {
                 SerialPortToolsPage.Current.SerialPortConnectCatch();
-                if (app is not null)
-                {
-                    MainWindow.Instance.taskbarProgress.SetTaskbarProgressValue(null, TaskbarProgress.TaskbarProgressState.NoProgress);
-                }
+
+                MainWindow.Instance.SetTaskbarProgressValue(null, MainWindow.TaskbarProgressState.Paused);
                 SerialPortConnectToggleButtonText.Text = LanguageText("connectl");
                 SerialPortConnectToggleButton.IsChecked = false;
                 SetRunProgressBarValue(null, ProgressState.Error);
@@ -273,17 +267,17 @@ public sealed partial class MainPage1 : Page
         }
         else
         {
-            if (Application.Current is App app)
-            {
-                MainWindow.Instance.taskbarProgress.SetTaskbarProgressValue(null, TaskbarProgress.TaskbarProgressState.NoProgress);
-            }
             try
             {
-                SerialPortToolsPage.Current.SerialPortClose();
+                SerialPortToolsPage.Current.SerialPortClose(); 
+
+                MainWindow.Instance.SetTaskbarProgressValue(null, MainWindow.TaskbarProgressState.NoProgress);
             }
             catch (Exception err)                                                                       //一般情况下关闭串口不会出错，所以不需要加处理程序
             {
                 Page1.Current.RxTextBox.Text = Page1.Current.RxTextBox.Text + err + "\r\n";
+
+                MainWindow.Instance.SetTaskbarProgressValue(null, MainWindow.TaskbarProgressState.Error);
             }
             SerialPortConnectToggleButtonText.Text = LanguageText("connectl");
             SerialPortToolsPage.Current.SerialPortDisconnect();

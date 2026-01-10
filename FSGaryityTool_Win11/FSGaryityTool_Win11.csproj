@@ -17,7 +17,7 @@
         <DefaultLanguage>zh-cn</DefaultLanguage>
         <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
         <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-        <PackageCertificateThumbprint>8081CC019F7FDD4D0BE6ED0791523A465152E5B3</PackageCertificateThumbprint>
+        <PackageCertificateThumbprint>E476AB9D8957BE18E8A3BB7B256F4BCE93822548</PackageCertificateThumbprint>
         <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
         <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
         <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>

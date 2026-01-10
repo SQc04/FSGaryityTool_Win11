@@ -1277,7 +1277,7 @@
                     <StackPanel Orientation="Horizontal" />
                 </ScrollViewer>
                 <controls:WaveFormBox x:Name="waveFormBox"
-                                      Height="200"
+                                      Height="600"
                                       DisplayMode="TimeDomain"
                                       XAxisLabel="Time(s)"
                                       XAxisTicks="10"

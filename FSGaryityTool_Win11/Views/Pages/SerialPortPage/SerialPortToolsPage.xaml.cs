@@ -401,8 +401,14 @@ public sealed partial class SerialPortToolsPage : Page
 
     public void SerialPortConnectCatch()
     {
-        Page1.Current._viewModel.AppendToRxTextinfo(LanguageText("openSPErr") + "\r\n");
-        //MessageBox.Show("打开串口失败，请检查相关设置", "错误");
+        if (MainSerialPortLIstBox.SelectedPortSingle == null)
+        {
+            Page1.Current._viewModel.AppendToRxTextinfo("串口未选择" + "\r\n");
+        }
+        else 
+        {
+            Page1.Current._viewModel.AppendToRxTextinfo(LanguageText("openSPErr") + "\r\n");
+        }
 
         PortIsConnect = 0;
         //CONTButton.Content = "CONNECT";

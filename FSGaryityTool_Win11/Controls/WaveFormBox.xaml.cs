@@ -14,6 +14,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.Foundation;
+using System.Collections.ObjectModel;
 
 
 namespace FSGaryityTool_Win11.Controls
@@ -28,7 +29,6 @@ namespace FSGaryityTool_Win11.Controls
         public WaveFormBox()
         {
             this.InitializeComponent();
-            this.SoundCanvas.SizeChanged += SoundCanvas_SizeChanged;
         }
 
         public static readonly DependencyProperty AudioDataProperty =
@@ -197,6 +197,30 @@ namespace FSGaryityTool_Win11.Controls
                 }
             }
         }
+        private ObservableCollection<WaveformDataSource> waveformDataSource;
+        public ObservableCollection<WaveformDataSource> WaveformDataSource
+        {
+            get
+            {
+                if (waveformDataSource == null)
+                {
+                    waveformDataSource = new ObservableCollection<WaveformDataSource>
+                    {
+                        new WaveformDataSource()
+                        {
+                            Name = "Waveform",
+                            StrokeThickness = 2f,
+                            LineStyle = LineStyle.Solid,
+                            TickMode = TickModeStyle.None,
+                            PolylinePointsData = new ObservableCollection<(float x, float y)>()
+                        }
+                    };
+                }
+
+                return waveformDataSource;
+            }
+        }
+
 
         private static void OnAudioDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -303,8 +327,6 @@ namespace FSGaryityTool_Win11.Controls
         private void SoundCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             DrawWaveform();
-            SetDataPlotXtextMargin();
-            SetDataPlotYtextMargin();
         }
 
         private void DrawWaveform()
@@ -314,7 +336,6 @@ namespace FSGaryityTool_Win11.Controls
                 if (AudioData == null || AudioData.Length == 0 || WaveFormGrid.ActualWidth == 0 || WaveFormGrid.ActualHeight == 0)
                     return;
 
-                SoundCanvas.Children.Clear();
                 DrawTimeDomainWaveform();
                 DrawAxes();
             }
@@ -323,7 +344,6 @@ namespace FSGaryityTool_Win11.Controls
                 if (SpectrumData == null || SpectrumData.Length == 0 || WaveFormGrid.ActualWidth == 0 || WaveFormGrid.ActualHeight == 0)
                     return;
 
-                SoundCanvas.Children.Clear();
                 GenerateColorScale();
                 DrawFrequencySpectrum();
                 DrawAxes();
@@ -335,7 +355,8 @@ namespace FSGaryityTool_Win11.Controls
             if (AudioData == null || AudioData.Length == 0 || WaveFormGrid.ActualWidth == 0 || WaveFormGrid.ActualHeight == 0)
                 return;
 
-            SoundCanvas.Children.Clear();
+            if (waveformDataSource != null || waveformDataSource.Count != 0)
+            waveformDataSource[0].PolylinePointsData.Clear();
 
             Polyline waveformPolyline = new Polyline
             {
@@ -351,10 +372,10 @@ namespace FSGaryityTool_Win11.Controls
             {
                 double x = i * xScale;
                 double y = (WaveFormGrid.ActualHeight / 2) - (AudioData[i] * yScale);
-                waveformPolyline.Points.Add(new Point(x, y));
+                waveformDataSource[0].PolylinePointsData.Add(( (float)x, (float)y ));
             }
 
-            SoundCanvas.Children.Add(waveformPolyline);
+            
         }
 
         private static double MIN_DB = -80;   // 最小显示分贝值
@@ -531,19 +552,6 @@ namespace FSGaryityTool_Win11.Controls
             }
         }
 
-        private void SetDataPlotXtextMargin()
-        {
-            // 设置X轴刻度的Margin
-            double xTickMargin = (-SoundCanvas.ActualWidth / (2 * XAxisTicks) + 12);
-            DataPlotXtext.Margin = new Thickness(xTickMargin, 0, xTickMargin, 0);
-        }
-        private void SetDataPlotYtextMargin()
-        {
-            // 设置Y轴刻度的Margin
-            double yTickMargin = (-SoundCanvas.ActualHeight / (2 * YAxisTicks) + 6);
-            DataPlotYtext.Margin = new Thickness(6, yTickMargin, 0, yTickMargin);
-        }
-
         private void SetEnergyScaleGridMargin()
         {
             double energyScaleGridMargin = (-ColorScaleRectangle.ActualHeight / (2 * 10) + 6);
@@ -558,9 +566,6 @@ namespace FSGaryityTool_Win11.Controls
             DataPlotYtext.Children.Clear();
             DataPlotYtext.RowDefinitions.Clear();
 
-            // 设置X轴和Y轴刻度的Margin
-            SetDataPlotXtextMargin();
-            SetDataPlotYtextMargin();
 
             // 绘制X轴刻度
             if (DisplayMode == WaveFormBoxDisplayMode.TimeDomain && AudioData != null)

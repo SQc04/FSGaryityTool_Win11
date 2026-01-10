@@ -67,7 +67,16 @@
                 </Grid.RowDefinitions>
                 <Border x:Name="WaveFormGrid" Grid.Row="1" Grid.Column="1" Margin="6" />
                 <Image x:Name="WaveFormImage" Grid.Row="1" Grid.Column="1" Margin="6" Stretch="Fill" />
-                <Canvas x:Name="SoundCanvas" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="6" />
+                <local:WaveformView x:Name="SoundWaveformView"
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="2"
+                                    Margin="6"
+                                    ZoomMode="Both"
+                                    Data="{x:Bind WaveformDataSource,Mode=OneWay}"
+                                    WaveGridBorderLineStyle="None"
+                                    WaveGridBorderTickLineStyle="None"
+                                    WaveGridTickLineStyle="None" />
                 <Grid x:Name="DataPlotXtext" Grid.Row="2" Grid.Column="1" Margin="0,0,0,0">
                     <Grid.Resources>
                         <Style TargetType="TextBlock">
@@ -87,8 +96,8 @@
                     <Grid.RowDefinitions />
                 </Grid>
 
-                <TextBlock Text="{x:Bind XAxisLabel}" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center"/>
-                <TextBlock Text="{x:Bind YAxisLabel}" Grid.Column="0" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" Text="{x:Bind XAxisLabel}" />
+                <TextBlock Grid.Column="0" HorizontalAlignment="Center" Text="{x:Bind YAxisLabel}" />
 
                 <Grid x:Name="WaveFormInfo" Grid.Row="1" Grid.Column="2">
                     <Grid.ColumnDefinitions>
