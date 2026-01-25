@@ -108,4 +108,9 @@ namespace FSGaryityTool_Win11.Controls
         Horizontal,
         Vertical
     }
+    public enum DrawMode
+    {
+        WinCanvas,
+        BranchPrediction
+    }
 }

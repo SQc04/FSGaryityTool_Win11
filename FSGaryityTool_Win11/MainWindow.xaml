@@ -60,7 +60,7 @@
                               AppLogoSource="ms-appx:///Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png"
                               AppTitleName="{x:Bind FSSoftName, Mode=OneWay}"
                               CurrentUserGroup="Community"
-                              CurrentVersionStage="Dev" />
+                              CurrentVersionStage="Canary" />
 
         <NavigationView x:Name="FSnv"
                         Grid.Row="0"
@@ -95,7 +95,7 @@
 
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Name="SerialPortI" Content="Serial Port" Icon="Sort" Tag="MainPage1" />
-                <NavigationViewItem x:Name="DownFlashI" Content="Download FLASH" Tag="Page2" Visibility="Collapsed">
+                <NavigationViewItem x:Name="DownFlashI" Content="Download FLASH" Tag="Page2" Visibility="Visible">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE7F1;" />
                         <!--  &#xEC59;  -->

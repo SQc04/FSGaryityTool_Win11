@@ -251,9 +251,10 @@ public sealed partial class MainPage1 : Page
                 SerialPortToolsPage.Current.HideTimer.Start();
                 Page1.Current.SerialPortOpen();
             }
-            catch 
+            catch (Exception ex)
             {
-                SerialPortToolsPage.Current.SerialPortConnectCatch();
+
+                SerialPortToolsPage.Current.SerialPortConnectCatch(ex);
 
                 MainWindow.Instance.SetTaskbarProgressValue(null, MainWindow.TaskbarProgressState.Paused);
                 SerialPortConnectToggleButtonText.Text = LanguageText("connectl");

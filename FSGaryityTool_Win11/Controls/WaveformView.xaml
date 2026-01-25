@@ -7,6 +7,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:win2Dcanvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
              Loaded="UserControl_Loaded"
+             PointerCanceled="UserControl_PointerCanceled"
              PointerExited="UserControl_PointerExited"
              PointerMoved="UserControl_PointerMoved"
              PointerPressed="UserControl_PointerPressed"
@@ -76,7 +77,38 @@
                            VerticalAlignment="Bottom"
                            FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
                            FontSize="22"
-                           Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           Visibility="{x:Bind DebugModuleVisibitly, Mode=OneWay}">
+
+                    <Run Text="WaveformView Debug Info" />
+                    <LineBreak />
+                    <Run Text="FPS:" />
+                    <Run Foreground="Orange" Text="{x:Bind ViewFPS, Mode=OneWay}" />
+                    <LineBreak />
+                    <Run Text="Default Border Value:" />
+                    <LineBreak />
+                    <Run Text="X = " />
+                    <Run Foreground="#1AFFD5" Text="{x:Bind MaxHorizontalValue, Mode=OneWay}" />
+                    <Run Text="|" />
+                    <Run Foreground="#1AFF95" Text="{x:Bind MinHorizontalValue, Mode=OneWay}" />
+                    <LineBreak />
+                    <Run Text="Y = " />
+                    <Run Foreground="#FF1B9F" Text="{x:Bind MaxVerticalValue, Mode=OneWay}" />
+                    <Run Text="|" />
+                    <Run Foreground="#A725FF" Text="{x:Bind MinVerticalValue, Mode=OneWay}" />
+                    <LineBreak />
+                    <Run Text="Border Value:" />
+                    <LineBreak />
+                    <Run Text="X = " />
+                    <Run Foreground="#1AFFD5" Text="{x:Bind ViewMaxX, Mode=OneWay}" />
+                    <Run Text="|" />
+                    <Run Foreground="#1AFF95" Text="{x:Bind ViewMinX, Mode=OneWay}" />
+                    <LineBreak />
+                    <Run Text="Y = " />
+                    <Run Foreground="#FF1B9F" Text="{x:Bind ViewMaxY, Mode=OneWay}" />
+                    <Run Text="|" />
+                    <Run Foreground="#A725FF" Text="{x:Bind ViewMinY, Mode=OneWay}" />
+                    <LineBreak />
                     <Run Text="Zoom:" />
                     <LineBreak />
                     <Run Text="H:" />

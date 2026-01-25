@@ -60,96 +60,107 @@ public class SerialPortInfo : INotifyPropertyChanged
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged(string propertyName)
+    protected virtual void OnPropertyChanged(string propertyName)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    private static readonly ConcurrentDictionary<string, SerialPortInfo> _portInfoDictionary = new();
+    private static readonly ConcurrentDictionary<string, SerialPortInfo> _portInfoDictionary = new(StringComparer.OrdinalIgnoreCase);
 
     public static SerialPortInfo FromPortName(string portName)
     {
-        return _portInfoDictionary.GetOrAdd(portName, _ => new SerialPortInfo { PortName = portName });
+        if (string.IsNullOrWhiteSpace(portName)) return null!;
+        return _portInfoDictionary.GetOrAdd(portName.Trim(), key => new SerialPortInfo { PortName = key });
     }
 
-    public static string GetIconFromDescription(ReadOnlySpan<char> description)
+    private static string GetIconFromDescription(ReadOnlySpan<char> description)
     {
         if (description.Contains("bluetooth", StringComparison.OrdinalIgnoreCase) ||
             description.Contains("蓝牙", StringComparison.OrdinalIgnoreCase))
             return "\uE702"; // Bluetooth
-        if (description.Contains("usb", StringComparison.OrdinalIgnoreCase))
+
+        if (description.Contains("usb", StringComparison.OrdinalIgnoreCase) ||
+            description.Contains("cdc", StringComparison.OrdinalIgnoreCase)) // 加强 RP2040 CDC 识别
             return "\uECF0"; // USB-SERIAL
+
         if (description.Contains("com0com", StringComparison.OrdinalIgnoreCase))
             return "\uE8CE"; // Emulator
+
         return "\uE783"; // Default serial
     }
 
     private static string EscapeWmiString(string input)
     {
-        return input.Replace("'", "''");
+        return input?.Replace("'", "''") ?? string.Empty;
     }
 
-    public static async Task RefreshPortInfoAsync(string portName = null)
+    /// <summary>
+    /// 刷新端口信息，支持全刷或单端口刷新
+    /// </summary>
+    public static async Task RefreshPortInfoAsync(string? portName = null)
     {
         await Task.Run(() =>
         {
-            string queryString;
+            string query;
             if (string.IsNullOrWhiteSpace(portName))
             {
-                queryString = "SELECT * FROM Win32_PnPEntity WHERE ClassGuid = '{4d36e978-e325-11ce-bfc1-08002be10318}'";
+                // 全量查询所有 Ports 类设备
+                query = "SELECT * FROM Win32_PnPEntity WHERE ClassGuid = '{4d36e978-e325-11ce-bfc1-08002be10318}'";
             }
             else
             {
-                var safePort = EscapeWmiString(portName);
-                queryString = $"SELECT * FROM Win32_PnPEntity WHERE ClassGuid = '{{4d36e978-e325-11ce-bfc1-08002be10318}}' AND Name LIKE '%{safePort}%'";
+                var safePort = EscapeWmiString(portName.Trim());
+                // 针对单个端口，尽量精确匹配（避免误匹配）
+                query = $"SELECT * FROM Win32_PnPEntity WHERE ClassGuid = '{{4d36e978-e325-11ce-bfc1-08002be10318}}' " +
+                        $"AND (Name LIKE '%({safePort})%' OR Name LIKE '%{safePort}%')";
             }
 
-            using var searcher = new ManagementObjectSearcher(queryString);
-            var hardInfos = searcher.Get();
-            var currentPortNames = new HashSet<string>();
+            using var searcher = new ManagementObjectSearcher(query);
+            using var results = searcher.Get();
 
-            foreach (var hardInfo in hardInfos)
+            var currentPortNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (ManagementObject obj in results)
             {
-                var nameObj = hardInfo.Properties["Name"]?.Value?.ToString();
-                if (string.IsNullOrEmpty(nameObj) || (!nameObj.Contains("COM") && !nameObj.StartsWith("CNC", StringComparison.OrdinalIgnoreCase)))
+                string? name = obj["Name"]?.ToString();
+                if (string.IsNullOrWhiteSpace(name)) continue;
+
+                // 更稳健的 COM 端口提取（兼容各种描述格式）
+                string portExtracted = ExtractComPort(name);
+                if (string.IsNullOrEmpty(portExtracted) ||
+                    (!portExtracted.StartsWith("COM", StringComparison.OrdinalIgnoreCase) &&
+                     !portExtracted.StartsWith("CNC", StringComparison.OrdinalIgnoreCase)))
                     continue;
 
-                ReadOnlySpan<char> nameSpan = nameObj.AsSpan();
-                int p = nameSpan.IndexOf('(');
-                if (p < 0) continue;
+                string description = obj["Description"]?.ToString() ?? obj["Caption"]?.ToString() ?? "Unknown";
+                string icon = GetIconFromDescription(description.AsSpan());
 
-                var slice = nameSpan.Slice(p + 1);
-                int q = slice.IndexOf(')');
-                if (q < 0) continue;
+                currentPortNames.Add(portExtracted);
 
-                var portNameExtracted = slice.Slice(0, q).ToString().Trim();
-                var description = hardInfo.Properties["Description"]?.Value?.ToString() ?? "Unknown";
-                var icon = GetIconFromDescription(description.AsSpan());
-
-                currentPortNames.Add(portNameExtracted);
-
-                if (_portInfoDictionary.TryGetValue(portNameExtracted, out var existing))
-                {
-                    if (existing.PortDeviceDescription != description)
-                        existing.PortDeviceDescription = description;
-                    if (existing.PortDeviceIcon != icon)
-                        existing.PortDeviceIcon = icon;
-                }
-                else
-                {
-                    var newInfo = new SerialPortInfo
+                var info = _portInfoDictionary.AddOrUpdate(
+                    portExtracted,
+                    _ => new SerialPortInfo
                     {
-                        PortName = portNameExtracted,
+                        PortName = portExtracted,
                         PortDeviceDescription = description,
                         PortDeviceIcon = icon
-                    };
-                    _portInfoDictionary[portNameExtracted] = newInfo;
-                }
+                    },
+                    (_, existing) =>
+                    {
+                        if (existing.PortDeviceDescription != description)
+                            existing.PortDeviceDescription = description;
+                        if (existing.PortDeviceIcon != icon)
+                            existing.PortDeviceIcon = icon;
+                        return existing;
+                    });
             }
 
-            // === 可选：清理已消失的端口（避免内存泄漏）===
+            // 全量刷新时清理已消失的端口（防止内存累积）
             if (string.IsNullOrWhiteSpace(portName))
             {
-                var keysToRemove = _portInfoDictionary.Keys.Except(currentPortNames).ToList();
-                foreach (var key in keysToRemove)
+                var toRemove = _portInfoDictionary.Keys
+                    .Where(k => !currentPortNames.Contains(k))
+                    .ToList();
+
+                foreach (var key in toRemove)
                 {
                     _portInfoDictionary.TryRemove(key, out _);
                 }
@@ -157,19 +168,121 @@ public class SerialPortInfo : INotifyPropertyChanged
         });
     }
 
-    public static async Task<SerialPortInfo?> GetPortAsync(string portName)
+    private static string ExtractComPort(string name)
     {
-        if (!_portInfoDictionary.ContainsKey(portName))
+        ReadOnlySpan<char> span = name.AsSpan();
+
+        int openParenIndex = span.IndexOf('(');
+        if (openParenIndex < 0)
         {
-            await RefreshPortInfoAsync(portName);
+            return ExtractWithoutParen(span);
         }
 
-        _portInfoDictionary.TryGetValue(portName, out var info);
+        var afterOpen = span.Slice(openParenIndex + 1);
+
+        int closeParenIndex = afterOpen.IndexOf(')');  
+        if (closeParenIndex < 0)
+        {
+            return string.Empty;
+        }
+
+        var candidate = afterOpen.Slice(0, closeParenIndex).Trim();
+
+        if (candidate.StartsWith("COM", StringComparison.OrdinalIgnoreCase) ||
+            candidate.StartsWith("CNC", StringComparison.OrdinalIgnoreCase))
+        {
+            return candidate.ToString();
+        }
+
+        return ExtractWithoutParen(span);
+    }
+
+    private static string ExtractWithoutParen(ReadOnlySpan<char> span)
+    {
+        int comIndex = span.IndexOf("COM", StringComparison.OrdinalIgnoreCase);
+        if (comIndex < 0)
+        {
+            comIndex = span.IndexOf("CNC", StringComparison.OrdinalIgnoreCase);
+            if (comIndex < 0) return string.Empty;
+        }
+
+        var sub = span.Slice(comIndex);
+
+        int endIndex = sub.IndexOfAny([' ', ')', '\t', '\r', '\n']);
+        if (endIndex < 0)
+        {
+            endIndex = sub.Length;
+        }
+
+        return sub.Slice(0, endIndex).ToString();
+    }
+
+    public static async Task<SerialPortInfo?> GetPortAsync(string portName)
+    {
+        if (string.IsNullOrWhiteSpace(portName)) return null;
+
+        portName = portName.Trim();
+        if (_portInfoDictionary.TryGetValue(portName, out var info))
+            return info;
+
+        await RefreshPortInfoAsync(portName);
+        _portInfoDictionary.TryGetValue(portName, out info);
         return info;
     }
 
     public static IReadOnlyDictionary<string, SerialPortInfo> GetAllPorts() => _portInfoDictionary;
+
+    /// <summary>
+    /// 获取当前有效的串口名称列表（替代 SerialPort.GetPortNames()）
+    /// 使用 WMI Win32_PnPEntity 查询，更可靠地处理 USB CDC 端口移除
+    /// </summary>
+    /// <returns>排序后的串口名列表（如 "COM1", "COM3", "CNC5"）</returns>
+    public static List<string> GetAvailablePortNames()
+    {
+        var ports = new HashSet<string>(StringComparer.OrdinalIgnoreCase); // 去重 + 忽略大小写
+
+        try
+        {
+            using var searcher = new ManagementObjectSearcher(
+                @"SELECT Name, DeviceID FROM Win32_PnPEntity 
+              WHERE ClassGuid = '{4d36e978-e325-11ce-bfc1-08002be10318}'"); // Ports 类 GUID
+
+            foreach (ManagementObject obj in searcher.Get())
+            {
+                // 优先尝试 DeviceID（有些驱动直接是 COMx）
+                string? deviceId = obj["DeviceID"]?.ToString();
+                if (!string.IsNullOrWhiteSpace(deviceId) &&
+                    (deviceId.StartsWith("COM", StringComparison.OrdinalIgnoreCase) ||
+                     deviceId.StartsWith("CNC", StringComparison.OrdinalIgnoreCase)))
+                {
+                    ports.Add(deviceId);
+                    continue;
+                }
+
+                // fallback：从 Name 中提取（如 "USB Serial Port (COM5)"）
+                string? name = obj["Name"]?.ToString();
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    string extracted = ExtractComPort(name); // 你类里已有的提取方法
+                    if (!string.IsNullOrEmpty(extracted))
+                    {
+                        ports.Add(extracted);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // WMI 异常时降级（生产环境可记录日志）
+            System.Diagnostics.Debug.WriteLine($"WMI 获取端口列表失败: {ex.Message}");
+            ports.UnionWith(SerialPort.GetPortNames());
+        }
+
+        return ports.OrderBy(p => p).ToList();
+    }
 }
+
+
 public class SerialPortEventArgs : EventArgs
 {
     public string PortName { get; }
@@ -333,7 +446,7 @@ public sealed partial class SerialPortLIstBox : UserControl, INotifyPropertyChan
             {
                 Task.Run(() =>
                 {
-                    var currentSnapshot = GetCurrentPortSnapshot();
+                    var currentSnapshot = SerialPortInfo.GetAvailablePortNames();
 
                     // 比较快照是否有变化
                     bool hasChanged = !_lastPortSnapshot.SequenceEqual(currentSnapshot);
@@ -359,10 +472,6 @@ public sealed partial class SerialPortLIstBox : UserControl, INotifyPropertyChan
         {
             Debug.WriteLine($"设备监听启动失败: {ex.Message}");
         }
-    }
-    private List<string> GetCurrentPortSnapshot()
-    {
-        return SerialPort.GetPortNames().OrderBy(p => p).ToList();
     }
 
     public void DisposeWatcher()
@@ -495,7 +604,7 @@ public sealed partial class SerialPortLIstBox : UserControl, INotifyPropertyChan
                 Debug.WriteLine($"Error updating ComListview selection: {ex.Message}, StackTrace: {ex.StackTrace}");
             }
         }); 
-        _lastPortSnapshot = SerialPort.GetPortNames().OrderBy(p => p).ToList();
+        _lastPortSnapshot = SerialPortInfo.GetAvailablePortNames();
     }
 
     private static int GetSortOrder(SerialPortInfo port)

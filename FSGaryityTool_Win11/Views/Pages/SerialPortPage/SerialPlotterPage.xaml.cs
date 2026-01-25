@@ -16,13 +16,14 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage;
 public sealed partial class SerialPlotterPage : Page
 {
     private WaveformDataSource _dynamicSquareWave;
-    private WaveformDataSource _randomPolylineWave;
     private Stopwatch _phaseTimer = new();
     private TimeSpan _lastUpdate = TimeSpan.Zero;
     private float _dutyCycle = 0.1f;
-    private bool _increasing = true;
     private float amplitude = 75f;
 
+    private float _dutyBreathFrequency = 0.8f;     // 占空比呼吸频率，建议0.3~2Hz都很舒服，0.8Hz ≈ 1.25秒一周期
+    private float _baseSignalFrequency = 2f;       // 方波基础信号频率（Hz）
+    private float _frequencyBreathAmount = 0.25f;  // 频率本身的呼吸幅度（可选），0 = 不呼吸
     public SerialPlotterPage()
     {
         InitializeComponent();
@@ -66,6 +67,17 @@ public sealed partial class SerialPlotterPage : Page
             _dynamicSquareWave,
             new WaveformDataSource
             {
+                Name = "方波",
+                StrokeBrush = StrokeBrush,
+                StrokeThickness = 2f,
+                LineStyle = LineStyle.Solid,
+                TickMode = TickModeStyle.Intersection,
+                OffSetY = -150,
+                OffSetX = 0,
+                FunctionFormulaData = x => SquareWaveFunction(x, _dutyCycle)
+            },
+            new WaveformDataSource
+            {
                 Name = "正弦波",
                 StrokeBrush = new SolidColorBrush(Colors.Lime),
                 StrokeThickness = 2f,
@@ -73,6 +85,61 @@ public sealed partial class SerialPlotterPage : Page
                 TickMode = TickModeStyle.None,
                 OffSetX = 0,
                 OffSetY = 200,
+                FunctionFormulaData = x => amplitude * MathF.Sin(x * 2 * MathF.PI * 2)
+            },
+            new WaveformDataSource
+            {
+                Name = "正弦波",
+                StrokeBrush = new SolidColorBrush(Colors.Lime),
+                StrokeThickness = 2f,
+                LineStyle = LineStyle.Solid,
+                TickMode = TickModeStyle.None,
+                OffSetX = 0,
+                OffSetY = 250,
+                FunctionFormulaData = x => amplitude * MathF.Sin(x * 2 * MathF.PI * 2)
+            },
+            new WaveformDataSource
+            {
+                Name = "正弦波",
+                StrokeBrush = new SolidColorBrush(Colors.Lime),
+                StrokeThickness = 2f,
+                LineStyle = LineStyle.Solid,
+                TickMode = TickModeStyle.None,
+                OffSetX = 0,
+                OffSetY = 300,
+                FunctionFormulaData = x => amplitude * MathF.Sin(x * 2 * MathF.PI * 2)
+            },
+            new WaveformDataSource
+            {
+                Name = "正弦波",
+                StrokeBrush = new SolidColorBrush(Colors.Lime),
+                StrokeThickness = 2f,
+                LineStyle = LineStyle.Solid,
+                TickMode = TickModeStyle.None,
+                OffSetX = 0,
+                OffSetY = 350,
+                FunctionFormulaData = x => amplitude * MathF.Sin(x * 2 * MathF.PI * 2)
+            },
+            new WaveformDataSource
+            {
+                Name = "正弦波",
+                StrokeBrush = new SolidColorBrush(Colors.Lime),
+                StrokeThickness = 2f,
+                LineStyle = LineStyle.Solid,
+                TickMode = TickModeStyle.None,
+                OffSetX = 0,
+                OffSetY = 400,
+                FunctionFormulaData = x => amplitude * MathF.Sin(x * 2 * MathF.PI * 2)
+            },
+            new WaveformDataSource
+            {
+                Name = "正弦波",
+                StrokeBrush = new SolidColorBrush(Colors.Lime),
+                StrokeThickness = 2f,
+                LineStyle = LineStyle.Solid,
+                TickMode = TickModeStyle.None,
+                OffSetX = 0,
+                OffSetY = 450,
                 FunctionFormulaData = x => amplitude * MathF.Sin(x * 2 * MathF.PI * 2)
             },
             new WaveformDataSource
@@ -124,17 +191,7 @@ public sealed partial class SerialPlotterPage : Page
                     (100f, 0f)
                 }
             },
-            new WaveformDataSource
-            {
-                Name = "方波",
-                StrokeBrush = StrokeBrush,
-                StrokeThickness = 2f,
-                LineStyle = LineStyle.Solid,
-                TickMode = TickModeStyle.Intersection,
-                OffSetY = -150,
-                OffSetX = 0,
-                FunctionFormulaData = x => SquareWaveFunction(x, _dutyCycle)
-            },
+            
         };
 
         _phaseTimer.Start();
@@ -147,24 +204,24 @@ public sealed partial class SerialPlotterPage : Page
         var delta = now - _lastUpdate;
         _lastUpdate = now;
 
-        double totalMs = now.TotalMilliseconds;
+        double totalSeconds = now.TotalSeconds;   // 改用秒，更直观
 
-        // 方波基础频率：2Hz（每500ms一个周期）
-        const float baseFrequency = 2f;
+        // ── 1. 占空比呼吸（独立控制） ────────────────────────────────
+        float dutyPhase = (float)(totalSeconds * _dutyBreathFrequency);
+        float dutyT = (MathF.Sin(dutyPhase * MathF.PI * 2f) + 1f) * 0.5f; // 0～1
+        _dutyCycle = 0.1f + dutyT * 0.8f;                                 // 0.1 ↔ 0.9
 
-        // 占空比变化频率：8Hz（每125ms呼吸一次）→ 正是 baseFrequency 的 4 倍！
-        float dutyCycleFrequency = baseFrequency * 1.5f;
 
-        // 计算占空比（0.1 → 0.9 呼吸）
-        float dutyPhase = (float)(totalMs * 0.001 * dutyCycleFrequency); // 转成秒 × 频率
-        float dutyT = (MathF.Sin(dutyPhase * MathF.PI * 2f) + 1f) * 0.5f; // [-1,1] → [0,1]
-        _dutyCycle = 0.1f + dutyT * 0.8f; // 0.1 → 0.9
+        // ── 2. 信号频率（可以固定，也可以加一点缓慢呼吸） ────────────
+        float currentFreq = _baseSignalFrequency;
 
-        // 可选：让频率也微微呼吸（更炫）
-        float freqBreath = 1f + 0.3f * MathF.Sin(dutyPhase * 0.5f); // 频率在 1.7~2.6 之间轻微波动
-        float currentFreq = baseFrequency * freqBreath;
+        // 如果想要频率也轻微呼吸，取消注释下面几行
+        // float freqBreathPhase = (float)(totalSeconds * _dutyBreathFrequency * 0.4f); // 可以用不同的频率
+        // float freqMod = 1f + _frequencyBreathAmount * MathF.Sin(freqBreathPhase * MathF.PI * 2f);
+        // currentFreq *= freqMod;   // 例如 2Hz ± 0.5Hz 范围内呼吸
 
-        // 更新函数（频率 + 占空比双动态！）
+
+        // ── 3. 更新动态方波的公式 ────────────────────────────────────
         _dynamicSquareWave.FunctionFormulaData = x => SquareWaveFunction(x, currentFreq, _dutyCycle);
     }
 

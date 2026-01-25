@@ -473,5 +473,50 @@ namespace FSGaryityTool_Win11.Controls
         private static readonly DependencyProperty RuntimeCenterProperty =
             DependencyProperty.Register(nameof(RuntimeCenter), typeof(Point), typeof(WaveformView), new PropertyMetadata(new Point(0, 0), OnVisualPropertyChanged));
 
+        public DrawMode ViewDrawMode
+        {
+            get => (DrawMode)GetValue(ViewDrawModeProperty);
+            set => SetValue(ViewDrawModeProperty, value);
+        }
+        private static readonly DependencyProperty ViewDrawModeProperty
+            = DependencyProperty.Register(nameof(RuntimeCenter), typeof(DrawMode), typeof(WaveformView), new PropertyMetadata(DrawMode.WinCanvas, OnVisualPropertyChanged));
+
+
+        /// <summary>
+        /// 获取或设置应用程序是否处于调试模式。
+        /// </summary>
+        /// <remarks>
+        /// 当设置为 <see langword="true"/> 时，WaveformView控件将包含额外的调试信息，并启用用于开发和故障排查的相关功能。
+        /// 此属性通常用于在开发过程中切换调试行为，生产环境下应设置为 <see langword="false"/>。
+        /// </remarks>
+        public bool IsDebugMode
+        {
+            get => (bool)GetValue(IsDebugModeProperty);
+            set => SetValue(IsDebugModeProperty, value);
+        }
+        private static readonly DependencyProperty IsDebugModeProperty =
+            DependencyProperty.Register(nameof(IsDebugMode), typeof(bool), typeof(WaveformView), new PropertyMetadata(false, OnVisualPropertyChanged));
+
+        /// <summary>
+        /// 获取或设置调试模块在用户界面中的可见状态。
+        /// </summary>
+        /// <remarks>
+        /// 更改此属性会影响调试模块在 UI 中的显示或隐藏。可根据应用状态或用户偏好控制调试功能的呈现。
+        /// </remarks>
+        private Visibility DebugModuleVisibitly
+        {
+            get => (Visibility)GetValue(DebugModuleVisibitlyProperty);
+            set => SetValue(DebugModuleVisibitlyProperty, value);
+        }
+        private static readonly DependencyProperty DebugModuleVisibitlyProperty =
+            DependencyProperty.Register(nameof(DebugModuleVisibitly), typeof(Visibility), typeof(WaveformView), new PropertyMetadata(Visibility.Collapsed, OnVisualPropertyChanged));
+
+
+
+
+
+
+
+
     }
 }

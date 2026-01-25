@@ -70,7 +70,7 @@
                         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                             <TextBlock HorizontalTextAlignment="Right" Text="Version : " />
                             <TextBlock HorizontalTextAlignment="Right" Text="{x:Bind local:MainWindow.FSSoftVersion}" />
-                            <TextBlock HorizontalTextAlignment="Right" Text="-251129_d2" />
+                            <TextBlock HorizontalTextAlignment="Right" Text="-260121_d3" />
                         </StackPanel>
 
                         <toolkit:SettingsExpander.Items>

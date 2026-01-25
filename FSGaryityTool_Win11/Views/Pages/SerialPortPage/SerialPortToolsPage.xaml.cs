@@ -399,7 +399,7 @@ public sealed partial class SerialPortToolsPage : Page
         PortIsConnect = 1;
     }
 
-    public void SerialPortConnectCatch()
+    public void SerialPortConnectCatch(Exception exception)
     {
         if (MainSerialPortLIstBox.SelectedPortSingle == null)
         {
@@ -407,12 +407,96 @@ public sealed partial class SerialPortToolsPage : Page
         }
         else 
         {
-            Page1.Current._viewModel.AppendToRxTextinfo(LanguageText("openSPErr") + "\r\n");
+            //Page1.Current._viewModel.AppendToRxTextinfo(LanguageText("openSPErr") + "\r\n");
+            string friendlyMessage = GetFriendlySerialPortErrorMessage(exception);
+            Page1.Current._viewModel.AppendToRxTextinfo(friendlyMessage + "\r\n");
         }
 
         PortIsConnect = 0;
         //CONTButton.Content = "CONNECT";
     }
+
+    private string GetFriendlySerialPortErrorMessage(Exception ex)
+    {
+        // 2. 权限问题 / 被占用（最常见）
+        if (ex is UnauthorizedAccessException)
+        {
+            return "串口已被其他程序占用或无权限访问";
+        }
+
+        // 3. IO异常（最常见的一大类）
+        if (ex is IOException ioEx)
+        {
+            string msg = ioEx.Message.ToLowerInvariant();
+
+            if (msg.Contains("in use") || msg.Contains("占用") || msg.Contains("被另一个进程"))
+            {
+                return "串口正在被其他程序占用";
+            }
+
+            if (msg.Contains("不存在") || msg.Contains("not exist") || msg.Contains("not find") || msg.Contains("找不到") || msg.Contains("已移除"))
+            {
+                return "找不到该串口（设备可能已被拔掉或断开）";
+            }
+
+            if (msg.Contains("access denied"))
+            {
+                return "访问被拒绝（可能权限不足或被占用）";
+            }
+
+            if (msg.Contains("parameter") || msg.Contains("参数") || msg.Contains("无效"))
+            {
+                return "串口参数设置不合法（波特率、数据位、校验等）";
+            }
+            if (msg.Contains("超时") || msg.Contains("timed out"))
+            {
+                return "串口设备超时";
+            }
+            if (msg.Contains("没有发挥作用"))
+            {
+                return "串口设备未响应";
+            }
+
+            // 其他IO异常兜底
+            return "打开串口失败(IO错误):" + ex.Message;
+        }
+
+        // 4. 参数非法（波特率、数据位等超出范围）
+        if (ex is ArgumentException || ex is ArgumentOutOfRangeException)
+        {
+            if (ex.Message.Contains("port name") || ex.Message.Contains("端口名称"))
+            {
+                return "串口名称无效";
+            }
+            if (ex.Message.Contains("baud rate") || ex.Message.Contains("波特率"))
+            {
+                return "波特率设置不合法";
+            }
+            if (ex.Message.Contains("data bits") || ex.Message.Contains("数据位"))
+            {
+                return "数据位设置不合法（通常为5-8）";
+            }
+            if (ex.Message.Contains("stop bits") || ex.Message.Contains("停止位"))
+            {
+                return "停止位设置不合法";
+            }
+            return "参数设置错误：" + ex.Message;
+        }
+
+        // 5. 已经打开（理论上不应该发生，但以防万一）
+        if (ex is InvalidOperationException && ex.Message.Contains("already open") || ex.Message.Contains("已经打开"))
+        {
+            return "串口已经处于打开状态";
+        }
+
+        // 6. 其他未知异常（保留原始信息方便调试）
+        string friendly = "无法打开串口，请检查设备连接和设置";
+        // 开发阶段可以临时加上这行，上线后再去掉
+        // friendly += $"  [{ex.GetType().Name}] {ex.Message}";
+
+        return friendly;
+    }
+
     public void SerialPortClose()
     {
         var sp = CommonRes.SerialPort;

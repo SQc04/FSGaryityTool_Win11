@@ -35,7 +35,7 @@ namespace FSGaryityTool_Win11;
 
 public sealed partial class MainWindow : Window
 {
-    public const string FSSoftVersion = "0.3.28";
+    public const string FSSoftVersion = "0.3.29";
     public string FSSoftName = "FSGravityTool";
 
     public static int FsPage { get; set; }

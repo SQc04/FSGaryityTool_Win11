@@ -557,15 +557,26 @@
             </Grid>
         </Border>
 
+        <Button Grid.Row="1"
+                Grid.Column="0"
+                Margin="12"
+                Visibility="Visible"
+                Click="Button_Click">
+            <StackPanel Padding="6">
+                <TextBlock Text="Test Button"
+                           HorizontalAlignment="Center" />
+            </StackPanel>
+        </Button>
 
-
-        <TextBox Grid.Row="1"
+        <TextBox x:Name="TestTextBox"
+                 Grid.Row="1"
                  Grid.Column="1"
                  Margin="12"
+                 TextChanged="TestTextBox_TextChanged"
                  AcceptsReturn="True"
                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                  TextWrapping="Wrap"
-                 Visibility="Collapsed" />
+                 Visibility="Visible" />
 
         <WebView2 x:Name="Webview1" Grid.Row="0" Grid.Column="0" Margin="6" Visibility="Collapsed" />
         <WebView2 x:Name="Webview2" Grid.Row="0" Grid.Column="1" Margin="6" Visibility="Collapsed" />

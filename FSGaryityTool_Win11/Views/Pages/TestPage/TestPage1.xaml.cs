@@ -5,6 +5,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Enumeration;
@@ -488,5 +490,30 @@ public sealed partial class TestPage1 : Page
 
         await lampArrayDevice.SendOutputReportAsync(outReport);
         System.Diagnostics.Debug.WriteLine("✅ 已发送 HID 报告: LampId=0 红色");
+    }
+
+    private void TestTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        
+    }
+
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+        //string input = "C1,C2,C3,C4,C5,C6,C7,C56,C57,C58,C59,C60,C61,C62,C63,C64,C65,C66,C67,C68,C69,C70,C71,...";
+        // 你也可以从TestTextBox.Text获取
+        string input = TestTextBox.Text;
+
+        var items = input.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+        int groupSize = 190;
+        var lines = new List<string>();
+
+        for (int i = 0; i < items.Length; i += groupSize)
+        {
+            var group = items.Skip(i).Take(groupSize).ToArray();
+            string line = $"{group.Length}|{string.Join(",", group)}";
+            lines.Add(line);
+        }
+
+        TestTextBox.Text = string.Join(Environment.NewLine, lines);
     }
 }

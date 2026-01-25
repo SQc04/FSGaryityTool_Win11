@@ -112,5 +112,16 @@ namespace FSGaryityTool_Win11.Controls
                 return null;
             }
         }
+
+        private IDataSnappingProvider? GetSnappingProvider(IndicatorMode mode)
+        {
+            return mode switch
+            {
+                IndicatorMode.ClosestData => new UnifiedSnappingProvider(SnappingAxis.Closest),
+                IndicatorMode.HorizontalData => new UnifiedSnappingProvider(SnappingAxis.Horizontal),
+                IndicatorMode.VerticalData => new UnifiedSnappingProvider(SnappingAxis.Vertical),
+                _ => null
+            };
+        }
     }
 }
