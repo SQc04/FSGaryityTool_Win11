@@ -28,6 +28,13 @@ public static class ObservableCollectionExtensions
     }
 }
 
+public enum PortConnectionStatus
+{
+    Closed,
+    Open,
+    Lost,
+    Error
+}
 
 public class SerialPortInfo : INotifyPropertyChanged
 {
@@ -57,6 +64,14 @@ public class SerialPortInfo : INotifyPropertyChanged
     {
         get => _newPortTag;
         set { _newPortTag = value; OnPropertyChanged(nameof(NewPortTag)); }
+    
+    
+    }
+    private PortConnectionStatus _connectionStatus = PortConnectionStatus.Closed;
+    public PortConnectionStatus ConnectionStatus
+    {
+        get => _connectionStatus;
+        set { _connectionStatus = value; OnPropertyChanged(nameof(ConnectionStatus)); }
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -78,7 +93,7 @@ public class SerialPortInfo : INotifyPropertyChanged
             return "\uE702"; // Bluetooth
 
         if (description.Contains("usb", StringComparison.OrdinalIgnoreCase) ||
-            description.Contains("cdc", StringComparison.OrdinalIgnoreCase)) // 加强 RP2040 CDC 识别
+            description.Contains("cdc", StringComparison.OrdinalIgnoreCase)) 
             return "\uECF0"; // USB-SERIAL
 
         if (description.Contains("com0com", StringComparison.OrdinalIgnoreCase))
@@ -250,7 +265,7 @@ public class SerialPortInfo : INotifyPropertyChanged
             foreach (ManagementObject obj in searcher.Get())
             {
                 // 优先尝试 DeviceID（有些驱动直接是 COMx）
-                string? deviceId = obj["DeviceID"]?.ToString();
+                string deviceId = obj["DeviceID"]?.ToString();
                 if (!string.IsNullOrWhiteSpace(deviceId) &&
                     (deviceId.StartsWith("COM", StringComparison.OrdinalIgnoreCase) ||
                      deviceId.StartsWith("CNC", StringComparison.OrdinalIgnoreCase)))
@@ -260,10 +275,10 @@ public class SerialPortInfo : INotifyPropertyChanged
                 }
 
                 // fallback：从 Name 中提取（如 "USB Serial Port (COM5)"）
-                string? name = obj["Name"]?.ToString();
+                string name = obj["Name"]?.ToString();
                 if (!string.IsNullOrWhiteSpace(name))
                 {
-                    string extracted = ExtractComPort(name); // 你类里已有的提取方法
+                    string extracted = ExtractComPort(name); 
                     if (!string.IsNullOrEmpty(extracted))
                     {
                         ports.Add(extracted);

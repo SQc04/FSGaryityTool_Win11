@@ -84,14 +84,41 @@ namespace FSGaryityTool_Win11.Controls
 
             // 2. Auto 模式：基础计算
             var margin = WaveGridBorderMargin;
-            double drawableWidth = ActualWidth - margin.Left - margin.Right;
-            if (drawableWidth <= 10) return 1000;
+            double drawableWidth = ActualRootWidth - margin.Left - margin.Right;
+            double drawableHeight = ActualRootHeight - margin.Top - margin.Bottom;
+            if (drawableWidth <= 10 || drawableHeight <= 10) return 1000;
 
             double viewRangeX = ViewMaxX - ViewMinX;
             if (viewRangeX <= 0) return 1000;
 
-            double pixelsPerUnit = drawableWidth / viewRangeX;
-            int desired = (int)Math.Ceiling(pixelsPerUnit * 3.0);
+            // For parametric/vector data, consider both axes; for function mode, horizontal axis dominates.
+            double pixelsPerUnitX = drawableWidth / viewRangeX;
+            double pixelsPerUnit = pixelsPerUnitX;
+            double pixelsPerPixelDimension = drawableWidth; // default use width
+            if (source.ParametricFunctionData != null)
+            {
+                double viewRangeY = ViewMaxY - ViewMinY;
+                if (viewRangeY > 0)
+                {
+                    double pixelsPerUnitY = drawableHeight / viewRangeY;
+                    pixelsPerUnit = Math.Max(pixelsPerUnitX, pixelsPerUnitY);
+                }
+                // for parametric curves consider the larger pixel dimension to avoid polygonization
+                pixelsPerPixelDimension = Math.Max(drawableWidth, drawableHeight);
+            }
+
+            // two strategies combined:
+            // 1) unit-based density (samples per logical unit)
+            int desiredByUnit = (int)Math.Ceiling(pixelsPerUnit * 3.0);
+            // 2) pixel-based density (samples per pixel) to ensure at least one sample per pixel when zoomed out
+            const double samplesPerPixel = 1.0; // target samples per pixel
+            int desiredByPixel = (int)Math.Ceiling(pixelsPerPixelDimension * samplesPerPixel);
+
+            int desired = Math.Max(desiredByUnit, desiredByPixel);
+
+            // Increase auto sampling density to improve visual quality (user requested higher fidelity).
+            // Multiply computed desired count by 5 while keeping existing LOD caps in place.
+            desired = desired * 2;
 
             // 关键！LOD 上限控制（解决 2000 倍卡死）
             const int MaxReasonablePoints = 16000;   // 16000 是 Win2D 舒适上限

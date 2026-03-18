@@ -16,6 +16,7 @@ namespace FSGaryityTool_Win11.Controls
     public enum TickModeStyle
     {
         None,
+        Pointed,
         Intersection,
         Cross
     }

@@ -63,15 +63,12 @@ namespace FSGaryityTool_Win11.Controls
         }
 
 
-        private Point RuntimeCenter
+        // Expose RuntimeCenter as a public CLR wrapper for the dependency property so
+        // XAML (including Hot Reload) can set it at design/runtime.
+        public Point RuntimeCenter
         {
             get => (Point)GetValue(RuntimeCenterProperty);
-            set
-            {
-                SetValue(RuntimeCenterProperty, value);
-                UpdateVisibleRange();
-                InvalidateCanvas();
-            }
+            set => SetValue(RuntimeCenterProperty, value);
         }
         private Point DefaultCenter => CalculateDefaultCenter();
 

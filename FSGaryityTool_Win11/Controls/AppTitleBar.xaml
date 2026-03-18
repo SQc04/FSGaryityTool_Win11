@@ -11,6 +11,7 @@
              VerticalAlignment="Top"
              mc:Ignorable="d">
 
+
     <Grid x:Name="AppTitleBarRootGrid" Margin="0,0,0,0">
         <Grid.Resources>
             <Style x:Key="TitleBadgeStyle" TargetType="Border">

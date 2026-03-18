@@ -59,7 +59,8 @@
                         Click="ResetViewButton_Click"
                         Visibility="{x:Bind ResetViewVisibility, Mode=OneWay}">
                     <Grid>
-                        <FontIcon Glyph="&#xECE9;" />
+                        <FontIcon Glyph="&#xE80F;" />
+                        <!--<FontIcon Glyph="&#xECE9;" />-->
                     </Grid>
                 </Button>
                 <Grid Grid.Row="3" Grid.Column="1" Visibility="Collapsed">
@@ -124,6 +125,13 @@
                     <LineBreak />
                     <Run Text="Y:" />
                     <Run Foreground="Red" Text="{x:Bind RuntimeCenter.Y, Mode=OneWay}" />
+                    <LineBreak />
+                    <Run Text="ActualWidth:" />
+                    <Run Foreground="Yellow" Text="{x:Bind ActualRootWidth, Mode=OneWay}" />
+                    <LineBreak />
+                    <Run Text="ActualHeight:" />
+                    <Run Foreground="Yellow" Text="{x:Bind ActualRootHeight, Mode=OneWay}" />
+
                 </TextBlock>
             </Grid>
         </Border>

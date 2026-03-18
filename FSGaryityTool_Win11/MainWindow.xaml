@@ -60,7 +60,7 @@
                               AppLogoSource="ms-appx:///Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png"
                               AppTitleName="{x:Bind FSSoftName, Mode=OneWay}"
                               CurrentUserGroup="Community"
-                              CurrentVersionStage="Canary" />
+                              CurrentVersionStage="Dev" />
 
         <NavigationView x:Name="FSnv"
                         Grid.Row="0"

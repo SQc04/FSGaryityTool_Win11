@@ -166,6 +166,8 @@ public sealed partial class Page5 : Page
         CpuWaveformData.Add(cpuTempLineSource);
         GpuWaveformData.Add(gpuFanCurve);
         GpuWaveformData.Add(gpuTempLineSource);
+
+        ClevoGetFanSeriver_Click(null, null);
     }
 
     private async Task InitializeAsync()
@@ -648,4 +650,26 @@ public sealed partial class Page5 : Page
         catch { }
     }
 
+    private void ClevoGetFanSeriver_Click(object sender, RoutedEventArgs e)
+    {
+        var sercerExePath = ClevoSeriverTextBox.Text + "\\ClevoEcControl.exe";
+        try
+        {
+            var processes = Process.GetProcessesByName("ClevoEcControl");
+            if (processes.Length == 0)
+            {
+                Process.Start(sercerExePath);
+                Debug.WriteLine("ClevoEcControl.exe started successfully.");
+            }
+            else
+            {
+                Debug.WriteLine("ClevoEcControl.exe is already running.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("Failed to start ClevoEcControl.exe: " + ex.Message);
+        }
+
+    }
 }

@@ -156,13 +156,26 @@ internal class SettingsCoreServices
                         "This is an example of cached serial device information.\r\n",
                     ["COM0"] =
                     {
-                        ["Icon"] = "\uE88E",                            //串口设备自定义的图标
-                        ["Description"] = "An example of a serial device format",                       //串口设备描述
-                        ["Name"] = "example",                              //串口设备名字
-                        ["Manufacturer"] = "FairingStudio",             //串口设备制造商
-                        ["RSTBaudRate"] = "115200",                     //自动重启上电打印波特率
-                        ["RSTTime"] = "300",                            //自动重启上电打印延时
-                        ["RSTMode"] = "0",                              //重启模式
+                        ["Icon"] = "\uE88E",                                                                //串口设备自定义的图标
+                        ["Description"] = "An example of a serial device format",       //串口设备描述
+                        ["Name"] = "example",                                                           //串口设备名字
+                        ["Manufacturer"] = "FairingStudio",                                        //串口设备制造商
+                        ["RSTBaudRate"] = "115200",                                               //自动重启上电打印波特率
+                        ["RSTTime"] = "300",                                                             //自动重启上电打印延时
+                        ["RSTMode"] = "Soft",                                                           //重启模式
+
+                        ["BaudRate"] = "115200",                //串口设备波特率
+                        ["Parity"] = "None",                          //串口设备奇偶校验
+                        ["StopBits"] = "One",                       //串口设备停止位
+                        ["DataBits"] = "8",                          //串口设备数据位
+                        ["Encoding"] = "utf-8",                   //串口设备编码"
+                        ["Handshake"] = "None",             //串口设备流控
+
+                        ["TXHEX"] = "0",                            //串口设备发送十六进制显示
+                        ["DTR"] = "1",                               //串口设备DTR
+                        ["RTS"] = "0",                               //串口设备RTS
+                        ["SendDelayTime"] = "0",            //串口设备发送延时
+                        
                     },
 
                 },
@@ -459,6 +472,48 @@ internal class SettingsCoreServices
             ResetSettingsFile();
         }
     }
+    private static string GetSerialPortSetting(string portName, string name)
+    {
+        string settingItem;
+        try
+        {
+            using (var reader = File.OpenText(FSGravityToolsSettingsToml))                    //打开TOML文件
+            {
+                SettingsTomlr = TOML.Parse(reader);
+                settingItem = SettingsTomlr[comData][portName][name];
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"获取串口设置时发生错误: {ex.Message}");
+            ResetSettingsFile();
+            settingItem = "Error";
+        }
+        return settingItem;
+    }
+    private static void SetSerialPortSetting(string portName, string name, string settingItem)
+    {
+        try
+        {
+            using (var reader = File.OpenText(FSGravityToolsSettingsToml))                    //打开TOML文件
+            {
+                SettingsTomlr = TOML.Parse(reader);
+
+                SettingsTomlr[comData][portName][name] = settingItem;
+            }
+
+            using (var writer = File.CreateText(FSGravityToolsSettingsToml))                  //将设置写入TOML文件
+            {
+                SettingsTomlr.WriteTo(writer);
+                writer.Flush();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"保存串口设置时发生错误: {ex.Message}");
+            ResetSettingsFile();
+        }
+    }
 
     //MainWindow's settings
     public static bool GetMainWindowNavigationPaneInfo()
@@ -557,4 +612,39 @@ internal class SettingsCoreServices
         SaveSetting(fsGravitySettings, "DefaultWindowWidth", width.ToString());
         SaveSetting(fsGravitySettings, "DefaultWindowHight", height.ToString());
     }
+
+    public static void SetSaveSerialPortSettings(string portName, int baudRate, string parity, string stopBits, int dataBits, string encoding)
+    {
+        SetSerialPortSetting(portName, "BaudRate", baudRate.ToString());
+        SetSerialPortSetting(portName, "Parity", parity);
+        SetSerialPortSetting(portName, "StopBits", stopBits);
+        SetSerialPortSetting(portName, "DataBits", dataBits.ToString());
+        SetSerialPortSetting(portName, "Encoding", encoding);
+    }
+    public static void SetSaveSerialPortDeviceInfo(string portName, string description, string name, string manufacturer)
+    {
+        SetSerialPortSetting(portName, "Description", description);
+        SetSerialPortSetting(portName, "Name", name);
+        SetSerialPortSetting(portName, "Manufacturer", manufacturer);
+    }
+    public static (int baudRate, string parity, string stopBits, int dataBits, string encoding) GetSerialPortSettings(string portName)
+    {
+        string baudRateStr = GetSerialPortSetting(portName, "BaudRate");
+        string parity = GetSerialPortSetting(portName, "Parity");
+        string stopBits = GetSerialPortSetting(portName, "StopBits");
+        string dataBitsStr = GetSerialPortSetting(portName, "DataBits");
+        string encoding = GetSerialPortSetting(portName, "Encoding");
+        int baudRate = int.TryParse(baudRateStr, out var br) ? br : 115200;
+        int dataBits = int.TryParse(dataBitsStr, out var db) ? db : 8;
+        return (baudRate, parity, stopBits, dataBits, encoding);
+    }
+
+    public static (string description, string name, string manufacturer) GetSerialPortDeviceInfo(string portName)
+    {
+        string description = GetSerialPortSetting(portName, "Description");
+        string name = GetSerialPortSetting(portName, "Name");
+        string manufacturer = GetSerialPortSetting(portName, "Manufacturer");
+        return (description, name, manufacturer);
+    }
+
 }

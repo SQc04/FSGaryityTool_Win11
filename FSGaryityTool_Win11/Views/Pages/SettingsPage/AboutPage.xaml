@@ -62,7 +62,7 @@
                     <TextBlock Margin="0,12,0,0" Text="" />
                     <TextBlock Margin="0" Text="About" />
 
-                    <toolkit:SettingsExpander Margin="0,2,0,3" Description="© 2019 - 2025 FairingStudio" Header="FSGravity For Windows 11" IsExpanded="False">
+                    <toolkit:SettingsExpander Margin="0,2,0,3" Description="© 2019 - 2026 FairingStudio" Header="FSGravity For Windows 11" IsExpanded="False">
                         <toolkit:SettingsExpander.HeaderIcon>
                             <BitmapIcon ShowAsMonochrome="False" UriSource="ms-appx:///Assets/Square44x44Logo.altform-lightunplated_targetsize-256.png" />
                         </toolkit:SettingsExpander.HeaderIcon>
@@ -70,7 +70,7 @@
                         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                             <TextBlock HorizontalTextAlignment="Right" Text="Version : " />
                             <TextBlock HorizontalTextAlignment="Right" Text="{x:Bind local:MainWindow.FSSoftVersion}" />
-                            <TextBlock HorizontalTextAlignment="Right" Text="-260121_d3" />
+                            <TextBlock HorizontalTextAlignment="Right" Text="-260312_D5" />
                         </StackPanel>
 
                         <toolkit:SettingsExpander.Items>

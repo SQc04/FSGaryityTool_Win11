@@ -1,3 +1,4 @@
+using MathNet.Numerics.Distributions;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -10,6 +11,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -21,6 +23,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using static FSGaryityTool_Win11.Controls.WaveformView;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -68,7 +71,35 @@ namespace FSGaryityTool_Win11.Controls
 
         public void WaveformView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            // Update exposed Actual size properties so x:Bind shows real-time values (helps XAML Hot Reload and debug display).
+            ActualRootWidth = RootGrid?.ActualWidth ?? 0;
+            ActualRootHeight = RootGrid?.ActualHeight ?? 0;
+
             InvalidateVisual();
+        }
+
+        private double _actualRootWidth;
+        public double ActualRootWidth
+        {
+            get => _actualRootWidth;
+            set
+            {
+                if (Math.Abs(_actualRootWidth - value) < 0.0001) return;
+                _actualRootWidth = value;
+                OnPropertyChanged(nameof(ActualRootWidth));
+            }
+        }
+
+        private double _actualRootHeight;
+        public double ActualRootHeight
+        {
+            get => _actualRootHeight;
+            set
+            {
+                if (Math.Abs(_actualRootHeight - value) < 0.0001) return;
+                _actualRootHeight = value;
+                OnPropertyChanged(nameof(ActualRootHeight));
+            }
         }
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -85,11 +116,12 @@ namespace FSGaryityTool_Win11.Controls
             InitializeComponent();
             ActualThemeChanged += OnActualThemeChanged;
 
-            //WaveformDemonstratorCanvasControl.PointerMoved += OnWaveformPointerMoved;
+            WaveformDemonstratorCanvasControl.PointerMoved += OnWaveformPointerMoved;
 
 
             RootGrid.SizeChanged += WaveformView_SizeChanged;
-
+            // 有时 SizeChanged/Loaded 可能未能覆盖所有布局时机，订阅 LayoutUpdated 以确保最终尺寸被采集
+            RootGrid.LayoutUpdated += RootGrid_LayoutUpdated;
             Loaded += WaveformView_Loaded;
 
             _fpsTimer = new DispatcherTimer
@@ -99,16 +131,38 @@ namespace FSGaryityTool_Win11.Controls
             _fpsTimer.Tick += (s, e) => UpdateFPS();
             _fpsTimer.Start();
         }
+
+        private void RootGrid_LayoutUpdated(object? sender, object? e)
+        {
+            if (RootGrid is null) return;
+
+            double w = RootGrid.ActualWidth;
+            double h = RootGrid.ActualHeight;
+
+            // 只有在尺寸发生变化时才触发属性变更，避免频繁通知
+            if (Math.Abs(ActualRootWidth - w) > 0.5 || Math.Abs(ActualRootHeight - h) > 0.5)
+            {
+                ActualRootWidth = w;
+                ActualRootHeight = h;
+            }
+        }
         private void WaveformView_Loaded(object sender, RoutedEventArgs e)
         {
             // 此时 XAML 属性已经全部应用完毕
             RuntimeCenter = DefaultCenter;  // 触发更新
             UpdateVisibleRange();
+            // 确保在 Loaded 时也采集一次最终尺寸，避免某些情况下 SizeChanged 未触发或已错过第一次事件
+            ActualRootWidth = RootGrid?.ActualWidth ?? 0;
+            ActualRootHeight = RootGrid?.ActualHeight ?? 0;
+
             InvalidateCanvas();
         }
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateSampleCountFromSize();
+            // 同步一次尺寸信息（某些场景下控件已布局完成但 RootGrid.SizeChanged 未再次触发）
+            ActualRootWidth = RootGrid?.ActualWidth ?? 0;
+            ActualRootHeight = RootGrid?.ActualHeight ?? 0;
             InvalidateCanvas();
         }
 
@@ -128,12 +182,9 @@ namespace FSGaryityTool_Win11.Controls
             float gridRight = width - (float)margin.Right;
             float gridBottom = height - (float)margin.Bottom;
             var grid = new GridBounds(gridLeft, gridTop, gridRight, gridBottom);
-
-            //绘制所有无效区域
-            foreach (var region in args.InvalidatedRegions)
+            // Helper to draw the full content into a given drawing session
+            void DrawIntoSession(CanvasDrawingSession ds)
             {
-                using var ds = sender.CreateDrawingSession(region);
-
                 //绘制所有数据源
                 if (Data != null)
                 {
@@ -146,6 +197,46 @@ namespace FSGaryityTool_Win11.Controls
                 }
                 //绘制指针指示线（十字光标）
                 DrawPointerIndicatorLines(ds, grid);
+            }
+
+            // Some GPUs/devices or Win2D tiling behaviours can cause region-based invalidation to
+            // miss tiles. Prefer full-draw when control is large OR when the invalidated regions
+            // do not cover the whole control area (fallback coverage check).
+            const double FullDrawThreshold = 2500.0;
+            bool doFullDraw = sender.ActualWidth > FullDrawThreshold || sender.ActualHeight > FullDrawThreshold;
+
+            if (!doFullDraw)
+            {
+                // Estimate coverage of invalidated regions. If they don't cover nearly the whole
+                // control, fall back to a full draw to avoid missing tiles (observed on some GPUs).
+                double totalArea = 0.0;
+                foreach (var region in args.InvalidatedRegions)
+                {
+                    // clamp region to control bounds
+                    double w = Math.Max(0.0, Math.Min(region.Width, sender.ActualWidth));
+                    double h = Math.Max(0.0, Math.Min(region.Height, sender.ActualHeight));
+                    totalArea += w * h;
+                }
+
+                double controlArea = Math.Max(1.0, sender.ActualWidth * sender.ActualHeight);
+                // If less than 98% of the control area is covered, do a full draw to be safe.
+                if (totalArea < controlArea * 0.98)
+                    doFullDraw = true;
+            }
+
+            if (doFullDraw)
+            {
+                using var ds = sender.CreateDrawingSession(new Windows.Foundation.Rect(0, 0, sender.ActualWidth, sender.ActualHeight));
+                DrawIntoSession(ds);
+            }
+            else
+            {
+                //绘制所有无效区域
+                foreach (var region in args.InvalidatedRegions)
+                {
+                    using var ds = sender.CreateDrawingSession(region);
+                    DrawIntoSession(ds);
+                }
             }
             SetFPSUpdateTime();
         }
@@ -256,6 +347,8 @@ namespace FSGaryityTool_Win11.Controls
 
         private float? _cursorX = null;
         private float? _cursorY = null;
+        // store recent drag samples for velocity estimation
+        private readonly Queue<(Point pos, long time)> _dragSamples = new();
 
         private Dictionary<uint, PointerPoint> _activePointers = new();
         private bool _isMultiTouch = false;
@@ -291,8 +384,13 @@ namespace FSGaryityTool_Win11.Controls
             {
                 _isDragging = true;
                 _lastDragPosition = point.Position;
-                _inertiaTimer?.Stop();
                 this.CapturePointer(e.Pointer);
+                // cancel any running inertia when starting a new drag
+                StopInertia();
+                // clear any previous drag samples
+                _dragSamples.Clear();
+                // record initial sample (high-resolution timestamp)
+                _dragSamples.Enqueue((point.Position, Stopwatch.GetTimestamp()));
                 e.Handled = true;
             }
         }
@@ -337,10 +435,13 @@ namespace FSGaryityTool_Win11.Controls
                 double logicDeltaX = -dx * rangeX / grid.Width;
                 double logicDeltaY = dy * rangeY / grid.Height;
 
-                // 直接同步更新（无动画，提升流畅度）
+                // 直接同步更新（无动画，提升流畅度） — 立即反馈
                 HorizontalZoomScale = targetScaleX;
                 VerticalZoomScale = targetScaleY;
                 RuntimeCenter = new Point(newCenterX + logicDeltaX, newCenterY + logicDeltaY);
+                InvalidateCanvas();
+                UpdateResetViewVisibility();
+                StartAnimationLoop();
 
                 _lastDistance = newDistance;
                 _lastCenter = newCenter;
@@ -352,10 +453,12 @@ namespace FSGaryityTool_Win11.Controls
             if (_isDragging && ZoomMode != WaveformZoomMode.Disabled)
             {
                 var curPos = point.Position;
-                double deltaX = curPos.X - _lastDragPosition.X;
-                double deltaY = curPos.Y - _lastDragPosition.Y;
+                var delta = new Vector2(
+                    (float)(curPos.X - _lastDragPosition.X),
+                    (float)(curPos.Y - _lastDragPosition.Y)
+                );
 
-                if (Math.Abs(deltaX) < 1 && Math.Abs(deltaY) < 1) return;
+                if (delta.Length() < 0.5f) return;
 
                 var margin = WaveGridBorderMargin;
                 double drawableWidth = ActualWidth - margin.Left - margin.Right;
@@ -364,16 +467,22 @@ namespace FSGaryityTool_Win11.Controls
 
                 double viewW = ViewMaxX - ViewMinX;
                 double viewH = ViewMaxY - ViewMinY;
-                double logicDeltaX = deltaX * viewW / drawableWidth;
-                double logicDeltaY = -deltaY * viewH / drawableHeight;
 
+                double logicDeltaX = delta.X * viewW / drawableWidth;
+                double logicDeltaY = -delta.Y * viewH / drawableHeight;
+
+                // Immediate update for drag (direct feedback)
                 RuntimeCenter = new Point(
                     RuntimeCenter.X - logicDeltaX * DragSensitivity,
                     RuntimeCenter.Y - logicDeltaY * DragSensitivity);
-
-                _inertiaVelocity = new Vector2((float)deltaX, (float)deltaY) * 0.95f;
-                _lastDragPosition = curPos;
                 InvalidateCanvas();
+                UpdateResetViewVisibility();
+
+                _lastDragPosition = curPos;
+                // record sample for velocity estimation (high-resolution timestamp)
+                _dragSamples.Enqueue((curPos, Stopwatch.GetTimestamp()));
+                while (_dragSamples.Count > 8) _dragSamples.Dequeue();
+
                 e.Handled = true;
             }
         }
@@ -386,15 +495,36 @@ namespace FSGaryityTool_Win11.Controls
             if (_activePointers.Count < 2)
                 _isMultiTouch = false;
 
-            if (_isDragging)
+                if (_isDragging)
             {
                 _isDragging = false;
                 this.ReleasePointerCapture(e.Pointer);
 
-                if (_inertiaVelocity.Length() > 0.1)
-                {
-                    StartInertiaAnimation();
-                }
+                    // 建议阈值调整为 20~50 像素/秒（根据实际手感调）
+                    // compute velocity from samples
+                    if (_dragSamples.Count >= 2)
+                    {
+                    var first = _dragSamples.Peek();
+                    var last = _dragSamples.Last();
+                    double dt = (last.time - first.time) / (double)Stopwatch.Frequency; // seconds
+                    if (dt > 0.001) // ignore too-short intervals
+                    {
+                        var dx = last.pos.X - first.pos.X;
+                        var dy = last.pos.Y - first.pos.Y;
+                        var vel = new Vector2((float)(dx / dt), (float)(dy / dt)); // pixels/sec
+                        // clamp extreme velocities to avoid 'fly' due to noise
+                        const float maxVel = 8000f;
+                        if (vel.Length() > maxVel)
+                            vel = Vector2.Normalize(vel) * maxVel;
+
+                        // set inertia velocity (pixel/sec)
+                        _inertiaVelocity = vel;
+                        if (_inertiaVelocity.Length() > 30f)
+                            StartInertiaAnimation();
+                    }
+                        _dragSamples.Clear();
+                    }
+
                 e.Handled = true;
             }
         }
@@ -408,51 +538,87 @@ namespace FSGaryityTool_Win11.Controls
         }
         private void UserControl_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            // 清除指针相关状态（适配触摸和鼠标）
-            _cursorX = null;
-            _cursorY = null;
-            _isDragging = false;
-            _activePointers.Clear();
-            _isMultiTouch = false;
+            // 仅在未拖动时清除指针相关状态（适配触摸和鼠标）
+            if (!_isDragging)
+            {
+                _cursorX = null;
+                _cursorY = null;
+                _activePointers.Clear();
+                _isMultiTouch = false;
+            }
             WaveformDemonstratorCanvasControl.Invalidate();
         }
+
+        private DateTime _lastWheelTime = DateTime.MinValue;
 
         private void UserControl_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
         {
             if (ZoomMode == WaveformZoomMode.Disabled) return;
 
             var pointerPoint = e.GetCurrentPoint(WaveformDemonstratorCanvasControl);
-            var position = pointerPoint.Position; // 鼠标或触摸点像素坐标
+            var position = pointerPoint.Position;
             int delta = pointerPoint.Properties.MouseWheelDelta;
             if (delta == 0) return;
 
+            // 计算滚动间隔
+            var now = DateTime.Now;
+            var intervalMs = (now - _lastWheelTime).TotalMilliseconds;
+            _lastWheelTime = now;
+
+            // 计算加速系数（越快滚动，系数越小，动画越短）
+            double speedFactor = Math.Clamp(intervalMs / 120.0, 0.3, 1.0);
+            var duration = TimeSpan.FromMilliseconds(160 * speedFactor);
+
+            var (targetScaleX, targetScaleY) = CalculateZoomTarget(delta);
+            // Modifier keys override axis behavior: Ctrl -> horizontal only, Alt (Menu) -> vertical only
+            var mods = e.KeyModifiers;
+            bool ctrl = mods.HasFlag(VirtualKeyModifiers.Control);
+            bool alt = mods.HasFlag(VirtualKeyModifiers.Menu);
+
+            if (ctrl && !alt)
+            {
+                // horizontal only
+                targetScaleY = VerticalZoomScale;
+            }
+            else if (alt && !ctrl)
+            {
+                // vertical only
+                targetScaleX = HorizontalZoomScale;
+            }
+            else if (ctrl && alt)
+            {
+                // both modifiers -> apply to both axes (no change)
+            }
+            var grid = GetGridBounds(WaveformDemonstratorCanvasControl.ActualWidth, WaveformDemonstratorCanvasControl.ActualHeight);
+            var logicalBefore = MapToLogical(position, grid, ViewMinX, ViewMaxX, ViewMinY, ViewMaxY);
+            var (newCenterX, newCenterY) = CalculateNewCenter(position, grid, logicalBefore, targetScaleX, targetScaleY);
+
+            UpdateResetViewVisibility();
+            StartZoomAnimation(newCenterX, newCenterY, targetScaleX, targetScaleY, duration);
+            e.Handled = true;
+        }
+
+        private (double targetScaleX, double targetScaleY) CalculateZoomTarget(int delta)
+        {
             double factor = delta > 0 ? 1.18 : 1.0 / 1.18;
             double targetScaleX = HorizontalZoomScale * (ZoomMode is WaveformZoomMode.Horizontal or WaveformZoomMode.Both ? factor : 1.0);
             double targetScaleY = VerticalZoomScale * (ZoomMode is WaveformZoomMode.Vertical or WaveformZoomMode.Both ? factor : 1.0);
+            return (targetScaleX, targetScaleY);
+        }
 
-            // 获取当前画布的 grid 区域
-            var grid = GetGridBounds(WaveformDemonstratorCanvasControl.ActualWidth, WaveformDemonstratorCanvasControl.ActualHeight);
-
-            // 记录缩放前指针像素坐标对应的逻辑坐标
-            var logicalBefore = MapToLogical(position, grid, ViewMinX, ViewMaxX, ViewMinY, ViewMaxY);
-
-            // 计算缩放后的显示范围
+        private (double newCenterX, double newCenterY) CalculateNewCenter(Point position, GridBounds grid, Point logicalBefore, double targetScaleX, double targetScaleY)
+        {
             double zoomX = targetScaleX;
             double zoomY = targetScaleY;
             double rangeX = (MaxHorizontalValue - MinHorizontalValue) / zoomX;
             double rangeY = (MaxVerticalValue - MinVerticalValue) / zoomY;
-
-            // 计算新的中心点，使得缩放后指针像素坐标对应的逻辑坐标和缩放前一致
             double percentX = (position.X - grid.Left) / grid.Width;
             double percentY = 1.0 - (position.Y - grid.Top) / grid.Height;
-
             double newCenterX = logicalBefore.X - (percentX - 0.5) * rangeX;
             double newCenterY = logicalBefore.Y - (percentY - 0.5) * rangeY;
-
-            UpdateResetViewVisibility();
-            StartZoomAnimation(newCenterX, newCenterY, targetScaleX, targetScaleY, TimeSpan.FromMilliseconds(160));
-            e.Handled = true;
+            return (newCenterX, newCenterY);
         }
+
         // 辅助方法
         private static double GetDistance(Point p1, Point p2)
         {

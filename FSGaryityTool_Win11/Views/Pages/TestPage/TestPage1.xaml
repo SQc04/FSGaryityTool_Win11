@@ -578,6 +578,12 @@
                  TextWrapping="Wrap"
                  Visibility="Visible" />
 
+        <ComboBox>
+            <x:String>原始转速</x:String>
+            <x:String>最小转速</x:String>
+            <x:String>固定转速</x:String>
+        </ComboBox>
+
         <WebView2 x:Name="Webview1" Grid.Row="0" Grid.Column="0" Margin="6" Visibility="Collapsed" />
         <WebView2 x:Name="Webview2" Grid.Row="0" Grid.Column="1" Margin="6" Visibility="Collapsed" />
         <WebView2 x:Name="Webview3" Grid.Row="1" Grid.Column="0" Margin="6" Visibility="Collapsed" />

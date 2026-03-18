@@ -29,9 +29,18 @@ namespace FSGaryityTool_Win11.Controls
 
     public sealed partial class SerialPortFlowInfoBox : UserControl, INotifyPropertyChanged
     {
-        private DispatcherTimer _timer;
-        private Queue<(bool Value, DateTime Timestamp)> _logicalValues;
-        private int LogicAnalyzerBoxTimems = 1;
+        // 使用 CompositionTarget.Rendering 替代 DispatcherTimer
+        private bool _isRenderingActive = false;
+        private System.Diagnostics.Stopwatch _stopwatch = new System.Diagnostics.Stopwatch();
+        private Queue<(bool Value, double TimestampMs)> _logicalValues;
+        private Queue<SerialPortStateSample> _dataCache = new Queue<SerialPortStateSample>();
+
+        // 串口状态采样结构
+        private class SerialPortStateSample
+        {
+            public bool Value { get; set; }
+            public double TimestampMs { get; set; } // 毫秒
+        }
 
         private double _waveViewWidth;
         public double WaveViewWidth
@@ -48,6 +57,8 @@ namespace FSGaryityTool_Win11.Controls
         }
 
         public ObservableCollection<WaveformDataSource> WaveformSources { get; private set; }
+        // 缓存并重用的点集合，避免每帧分配
+        private ObservableCollection<(float x, float y)> _polylinePoints;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
@@ -134,7 +145,7 @@ namespace FSGaryityTool_Win11.Controls
         public SerialPortFlowInfoBox()
         {
             this.InitializeComponent();
-            _logicalValues = new Queue<(bool, DateTime)>();
+            _logicalValues = new Queue<(bool, double)>();
 
             WaveformSources = new ObservableCollection<WaveformDataSource>
             {
@@ -146,10 +157,57 @@ namespace FSGaryityTool_Win11.Controls
                 }
             };
 
+            // 初始化并重用点集合
+            _polylinePoints = new ObservableCollection<(float x, float y)>();
+            WaveformSources[0].PolylinePointsData = _polylinePoints;
+
             this.ActualThemeChanged += OnActualThemeChanged;
-            _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(LogicAnalyzerBoxTimems) };
-            _timer.Tick += Timer_Tick;
             WaveViewWidth = LogicAnalyzerBoxMaxTime * 1000.0;
+
+            this.Loaded += SerialPortFlowInfoBox_Loaded;
+            this.Unloaded += SerialPortFlowInfoBox_Unloaded;
+        }
+
+        private void SerialPortFlowInfoBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (!_isRenderingActive)
+            {
+                _stopwatch.Restart();
+                Microsoft.UI.Xaml.Media.CompositionTarget.Rendering += CompositionTarget_Rendering;
+                _isRenderingActive = true;
+                // 初始化时确保至少有一个采样点，避免无图形渲染
+                if (_logicalValues.Count == 0)
+                {
+                    double timestampMs = _stopwatch.IsRunning ? _stopwatch.Elapsed.TotalMilliseconds : 0;
+                    _logicalValues.Enqueue((LogicalValue, timestampMs));
+                    UpdateOscilloscope();
+                }
+            }
+        }
+
+        private void SerialPortFlowInfoBox_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (_isRenderingActive)
+            {
+                Microsoft.UI.Xaml.Media.CompositionTarget.Rendering -= CompositionTarget_Rendering;
+                _isRenderingActive = false;
+                _stopwatch.Stop();
+            }
+        }
+
+        private void CompositionTarget_Rendering(object sender, object e)
+        {
+            // 每次 CompositionTarget.Rendering 触发都刷新，自动适应屏幕刷新率
+            if (LogicAnalyzer)
+            {
+                // 批量处理数据缓存
+                while (_dataCache.Count > 0)
+                {
+                    var sample = _dataCache.Dequeue();
+                    _logicalValues.Enqueue((sample.Value, sample.TimestampMs));
+                }
+                UpdateOscilloscope();
+            }
         }
 
 
@@ -164,7 +222,7 @@ namespace FSGaryityTool_Win11.Controls
             var control = d as SerialPortFlowInfoBox;
             bool newValue = (bool)e.NewValue;
             control.FsBorderIsChecked(newValue ? 1 : 0, control.InfoBorder, control.InfoNameTextBlock);
-            control.UpdateOscilloscope(newValue); // 更新示波器图像
+            control.AddSerialPortStateSample(newValue); // 只采集数据，绘制交给渲染事件
         }
 
         private static void OnLogicAnalyzerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -176,42 +234,81 @@ namespace FSGaryityTool_Win11.Controls
 
         private void UpdateMaxValues()
         {
-            DateTime now = DateTime.Now;
-            RemoveExpiredLogicalValues(now);
+            double nowMs = _stopwatch.IsRunning ? _stopwatch.Elapsed.TotalMilliseconds : 0;
+            RemoveExpiredLogicalValues(nowMs);
         }
 
         private void UpdateOscilloscope(bool? newValue = null)
         {
-            DateTime now = DateTime.Now;
-            _logicalValues.Enqueue((newValue ?? LogicalValue, now));
-            RemoveExpiredLogicalValues(now);
-
-            var points = new ObservableCollection<(float x, float y)>();
+            // 使用高精度计时器，绘制时统一处理队列
+            double nowMs = _stopwatch.IsRunning ? _stopwatch.Elapsed.TotalMilliseconds : 0;
+            RemoveExpiredLogicalValues(nowMs);
             double totalTimeSpan = LogicAnalyzerBoxMaxTime * 1000.0; // 毫秒范围
 
-            foreach (var value in _logicalValues)
+            // 将队列转换为数组便于索引
+            var samples = _logicalValues.ToArray();
+
+            // 生成阶梯波点（从左到右）：先在 x=0 处填充当前最早的值
+            var newPoints = new List<(float x, float y)>();
+            if (samples.Length == 0)
             {
-                double elapsedTime = (now - value.Timestamp).TotalMilliseconds;
-                // 横坐标直接用毫秒值（0 ~ totalTimeSpan）
-                float x = (float)(totalTimeSpan - elapsedTime);
-                // 纵坐标归一化到 0/1
-                float y = value.Value ? 1f : 0f;
-                points.Add((x, y));
+                // 没有采样则清空点
+                _polylinePoints.Clear();
+                return;
             }
 
-            WaveformSources[0].PolylinePointsData = points;
+            float valueToY(bool v) => v ? 1f : 0f;
+
+            // 左端使用最早样本的值
+            bool prevValue = samples[0].Value;
+            newPoints.Add((0f, valueToY(prevValue)));
+
+            for (int i = 0; i < samples.Length; i++)
+            {
+                var s = samples[i];
+                double elapsed = nowMs - s.TimestampMs;
+                float x = (float)(totalTimeSpan - elapsed);
+
+                // 横到达此时间点，保持之前的值
+                newPoints.Add((x, valueToY(prevValue)));
+                // 在此时间点发生跳变（如果有变化）
+                if (s.Value != prevValue)
+                {
+                    newPoints.Add((x, valueToY(s.Value)));
+                    prevValue = s.Value;
+                }
+            }
+
+            // 将当前值一直拉伸到右边缘
+            newPoints.Add(((float)totalTimeSpan, valueToY(prevValue)));
+
+            // 同步更新到重用集合，避免每帧分配
+            int iExisting = 0;
+            for (; iExisting < newPoints.Count && iExisting < _polylinePoints.Count; iExisting++)
+            {
+                _polylinePoints[iExisting] = newPoints[iExisting];
+            }
+            // 添加额外的点
+            for (int j = iExisting; j < newPoints.Count; j++)
+            {
+                _polylinePoints.Add(newPoints[j]);
+            }
+            // 移除多余的点
+            while (_polylinePoints.Count > newPoints.Count)
+            {
+                _polylinePoints.RemoveAt(_polylinePoints.Count - 1);
+            }
         }
 
-        private void RemoveExpiredLogicalValues(DateTime now)
+        private void RemoveExpiredLogicalValues(double nowMs)
         {
-            DateTime cutoffTime = now.AddSeconds(-LogicAnalyzerBoxMaxTime);
-
-            // 只要队列中有两个及以上点，并且第2个点也超时，才移除第1个点
+            // 重载为高精度毫秒
+            double cutoffMs = nowMs - LogicAnalyzerBoxMaxTime * 1000.0;
             while (_logicalValues.Count > 1)
             {
                 var first = _logicalValues.Peek();
                 var second = _logicalValues.ToArray()[1];
-                if (second.Timestamp < cutoffTime)
+                if (second.TimestampMs < cutoffMs)
                 {
                     _logicalValues.Dequeue();
                 }
@@ -222,21 +319,21 @@ namespace FSGaryityTool_Win11.Controls
             }
         }
 
+        // 采集数据时调用，入队缓存
+        private void AddSerialPortStateSample(bool value)
+        {
+            double timestampMs = _stopwatch.IsRunning ? _stopwatch.Elapsed.TotalMilliseconds : 0;
+            _dataCache.Enqueue(new SerialPortStateSample { Value = value, TimestampMs = timestampMs });
+        }
+
         private void UpdateLogicAnalyzer(bool isEnabled)
         {
-            if (isEnabled)
-            {
-                _timer.Start();
-            }
-            else
-            {
-                _timer.Stop();
-            }
+            // CompositionTarget.Rendering 由 Loaded/Unloaded 控制，无需在此启动/停止
         }
 
         private void Timer_Tick(object sender, object e)
         {
-            UpdateOscilloscope();
+            // 已被 CompositionTarget_Rendering 替代，无需实现
         }
 
         private double startPront = 0;//_canvasWidth
@@ -264,7 +361,13 @@ namespace FSGaryityTool_Win11.Controls
         private void ClearSerialInfoButton_Click(object sender, RoutedEventArgs e)
         {
             _logicalValues.Clear();
-            WaveformSources[0].PolylinePointsData = new ObservableCollection<(float x, float y)>();
+            _dataCache.Clear();
+            // 在清空后添加一个初始点以保证控件有可渲染的数据
+            double timestampMs = _stopwatch.IsRunning ? _stopwatch.Elapsed.TotalMilliseconds : 0;
+            bool initial = LogicalValue; // 使用当前逻辑值
+            _logicalValues.Enqueue((initial, timestampMs));
+            _polylinePoints.Clear();
+            UpdateOscilloscope();
         }
     }
 }

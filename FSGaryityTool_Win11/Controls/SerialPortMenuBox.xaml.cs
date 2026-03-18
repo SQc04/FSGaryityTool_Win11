@@ -170,21 +170,30 @@ namespace FSGaryityTool_Win11.Controls
         {
             get
             {
-                if (SerialPortBaudRate > 9600)
-                    return $"{(BitRate / 1000.0):F2} Kbit/s";
+                double bitRate = BitRate;
+                if (bitRate < 1000)
+                    return $"{bitRate:F2} bit/s";
+                else if (bitRate < 1_000_000)
+                    return $"{(bitRate / 1000.0):F2} Kbit/s";
+                else if (bitRate < 1_000_000_000)
+                    return $"{(bitRate / 1_000_000.0):F2} Mbit/s";
                 else
-                    return $"{BitRate} bit/s";
+                    return $"{(bitRate / 1_000_000_000.0):F2} Gbit/s";
             }
         }
         public string ByteRateDisplay
         {
             get
             {
-                double byteRate = BitRate / 8.0; // Convert bits to bytes
-                if (SerialPortBaudRate > 9600)
-                    return $"{(byteRate / 1000.0):F2} KB/s"; // Use KB/s for kilobytes per second
+                double byteRate = BitRate / 8.0;
+                if (byteRate < 1000)
+                    return $"{byteRate:F2} Byte/s";
+                else if (byteRate < 1_000_000)
+                    return $"{(byteRate / 1000.0):F2} KB/s";
+                else if (byteRate < 1_000_000_000)
+                    return $"{(byteRate / 1_000_000.0):F2} MB/s";
                 else
-                    return $"{byteRate:F2} Byte/s"; // Use B/s for bytes per second
+                    return $"{(byteRate / 1_000_000_000.0):F2} GB/s";
             }
         }
 

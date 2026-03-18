@@ -624,68 +624,17 @@
                         <Grid />
                     </toolkit:SettingsCard>
 
-                    <toolkit:SettingsExpander x:Name="SoftToolBackground" Margin="0,3,0,3" Description="Set the background of FSGravityTool." Header="Personalize the background" IsExpanded="True">
-                        <toolkit:SettingsExpander.HeaderIcon>
-                            <FontIcon FontSize="12" Glyph="&#xEF1F;" />
-                        </toolkit:SettingsExpander.HeaderIcon>
-                        <Grid>
-                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                <ComboBox x:Name="SoftBackgroundCombobox" Width="150" Margin="0,0,0,0" SelectionChanged="SoftBackgroundCombobox_SelectionChanged" />
-                            </StackPanel>
-                        </Grid>
-                        <toolkit:SettingsExpander.Items>
-                            <toolkit:SettingsCard Description="Keep the application transparent when it is not in focus." Header="Keep transparent">
-                                <Grid>
-                                    <controls:ToggleSwitch x:Name="SoftBackgroundToggleSwitch" IsOn="{x:Bind WindowBackgroundBrushActivatedEnable, Mode=TwoWay}" />
-                                </Grid>
-                            </toolkit:SettingsCard>
-                        </toolkit:SettingsExpander.Items>
-                    </toolkit:SettingsExpander>
-
-                    <toolkit:SettingsExpander x:Name="SoftWindowTheme"
-                                              Description="Set the App theme of FSGravityTool."
-                                              Header="Set App theme">
-                        <toolkit:SettingsExpander.HeaderIcon>
-                            <FontIcon FontSize="12" Glyph="&#xE793;" />
-                        </toolkit:SettingsExpander.HeaderIcon>
-                        <ComboBox x:Name="SoftWindowThemeComboBox" Width="150" Margin="0,0,0,0" SelectedIndex="0" SelectionChanged="SoftWindowThemeComboBox_SelectionChanged">
-                            <x:String>System Default</x:String>
-                            <x:String>Light</x:String>
-                            <x:String>Dark</x:String>
-                        </ComboBox>
-                        <toolkit:SettingsExpander.Items>
-                            <toolkit:SettingsCard>
-                                <Grid />
-                            </toolkit:SettingsCard>
-                        </toolkit:SettingsExpander.Items>
-
-                    </toolkit:SettingsExpander>
-
-                    <toolkit:SettingsExpander x:Name="SoftBackground" Margin="0,3,0,3" Description="" Header="">
-                        <toolkit:SettingsExpander.HeaderIcon>
-                            <FontIcon FontSize="12" Glyph="&#xE790;" />
-                        </toolkit:SettingsExpander.HeaderIcon>
-                        <ComboBox x:Name="SoftBackgroundColorComboBox" Width="150" Margin="0,0,0,0" />
-                        <toolkit:SettingsExpander.Items>
-                            <toolkit:SettingsCard>
-                                <Grid>
-                                    <toolkit:ColorPickerButton />
-
-                                </Grid>
-                            </toolkit:SettingsCard>
-                            <toolkit:SettingsCard>
-                                <Grid />
-                            </toolkit:SettingsCard>
-                        </toolkit:SettingsExpander.Items>
-                    </toolkit:SettingsExpander>
-
                     <toolkit:SettingsCard x:Name="SoftLanguage" Margin="0,3,0,3" Description="Set the background of FSGravityTool." Header="Language">
                         <toolkit:SettingsCard.HeaderIcon>
                             <FontIcon FontSize="12" Glyph="&#xF2B7;" />
                         </toolkit:SettingsCard.HeaderIcon>
                         <Grid>
                             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                <ComboBox x:Name="SoftLanguageCombobox" Width="150" Margin="0,0,27,0" SelectionChanged="SoftLanguageCombobox_SelectionChanged" />
+                                <ComboBox x:Name="SoftLanguageCombobox" Width="150" Margin="0,0,27,0" SelectedIndex="0" SelectionChanged="SoftLanguageCombobox_SelectionChanged">
+                                    <x:String>System Default</x:String>
+                                    <x:String>English</x:String>
+                                    <x:String>Chinese Simplified</x:String>
+                                </ComboBox>
                             </StackPanel>
                         </Grid>
                     </toolkit:SettingsCard>
@@ -724,6 +673,76 @@
                             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" />
                         </Grid>
                     </toolkit:SettingsCard>
+
+                    <StackPanel.ChildrenTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition />
+                            <RepositionThemeTransition IsStaggeringEnabled="False" />
+                        </TransitionCollection>
+                    </StackPanel.ChildrenTransitions>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Margin="0,12,0,0" Text="" />
+                    <TextBlock Margin="0" Text="Appearance" />
+
+                    <toolkit:SettingsExpander x:Name="SoftToolBackground" Margin="0,3,0,3" Description="Set the background of FSGravityTool." Header="Personalize the background" IsExpanded="True">
+                        <toolkit:SettingsExpander.HeaderIcon>
+                            <FontIcon FontSize="12" Glyph="&#xEF1F;" />
+                        </toolkit:SettingsExpander.HeaderIcon>
+                        <Grid>
+                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                <ComboBox x:Name="SoftBackgroundCombobox" Width="150" Margin="0,0,0,0" SelectionChanged="SoftBackgroundCombobox_SelectionChanged" />
+                            </StackPanel>
+                        </Grid>
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard Description="Keep the application transparent when it is not in focus." Header="Keep transparent">
+                                <Grid>
+                                    <controls:ToggleSwitch x:Name="SoftBackgroundToggleSwitch" IsOn="{x:Bind WindowBackgroundBrushActivatedEnable, Mode=TwoWay}" />
+                                </Grid>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
+
+                    <toolkit:SettingsCard x:Name="SoftWindowTheme" Margin="0,3,0,3" Description="Set the App theme of FSGravityTool." Header="Set App theme">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon FontSize="12" Glyph="&#xE793;" />
+                        </toolkit:SettingsCard.HeaderIcon>
+                        <ComboBox x:Name="SoftWindowThemeComboBox" Width="150" Margin="0,0,27,0" SelectedIndex="0" SelectionChanged="SoftWindowThemeComboBox_SelectionChanged">
+                            <x:String>System Default</x:String>
+                            <x:String>Light</x:String>
+                            <x:String>Dark</x:String>
+                        </ComboBox>
+                    </toolkit:SettingsCard>
+
+                    <toolkit:SettingsExpander x:Name="SoftBackground" Margin="0,3,0,3" Description="Personalize app Background" Header="Set App Background">
+                        <toolkit:SettingsExpander.HeaderIcon>
+                            <FontIcon FontSize="12" Glyph="&#xE790;" />
+                        </toolkit:SettingsExpander.HeaderIcon>
+                        <ComboBox x:Name="SoftBackgroundColorComboBox" Width="150" Margin="0,0,0,0" SelectedIndex="0">
+                            <x:String>Color</x:String>
+                            <x:String>Image</x:String>
+                        </ComboBox>
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard Header="Background Color Setting">
+                                <Grid>
+                                    <toolkit:ColorPickerButton Width="150">
+                                        <toolkit:ColorPickerButton.ColorPickerStyle>
+                                            <Style TargetType="toolkit:ColorPicker">
+                                                <Setter Property="IsAlphaEnabled" Value="True" />
+                                                <Setter Property="IsColorPaletteVisible" Value="false" />
+                                            </Style>
+                                        </toolkit:ColorPickerButton.ColorPickerStyle>
+                                    </toolkit:ColorPickerButton>
+
+                                </Grid>
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard Description="File location of the image used for the window background" Header="Background image path">
+                                <Grid>
+                                    <TextBox MinWidth="150" MaxWidth="300" HorizontalAlignment="Stretch" />
+                                </Grid>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
 
                     <StackPanel.ChildrenTransitions>
                         <TransitionCollection>

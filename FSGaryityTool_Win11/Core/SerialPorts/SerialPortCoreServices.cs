@@ -22,6 +22,7 @@ internal class SerialPortCoreServices
         /// </summary>
         public class SerialPortConfig : INotifyPropertyChanged
         {
+            private string _portName;
             private int baudRate;                       // 波特率
             private Parity parity;                      // 校验位
             private StopBits stopBits;                  // 停止位
@@ -56,6 +57,18 @@ internal class SerialPortCoreServices
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
 
+            public string PortName
+            {
+                get => _portName;
+                set
+                {
+                    if (_portName != value)
+                    {
+                        _portName = value;
+                        OnPropertyChanged(nameof(PortName));
+                    }
+                }
+            }
             public int BaudRate
             {
                 get => baudRate;

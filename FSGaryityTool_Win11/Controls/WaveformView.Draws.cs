@@ -147,48 +147,365 @@ namespace FSGaryityTool_Win11.Controls
             if (source.PolylinePointsData is not { Count: > 1 } points)
                 return;
 
+            // quick aliases
             var brush = source.StrokeBrush;
             var thickness = source.StrokeThickness;
             var style = source.LineStyle;
             var color = GetBrushColor(brush);
 
-            var builder = new CanvasPathBuilder(sender.Device);
-            bool first = true;
+            // If style is None we don't draw polyline geometry (ticks may still be drawn elsewhere)
+            if (style == LineStyle.None)
+                return;
 
-            // 计算最小像素间隔，缩小时增大间隔
-            float minPixelDist = 1.5f;
-            if (zoomX < 1.0)
-                minPixelDist = (float)(1.5 / zoomX);
+            // Visible logical span
+            double viewW = viewMaxX - viewMinX;
+            double viewH = viewMaxY - viewMinY;
+            if (viewW <= 0 || viewH <= 0) return;
 
-            float lastX = float.MinValue, lastY = float.MinValue;
+            // precompute linear mapping constants: logical -> canvas
+            float scaleX = (float)(grid.Width / viewW);
+            float scaleY = (float)(grid.Height / viewH);
+            float originX = (float)grid.Left - (float)(viewMinX * scaleX);
+
+            // dynamic minimum pixel distance
+            float minPixelDist = Math.Max(1.0f, (float)(1.0 / Math.Max(1e-9, zoomX)));
+            int pixelCols = Math.Max(1, (int)Math.Ceiling(ActualRootWidth));
+            int pixelRows = Math.Max(1, (int)Math.Ceiling(ActualRootHeight));
+
+            var canvasPoints = new List<Vector2>(points.Count);
+            double totalDx = 0;
+            double totalDy = 0;
+            float minCanvasX = float.MaxValue;
+            float maxCanvasX = float.MinValue;
+            float minCanvasY = float.MaxValue;
+            float maxCanvasY = float.MinValue;
+            Vector2? lastCanvas = null;
 
             foreach (var rawPt in points)
             {
-                var logicalPoint = ApplyOffset(new Point(rawPt.x, rawPt.y), source);
-                var canvasPt = MapToCanvas(logicalPoint, grid, viewMinX, viewMaxX, viewMinY, viewMaxY);
-
-                if (!first && Math.Abs(canvasPt.X - lastX) < minPixelDist && Math.Abs(canvasPt.Y - lastY) < minPixelDist)
+                float cx = originX + (float)((rawPt.x + source.OffSetX) * scaleX);
+                float cy = (float)(grid.Bottom - ((rawPt.y + source.OffSetY) - viewMinY) * scaleY);
+                if (float.IsNaN(cx) || float.IsNaN(cy) || float.IsInfinity(cx) || float.IsInfinity(cy))
                     continue;
 
-                if (first)
+                var pt = new Vector2(cx, cy);
+                canvasPoints.Add(pt);
+
+                minCanvasX = Math.Min(minCanvasX, cx);
+                maxCanvasX = Math.Max(maxCanvasX, cx);
+                minCanvasY = Math.Min(minCanvasY, cy);
+                maxCanvasY = Math.Max(maxCanvasY, cy);
+
+                if (lastCanvas.HasValue)
                 {
-                    builder.BeginFigure(canvasPt);
-                    first = false;
-                }
-                else
-                {
-                    builder.AddLine(canvasPt);
+                    totalDx += Math.Abs(cx - lastCanvas.Value.X);
+                    totalDy += Math.Abs(cy - lastCanvas.Value.Y);
                 }
 
-                lastX = canvasPt.X;
-                lastY = canvasPt.Y;
+                lastCanvas = pt;
             }
 
-            if (!first)
+            if (canvasPoints.Count < 2)
+                return;
+
+            void DrawExactPolyline()
             {
+                var builder = new CanvasPathBuilder(sender.Device);
+                builder.BeginFigure(canvasPoints[0]);
+                for (int i = 1; i < canvasPoints.Count; i++)
+                    builder.AddLine(canvasPoints[i]);
+
                 builder.EndFigure(CanvasFigureLoop.Open);
-                using var geometry = CanvasGeometry.CreatePath(builder);
-                DrawGeometryStyle(ds, geometry, color, thickness, style);
+                using var geom = CanvasGeometry.CreatePath(builder);
+                DrawGeometryStyle(ds, geom, color, thickness, style);
+            }
+
+            bool isTwoPointSegment = canvasPoints.Count == 2;
+            bool isSparseEnough = canvasPoints.Count <= Math.Max(64, (int)Math.Ceiling(grid.Width * 1.25f));
+            if (isTwoPointSegment || isSparseEnough)
+            {
+                DrawExactPolyline();
+                return;
+            }
+
+            bool preferColumns = totalDx >= totalDy || (maxCanvasX - minCanvasX) >= (maxCanvasY - minCanvasY);
+            int step = Math.Max(1, (int)Math.Floor(minPixelDist));
+
+            if (preferColumns)
+            {
+                var hasData = new bool[pixelCols];
+                var minY = new float[pixelCols];
+                var maxY = new float[pixelCols];
+                for (int i = 0; i < pixelCols; i++)
+                {
+                    minY[i] = float.MaxValue;
+                    maxY[i] = float.MinValue;
+                }
+
+                void AccumulateColumn(int px, float y0, float y1)
+                {
+                    if (px < 0 || px >= pixelCols)
+                        return;
+
+                    if (!hasData[px])
+                    {
+                        hasData[px] = true;
+                        minY[px] = Math.Min(y0, y1);
+                        maxY[px] = Math.Max(y0, y1);
+                    }
+                    else
+                    {
+                        minY[px] = Math.Min(minY[px], Math.Min(y0, y1));
+                        maxY[px] = Math.Max(maxY[px], Math.Max(y0, y1));
+                    }
+                }
+
+                for (int i = 1; i < canvasPoints.Count; i++)
+                {
+                    Vector2 a = canvasPoints[i - 1];
+                    Vector2 b = canvasPoints[i];
+
+                    if (Math.Max(a.X, b.X) < grid.Left || Math.Min(a.X, b.X) > grid.Right ||
+                        Math.Max(a.Y, b.Y) < grid.Top || Math.Min(a.Y, b.Y) > grid.Bottom)
+                        continue;
+
+                    float dx = b.X - a.X;
+                    float dy = b.Y - a.Y;
+
+                    if (Math.Abs(dx) < 0.0001f)
+                    {
+                        int px = (int)Math.Floor(a.X);
+                        AccumulateColumn(px, a.Y, b.Y);
+                        continue;
+                    }
+
+                    int startPx = Math.Max(0, (int)Math.Floor(Math.Min(a.X, b.X)));
+                    int endPx = Math.Min(pixelCols - 1, (int)Math.Floor(Math.Max(a.X, b.X)));
+
+                    for (int px = startPx; px <= endPx; px++)
+                    {
+                        float segStartX = Math.Max(Math.Min(a.X, b.X), px);
+                        float segEndX = Math.Min(Math.Max(a.X, b.X), px + 1f);
+                        if (segStartX > segEndX)
+                            continue;
+
+                        float t0 = (segStartX - a.X) / dx;
+                        float t1 = (segEndX - a.X) / dx;
+                        float y0 = a.Y + dy * t0;
+                        float y1 = a.Y + dy * t1;
+                        AccumulateColumn(px, y0, y1);
+                    }
+                }
+
+                bool any = false;
+                for (int i = 0; i < pixelCols; i++)
+                {
+                    if (hasData[i])
+                    {
+                        any = true;
+                        break;
+                    }
+                }
+
+                if (!any)
+                {
+                    DrawExactPolyline();
+                    return;
+                }
+
+                var builder = new CanvasPathBuilder(sender.Device);
+                bool started = false;
+                bool hasAnyFigure = false;
+                int startCol = Math.Max(0, (int)Math.Floor(grid.Left));
+                int endCol = Math.Min(pixelCols - 1, (int)Math.Ceiling(grid.Right));
+
+                void FlushColumnFigure()
+                {
+                    if (!started)
+                        return;
+
+                    builder.EndFigure(CanvasFigureLoop.Open);
+                    started = false;
+                    hasAnyFigure = true;
+                }
+
+                for (int px = startCol; px <= endCol; px += step)
+                {
+                    if (!hasData[px])
+                    {
+                        FlushColumnFigure();
+                        continue;
+                    }
+
+                    float x = px + 0.5f;
+                    float low = minY[px];
+                    float high = maxY[px];
+                    float span = Math.Abs(high - low);
+
+                    if (span > 1.5f)
+                    {
+                        FlushColumnFigure();
+                        DrawLineStyle(ds, x, low, x, high, color, thickness, style);
+                        continue;
+                    }
+
+                    var pt = new Vector2(x, (low + high) * 0.5f);
+                    if (!started)
+                    {
+                        builder.BeginFigure(pt);
+                        started = true;
+                    }
+                    else
+                    {
+                        builder.AddLine(pt);
+                    }
+                }
+
+                FlushColumnFigure();
+
+                if (hasAnyFigure)
+                {
+                    using var geom = CanvasGeometry.CreatePath(builder);
+                    DrawGeometryStyle(ds, geom, color, thickness, style);
+                }
+            }
+            else
+            {
+                var hasData = new bool[pixelRows];
+                var minX = new float[pixelRows];
+                var maxX = new float[pixelRows];
+                for (int i = 0; i < pixelRows; i++)
+                {
+                    minX[i] = float.MaxValue;
+                    maxX[i] = float.MinValue;
+                }
+
+                void AccumulateRow(int py, float x0, float x1)
+                {
+                    if (py < 0 || py >= pixelRows)
+                        return;
+
+                    if (!hasData[py])
+                    {
+                        hasData[py] = true;
+                        minX[py] = Math.Min(x0, x1);
+                        maxX[py] = Math.Max(x0, x1);
+                    }
+                    else
+                    {
+                        minX[py] = Math.Min(minX[py], Math.Min(x0, x1));
+                        maxX[py] = Math.Max(maxX[py], Math.Max(x0, x1));
+                    }
+                }
+
+                for (int i = 1; i < canvasPoints.Count; i++)
+                {
+                    Vector2 a = canvasPoints[i - 1];
+                    Vector2 b = canvasPoints[i];
+
+                    if (Math.Max(a.X, b.X) < grid.Left || Math.Min(a.X, b.X) > grid.Right ||
+                        Math.Max(a.Y, b.Y) < grid.Top || Math.Min(a.Y, b.Y) > grid.Bottom)
+                        continue;
+
+                    float dx = b.X - a.X;
+                    float dy = b.Y - a.Y;
+
+                    if (Math.Abs(dy) < 0.0001f)
+                    {
+                        int py = (int)Math.Floor(a.Y);
+                        AccumulateRow(py, a.X, b.X);
+                        continue;
+                    }
+
+                    int startPy = Math.Max(0, (int)Math.Floor(Math.Min(a.Y, b.Y)));
+                    int endPy = Math.Min(pixelRows - 1, (int)Math.Floor(Math.Max(a.Y, b.Y)));
+
+                    for (int py = startPy; py <= endPy; py++)
+                    {
+                        float segStartY = Math.Max(Math.Min(a.Y, b.Y), py);
+                        float segEndY = Math.Min(Math.Max(a.Y, b.Y), py + 1f);
+                        if (segStartY > segEndY)
+                            continue;
+
+                        float t0 = (segStartY - a.Y) / dy;
+                        float t1 = (segEndY - a.Y) / dy;
+                        float x0 = a.X + dx * t0;
+                        float x1 = a.X + dx * t1;
+                        AccumulateRow(py, x0, x1);
+                    }
+                }
+
+                bool any = false;
+                for (int i = 0; i < pixelRows; i++)
+                {
+                    if (hasData[i])
+                    {
+                        any = true;
+                        break;
+                    }
+                }
+
+                if (!any)
+                {
+                    DrawExactPolyline();
+                    return;
+                }
+
+                var builder = new CanvasPathBuilder(sender.Device);
+                bool started = false;
+                bool hasAnyFigure = false;
+                int startRow = Math.Max(0, (int)Math.Floor(grid.Top));
+                int endRow = Math.Min(pixelRows - 1, (int)Math.Ceiling(grid.Bottom));
+
+                void FlushRowFigure()
+                {
+                    if (!started)
+                        return;
+
+                    builder.EndFigure(CanvasFigureLoop.Open);
+                    started = false;
+                    hasAnyFigure = true;
+                }
+
+                for (int py = startRow; py <= endRow; py += step)
+                {
+                    if (!hasData[py])
+                    {
+                        FlushRowFigure();
+                        continue;
+                    }
+
+                    float y = py + 0.5f;
+                    float left = minX[py];
+                    float right = maxX[py];
+                    float span = Math.Abs(right - left);
+
+                    if (span > 1.5f)
+                    {
+                        FlushRowFigure();
+                        DrawLineStyle(ds, left, y, right, y, color, thickness, style);
+                        continue;
+                    }
+
+                    var pt = new Vector2((left + right) * 0.5f, y);
+                    if (!started)
+                    {
+                        builder.BeginFigure(pt);
+                        started = true;
+                    }
+                    else
+                    {
+                        builder.AddLine(pt);
+                    }
+                }
+
+                FlushRowFigure();
+
+                if (hasAnyFigure)
+                {
+                    using var geom = CanvasGeometry.CreatePath(builder);
+                    DrawGeometryStyle(ds, geom, color, thickness, style);
+                }
             }
         }
 
@@ -207,13 +524,26 @@ namespace FSGaryityTool_Win11.Controls
         private void DrawFunction(CanvasVirtualControl sender, CanvasDrawingSession ds, WaveformDataSource source,
                                 GridBounds grid, double viewMinX, double viewMaxX, double viewMinY, double viewMaxY)
         {
-            if (source.FunctionFormulaData is null)
+            // Support either legacy (FunctionFormulaData) or new parametric vector function.
+            if (source.FunctionFormulaData is null && source.ParametricFunctionData is null)
                 return;
 
             var brush = source.StrokeBrush;
             var thickness = source.StrokeThickness;
             var style = source.LineStyle;
             var color = GetBrushColor(brush);
+
+            // If caller provided a parametric vector function, prefer generating a geometry via the data source
+            // which uses adaptive subdivision for accurate 2D vector curves.
+            if (source.ParametricFunctionData != null)
+            {
+                var geom = source.GetFunctionGeometry(sender.Device, grid);
+                if (geom != null)
+                {
+                    DrawGeometryStyle(ds, geom, color, thickness, style);
+                    return;
+                }
+            }
 
             int count = source.IsAutoCount ? GetOptimalSampleCount(source) : source.EffectiveCount;
 
@@ -279,10 +609,13 @@ namespace FSGaryityTool_Win11.Controls
 
                 if (lastX.HasValue && lastY.HasValue && lastCanvasPt.HasValue)
                 {
-                    bool bothLeft = trueLogicX < viewMinX && lastX.Value < viewMinX;
-                    bool bothRight = trueLogicX > viewMaxX && lastX.Value > viewMaxX;
-                    bool bothBelow = trueLogicY < viewMinY && lastY.Value < viewMinY;
-                    bool bothAbove = trueLogicY > viewMaxY && lastY.Value > viewMaxY;
+                    // Use draw bounds (including overdraw) when deciding to cull a segment.
+                    // This prevents vertical segments near the view edge from disappearing
+                    // due to clipping against the strict view bounds.
+                    bool bothLeft = trueLogicX < drawMinX && lastX.Value < drawMinX;
+                    bool bothRight = trueLogicX > drawMaxX && lastX.Value > drawMaxX;
+                    bool bothBelow = trueLogicY < drawMinY && lastY.Value < drawMinY;
+                    bool bothAbove = trueLogicY > drawMaxY && lastY.Value > drawMaxY;
 
                     if (bothLeft || bothRight || bothBelow || bothAbove)
                     {
@@ -359,6 +692,10 @@ namespace FSGaryityTool_Win11.Controls
                 else if (source.TickMode == TickModeStyle.Intersection)
                 {
                     ds.FillCircle(canvasPt.X, canvasPt.Y, 4f, color);
+                }
+                else if (source.TickMode == TickModeStyle.Pointed)
+                {
+                    ds.FillCircle(canvasPt.X, canvasPt.Y, 0.8f, color);
                 }
 
                 lastX = canvasPt.X;

@@ -470,8 +470,21 @@ namespace FSGaryityTool_Win11.Controls
         }
 
 
-        private static readonly DependencyProperty RuntimeCenterProperty =
-            DependencyProperty.Register(nameof(RuntimeCenter), typeof(Point), typeof(WaveformView), new PropertyMetadata(new Point(0, 0), OnVisualPropertyChanged));
+        // Expose RuntimeCenter as a public DependencyProperty so it can be set by XAML (including XAML Hot Reload).
+        // Provide a specific property changed callback to ensure runtime updates refresh the view.
+        public static readonly DependencyProperty RuntimeCenterProperty =
+            DependencyProperty.Register(nameof(RuntimeCenter), typeof(Point), typeof(WaveformView), new PropertyMetadata(new Point(0, 0), OnRuntimeCenterChanged));
+
+        private static void OnRuntimeCenterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not WaveformView view) return;
+
+            // When RuntimeCenter is updated (for example via XAML hot reload), make sure
+            // the visible range and canvas are refreshed and reset-button visibility updated.
+            view.UpdateVisibleRange();
+            view.InvalidateCanvas();
+            view.UpdateResetViewVisibility();
+        }
 
         public DrawMode ViewDrawMode
         {
