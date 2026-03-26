@@ -453,47 +453,44 @@ public sealed partial class MainWindow : Window
 
     public void WindowBackSetting(WindowTheme windowTheme)
     {
-        if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
+        var defPageBackground = int.Parse(SettingsCoreServices.GetSoftBackgroundSetting());
+        if (defPageBackground != _lastDefWindowBackGround)
         {
-            var defPageBackground = int.Parse(SettingsCoreServices.GetSoftBackgroundSetting());
-            if (defPageBackground != _lastDefWindowBackGround)
-            {
-                DefWindowBackGround = defPageBackground;
-            }
-            _lastDefWindowBackGround = defPageBackground;
-
-            WindowBackgroundBrushControl.WindowBackgroundBrushKind BackgroundBrushKind;
-            // 根据defWindowBackGround的值选择背景效果的类型。
-            switch (DefWindowBackGround)
-            {
-                case 0:
-                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.AcrylicThin;
-                    break;
-                case 1:
-                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.AcrylicBase;
-                    break;
-                case 2:
-                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.Mica;
-                    break;
-                case 3:
-                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.MicaAlt;
-                    break;
-                case 4:
-                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.AcrylicDesktop;
-                    break;
-                case 5:
-                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.Transparent;
-                    break;
-                case 6:
-                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.None;
-                    break;
-                default:
-                    BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.None;
-                    break;
-
-            }
-            WindowBackgroundBrushControl.SetWindowBackgroundBrush(BackgroundBrushKind);
+            DefWindowBackGround = defPageBackground;
         }
+        _lastDefWindowBackGround = defPageBackground;
+
+        WindowBackgroundBrushControl.WindowBackgroundBrushKind BackgroundBrushKind;
+        // 根据defWindowBackGround的值选择背景效果的类型。
+        switch (DefWindowBackGround)
+        {
+            case 0:
+                BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.AcrylicThin;
+                break;
+            case 1:
+                BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.AcrylicBase;
+                break;
+            case 2:
+                BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.Mica;
+                break;
+            case 3:
+                BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.MicaAlt;
+                break;
+            case 4:
+                BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.AcrylicDesktop;
+                break;
+            case 5:
+                BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.Transparent;
+                break;
+            case 6:
+                BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.None;
+                break;
+            default:
+                BackgroundBrushKind = WindowBackgroundBrushControl.WindowBackgroundBrushKind.None;
+                break;
+
+        }
+        WindowBackgroundBrushControl.SetWindowBackgroundBrush(BackgroundBrushKind);
     }
 
 

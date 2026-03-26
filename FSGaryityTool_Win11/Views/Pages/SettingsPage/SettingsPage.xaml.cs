@@ -258,6 +258,46 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
 
         // 更新窗口的背景
         mainWindow.WindowBackSetting(windowTheme);
+
+        // 将设置预览应用到页面内的 AppWindowBackgroundBrushBorder，使用 Dark 主题字典中的对应 Brush
+        try
+        {
+            string selected = (string)SoftBackgroundCombobox.SelectedItem ?? string.Empty;
+            string brushKey = selected switch
+            {
+                var s when s == Page1.LanguageText("thin") => "CustomWindowAcrylicThinBrush",
+                var s when s == Page1.LanguageText("base") => "CustomWindowAcrylicBrush",
+                var s when s == Page1.LanguageText("mica") => "CustomWindowMicaBrush",
+                var s when s == Page1.LanguageText("micaAlt") => "CustomWindowMicaAltBrush",
+                var s when s == Page1.LanguageText("defaultDesktopAcrylicBackGround") => "CustomWindowAcrylicBaseBrush",
+                var s when s == Page1.LanguageText("transparent") => "CustomWindowTransparentBrush",
+                var s when s == Page1.LanguageText("default") => "CustomWindowDefaultBrush",
+                _ => "CustomWindowDefaultBrush",
+            };
+
+            ResourceDictionary darkDict = null;
+            if (this.Resources?.ThemeDictionaries != null && this.Resources.ThemeDictionaries.ContainsKey("Dark"))
+            {
+                darkDict = this.Resources.ThemeDictionaries["Dark"] as ResourceDictionary;
+            }
+            else if (Application.Current?.Resources?.ThemeDictionaries != null && Application.Current.Resources.ThemeDictionaries.ContainsKey("Dark"))
+            {
+                darkDict = Application.Current.Resources.ThemeDictionaries["Dark"] as ResourceDictionary;
+            }
+
+            if (darkDict != null && darkDict.ContainsKey(brushKey))
+            {
+                var brush = darkDict[brushKey] as Brush;
+                if (brush != null)
+                {
+                    AppWindowBackgroundBrushBorder.Background = brush;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Set preview AppWindow background failed: {ex.Message}");
+        }
     }
 
     private void SetDesktopBackground()

@@ -557,14 +557,9 @@
             </Grid>
         </Border>
 
-        <Button Grid.Row="1"
-                Grid.Column="0"
-                Margin="12"
-                Visibility="Visible"
-                Click="Button_Click">
+        <Button Grid.Row="1" Grid.Column="0" Margin="12" Click="Button_Click" Visibility="Visible">
             <StackPanel Padding="6">
-                <TextBlock Text="Test Button"
-                           HorizontalAlignment="Center" />
+                <TextBlock HorizontalAlignment="Center" Text="Test Button" />
             </StackPanel>
         </Button>
 
@@ -572,11 +567,33 @@
                  Grid.Row="1"
                  Grid.Column="1"
                  Margin="12"
-                 TextChanged="TestTextBox_TextChanged"
                  AcceptsReturn="True"
                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 TextChanged="TestTextBox_TextChanged"
                  TextWrapping="Wrap"
-                 Visibility="Visible" />
+                 Visibility="Collapsed" />
+
+        <controls:PolyView x:Name="PolyView"
+                           Grid.Row="1"
+                           Grid.Column="1"
+                           Margin="12"
+                           ColumnAutoGridMode="PowerOfN"
+                           ColumnAutoGridMultiple="2"
+                           ColumnGridBorderSubTickCount="5"
+                           ColumnTickCount="auto"
+                           CrossSize="16"
+                           MaxColumnTickCount="10"
+                           MaxRowTickCount="10"
+                           MinColumnTickCount="4"
+                           MinColumnTickWidth="60"
+                           MinRowTickCount="4"
+                           MinRowTickHeight="60"
+                           RowAutoGridMode="PowerOfN"
+                           RowAutoGridMultiple="2"
+                           RowGridBorderSubTickCount="5"
+                           RowTickCount="auto"
+                           WaveGridBorderSubTickThickness="6"
+                           WaveGridTickMode="Cross" />
 
         <ComboBox>
             <x:String>原始转速</x:String>

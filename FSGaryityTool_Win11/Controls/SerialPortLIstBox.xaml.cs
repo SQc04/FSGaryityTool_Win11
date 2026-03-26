@@ -295,6 +295,18 @@ public class SerialPortInfo : INotifyPropertyChanged
 
         return ports.OrderBy(p => p).ToList();
     }
+    public void ClearPropertyChangedSubscribers()
+    {
+        PropertyChanged = null;
+    }
+
+    public static void ClearAllPropertyChangedSubscribers()
+    {
+        foreach (var info in _portInfoDictionary.Values)
+        {
+            info.PropertyChanged = null;
+        }
+    }
 }
 
 
@@ -411,6 +423,7 @@ public sealed partial class SerialPortLIstBox : UserControl, INotifyPropertyChan
 
         StartDeviceWatcher();
 
+        this.Unloaded += SerialPortLIstBox_Unloaded;
         Task.Run(() =>
         {
             DispatcherQueue.TryEnqueue(() =>
@@ -763,5 +776,33 @@ public sealed partial class SerialPortLIstBox : UserControl, INotifyPropertyChan
             if (result != null) return result;
         }
         return null;
+    }
+    private void SerialPortLIstBox_Unloaded(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            // 停止并释放设备监听器
+            DisposeWatcher();
+            _deviceWatcher = null;
+
+            // 停止滚动计时器
+            _scrollTimer?.Stop();
+            _scrollTimer = null;
+            _pauseTimer?.Stop();
+            _pauseTimer = null;
+            _activeScrollViewer = null;
+
+            // 清空 UI 列表，解除 x:Bind 目标引用
+            PortList.Clear();
+            SelectedPorts.Clear();
+
+            // 清理所有 SerialPortInfo 的 PropertyChanged 订阅，
+            // 防止后台线程在控件销毁后触发绑定回调
+            SerialPortInfo.ClearAllPropertyChangedSubscribers();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"SerialPortLIstBox_Unloaded cleanup error: {ex.Message}");
+        }
     }
 }

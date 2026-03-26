@@ -146,55 +146,71 @@ namespace FSGaryityTool_Win11.Controls
                 {
                     _serialPortBaudRate = value;
                     OnPropertyChanged(nameof(SerialPortBaudRate));
-                    OnPropertyChanged(nameof(BitRate)); // 通知比特率变化
-                    OnPropertyChanged(nameof(BitRateDisplay));
+                    OnPropertyChanged(nameof(EffectiveDataBitRate)); // 通知比特率变化
+                    OnPropertyChanged(nameof(EffectiveDataRateDisplay));
                     OnPropertyChanged(nameof(ByteRateDisplay));
                     DelayAddBaudRateComboboxItem(); // 延迟添加波特率到ComboBox
                 }
             }
         }
-        public double BitRate
+        // 1. 重命名为有效载荷比特率，避免歧义
+        public double EffectiveDataBitRate
         {
             get
             {
-                // 如果Parity为None，校验位为0，否则为1
-                int parityBit = SerialPortParity == Parity.None ? 0 : 1;
-                // 计算总位数
-                double totalBits = 1 + SerialPortDataBits + parityBit + (double)SerialPortStopBits;
-                // 计算比特率并四舍五入
-                double bitRate = SerialPortBaudRate * SerialPortDataBits / totalBits;
-                return Math.Round(bitRate);
+                // 校验位
+                int parityBits = (SerialPortParity == Parity.None) ? 0 : 1;
+
+                // 停止位：修复 OnePointFive 枚举值为 3 的坑
+                double stopBitsValue = SerialPortStopBits switch
+                {
+                    StopBits.One => 1.0,
+                    StopBits.Two => 2.0,
+                    StopBits.OnePointFive => 1.5,
+                    _ => 1.0
+                };
+
+                // 总帧长度 = 起始位(1) + 数据位 + 校验位 + 停止位
+                double totalFrameBits = 1.0 + SerialPortDataBits + parityBits + stopBitsValue;
+
+                if (totalFrameBits == 0) return 0;
+
+                // 有效数据率 = 波特率 * (数据位 / 总帧长度)
+                return SerialPortBaudRate * ((double)SerialPortDataBits / totalFrameBits);
             }
         }
-        public string BitRateDisplay
+
+        // 2. 内部计算不四舍五入，仅在显示层处理
+        public string EffectiveDataRateDisplay
         {
             get
             {
-                double bitRate = BitRate;
-                if (bitRate < 1000)
-                    return $"{bitRate:F2} bit/s";
-                else if (bitRate < 1_000_000)
-                    return $"{(bitRate / 1000.0):F2} Kbit/s";
-                else if (bitRate < 1_000_000_000)
-                    return $"{(bitRate / 1_000_000.0):F2} Mbit/s";
-                else
-                    return $"{(bitRate / 1_000_000_000.0):F2} Gbit/s";
+                double rate = EffectiveDataBitRate;
+                return FormatSpeed(rate, "bit/s");
             }
         }
+
         public string ByteRateDisplay
         {
             get
             {
-                double byteRate = BitRate / 8.0;
-                if (byteRate < 1000)
-                    return $"{byteRate:F2} Byte/s";
-                else if (byteRate < 1_000_000)
-                    return $"{(byteRate / 1000.0):F2} KB/s";
-                else if (byteRate < 1_000_000_000)
-                    return $"{(byteRate / 1_000_000.0):F2} MB/s";
-                else
-                    return $"{(byteRate / 1_000_000_000.0):F2} GB/s";
+                double rate = EffectiveDataBitRate / 8.0;
+                return FormatSpeed(rate, "B/s");
             }
+        }
+
+        private string FormatSpeed(double value, string unitBase)
+        {
+            string[] prefixes = { "", "K", "M", "G" };
+            int index = 0;
+
+            while (value >= 1000.0 && index < prefixes.Length - 1)
+            {
+                value /= 1000.0;
+                index++;
+            }
+
+            return $"{value:F2} {prefixes[index]}{unitBase}";
         }
 
         public int SerialPortDataBits
@@ -206,8 +222,8 @@ namespace FSGaryityTool_Win11.Controls
                 {
                     _serialPortDataBits = value;
                     OnPropertyChanged(nameof(SerialPortDataBits));
-                    OnPropertyChanged(nameof(BitRate)); // 通知比特率变化
-                    OnPropertyChanged(nameof(BitRateDisplay));
+                    OnPropertyChanged(nameof(EffectiveDataBitRate)); // 通知比特率变化
+                    OnPropertyChanged(nameof(EffectiveDataRateDisplay));
                     OnPropertyChanged(nameof(ByteRateDisplay));
                 }
             }
@@ -222,8 +238,8 @@ namespace FSGaryityTool_Win11.Controls
                 {
                     _serialPortParity = value;
                     OnPropertyChanged(nameof(SerialPortParity));
-                    OnPropertyChanged(nameof(BitRate)); // 通知比特率变化
-                    OnPropertyChanged(nameof(BitRateDisplay));
+                    OnPropertyChanged(nameof(EffectiveDataBitRate)); // 通知比特率变化
+                    OnPropertyChanged(nameof(EffectiveDataRateDisplay));
                     OnPropertyChanged(nameof(ByteRateDisplay));
                     // 同步到Segmented控件
                     if (ParitySegmented != null)
@@ -240,8 +256,8 @@ namespace FSGaryityTool_Win11.Controls
                 {
                     _serialPortStopBits = value;
                     OnPropertyChanged(nameof(SerialPortStopBits));
-                    OnPropertyChanged(nameof(BitRate)); // 通知比特率变化
-                    OnPropertyChanged(nameof(BitRateDisplay));
+                    OnPropertyChanged(nameof(EffectiveDataBitRate)); // 通知比特率变化
+                    OnPropertyChanged(nameof(EffectiveDataRateDisplay));
                     OnPropertyChanged(nameof(ByteRateDisplay));
                 }
             }
@@ -417,7 +433,7 @@ namespace FSGaryityTool_Win11.Controls
                 _serialPortEncoding = Encoding.UTF8;
             }
 
-            if (SerialPortBaudRate == 0 || SerialPortBaudRate < 1 || SerialPortBaudRate > 100000000)
+            if (SerialPortBaudRate == 0 || SerialPortBaudRate < 1 || SerialPortBaudRate > 500000000)
             {
                 SerialPortBaudRate = 115200;
                 _serialPortBaudRate = 115200;
@@ -723,7 +739,7 @@ namespace FSGaryityTool_Win11.Controls
         private async void AddBaudRateComboboxItem(ComboBox comboBox, int value)
         {
             // 检查是否需要将新值添加到 ComboBox 的 Items
-            int min = 1, max = 100000000;
+            int min = 1, max = 500000000;
             if (!comboBox.Items.Contains(value) && value >= min && value <= max)
             {
                 // 添加新值到 ComboBox 的 Items
@@ -756,7 +772,7 @@ namespace FSGaryityTool_Win11.Controls
         private void ValidateBaudRateInput(ComboBox comboBox, string text)
         {
             // 允许的波特率范围
-            int min = 1, max = 100000000;
+            int min = 1, max = 500000000;
 
             // 验证输入是否为纯数字且在范围内
             if (!string.IsNullOrWhiteSpace(text) && text.All(char.IsDigit) && int.TryParse(text, out int value) && value >= min && value <= max)

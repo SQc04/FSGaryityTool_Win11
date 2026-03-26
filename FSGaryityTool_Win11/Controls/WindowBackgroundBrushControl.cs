@@ -40,6 +40,10 @@ namespace FSGaryityTool_Win11.Controls
         [DllImport("gdi32.dll")]
         private static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
 
+        [DllImport("gdi32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool DeleteObject(IntPtr hObject);
+
         [DllImport("dwmapi.dll")]
         private static extern int DwmEnableBlurBehindWindow(IntPtr hWnd, ref DWM_BLURBEHIND pBlurBehind);
 
@@ -84,6 +88,7 @@ namespace FSGaryityTool_Win11.Controls
         
         private static DesktopAcrylicController acrylicController;
         private static MicaController micaController;
+        private static TransparentController transparentController;
         private static SystemBackdropConfiguration configurationSource = new();
 
         public static Window window;
@@ -121,6 +126,8 @@ namespace FSGaryityTool_Win11.Controls
             catch { }
         }
 
+        // TransparentController extracted to its own file
+
         private static void ApplyBackgroundBrush()
         {
             var titleBar = appWindow.TitleBar; 
@@ -137,6 +144,12 @@ namespace FSGaryityTool_Win11.Controls
                     micaController ??= new();
                     acrylicController?.Dispose();
                     acrylicController = null;
+                    // dispose transparent when switching away and restore window style
+                    if (transparentController is not null)
+                    {
+                        transparentController.Dispose();
+                        transparentController = null;
+                    }
                     break;
 
                 case WindowBackgroundBrushKind.AcrylicDesktop 
@@ -148,6 +161,12 @@ namespace FSGaryityTool_Win11.Controls
                     acrylicController ??= new();
                     micaController?.Dispose();
                     micaController = null;
+                    // dispose transparent when switching away and restore window style
+                    if (transparentController is not null)
+                    {
+                        transparentController.Dispose();
+                        transparentController = null;
+                    }
                     break;
 
                 case WindowBackgroundBrushKind.Transparent:
@@ -155,6 +174,7 @@ namespace FSGaryityTool_Win11.Controls
                     acrylicController?.Dispose();
                     micaController = null;
                     acrylicController = null;
+                    transparentController ??= new TransparentController();
                     break;
                 default:
                     titleBar.BackgroundColor = null;
@@ -164,6 +184,8 @@ namespace FSGaryityTool_Win11.Controls
                     acrylicController?.Dispose();
                     micaController = null;
                     acrylicController = null;
+                    transparentController?.Dispose();
+                    transparentController = null;
                     break;
             }
             // 根据 windowBackgroundBrushKind 设置窗口背景
@@ -193,7 +215,7 @@ namespace FSGaryityTool_Win11.Controls
                     acrylicController.Kind = DesktopAcrylicKind.Base;
                     break;
                 case WindowBackgroundBrushKind.Transparent:
-                    // 设置为透明背景
+                    // 透明背景交由 TransparentController 处理
                     break;
             }
 
@@ -214,28 +236,9 @@ namespace FSGaryityTool_Win11.Controls
                     break;
 
                 case WindowBackgroundBrushKind.Transparent:
-                    micaController?.Dispose();
-                    acrylicController?.Dispose();
-                    micaController = null;
-                    acrylicController = null;
 
-                    // 移除分层窗口样式，确保内容可见
-                    extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-                    SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle & ~WS_EX_LAYERED);
-
-                    // 启用 DWM 模糊并设置为空区域，实现完全透明背景
-                    var rgn = CreateRectRgn(-2, -2, -1, -1); // 空区域，使整个窗口透明
-                    var dmw = new DWM_BLURBEHIND()
-                    {
-                        dwFlags = DWM_BLURBEHIND_Mask.DWM_BB_ENABLE | DWM_BLURBEHIND_Mask.DWM_BB_BLURREGION,
-                        fEnable = true,
-                        hRgnBlur = rgn,
-                    };
-                    DwmEnableBlurBehindWindow(hwnd, ref dmw);
-                    // 设置 SystemBackdrop 为透明颜色刷子
-                    ICompositionSupportsSystemBackdrop brushHolder = window.As<ICompositionSupportsSystemBackdrop>();
-                    var colorBrush = WindowsCompositionHelper.Compositor.CreateColorBrush(Windows.UI.Color.FromArgb(0, 255, 255, 255));
-                    brushHolder.SystemBackdrop = colorBrush;
+                    // Delegate transparent handling to the transparentController
+                    transparentController?.Apply(window, hwnd);
                     break;
                 default:
                     
@@ -264,6 +267,14 @@ namespace FSGaryityTool_Win11.Controls
             {
                 micaController.Dispose();
                 micaController = null;
+            }
+            // 释放 transparentController 并恢复样式
+            if (transparentController is not null)
+            {
+                var hwnd = WindowNative.GetWindowHandle(window);
+                transparentController.RestoreWindowStyle(hwnd);
+                transparentController.Dispose();
+                transparentController = null;
             }
             configurationSource = null;
         }

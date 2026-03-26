@@ -1017,7 +1017,7 @@
                             <LineBreak />
                             <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ByteRateDisplay, Mode=OneWay}" />
                             <Run Text="|" />
-                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind BitRateDisplay, Mode=OneWay}" />
+                            <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind EffectiveDataRateDisplay, Mode=OneWay}" />
                         </TextBlock>
                         <ComboBox x:Name="BaudRateComboBox"
                                   HorizontalAlignment="Stretch"
@@ -1070,6 +1070,8 @@
                             <x:Int32>50000000</x:Int32>
                             <x:Int32>80000000</x:Int32>
                             <x:Int32>100000000</x:Int32>
+                            <x:Int32>150000000</x:Int32>
+                            <x:Int32>200000000</x:Int32>
                         </ComboBox>
 
                         <TextBlock x:Name="ParitySegmentedTextBlock" Margin="0,12,0,3">

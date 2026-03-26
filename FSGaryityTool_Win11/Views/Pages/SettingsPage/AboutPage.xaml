@@ -80,6 +80,7 @@
                                     <HyperlinkButton Margin="-12,0,0,0" HorizontalAlignment="Left" Content="Windows App SDK" NavigateUri="https://aka.ms/windowsappsdk" />
                                     <HyperlinkButton Margin="-12,0,0,0" HorizontalAlignment="Left" Content="Windows UI Library" NavigateUri="https://aka.ms/winui" />
                                     <HyperlinkButton Margin="-12,0,0,0" HorizontalAlignment="Left" Content="Windows Community Toolkit" NavigateUri="https://github.com/CommunityToolkit/Windows" />
+                                    <HyperlinkButton Margin="-12,0,0,0" HorizontalAlignment="Left" Content="WinUICommunity" NavigateUri="https://github.com/WinUICommunity/WinUICommunity/" />
                                     <HyperlinkButton Margin="-12,0,0,0" HorizontalAlignment="Left" Content="Tommy" NavigateUri="https://github.com/dezhidki/Tommy" />
 
                                     <StackPanel.ChildrenTransitions>

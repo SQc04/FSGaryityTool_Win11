@@ -9,7 +9,7 @@ using Windows.Foundation;
 
 namespace FSGaryityTool_Win11.Controls
 {
-    public partial class WaveformView
+    public partial class PolyView
     {
         public static readonly DependencyProperty WaveGridBorderOpacityProperty = DependencyProperty.Register(
             nameof(WaveGridBorderOpacity), typeof(double), typeof(WaveformView), new PropertyMetadata(1.0, OnVisualPropertyChanged));
@@ -18,14 +18,6 @@ namespace FSGaryityTool_Win11.Controls
             get => (double)GetValue(WaveGridBorderOpacityProperty);
             set => SetValue(WaveGridBorderOpacityProperty, value);
         }
-        public static readonly DependencyProperty WaveDemonstratorOpacityProperty = DependencyProperty.Register(
-            nameof(WaveDemonstratorOpacity), typeof(double), typeof(WaveformView), new PropertyMetadata(1.0, OnVisualPropertyChanged));
-        public double WaveDemonstratorOpacity
-        {
-            get => (double)GetValue(WaveDemonstratorOpacityProperty);
-            set => SetValue(WaveDemonstratorOpacityProperty, value);
-        }
-
         public static readonly DependencyProperty MinRowTickCountProperty =
             DependencyProperty.Register(nameof(MinRowTickCount), typeof(int), typeof(WaveformView), new PropertyMetadata(0, OnVisualPropertyChanged));
 
@@ -311,7 +303,6 @@ namespace FSGaryityTool_Win11.Controls
             get => (int)GetValue(ColumnGridBorderSubTickCountProperty);
             set => SetValue(ColumnGridBorderSubTickCountProperty, value);
         }
-
         public static readonly DependencyProperty CrossSizeProperty =
             DependencyProperty.Register(nameof(CrossSize), typeof(double), typeof(WaveformView), new PropertyMetadata(6.0, OnVisualPropertyChanged));
 
@@ -377,51 +368,6 @@ namespace FSGaryityTool_Win11.Controls
             set => SetValue(PointerIndicatorCursorModeProperty, value);
         }
 
-        public static readonly DependencyProperty ZoomModeProperty =
-            DependencyProperty.Register(nameof(ZoomMode), typeof(WaveformZoomMode), typeof(WaveformView), new PropertyMetadata(WaveformZoomMode.Disabled, OnVisualPropertyChanged));
-        public WaveformZoomMode ZoomMode
-        {
-            get => (WaveformZoomMode)GetValue(ZoomModeProperty);
-            set => SetValue(ZoomModeProperty, value);
-        }
-        public static readonly DependencyProperty MoveModeProperty =
-            DependencyProperty.Register(nameof(MoveMode), typeof(WaveformZoomMode), typeof(WaveformView), new PropertyMetadata(WaveformZoomMode.Disabled, OnVisualPropertyChanged));
-        public WaveformZoomMode MoveMode
-        {
-            get => (WaveformZoomMode)GetValue(MoveModeProperty);
-            set => SetValue(MoveModeProperty, value);
-        }
-
-        public static readonly DependencyProperty HorizontalScrollBarVisibilityProperty =
-            DependencyProperty.Register(nameof(HorizontalScrollBarVisibility), typeof(ViewScrollBarVisibility), typeof(WaveformView), new PropertyMetadata(ViewScrollBarVisibility.Auto, OnVisualPropertyChanged));
-        public ViewScrollBarVisibility HorizontalScrollBarVisibility
-        {
-            get => (ViewScrollBarVisibility)GetValue(HorizontalScrollBarVisibilityProperty);
-            set => SetValue(HorizontalScrollBarVisibilityProperty, value);
-        }
-        public static readonly DependencyProperty VerticalScrollBarVisibilityProperty =
-            DependencyProperty.Register(nameof(VerticalScrollBarVisibility), typeof(ViewScrollBarVisibility), typeof(WaveformView), new PropertyMetadata(ViewScrollBarVisibility.Auto, OnVisualPropertyChanged));
-        public ViewScrollBarVisibility VerticalScrollBarVisibility
-        {
-            get => (ViewScrollBarVisibility)GetValue(VerticalScrollBarVisibilityProperty);
-            set => SetValue(VerticalScrollBarVisibilityProperty, value);
-        }
-
-        public static readonly DependencyProperty ViewCenterPointModeProperty =
-            DependencyProperty.Register(nameof(ViewCenterPointMode), typeof(ViewCenterMode), typeof(WaveformView), new PropertyMetadata(ViewCenterMode.Center, OnVisualPropertyChanged));
-        public ViewCenterMode ViewCenterPointMode
-        {
-            get => (ViewCenterMode)GetValue(ViewCenterPointModeProperty);
-            set => SetValue(ViewCenterPointModeProperty, value);
-        }
-        public static readonly DependencyProperty ViewCenterPointProperty =
-            DependencyProperty.Register(nameof(ViewCenterPoint), typeof(Point), typeof(WaveformView), new PropertyMetadata(new Point(0, 0), OnVisualPropertyChanged));
-        public Point ViewCenterPoint
-        {
-            get => (Point)GetValue(ViewCenterPointProperty);
-            set => SetValue(ViewCenterPointProperty, value);
-        }
-
         public static readonly DependencyProperty MinHorizontalValueProperty =
             DependencyProperty.Register(nameof(MinHorizontalValue), typeof(double), typeof(WaveformView), new PropertyMetadata(-100.0, OnVisualPropertyChanged));
         public double MinHorizontalValue
@@ -451,84 +397,24 @@ namespace FSGaryityTool_Win11.Controls
             set => SetValue(MaxVerticalValueProperty, value);
         }
 
-        public static readonly DependencyProperty HorizontalZoomScaleProperty =
-            DependencyProperty.Register(nameof(HorizontalZoomScale), typeof(double), typeof(WaveformView), new PropertyMetadata(1.0, OnVisualPropertyChanged));
+        public static readonly DependencyProperty IsTouchInteractionEnabledProperty =
+            DependencyProperty.Register(nameof(IsTouchInteractionEnabled), typeof(bool), typeof(WaveformView), new PropertyMetadata(true, OnVisualPropertyChanged));
 
-        public double HorizontalZoomScale
+        public bool IsTouchInteractionEnabled
         {
-            get => (double)GetValue(HorizontalZoomScaleProperty);
-            set => SetValue(HorizontalZoomScaleProperty, value);
-        }
-
-        public static readonly DependencyProperty VerticalZoomScaleProperty =
-            DependencyProperty.Register(nameof(VerticalZoomScale), typeof(double), typeof(WaveformView), new PropertyMetadata(1.0, OnVisualPropertyChanged));
-
-        public double VerticalZoomScale
-        {
-            get => (double)GetValue(VerticalZoomScaleProperty);
-            set => SetValue(VerticalZoomScaleProperty, value);
+            get => (bool)GetValue(IsTouchInteractionEnabledProperty);
+            set => SetValue(IsTouchInteractionEnabledProperty, value);
         }
 
 
-        // Expose RuntimeCenter as a public DependencyProperty so it can be set by XAML (including XAML Hot Reload).
-        // Provide a specific property changed callback to ensure runtime updates refresh the view.
-        public static readonly DependencyProperty RuntimeCenterProperty =
-            DependencyProperty.Register(nameof(RuntimeCenter), typeof(Point), typeof(WaveformView), new PropertyMetadata(new Point(0, 0), OnRuntimeCenterChanged));
-
-        private static void OnRuntimeCenterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not WaveformView view) return;
-
-            // When RuntimeCenter is updated (for example via XAML hot reload), make sure
-            // the visible range and canvas are refreshed and reset-button visibility updated.
-            view.UpdateVisibleRange();
-            view.InvalidateCanvas();
-            view.UpdateResetViewVisibility();
-        }
+        private static readonly DependencyProperty ViewDrawModeProperty
+            = DependencyProperty.Register(nameof(ViewDrawMode), typeof(DrawMode), typeof(WaveformView), new PropertyMetadata(DrawMode.WinCanvas, OnVisualPropertyChanged));
 
         public DrawMode ViewDrawMode
         {
             get => (DrawMode)GetValue(ViewDrawModeProperty);
             set => SetValue(ViewDrawModeProperty, value);
         }
-        private static readonly DependencyProperty ViewDrawModeProperty
-            = DependencyProperty.Register(nameof(ViewDrawMode), typeof(DrawMode), typeof(WaveformView), new PropertyMetadata(DrawMode.WinCanvas, OnVisualPropertyChanged));
-
-
-        /// <summary>
-        /// 获取或设置应用程序是否处于调试模式。
-        /// </summary>
-        /// <remarks>
-        /// 当设置为 <see langword="true"/> 时，WaveformView控件将包含额外的调试信息，并启用用于开发和故障排查的相关功能。
-        /// 此属性通常用于在开发过程中切换调试行为，生产环境下应设置为 <see langword="false"/>。
-        /// </remarks>
-        public bool IsDebugMode
-        {
-            get => (bool)GetValue(IsDebugModeProperty);
-            set => SetValue(IsDebugModeProperty, value);
-        }
-        private static readonly DependencyProperty IsDebugModeProperty =
-            DependencyProperty.Register(nameof(IsDebugMode), typeof(bool), typeof(WaveformView), new PropertyMetadata(false, OnVisualPropertyChanged));
-
-        /// <summary>
-        /// 获取或设置调试模块在用户界面中的可见状态。
-        /// </summary>
-        /// <remarks>
-        /// 更改此属性会影响调试模块在 UI 中的显示或隐藏。可根据应用状态或用户偏好控制调试功能的呈现。
-        /// </remarks>
-        private Visibility DebugModuleVisibitly
-        {
-            get => (Visibility)GetValue(DebugModuleVisibitlyProperty);
-            set => SetValue(DebugModuleVisibitlyProperty, value);
-        }
-        private static readonly DependencyProperty DebugModuleVisibitlyProperty =
-            DependencyProperty.Register(nameof(DebugModuleVisibitly), typeof(Visibility), typeof(WaveformView), new PropertyMetadata(Visibility.Collapsed, OnVisualPropertyChanged));
-
-
-
-
-
-
 
 
     }
