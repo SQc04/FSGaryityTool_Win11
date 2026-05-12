@@ -5,6 +5,7 @@
              xmlns:controls="using:Microsoft.UI.Xaml.Controls"
              xmlns:controls2="using:FSGaryityTool_Win11.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:labs="using:CommunityToolkit.Labs.WinUI"
              xmlns:local="using:FSGaryityTool_Win11.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d">
@@ -276,72 +277,99 @@
                 </Grid.RowDefinitions>
 
                 <ProgressBar x:Name="AutoSerchComProgressBar" Grid.Row="2" VerticalAlignment="Top" IsIndeterminate="True" Style="{StaticResource ProgressBarStyle}" />
-                <ListView x:Name="ComListview"
-                          Grid.Row="1"
-                          Margin="2,4,2,4"
-                          VerticalAlignment="Top"
-                          BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-                          BorderThickness="0"
-                          ItemsSource="{x:Bind PortList, Mode=OneWay}"
-                          SelectionChanged="ComListview_SelectionChanged"
-                          SelectionMode="{x:Bind SelectionMode, Mode=OneWay}">
+                <Grid Grid.Row="1">
+                    <ListView x:Name="ComListview"
+                              Margin="2,4,2,4"
+                              VerticalAlignment="Top"
+                              BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+                              BorderThickness="0"
+                              ItemsSource="{x:Bind PortList, Mode=OneWay}"
+                              SelectionChanged="ComListview_SelectionChanged"
+                              SelectionMode="{x:Bind SelectionMode, Mode=OneWay}">
 
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="local:SerialPortInfo">
-                            <Grid x:Name="PortItemGrid" Loaded="PortItemGrid_Loaded" PointerEntered="PortItemGrid_PointerEntered" PointerExited="PortItemGrid_PointerExited">
-                                <Grid.Transitions>
-                                    <TransitionCollection>
-                                        <EntranceThemeTransition IsStaggeringEnabled="False" />
-                                    </TransitionCollection>
-                                </Grid.Transitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="32" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <FontIcon Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Glyph="{x:Bind PortDeviceIcon, Mode=OneWay}" />
-                                <StackPanel Grid.Column="1" Margin="0,6">
-                                    <TextBlock Text="{x:Bind PortName, Mode=OneWay}" />
-                                    <ScrollViewer x:Name="PortDeviceDescriptionScrollViewer"
-                                                  Width="180"
-                                                  Height="20"
-                                                  HorizontalScrollBarVisibility="Hidden"
-                                                  HorizontalScrollMode="Enabled"
-                                                  IsHitTestVisible="False"
-                                                  IsHorizontalRailEnabled="False"
-                                                  IsScrollInertiaEnabled="False"
-                                                  IsVerticalRailEnabled="False"
-                                                  ManipulationMode="None"
-                                                  PointerWheelChanged="PortDeviceDescriptionScrollViewer_PointerWheelChanged"
-                                                  VerticalScrollBarVisibility="Disabled"
-                                                  VerticalScrollMode="Disabled"
-                                                  ZoomMode="Disabled">
-                                        <TextBlock x:Name="PortDeviceDescriptionTextBlock"
-                                                   Margin="0,0,20,0"
-                                                   FontSize="14"
-                                                   Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                                   Text="{x:Bind PortDeviceDescription, Mode=OneWay}"
-                                                   TextWrapping="NoWrap" />
-                                    </ScrollViewer>
-                                </StackPanel>
-                                <TextBlock x:Name="NewTagTextBlock"
-                                           Grid.ColumnSpan="2"
-                                           Margin="0,4,4,0"
-                                           HorizontalAlignment="Right"
-                                           VerticalAlignment="Top"
-                                           FontSize="11"
-                                           Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
-                                           Text="NEW"
-                                           Visibility="{x:Bind NewPortTag, Mode=OneWay}" />
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="local:SerialPortInfo">
+                                <Grid x:Name="PortItemGrid" Loaded="PortItemGrid_Loaded" PointerEntered="PortItemGrid_PointerEntered" PointerExited="PortItemGrid_PointerExited">
+                                    <Grid.Transitions>
+                                        <TransitionCollection>
+                                            <EntranceThemeTransition IsStaggeringEnabled="False" />
+                                        </TransitionCollection>
+                                    </Grid.Transitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="32" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Glyph="{x:Bind PortDeviceIcon, Mode=OneWay}" />
+                                    <StackPanel Grid.Column="1" Margin="0,6">
+                                        <TextBlock Text="{x:Bind PortName, Mode=OneWay}" />
+                                        <ScrollViewer x:Name="PortDeviceDescriptionScrollViewer"
+                                                      Width="180"
+                                                      Height="20"
+                                                      HorizontalScrollBarVisibility="Hidden"
+                                                      HorizontalScrollMode="Enabled"
+                                                      IsHitTestVisible="False"
+                                                      IsHorizontalRailEnabled="False"
+                                                      IsScrollInertiaEnabled="False"
+                                                      IsVerticalRailEnabled="False"
+                                                      ManipulationMode="None"
+                                                      PointerWheelChanged="PortDeviceDescriptionScrollViewer_PointerWheelChanged"
+                                                      VerticalScrollBarVisibility="Disabled"
+                                                      VerticalScrollMode="Disabled"
+                                                      ZoomMode="Disabled">
+                                            <TextBlock x:Name="PortDeviceDescriptionTextBlock"
+                                                       Margin="0,0,20,0"
+                                                       FontSize="14"
+                                                       Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                                       Text="{x:Bind PortDeviceDescription, Mode=OneWay}"
+                                                       TextWrapping="NoWrap" />
+                                        </ScrollViewer>
+                                    </StackPanel>
+                                    <TextBlock x:Name="NewTagTextBlock"
+                                               Grid.ColumnSpan="2"
+                                               Margin="0,4,4,0"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Top"
+                                               FontSize="11"
+                                               Foreground="{ThemeResource AccentTextFillColorSecondaryBrush}"
+                                               Text="NEW"
+                                               Visibility="{x:Bind NewPortTag, Mode=OneWay}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+
+                        <ListView.ItemContainerTransitions>
+                            <TransitionCollection>
+                                <ContentThemeTransition />
+                            </TransitionCollection>
+                        </ListView.ItemContainerTransitions>
+                    </ListView>
+
+                    <Grid Visibility="{x:Bind PortListEmptyVisibility, Mode=OneWay}"
+                          IsHitTestVisible="False"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Top">
+                        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center" Spacing="6" Margin="6">
+                            <Grid>
+                                <FontIcon Margin="12,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="18" Glyph="&#xE88E;" />
+                                <labs:Shimmer HorizontalAlignment="Stretch" Height="46" />
+                                <labs:Shimmer HorizontalAlignment="Left" VerticalAlignment="Top" Margin="42,8,0,0" Width="52" Height="14" />
+                                <labs:Shimmer HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="42,27,9,0" Height="14" />
                             </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-
-                    <ListView.ItemContainerTransitions>
-                        <TransitionCollection>
-                            <ContentThemeTransition />
-                        </TransitionCollection>
-                    </ListView.ItemContainerTransitions>
-                </ListView>
+                            <Grid>
+                                <FontIcon Margin="12,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="18" Glyph="&#xE88E;" />
+                                <labs:Shimmer HorizontalAlignment="Stretch" Height="46" />
+                                <labs:Shimmer HorizontalAlignment="Left" VerticalAlignment="Top" Margin="42,8,0,0" Width="52" Height="14" />
+                                <labs:Shimmer HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="42,27,9,0" Height="14" />
+                            </Grid>
+                            <Grid>
+                                <FontIcon Margin="12,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="18" Glyph="&#xE88E;" />
+                                <labs:Shimmer HorizontalAlignment="Stretch" Height="46" />
+                                <labs:Shimmer HorizontalAlignment="Left" VerticalAlignment="Top" Margin="42,8,0,0" Width="52" Height="14" />
+                                <labs:Shimmer HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="42,27,9,0" Height="14" />
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
 
                 <Grid Grid.Row="2" Margin="1,8,0,4" VerticalAlignment="Bottom">
                     <Grid.ColumnDefinitions>

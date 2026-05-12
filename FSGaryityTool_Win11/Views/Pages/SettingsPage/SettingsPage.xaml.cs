@@ -276,7 +276,7 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
         // 更新窗口的背景
         mainWindow.WindowBackSetting(windowTheme);
 
-        // 将设置预览应用到页面内的 AppWindowBackgroundBrushBorder，使用 Dark 主题字典中的对应 Brush
+        // 将设置预览应用到页面内的 AppWindowBackgroundBrushBorder，按当前主题优先使用对应 Brush
         try
         {
             string selected = (string)SoftBackgroundCombobox.SelectedItem ?? string.Empty;
@@ -292,19 +292,21 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
                 _ => "CustomWindowDefaultBrush",
             };
 
-            ResourceDictionary darkDict = null;
-            if (this.Resources?.ThemeDictionaries != null && this.Resources.ThemeDictionaries.ContainsKey("Dark"))
+            string themeKey = ActualTheme == ElementTheme.Light ? "Light" : "Dark";
+
+            ResourceDictionary themeDict = null;
+            if (this.Resources?.ThemeDictionaries != null && this.Resources.ThemeDictionaries.ContainsKey(themeKey))
             {
-                darkDict = this.Resources.ThemeDictionaries["Dark"] as ResourceDictionary;
+                themeDict = this.Resources.ThemeDictionaries[themeKey] as ResourceDictionary;
             }
-            else if (Application.Current?.Resources?.ThemeDictionaries != null && Application.Current.Resources.ThemeDictionaries.ContainsKey("Dark"))
+            else if (Application.Current?.Resources?.ThemeDictionaries != null && Application.Current.Resources.ThemeDictionaries.ContainsKey(themeKey))
             {
-                darkDict = Application.Current.Resources.ThemeDictionaries["Dark"] as ResourceDictionary;
+                themeDict = Application.Current.Resources.ThemeDictionaries[themeKey] as ResourceDictionary;
             }
 
-            if (darkDict != null && darkDict.ContainsKey(brushKey))
+            if (themeDict != null && themeDict.ContainsKey(brushKey))
             {
-                var brush = darkDict[brushKey] as Brush;
+                var brush = themeDict[brushKey] as Brush;
                 if (brush != null)
                 {
                     AppWindowBackgroundBrushBorder.Background = brush;

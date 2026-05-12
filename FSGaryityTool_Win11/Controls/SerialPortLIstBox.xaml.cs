@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Collections.Specialized;
 using System.IO.Ports;
 using System.Linq;
 using System.Management;
@@ -353,6 +354,8 @@ public sealed partial class SerialPortLIstBox : UserControl, INotifyPropertyChan
         set { if (_portList != value) { _portList = value; OnPropertyChanged(nameof(PortList)); } }
     }
 
+    public Visibility PortListEmptyVisibility => PortList.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+
     private ObservableCollection<string> _selectedPorts = new();
     public ObservableCollection<string> SelectedPorts
     {
@@ -419,8 +422,15 @@ public sealed partial class SerialPortLIstBox : UserControl, INotifyPropertyChan
     {
         InitializeComponent();
 
+        PortList.CollectionChanged += PortList_CollectionChanged;
+
         this.Loaded += SerialPortLIstBox_Loaded;
         this.Unloaded += SerialPortLIstBox_Unloaded;
+    }
+
+    private void PortList_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(PortListEmptyVisibility));
     }
 
     private void SerialPortLIstBox_Loaded(object sender, RoutedEventArgs e)
@@ -563,6 +573,7 @@ public sealed partial class SerialPortLIstBox : UserControl, INotifyPropertyChan
 
         PortList.Clear();
         PortList.AddRange(newPortList);
+        OnPropertyChanged(nameof(PortListEmptyVisibility));
 
         // 更新状态
         _lastPortNames.Clear();
