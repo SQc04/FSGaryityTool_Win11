@@ -1,5 +1,6 @@
 ﻿using FSGaryityTool_Win11.Controls;
 using FSGaryityTool_Win11.Core.Settings;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -13,6 +14,7 @@ using System.Diagnostics;
 using System.IO;
 using Tommy;
 using Windows.ApplicationModel;
+using Windows.UI;
 using static FSGaryityTool_Win11.Controls.WindowBackgroundBrushControl;
 
 namespace FSGaryityTool_Win11;
@@ -58,6 +60,21 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
         }
     }
 
+    private Color _windowBackgroundBrushColor;
+    public Color WindowBackgroundBrushColor
+    {
+        get => _windowBackgroundBrushColor;
+        set
+        {
+            if (_windowBackgroundBrushColor != value)
+            {
+                _windowBackgroundBrushColor = value;
+                OnPropertyChanged(nameof(WindowBackgroundBrushColor));
+                MainWindow.Instance.SetAppBackground(value);
+            }
+        }
+    }
+
     private void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -77,7 +94,7 @@ public sealed partial class SettingsPage : Page, INotifyPropertyChanged
         */
 
         LanguageSetting();
-
+        WindowBackgroundBrushColor = Colors.Transparent; // 设置默认颜色为透明
         SetDesktopBackground();
         //_wallpaperChangeListener.WallpaperChanged += (s, e) => SetDesktopBackgroundImage();
     }

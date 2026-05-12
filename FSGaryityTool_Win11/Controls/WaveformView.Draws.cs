@@ -7,12 +7,91 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using Windows.Foundation;
 
 namespace FSGaryityTool_Win11.Controls
 {
     public partial class WaveformView
     {
+        // Reusable buffers to avoid per-frame allocations during rendering
+        private List<Vector2> _reusableCanvasPoints = new List<Vector2>();
+        private bool[]? _hasColumnData;
+        private float[]? _minYBuffer;
+        private float[]? _maxYBuffer;
+        private bool[]? _hasRowData;
+        private float[]? _minXBuffer;
+        private float[]? _maxXBuffer;
+
+        // Cached stroke styles to avoid reallocating CanvasStrokeStyle each frame
+        private CanvasStrokeStyle? _cachedDashStrokeStyle;
+        private CanvasStrokeStyle? _cachedDotStrokeStyle;
+        private CanvasStrokeStyle? _cachedSolidStrokeStyle;
+
+        private void EnsureColumnBuffers(int cols)
+        {
+            if (_hasColumnData == null || _hasColumnData.Length < cols)
+            {
+                _hasColumnData = new bool[cols];
+                _minYBuffer = new float[cols];
+                _maxYBuffer = new float[cols];
+            }
+
+            Array.Clear(_hasColumnData, 0, cols);
+            for (int i = 0; i < cols; i++)
+            {
+                _minYBuffer![i] = float.MaxValue;
+                _maxYBuffer![i] = float.MinValue;
+            }
+        }
+
+        private void EnsureRowBuffers(int rows)
+        {
+            if (_hasRowData == null || _hasRowData.Length < rows)
+            {
+                _hasRowData = new bool[rows];
+                _minXBuffer = new float[rows];
+                _maxXBuffer = new float[rows];
+            }
+
+            Array.Clear(_hasRowData, 0, rows);
+            for (int i = 0; i < rows; i++)
+            {
+                _minXBuffer![i] = float.MaxValue;
+                _maxXBuffer![i] = float.MinValue;
+            }
+        }
+
+        private CanvasStrokeStyle? GetCachedStroke(LineStyle style, bool forGeometry = false)
+        {
+            switch (style)
+            {
+                case LineStyle.Dash:
+                    if (_cachedDashStrokeStyle == null)
+                        _cachedDashStrokeStyle = new CanvasStrokeStyle { DashStyle = CanvasDashStyle.Dash };
+                    return _cachedDashStrokeStyle;
+                case LineStyle.Dot:
+                    if (_cachedDotStrokeStyle == null)
+                    {
+                        _cachedDotStrokeStyle = new CanvasStrokeStyle
+                        {
+                            DashStyle = CanvasDashStyle.Solid,
+                            CustomDashStyle = new float[] { 0.1f, forGeometry ? 4f : 3f },
+                            DashCap = CanvasCapStyle.Round
+                        };
+                    }
+                    return _cachedDotStrokeStyle;
+                case LineStyle.Solid:
+                default:
+                    if (forGeometry)
+                    {
+                        if (_cachedSolidStrokeStyle == null)
+                            _cachedSolidStrokeStyle = new CanvasStrokeStyle();
+                        return _cachedSolidStrokeStyle;
+                    }
+                    return null;
+            }
+        }
         private void DrawLineStyle(CanvasDrawingSession ds, float x1, float y1, float x2, float y2, Windows.UI.Color color, float width, LineStyle style)
         {
             if (style == LineStyle.None)
@@ -35,18 +114,7 @@ namespace FSGaryityTool_Win11.Controls
             }
             else
             {
-                CanvasStrokeStyle? strokeStyle = style switch
-                {
-                    LineStyle.Solid => null,
-                    LineStyle.Dash => new CanvasStrokeStyle { DashStyle = CanvasDashStyle.Dash },
-                    LineStyle.Dot => new CanvasStrokeStyle
-                    {
-                        DashStyle = CanvasDashStyle.Solid,
-                        CustomDashStyle = [0.1f, 3f],
-                        DashCap = CanvasCapStyle.Round
-                    },
-                    _ => null
-                };
+                var strokeStyle = GetCachedStroke(style, forGeometry: false);
 
                 if (strokeStyle != null)
                     ds.DrawLine(x1, y1, x2, y2, color, width, strokeStyle);
@@ -113,19 +181,7 @@ namespace FSGaryityTool_Win11.Controls
         {
             if (style == LineStyle.None) return;
 
-            var strokeStyle = style switch
-            {
-                LineStyle.Solid => new CanvasStrokeStyle(),
-                LineStyle.Dash => new CanvasStrokeStyle { DashStyle = CanvasDashStyle.Dash },
-                LineStyle.Dot => new CanvasStrokeStyle
-                {
-                    DashStyle = CanvasDashStyle.Solid,
-                    CustomDashStyle = new float[] { 0.1f, 4f }, // 点线
-                    DashCap = CanvasCapStyle.Round
-                },
-                _ => new CanvasStrokeStyle()
-            };
-
+            var strokeStyle = GetCachedStroke(style, forGeometry: true) ?? new CanvasStrokeStyle();
             ds.DrawGeometry(geometry, color, thickness, strokeStyle);
         }
 
@@ -142,7 +198,9 @@ namespace FSGaryityTool_Win11.Controls
         /// <param name="viewMinY">当前逻辑坐标系的最小 Y 边界。</param>
         /// <param name="viewMaxY">当前逻辑坐标系的最大 Y 边界。</param>
         /// <param name="zoomX">X 轴缩放比例，用于调整采样密度和像素间隔。</param>
-        private void DrawPolyLines(CanvasVirtualControl sender, CanvasDrawingSession ds, WaveformDataSource source, GridBounds grid, double viewMinX, double viewMaxX, double viewMinY, double viewMaxY, double zoomX)
+        private void DrawPolyLines(CanvasVirtualControl sender, CanvasDrawingSession ds, WaveformDataSource source,
+                           GridBounds grid, double viewMinX, double viewMaxX, double viewMinY, double viewMaxY,
+                           double zoomX)
         {
             if (source.PolylinePointsData is not { Count: > 1 } points)
                 return;
@@ -153,7 +211,6 @@ namespace FSGaryityTool_Win11.Controls
             var style = source.LineStyle;
             var color = GetBrushColor(brush);
 
-            // If style is None we don't draw polyline geometry (ticks may still be drawn elsewhere)
             if (style == LineStyle.None)
                 return;
 
@@ -168,11 +225,16 @@ namespace FSGaryityTool_Win11.Controls
             float originX = (float)grid.Left - (float)(viewMinX * scaleX);
 
             // dynamic minimum pixel distance
-            float minPixelDist = Math.Max(1.0f, (float)(1.0 / Math.Max(1e-9, zoomX)));
-            int pixelCols = Math.Max(1, (int)Math.Ceiling(ActualRootWidth));
-            int pixelRows = Math.Max(1, (int)Math.Ceiling(ActualRootHeight));
+            float minPixelDist = Math.Max(1.0f, 1.0f / Math.Max(1e-9f, scaleX));
+            int pixelCols = Math.Max(1, (int)Math.Ceiling(grid.Width));
+            int pixelRows = Math.Max(1, (int)Math.Ceiling(grid.Height));
 
-            var canvasPoints = new List<Vector2>(points.Count);
+            // Ensure capacity
+            if (_reusableCanvasPoints.Capacity < points.Count)
+                _reusableCanvasPoints.Capacity = points.Count;
+            _reusableCanvasPoints.Clear();
+            var canvasPoints = _reusableCanvasPoints;
+
             double totalDx = 0;
             double totalDy = 0;
             float minCanvasX = float.MaxValue;
@@ -208,6 +270,32 @@ namespace FSGaryityTool_Win11.Controls
             if (canvasPoints.Count < 2)
                 return;
 
+            // ====================== 新增：高密度快速路径 ======================
+            const int HighDensityThreshold = 2000;   // 建议值，可调（1800~2500）
+            const int TargetMaxPoints = 2800;        // 快速路径目标绘制点数
+
+            if (canvasPoints.Count > HighDensityThreshold)
+            {
+                // 高密度模式：轻度抽样 + 直接建Path，优先保证帧率
+                int hdStep = Math.Max(1, canvasPoints.Count / TargetMaxPoints);
+
+                var builder = new CanvasPathBuilder(sender.Device);
+                builder.BeginFigure(canvasPoints[0]);
+
+                for (int i = 1; i < canvasPoints.Count; i += hdStep)
+                {
+                    builder.AddLine(canvasPoints[i]);
+                }
+
+                builder.EndFigure(CanvasFigureLoop.Open);
+
+                using var geom = CanvasGeometry.CreatePath(builder);
+                DrawGeometryStyle(ds, geom, color, thickness, style);
+
+                return;   // 直接返回，不走复杂桶化逻辑
+            }
+            // ================================================================
+
             void DrawExactPolyline()
             {
                 var builder = new CanvasPathBuilder(sender.Device);
@@ -229,34 +317,33 @@ namespace FSGaryityTool_Win11.Controls
             }
 
             bool preferColumns = totalDx >= totalDy || (maxCanvasX - minCanvasX) >= (maxCanvasY - minCanvasY);
-            int step = Math.Max(1, (int)Math.Floor(minPixelDist));
+            int pixelStep = Math.Max(1, (int)Math.Floor(minPixelDist));
+
+            int gridLeftInt = Math.Max(0, (int)Math.Floor(grid.Left));
+            int gridTopInt = Math.Max(0, (int)Math.Floor(grid.Top));
 
             if (preferColumns)
             {
-                var hasData = new bool[pixelCols];
-                var minY = new float[pixelCols];
-                var maxY = new float[pixelCols];
-                for (int i = 0; i < pixelCols; i++)
-                {
-                    minY[i] = float.MaxValue;
-                    maxY[i] = float.MinValue;
-                }
+                EnsureColumnBuffers(pixelCols);
+                var hasData = _hasColumnData!;
+                var minY = _minYBuffer!;
+                var maxY = _maxYBuffer!;
 
-                void AccumulateColumn(int px, float y0, float y1)
+                void AccumulateColumn(int pxAbs, float y0, float y1)
                 {
-                    if (px < 0 || px >= pixelCols)
-                        return;
+                    int idx = pxAbs - gridLeftInt;
+                    if (idx < 0 || idx >= pixelCols) return;
 
-                    if (!hasData[px])
+                    if (!hasData[idx])
                     {
-                        hasData[px] = true;
-                        minY[px] = Math.Min(y0, y1);
-                        maxY[px] = Math.Max(y0, y1);
+                        hasData[idx] = true;
+                        minY[idx] = Math.Min(y0, y1);
+                        maxY[idx] = Math.Max(y0, y1);
                     }
                     else
                     {
-                        minY[px] = Math.Min(minY[px], Math.Min(y0, y1));
-                        maxY[px] = Math.Max(maxY[px], Math.Max(y0, y1));
+                        minY[idx] = Math.Min(minY[idx], Math.Min(y0, y1));
+                        maxY[idx] = Math.Max(maxY[idx], Math.Max(y0, y1));
                     }
                 }
 
@@ -279,15 +366,14 @@ namespace FSGaryityTool_Win11.Controls
                         continue;
                     }
 
-                    int startPx = Math.Max(0, (int)Math.Floor(Math.Min(a.X, b.X)));
-                    int endPx = Math.Min(pixelCols - 1, (int)Math.Floor(Math.Max(a.X, b.X)));
+                    int startPx = (int)Math.Floor(Math.Min(a.X, b.X));
+                    int endPx = (int)Math.Floor(Math.Max(a.X, b.X));
 
                     for (int px = startPx; px <= endPx; px++)
                     {
                         float segStartX = Math.Max(Math.Min(a.X, b.X), px);
                         float segEndX = Math.Min(Math.Max(a.X, b.X), px + 1f);
-                        if (segStartX > segEndX)
-                            continue;
+                        if (segStartX > segEndX) continue;
 
                         float t0 = (segStartX - a.X) / dx;
                         float t1 = (segEndX - a.X) / dx;
@@ -300,11 +386,7 @@ namespace FSGaryityTool_Win11.Controls
                 bool any = false;
                 for (int i = 0; i < pixelCols; i++)
                 {
-                    if (hasData[i])
-                    {
-                        any = true;
-                        break;
-                    }
+                    if (hasData[i]) { any = true; break; }
                 }
 
                 if (!any)
@@ -316,30 +398,28 @@ namespace FSGaryityTool_Win11.Controls
                 var builder = new CanvasPathBuilder(sender.Device);
                 bool started = false;
                 bool hasAnyFigure = false;
-                int startCol = Math.Max(0, (int)Math.Floor(grid.Left));
-                int endCol = Math.Min(pixelCols - 1, (int)Math.Ceiling(grid.Right));
+                int startCol = 0;
+                int endCol = pixelCols - 1;
 
                 void FlushColumnFigure()
                 {
-                    if (!started)
-                        return;
-
+                    if (!started) return;
                     builder.EndFigure(CanvasFigureLoop.Open);
                     started = false;
                     hasAnyFigure = true;
                 }
 
-                for (int px = startCol; px <= endCol; px += step)
+                for (int rel = startCol; rel <= endCol; rel += pixelStep)
                 {
-                    if (!hasData[px])
+                    if (!hasData[rel])
                     {
                         FlushColumnFigure();
                         continue;
                     }
 
-                    float x = px + 0.5f;
-                    float low = minY[px];
-                    float high = maxY[px];
+                    float x = gridLeftInt + rel + 0.5f;
+                    float low = minY[rel];
+                    float high = maxY[rel];
                     float span = Math.Abs(high - low);
 
                     if (span > 1.5f)
@@ -371,30 +451,27 @@ namespace FSGaryityTool_Win11.Controls
             }
             else
             {
-                var hasData = new bool[pixelRows];
-                var minX = new float[pixelRows];
-                var maxX = new float[pixelRows];
-                for (int i = 0; i < pixelRows; i++)
-                {
-                    minX[i] = float.MaxValue;
-                    maxX[i] = float.MinValue;
-                }
+                // Row-based bucketing（保持你原来的代码不变）
+                EnsureRowBuffers(pixelRows);
+                var hasData = _hasRowData!;
+                var minX = _minXBuffer!;
+                var maxX = _maxXBuffer!;
 
                 void AccumulateRow(int py, float x0, float x1)
                 {
-                    if (py < 0 || py >= pixelRows)
-                        return;
+                    int idx = py - gridTopInt;
+                    if (idx < 0 || idx >= pixelRows) return;
 
-                    if (!hasData[py])
+                    if (!hasData[idx])
                     {
-                        hasData[py] = true;
-                        minX[py] = Math.Min(x0, x1);
-                        maxX[py] = Math.Max(x0, x1);
+                        hasData[idx] = true;
+                        minX[idx] = Math.Min(x0, x1);
+                        maxX[idx] = Math.Max(x0, x1);
                     }
                     else
                     {
-                        minX[py] = Math.Min(minX[py], Math.Min(x0, x1));
-                        maxX[py] = Math.Max(maxX[py], Math.Max(x0, x1));
+                        minX[idx] = Math.Min(minX[idx], Math.Min(x0, x1));
+                        maxX[idx] = Math.Max(maxX[idx], Math.Max(x0, x1));
                     }
                 }
 
@@ -417,15 +494,14 @@ namespace FSGaryityTool_Win11.Controls
                         continue;
                     }
 
-                    int startPy = Math.Max(0, (int)Math.Floor(Math.Min(a.Y, b.Y)));
-                    int endPy = Math.Min(pixelRows - 1, (int)Math.Floor(Math.Max(a.Y, b.Y)));
+                    int startPy = (int)Math.Floor(Math.Min(a.Y, b.Y));
+                    int endPy = (int)Math.Floor(Math.Max(a.Y, b.Y));
 
                     for (int py = startPy; py <= endPy; py++)
                     {
                         float segStartY = Math.Max(Math.Min(a.Y, b.Y), py);
                         float segEndY = Math.Min(Math.Max(a.Y, b.Y), py + 1f);
-                        if (segStartY > segEndY)
-                            continue;
+                        if (segStartY > segEndY) continue;
 
                         float t0 = (segStartY - a.Y) / dy;
                         float t1 = (segEndY - a.Y) / dy;
@@ -438,11 +514,7 @@ namespace FSGaryityTool_Win11.Controls
                 bool any = false;
                 for (int i = 0; i < pixelRows; i++)
                 {
-                    if (hasData[i])
-                    {
-                        any = true;
-                        break;
-                    }
+                    if (hasData[i]) { any = true; break; }
                 }
 
                 if (!any)
@@ -454,30 +526,28 @@ namespace FSGaryityTool_Win11.Controls
                 var builder = new CanvasPathBuilder(sender.Device);
                 bool started = false;
                 bool hasAnyFigure = false;
-                int startRow = Math.Max(0, (int)Math.Floor(grid.Top));
-                int endRow = Math.Min(pixelRows - 1, (int)Math.Ceiling(grid.Bottom));
+                int startRow = 0;
+                int endRow = pixelRows - 1;
 
                 void FlushRowFigure()
                 {
-                    if (!started)
-                        return;
-
+                    if (!started) return;
                     builder.EndFigure(CanvasFigureLoop.Open);
                     started = false;
                     hasAnyFigure = true;
                 }
 
-                for (int py = startRow; py <= endRow; py += step)
+                for (int rel = startRow; rel <= endRow; rel += pixelStep)
                 {
-                    if (!hasData[py])
+                    if (!hasData[rel])
                     {
                         FlushRowFigure();
                         continue;
                     }
 
-                    float y = py + 0.5f;
-                    float left = minX[py];
-                    float right = maxX[py];
+                    float y = gridTopInt + rel + 0.5f;
+                    float left = minX[rel];
+                    float right = maxX[rel];
                     float span = Math.Abs(right - left);
 
                     if (span > 1.5f)
@@ -730,12 +800,14 @@ namespace FSGaryityTool_Win11.Controls
             float lineWidth = 1.5f;
             float dotRadius = (float)DotRadius;
 
-            foreach (var (y, rowIdx) in rowPositions.Select((v, i) => (v, i)))
+            for (int rowIdx = 0; rowIdx < rowPositions.Count; rowIdx++)
             {
-                foreach (var (x, colIdx) in colPositions.Select((v, i) => (v, i)))
+                float y = rowPositions[rowIdx];
+                bool isRowCenter = rowIdx == rowCenterIndex;
+                for (int colIdx = 0; colIdx < colPositions.Count; colIdx++)
                 {
-                    var isRowCenter = rowIdx == rowCenterIndex;
-                    var isColCenter = colIdx == colCenterIndex;
+                    float x = colPositions[colIdx];
+                    bool isColCenter = colIdx == colCenterIndex;
 
                     Windows.UI.Color color = isRowCenter ? colors.RowCenterColor :
                                               isColCenter ? colors.ColCenterColor :
@@ -757,14 +829,16 @@ namespace FSGaryityTool_Win11.Controls
 
         private void DrawTickLines(CanvasDrawingSession ds, GridBounds grid, List<float> rowPositions, List<float> colPositions, int rowCenterIndex, int colCenterIndex, TickColors colors)
         {
-            foreach (var (y, i) in rowPositions.Select((v, idx) => (v, idx)))
+            for (int i = 0; i < rowPositions.Count; i++)
             {
+                float y = rowPositions[i];
                 var color = (i == rowCenterIndex) ? colors.RowCenterColor : colors.RowColor;
                 DrawLineStyle(ds, grid.Left, y, grid.Right, y, color, (float)RowTickLineWidth, WaveGridTickLineStyle);
             }
 
-            foreach (var (x, i) in colPositions.Select((v, idx) => (v, idx)))
+            for (int i = 0; i < colPositions.Count; i++)
             {
+                float x = colPositions[i];
                 var color = (i == colCenterIndex) ? colors.ColCenterColor : colors.ColColor;
                 DrawLineStyle(ds, x, grid.Top, x, grid.Bottom, color, (float)ColumnTickLineWidth, WaveGridTickLineStyle);
             }
@@ -833,8 +907,9 @@ namespace FSGaryityTool_Win11.Controls
 
         private void DrawTickSegments(CanvasDrawingSession ds, List<float> positions, float start, float end, int centerIndex, Windows.UI.Color normalColor, Windows.UI.Color centerColor, bool horizontal)
         {
-            foreach (var (pos, i) in positions.Select((p, idx) => (p, idx)))
+            for (int i = 0; i < positions.Count; i++)
             {
+                float pos = positions[i];
                 var color = (i == centerIndex) ? centerColor : normalColor;
                 if (horizontal)
                     DrawLineStyle(ds, start, pos, end, pos, color, 1.5f, WaveGridBorderTickLineStyle);
@@ -845,18 +920,21 @@ namespace FSGaryityTool_Win11.Controls
 
         private long _frameCount;
         private long _totalElapsedMs;           // 用 long 避免精度损失
-        private DateTime _fpsUpdateTime = DateTime.Now;
-        private DateTime _lastFpsRecordTime = DateTime.Now;
+        private readonly Stopwatch _fpsStopwatch = Stopwatch.StartNew();
+        private long _lastElapsedMs = 0;
         private double _fps = 0;
 
         private void SetFPSUpdateTime()
         {
             _frameCount++;
 
-            _fpsUpdateTime = DateTime.Now;
-            _totalElapsedMs += (long)(_fpsUpdateTime - _lastFpsRecordTime).TotalMilliseconds;
-            _fps = 1000.0 / (_fpsUpdateTime - _lastFpsRecordTime).TotalMilliseconds;
-            _lastFpsRecordTime = _fpsUpdateTime;
+            // Use Stopwatch for higher-resolution and monotonic timing
+            long elapsedMs = _fpsStopwatch.ElapsedMilliseconds - _lastElapsedMs;
+            if (elapsedMs < 0) elapsedMs = 0;
+            _totalElapsedMs += elapsedMs;
+            if (elapsedMs > 0)
+                _fps = 1000.0 / elapsedMs;
+            _lastElapsedMs = _fpsStopwatch.ElapsedMilliseconds;
         }
 
         private void UpdateFPS()
@@ -866,19 +944,18 @@ namespace FSGaryityTool_Win11.Controls
                 ViewFPS = "—";
                 return;
             }
-
             double avgMsPerFrame = (double)_totalElapsedMs / _frameCount;
             double fps = 1000.0 / avgMsPerFrame;
 
-
             ViewFPS = _fps.ToString("F1") + " | " + fps.ToString("F1");  // 或 "F2" 看需求
 
-            // 可选：每 N 秒重置一次，防止 long 溢出或长期运行漂移
+            // 可选：每 N 帧或超过阈值时重置一次，防止 long 溢出或长期运行漂移
             if (_frameCount > 3600)  // 例如跑了1分钟左右
             {
                 _frameCount = 0;
                 _totalElapsedMs = 0;
-                _lastFpsRecordTime = DateTime.Now;
+                _lastElapsedMs = 0;
+                _fpsStopwatch.Restart();
             }
 
         }

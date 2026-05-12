@@ -419,8 +419,8 @@
                 <ResourceDictionary x:Key="Dark">
                     <AcrylicBrush x:Key="CustomWindowDefaultBrush" FallbackColor="#000000" TintColor="#000000" TintLuminosityOpacity="1" TintOpacity="1" />
                     <AcrylicBrush x:Key="CustomWindowAcrylicThinBrush" FallbackColor="#000000" TintColor="#161616" TintLuminosityOpacity="0.23" TintOpacity="0.0" />
-                    <AcrylicBrush x:Key="CustomWindowAcrylicBaseBrush" FallbackColor="#000000" TintColor="#161616" TintLuminosityOpacity="0.85" TintOpacity="0.4" />
-                    <AcrylicBrush x:Key="CustomWindowAcrylicBrush" FallbackColor="#000000" TintColor="#262626" TintLuminosityOpacity="0.75" TintOpacity="0.1" />
+                    <AcrylicBrush x:Key="CustomWindowAcrylicBaseBrush" FallbackColor="#000000" TintColor="#262626" TintLuminosityOpacity="0.75" TintOpacity="0.1" />
+                    <AcrylicBrush x:Key="CustomWindowAcrylicBrush" FallbackColor="#000000" TintColor="#161616" TintLuminosityOpacity="0.85" TintOpacity="0.4" />
                     <AcrylicBrush x:Key="CustomWindowMicaBrush" FallbackColor="#000000" TintColor="#161616" TintLuminosityOpacity="0.9" TintOpacity="0.6" />
                     <AcrylicBrush x:Key="CustomWindowMicaAltBrush" FallbackColor="#000000" TintColor="#060606" TintLuminosityOpacity="0.9" TintOpacity="0.0" />
                     <AcrylicBrush x:Key="CustomWindowTransparentBrush"
@@ -725,7 +725,7 @@
                         <toolkit:SettingsExpander.Items>
                             <toolkit:SettingsCard Header="Background Color Setting">
                                 <Grid>
-                                    <toolkit:ColorPickerButton Width="150">
+                                    <toolkit:ColorPickerButton Width="150" SelectedColor="{x:Bind WindowBackgroundBrushColor, Mode=TwoWay}">
                                         <toolkit:ColorPickerButton.ColorPickerStyle>
                                             <Style TargetType="toolkit:ColorPicker">
                                                 <Setter Property="IsAlphaEnabled" Value="True" />

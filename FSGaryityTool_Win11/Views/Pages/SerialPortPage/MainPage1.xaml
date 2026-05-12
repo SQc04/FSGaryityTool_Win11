@@ -44,12 +44,12 @@
         </Grid.ColumnDefinitions>
 
         <ProgressBar x:Name="RunProgressBar"
-                     Background="{ThemeResource CustomSolidColorBrush}"
                      Grid.Row="2"
                      Grid.Column="0"
                      Grid.ColumnSpan="2"
                      Margin="0,0,0,0"
                      VerticalAlignment="Bottom"
+                     Background="{ThemeResource CustomSolidColorBrush}"
                      IsIndeterminate="False"
                      ShowError="False"
                      ShowPaused="False" />

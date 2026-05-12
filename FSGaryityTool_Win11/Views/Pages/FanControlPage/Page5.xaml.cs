@@ -172,6 +172,7 @@ public sealed partial class Page5 : Page
 
     private async Task InitializeAsync()
     {
+        ClevoFanControlServices.Initialize();
         try
         {
             var isConnect = await Task.Run(() => ClevoEcControl.IsServerStarted());
@@ -205,34 +206,41 @@ public sealed partial class Page5 : Page
         {
             ResetUiForDisconnected(2);
         }
-
-        if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
+        try
         {
-            Debug.WriteLine("An instance of this application is already running.");
-            ResetUiForDisconnected(0);
-            return;
+            if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
+            {
+                Debug.WriteLine("An instance of this application is already running.");
+                ResetUiForDisconnected(0);
+                return;
+            }
+            else
+            {
+                CpuFanRadialGauge.ValueChanged += CPUFanRadialGauge_ValueChanged;
+                GpuFanRadialGauge.ValueChanged += GPUFanRadialGauge_ValueChanged;
+                // 初始化定时器，但不启动
+                _cpuDelayTimer = new(CpuOnTimer, null, Timeout.Infinite, Timeout.Infinite);
+                _gpuDelayTimer = new(GpuOnTimer, null, Timeout.Infinite, Timeout.Infinite);
+
+                Clevoinfo_Click(null, null);
+
+                ServerRunCheckTimer = new(ServerRunCheckTimeTick, null, 0, 5000);
+
+                //自动温度控制
+                TempSettimer.Interval = new TimeSpan(0, 0, 2); // 每2秒检查一次
+                TempSettimer.Tick += TempSetTimer_Tick;
+                TempSettimer.Start();
+            }
+            ViewModel = new TempViewModel();
+            this.DataContext = ViewModel;
+            ViewModel.CpumTemp = 25.0;
+            ViewModel.GpumTemp = 25.0;
         }
-        else
+        catch (Exception ex)
         {
-            CpuFanRadialGauge.ValueChanged += CPUFanRadialGauge_ValueChanged;
-            GpuFanRadialGauge.ValueChanged += GPUFanRadialGauge_ValueChanged;
-            // 初始化定时器，但不启动
-            _cpuDelayTimer = new(CpuOnTimer, null, Timeout.Infinite, Timeout.Infinite);
-            _gpuDelayTimer = new(GpuOnTimer, null, Timeout.Infinite, Timeout.Infinite);
-
-            Clevoinfo_Click(null, null);
-
-            ServerRunCheckTimer = new(ServerRunCheckTimeTick, null, 0, 5000);
-
-            //自动温度控制
-            TempSettimer.Interval = new TimeSpan(0, 0, 2); // 每2秒检查一次
-            TempSettimer.Tick += TempSetTimer_Tick;
-            TempSettimer.Start();
+            Debug.WriteLine("Initialization error: " + ex.Message);
+            ResetUiForDisconnected(2);
         }
-        ViewModel = new TempViewModel();
-        this.DataContext = ViewModel;
-        ViewModel.CpumTemp = 25.0;
-        ViewModel.GpumTemp = 25.0;
     }
 
     public class KalmanFilter
@@ -352,28 +360,39 @@ public sealed partial class Page5 : Page
 
     public void TempTimerTick(object stateInfo)
     {
-        var isConnect = ClevoEcControl.IsServerStarted();
-        //Debug.WriteLine($"isConnect: " + isConnect.ToString());
-
-        if (isConnect)
+        try
         {
-            var cpuFanRpm = FanRpmCalculation(ClevoEcControl.GetCpuFanRpm());
-            var gpuFanRpm = FanRpmCalculation(ClevoEcControl.GetGpuFanRpm());
+            var isConnect = ClevoEcControl.IsServerStarted();
+            //Debug.WriteLine($"isConnect: " + isConnect.ToString());
 
-            DispatcherQueue.TryEnqueue(() =>
+            if (isConnect)
             {
-                CpuDutySet = UpdateFanDutySet(CpuFanRadialGauge.Value);
-                GpuDutySet = UpdateFanDutySet(GpuFanRadialGauge.Value);
+                var cpuFanRpm = FanRpmCalculation(ClevoEcControl.GetCpuFanRpm());
+                var gpuFanRpm = FanRpmCalculation(ClevoEcControl.GetGpuFanRpm());
 
-                CpuFanRpmRadialGauge.Value = cpuFanRpm;
-                GpuFanRpmRadialGauge.Value = gpuFanRpm;
-            });
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    CpuDutySet = UpdateFanDutySet(CpuFanRadialGauge.Value);
+                    GpuDutySet = UpdateFanDutySet(GpuFanRadialGauge.Value);
 
-            UpdateFanData(1, CpuDutySet, CpuFanDuty, CpuTempText, cpuTempFilter, temp => ViewModel.CpumTemp = temp);
-            UpdateFanData(2, GpuDutySet, GpuFanDuty, GpuTempText, gpuTempFilter, temp => ViewModel.GpumTemp = temp);
+                    CpuFanRpmRadialGauge.Value = cpuFanRpm;
+                    GpuFanRpmRadialGauge.Value = gpuFanRpm;
+                });
+
+                UpdateFanData(1, CpuDutySet, CpuFanDuty, CpuTempText, cpuTempFilter, temp => ViewModel.CpumTemp = temp);
+                UpdateFanData(2, GpuDutySet, GpuFanDuty, GpuTempText, gpuTempFilter, temp => ViewModel.GpumTemp = temp);
+            }
+            else
+            {
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    ResetUiForDisconnected(1);
+                });
+            }
         }
-        else
+        catch (Exception ex)
         {
+            Debug.WriteLine("TempTimerTick error: " + ex.Message);
             DispatcherQueue.TryEnqueue(() =>
             {
                 ResetUiForDisconnected(1);
@@ -532,36 +551,50 @@ public sealed partial class Page5 : Page
     {
         var cpuFanId = 1;
         // 从RadialGauge获取数据
-        DispatcherQueue.TryEnqueue(() =>
+        try
         {
-            CpuDutySet = UpdateFanDutySet(CpuFanRadialGauge.Value);
-        });
-        var isConnect = ClevoEcControl.IsServerStarted();
-        if (isConnect)
-        {
-            if (CpuFanDuty != CpuDutySet)
+            DispatcherQueue.TryEnqueue(() =>
             {
-                ClevoEcControl.SetFanDuty(cpuFanId, CpuDutySet);
+                CpuDutySet = UpdateFanDutySet(CpuFanRadialGauge.Value);
+            });
+            var isConnect = ClevoEcControl.IsServerStarted();
+            if (isConnect)
+            {
+                if (CpuFanDuty != CpuDutySet)
+                {
+                    ClevoEcControl.SetFanDuty(cpuFanId, CpuDutySet);
+                }
+                CpuFanDuty = CpuDutySet;
             }
-            CpuFanDuty = CpuDutySet;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("CpuOnTimer error: " + ex.Message);
         }
     }
 
     private void GpuOnTimer(object state)
     {
         var gpuFanId = 2;
-        // 从RadialGauge获取数据
-        DispatcherQueue.TryEnqueue(() =>
+        try
         {
-            GpuDutySet = UpdateFanDutySet(GpuFanRadialGauge.Value);
-        });
-        var isConnect = ClevoEcControl.IsServerStarted();
-        if (isConnect)
-        {
-            if (CpuFanDuty != GpuDutySet)
+            // 从RadialGauge获取数据
+            DispatcherQueue.TryEnqueue(() =>
             {
-                ClevoEcControl.SetFanDuty(gpuFanId, GpuDutySet);
+                GpuDutySet = UpdateFanDutySet(GpuFanRadialGauge.Value);
+            });
+            var isConnect = ClevoEcControl.IsServerStarted();
+            if (isConnect)
+            {
+                if (CpuFanDuty != GpuDutySet)
+                {
+                    ClevoEcControl.SetFanDuty(gpuFanId, GpuDutySet);
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("GpuOnTimer error: " + ex.Message);
         }
     }
 

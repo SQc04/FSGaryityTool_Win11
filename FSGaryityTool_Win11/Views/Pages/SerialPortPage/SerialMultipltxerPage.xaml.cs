@@ -77,10 +77,14 @@ namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage
             if (port != null && !port.IsOpen)
             {
                 port.PortName = portName;
-                port.BaudRate = 460800;
+                port.BaudRate = 19200;
                 port.Parity = Parity.None;
                 port.DataBits = 8;
                 port.StopBits = StopBits.One;
+                port.DtrEnable = true;
+                port.RtsEnable = true;
+                port.ReadTimeout = 1000;
+                port.WriteTimeout = 1000;
                 port.Open();
             }
         }

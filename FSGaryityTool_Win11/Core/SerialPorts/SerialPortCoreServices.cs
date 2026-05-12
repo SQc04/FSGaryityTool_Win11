@@ -4,6 +4,10 @@ using System.ComponentModel;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using System.Management;
+using System.Text.RegularExpressions;
+using System.Threading;
 using static FSGaryityTool_Win11.Core.SerialPorts.SerialPortCoreServices.SerialPortConfigManager;
 
 namespace FSGaryityTool_Win11.Core.SerialPorts;
@@ -22,6 +26,8 @@ internal class SerialPortCoreServices
         /// </summary>
         public class SerialPortConfig : INotifyPropertyChanged
         {
+            private SerialPort _serialPort;
+
             private string _portName;
             private int baudRate;                       // 波特率
             private Parity parity;                      // 校验位
@@ -40,7 +46,6 @@ internal class SerialPortCoreServices
             private bool _RTS;                           // 请求发送
 
 
-            private string serialDeviceIcon;            // 设备图标
             private string serialDeviceName;            // 设备名
             private string serialDeviceDescription;     // 设备描述
             private string serialDeviceManufacturer;    // 设备制造商
@@ -50,11 +55,27 @@ internal class SerialPortCoreServices
             private string serialDevicePid;             // USB PID
             private string serialDeviceType;            // 设备类型（如 USB、Bluetooth、Other）
 
+            private bool _deviceInfoLoaded;
+            private bool _isFetchingDeviceInfo;
+
             public event PropertyChangedEventHandler PropertyChanged;
 
             protected void OnPropertyChanged(string propertyName)
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+
+            public SerialPort SerialPort
+            {
+                get => _serialPort;
+                set
+                {
+                    if (_serialPort != value)
+                    {
+                        _serialPort = value;
+                        OnPropertyChanged(nameof(SerialPort));
+                    }
+                }
             }
 
             public string PortName
@@ -74,7 +95,6 @@ internal class SerialPortCoreServices
                 get => baudRate;
                 set
                 {
-                    if (baudRate != value)
                     if (baudRate != value)
                     {
                         baudRate = value;
@@ -160,18 +180,6 @@ internal class SerialPortCoreServices
                 }
             }
 
-            public string SerialDeviceIcon
-            {
-                get => serialDeviceIcon;
-                set
-                {
-                    if (serialDeviceIcon != value)
-                    {
-                        serialDeviceIcon = value;
-                        OnPropertyChanged(nameof(SerialDeviceIcon));
-                    }
-                }
-            }
 
             public string SerialDeviceName
             {
@@ -260,6 +268,102 @@ internal class SerialPortCoreServices
                         serialDeviceType = value;
                         OnPropertyChanged(nameof(SerialDeviceType));
                     }
+                }
+            }
+            /// <summary>
+            /// True when device info (description/manufacturer/vid/pid) has been loaded.
+            /// </summary>
+            public bool DeviceInfoLoaded
+            {
+                get => _deviceInfoLoaded;
+                private set
+                {
+                    if (_deviceInfoLoaded != value)
+                    {
+                        _deviceInfoLoaded = value;
+                        OnPropertyChanged(nameof(DeviceInfoLoaded));
+                    }
+                }
+            }
+
+            /// <summary>
+            /// True while background fetch of device info is in progress.
+            /// </summary>
+            public bool IsFetchingDeviceInfo
+            {
+                get => _isFetchingDeviceInfo;
+                private set
+                {
+                    if (_isFetchingDeviceInfo != value)
+                    {
+                        _isFetchingDeviceInfo = value;
+                        OnPropertyChanged(nameof(IsFetchingDeviceInfo));
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Manually fetches device information (description/manufacturer/VID/PID).
+            /// This operation may be slow and should be triggered explicitly by callers.
+            /// </summary>
+            /// <param name="cancellationToken">Optional cancellation token.</param>
+            public async Task RefreshDeviceInfoAsync(CancellationToken cancellationToken = default)
+            {
+                if (string.IsNullOrEmpty(PortName)) return;
+                if (IsFetchingDeviceInfo) return;
+
+                IsFetchingDeviceInfo = true;
+                try
+                {
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            // Query PnP entities and match the one that contains the COM port name
+                            using var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity");
+                            foreach (ManagementObject mo in searcher.Get())
+                            {
+                                cancellationToken.ThrowIfCancellationRequested();
+
+                                var nameObj = mo["Name"];
+                                if (nameObj == null) continue;
+                                var name = nameObj.ToString();
+                                if (!name.Contains(PortName, StringComparison.OrdinalIgnoreCase)) continue;
+
+                                // Found matching device entry
+                                var caption = mo["Caption"]?.ToString();
+                                var manufacturer = mo["Manufacturer"]?.ToString();
+                                var pnpId = mo["PNPDeviceID"]?.ToString();
+
+                                // Update properties on UI thread via OnPropertyChanged (caller may be UI thread)
+                                SerialDeviceDescription = caption ?? name;
+                                SerialDeviceManufacturer = manufacturer ?? SerialDeviceManufacturer;
+
+                                if (!string.IsNullOrEmpty(pnpId))
+                                {
+                                    var vidMatch = Regex.Match(pnpId, "VID_([0-9A-Fa-f]{4})");
+                                    var pidMatch = Regex.Match(pnpId, "PID_([0-9A-Fa-f]{4})");
+                                    SerialDeviceVid = vidMatch.Success ? vidMatch.Groups[1].Value : SerialDeviceVid;
+                                    SerialDevicePid = pidMatch.Success ? pidMatch.Groups[1].Value : SerialDevicePid;
+                                }
+
+                                // Attempt to infer device type from PNPClass or other fields
+                                var pnpClass = mo["PNPClass"]?.ToString();
+                                SerialDeviceType = pnpClass ?? SerialDeviceType;
+
+                                DeviceInfoLoaded = true;
+                                break;
+                            }
+                        }
+                        catch
+                        {
+                            // swallow - leave existing values
+                        }
+                    }, cancellationToken).ConfigureAwait(false);
+                }
+                finally
+                {
+                    IsFetchingDeviceInfo = false;
                 }
             }
             public bool IsOpen
@@ -378,7 +482,7 @@ internal class SerialPortCoreServices
         /// <param name="dataBits">The data bits.</param>
         /// <param name="timeout">The timeout.</param>
         /// <param name="encoding">The encoding.</param>
-        public static void UpdateSerialPortConfig(string portName, int? baudRate = null, string parity = null, string stopBits = null, int? dataBits = null, int? timeout = null, string encoding = null)
+        public static void UpdateSerialPortConfig(string portName, int? baudRate = null, Parity? parity = null, StopBits? stopBits = null, int? dataBits = null, int? timeout = null, Encoding encoding = null)
         {
             if (SerialPortConfigs.TryGetValue(portName, out var config))
             {
@@ -391,18 +495,18 @@ internal class SerialPortCoreServices
                     config.BaudRate = 115200;
                 }
 
-                if (parity is not null)
+                if (parity.HasValue)
                 {
-                    config.Parity = (Parity)Enum.Parse(typeof(Parity), parity, true);
+                    config.Parity = parity.Value;
                 }
                 else if (config.Parity is 0)
                 {
                     config.Parity = Parity.None;
                 }
 
-                if (stopBits is not null)
+                if (stopBits.HasValue)
                 {
-                    config.StopBits = (StopBits)Enum.Parse(typeof(StopBits), stopBits, true);
+                    config.StopBits = stopBits.Value;
                 }
                 else if (config.StopBits is 0)
                 {
@@ -429,7 +533,7 @@ internal class SerialPortCoreServices
 
                 if (encoding is not null)
                 {
-                    config.Encoding = Encoding.GetEncoding(encoding);
+                    config.Encoding = encoding;
                 }
                 else if (config.Encoding is null)
                 {
@@ -442,16 +546,14 @@ internal class SerialPortCoreServices
         /// Updates the serial device configuration for the specified port name.
         /// </summary>
         /// <param name="portName">The name of the port.</param>
-        /// <param name="icon">The serial device icon.</param>
         /// <param name="name">The serial device name.</param>
         /// <param name="description">The serial device description.</param>
         /// <param name="manufacturer">The serial device manufacturer.</param>
         /// <param name="resetBaudRate">The default baud rate for resetting the serial device.</param>
-        public static void UpdateSerialDeviceConfig(string portName, string icon = null, string name = null, string description = null, string manufacturer = null, int? resetBaudRate = null)
+        public static void UpdateSerialDeviceConfig(string portName, string name = null, string description = null, string manufacturer = null, int? resetBaudRate = null)
         {
             if (SerialPortConfigs.TryGetValue(portName, out var config))
             {
-                config.SerialDeviceIcon = icon ?? "\uE964";
 
                 config.SerialDeviceName = name ?? portName;
 
@@ -482,7 +584,7 @@ internal class SerialPortCoreServices
         /// <param name="timeout">The read timeout.</param>
         /// <param name="encoding">The encoding.</param>
         /// <returns>The configured serial port.</returns>
-        public static void AddSerialPort(string portName, int baudRate, string parity, string stopBits, int dataBits, int timeout, string encoding)
+        public static void AddSerialPort(string portName, int baudRate, Parity parity, StopBits stopBits, int dataBits, int timeout, Encoding encoding)
         {
             if (!serialPorts.ContainsKey(portName))
             {
@@ -490,13 +592,12 @@ internal class SerialPortCoreServices
                 {
                     PortName = portName,
                     BaudRate = baudRate,
-                    Parity = (Parity)Enum.Parse(typeof(Parity), parity, true),
-                    StopBits = (StopBits)Enum.Parse(typeof(StopBits), stopBits, true),
+                    Parity = parity,
+                    StopBits = stopBits,
                     DataBits = dataBits,
                     ReadTimeout = timeout,
-                    Encoding = Encoding.GetEncoding(encoding)
+                    Encoding = encoding
                 };
-
                 serialPorts[portName] = serialPort;
             }
         }
@@ -562,9 +663,19 @@ internal class SerialPortCoreServices
         /// <param name="portName">The name of the port.</param>
         public static void OpenSerialPort(string portName)
         {
+            // Keep synchronous wrapper for compatibility - internally uses the async implementation
+            OpenSerialPortAsync(portName).GetAwaiter().GetResult();
+        }
+
+        /// <summary>
+        /// Opens the specified serial port asynchronously to avoid blocking caller threads.
+        /// </summary>
+        /// <param name="portName">The name of the port.</param>
+        public static async Task OpenSerialPortAsync(string portName)
+        {
             if (serialPorts.TryGetValue(portName, out var value))
             {
-                value.Open();
+                await Task.Run(() => value.Open()).ConfigureAwait(false);
             }
         }
 

@@ -419,11 +419,16 @@ public sealed partial class SerialPortLIstBox : UserControl, INotifyPropertyChan
     {
         InitializeComponent();
 
+        this.Loaded += SerialPortLIstBox_Loaded;
+        this.Unloaded += SerialPortLIstBox_Unloaded;
+    }
+
+    private void SerialPortLIstBox_Loaded(object sender, RoutedEventArgs e)
+    {
         AutoSearchSetting = true;
 
-        StartDeviceWatcher();
+        StartDeviceWatcher(); 
 
-        this.Unloaded += SerialPortLIstBox_Unloaded;
         Task.Run(() =>
         {
             DispatcherQueue.TryEnqueue(() =>

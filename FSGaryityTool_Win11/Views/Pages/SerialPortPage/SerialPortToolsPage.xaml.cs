@@ -23,8 +23,29 @@ using System.ComponentModel;
 
 namespace FSGaryityTool_Win11.Views.Pages.SerialPortPage;
 
-public sealed partial class SerialPortToolsPage : Page
+public sealed partial class SerialPortToolsPage : Page, INotifyPropertyChanged
 {
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    private void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
     public static int GetPortInfo { get; set; }
 
     /// <summary>
@@ -197,16 +218,8 @@ public sealed partial class SerialPortToolsPage : Page
             }
             LanguageSetting();
 
-            ///*
-            // 在你的代码后台，定义一个List<string>作为数据源
-            var baudRates = new List<string>
-            {
-                "75", "110", "134", "150", "300", "600", "1200", "1800", "2400", "4800", "7200", "9600", "14400", "19200", "38400", "57600", "74880","115200", "128000", "230400", "250000", "500000", "1000000", "2000000"
-            };
-            // 将ComboBox的ItemsSource属性绑定到这个数据源
-            BandComboBox.ItemsSource = baudRates;
             // 设置默认选项
-            BandComboBox.SelectedItem = defaultBaud; // 将"9600"设置为默认选项
+            ToolControlSerialPortMenuBox.SerialPortBaudRate = int.Parse(defaultBaud); // 将"9600"设置为默认选项
 
             var parRates = new List<ParityOption>
             {
@@ -269,7 +282,6 @@ public sealed partial class SerialPortToolsPage : Page
 
     public void LanguageSetting()
     {
-        BaudTextBlock.Text = LanguageText("baudRatel");
         PartTextBlock.Text = LanguageText("parityl");
         StopTextBlock.Text = LanguageText("stopBits");
         DataTextBlock.Text = LanguageText("dataBits");
@@ -348,7 +360,7 @@ public sealed partial class SerialPortToolsPage : Page
         ConCom = MainSerialPortLIstBox.SelectedPortSingle;
 
         var portName = MainSerialPortLIstBox.SelectedPortSingle;
-        var bandRate = Convert.ToInt32(BandComboBox.SelectedItem);
+        var bandRate = ToolControlSerialPortMenuBox.SerialPortBaudRate;
         var parity = ToolControlSerialPortMenuBox.SerialPortParity;
         var stopBits = ToolControlSerialPortMenuBox.SerialPortStopBits;
         var dataBits = ToolControlSerialPortMenuBox.SerialPortDataBits;
@@ -359,10 +371,11 @@ public sealed partial class SerialPortToolsPage : Page
         var dataBits = Convert.ToInt32(DataComboBox.SelectedItem);
         var encoding = (string)EncodingComboBox.SelectedItem;
         */
+        Baudrate = bandRate;
 
         Page1.Current.SerialPortConnect(portName, bandRate, parity, stopBits, dataBits, 1500, encoding);
 
-        Page1.Current._viewModel.AppendToRxTextinfo("BaudRate = " + Convert.ToInt32(BandComboBox.SelectedItem) + "\r\n");
+        Page1.Current._viewModel.AppendToRxTextinfo("BaudRate = " + ToolControlSerialPortMenuBox.SerialPortBaudRate + "\r\n");
         Page1.Current._viewModel.AppendToRxTextinfo("Parity = " + ToolControlSerialPortMenuBox.SerialPortParity + "\r\n");
         Page1.Current._viewModel.AppendToRxTextinfo("StopBits = " + ToolControlSerialPortMenuBox.SerialPortStopBits + "\r\n");
         Page1.Current._viewModel.AppendToRxTextinfo("DataBits = " + ToolControlSerialPortMenuBox.SerialPortDataBits + "\r\n");
@@ -538,37 +551,6 @@ public sealed partial class SerialPortToolsPage : Page
         writer.Flush();
     }
     
-    private void BANDComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        // 检查输入的是否为数字
-        if (!int.TryParse((string)BandComboBox.SelectedItem, out var baudRate) || baudRate is 0)
-        {
-            // 如果输入的不是数字，使用设置文件中的数字覆盖它
-            using var reader = File.OpenText(FsSetToml);
-            SettingsTomlr = TOML.Parse(reader);
-            BandComboBox.SelectedItem = ((TomlString)SettingsTomlr["SerialPortSettings"]["DefaultBAUD"]).Value;
-        }
-        else
-        {
-            if (AutoSaveSet is 1)
-            {
-                ComboboxSaveSetting("SerialPortSettings", "DefaultBAUD", (string)BandComboBox.SelectedItem);
-            }
-            if (PortIsConnect is 1)
-            {
-                CommonRes.SerialPort.BaudRate = Convert.ToInt32(BandComboBox.SelectedItem);
-                Page1.Current._viewModel.AppendToRxTextinfo("BaudRate = " + Convert.ToInt32(BandComboBox.SelectedItem) + "\r\n");
-            }
-            Baudrate = Convert.ToInt32(BandComboBox.SelectedItem);
-        }
-
-        BaudrateIcon.Glyph = Convert.ToInt32(BandComboBox.SelectedItem) switch
-        {
-            <= 7200 => "\uEC48",
-            > 7200 and < 128000 => "\uEC49",
-            _ => "\uEC4A"
-        };
-    }
 
     private void PARComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {

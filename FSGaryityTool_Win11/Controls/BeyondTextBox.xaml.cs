@@ -518,7 +518,7 @@ namespace FSGaryityTool_Win11.Controls
             OnPropertyChanged(nameof(CharItems));
         }
 
-        private void TextPresenterCanvasControl_Draw(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
+        private void TextPresenterCanvasVirtualControl_RegionsInvalidated(Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs args)
         {
 
         }
@@ -545,5 +545,6 @@ namespace FSGaryityTool_Win11.Controls
             }
 
         }
+
     }
 }

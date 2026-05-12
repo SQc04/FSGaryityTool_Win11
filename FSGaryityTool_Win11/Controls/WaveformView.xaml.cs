@@ -21,6 +21,9 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
+using Windows.Storage;
+using Windows.Storage.Streams;
+using System.Threading.Tasks;
 using Windows.Foundation.Collections;
 using static FSGaryityTool_Win11.Controls.WaveformView;
 using Windows.System;
@@ -182,22 +185,8 @@ namespace FSGaryityTool_Win11.Controls
             float gridRight = width - (float)margin.Right;
             float gridBottom = height - (float)margin.Bottom;
             var grid = new GridBounds(gridLeft, gridTop, gridRight, gridBottom);
-            // Helper to draw the full content into a given drawing session
-            void DrawIntoSession(CanvasDrawingSession ds)
-            {
-                //绘制所有数据源
-                if (Data != null)
-                {
-                    foreach (var source in Data)
-                    {
-                        DrawPolyLines(sender, ds, source, grid, ViewMinX, ViewMaxX, ViewMinY, ViewMaxY, HorizontalZoomScale);
-                        DrawFunction(sender, ds, source, grid, ViewMinX, ViewMaxX, ViewMinY, ViewMaxY);
-                        DrawTickMarks(ds, source, grid, ViewMinX, ViewMaxX, ViewMinY, ViewMaxY, GetBrushColor(source.StrokeBrush));
-                    }
-                }
-                //绘制指针指示线（十字光标）
-                DrawPointerIndicatorLines(ds, grid);
-            }
+            // Use instance helper to avoid allocating a closure per invalidation
+            // See DrawIntoSession below
 
             // Some GPUs/devices or Win2D tiling behaviours can cause region-based invalidation to
             // miss tiles. Prefer full-draw when control is large OR when the invalidated regions
@@ -227,7 +216,7 @@ namespace FSGaryityTool_Win11.Controls
             if (doFullDraw)
             {
                 using var ds = sender.CreateDrawingSession(new Windows.Foundation.Rect(0, 0, sender.ActualWidth, sender.ActualHeight));
-                DrawIntoSession(ds);
+                DrawAllSourcesIntoSession(sender, ds, grid);
             }
             else
             {
@@ -235,10 +224,69 @@ namespace FSGaryityTool_Win11.Controls
                 foreach (var region in args.InvalidatedRegions)
                 {
                     using var ds = sender.CreateDrawingSession(region);
-                    DrawIntoSession(ds);
+                    DrawAllSourcesIntoSession(sender, ds, grid);
                 }
             }
             SetFPSUpdateTime();
+        }
+
+        // Non-capturing helper to avoid per-frame closure allocations for DrawIntoSession
+        private void DrawAllSourcesIntoSession(CanvasVirtualControl sender, CanvasDrawingSession ds, GridBounds grid)
+        {
+            if (Data != null)
+            {
+                foreach (var source in Data)
+                {
+                    DrawPolyLines(sender, ds, source, grid, ViewMinX, ViewMaxX, ViewMinY, ViewMaxY, HorizontalZoomScale);
+                    DrawFunction(sender, ds, source, grid, ViewMinX, ViewMaxX, ViewMinY, ViewMaxY);
+                    DrawTickMarks(ds, source, grid, ViewMinX, ViewMaxX, ViewMinY, ViewMaxY, GetBrushColor(source.StrokeBrush));
+                }
+            }
+
+            DrawPointerIndicatorLines(ds, grid);
+        }
+
+        /// <summary>
+        /// Renders the current waveform view into the provided StorageFile as an image.
+        /// The caller is responsible for obtaining a writable StorageFile (e.g. via KnownFolders or a FileSavePicker).
+        /// </summary>
+        public async Task SaveWaveformToFileAsync(StorageFile file, CanvasBitmapFileFormat format = CanvasBitmapFileFormat.Png, float dpi = 96f)
+        {
+            if (file == null) throw new ArgumentNullException(nameof(file));
+            if (WaveformDemonstratorCanvasControl == null) throw new InvalidOperationException("Canvas control is not initialized.");
+
+            double width = WaveformDemonstratorCanvasControl.ActualWidth;
+            double height = WaveformDemonstratorCanvasControl.ActualHeight;
+            if (width <= 0 || height <= 0) throw new InvalidOperationException("Invalid control size.");
+
+            var device = WaveformDemonstratorCanvasControl.Device;
+            using (var render = new CanvasRenderTarget(device, (float)width, (float)height, dpi))
+            {
+                using (var ds = render.CreateDrawingSession())
+                {
+                    // clear explicitly then draw the same content we render to screen into the render target
+                    ds.Clear(Microsoft.UI.Colors.Transparent);
+                    var grid = GetGridBounds(width, height);
+                    DrawAllSourcesIntoSession(WaveformDemonstratorCanvasControl, ds, grid);
+                }
+
+                // Win2D CanvasRenderTarget: save via stream with explicit format
+                using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                {
+                    await render.SaveAsync(stream, format);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Convenience: save a screenshot into the user's Pictures library (generates unique name).
+        /// </summary>
+        public async Task<StorageFile> SaveWaveformToPicturesAsync(string suggestedFileName = "waveform.png", CanvasBitmapFileFormat format = CanvasBitmapFileFormat.Png)
+        {
+            var pictures = KnownFolders.PicturesLibrary;
+            var file = await pictures.CreateFileAsync(suggestedFileName, CreationCollisionOption.GenerateUniqueName);
+            await SaveWaveformToFileAsync(file, format);
+            return file;
         }
 
 
@@ -347,8 +395,8 @@ namespace FSGaryityTool_Win11.Controls
 
         private float? _cursorX = null;
         private float? _cursorY = null;
-        // store recent drag samples for velocity estimation
-        private readonly Queue<(Point pos, long time)> _dragSamples = new();
+        // Inertia accumulator for post-drag animation
+        private readonly InertiaAccumulator _inertiaAccumulator = new() { MinVelocity = 30f };
 
         private Dictionary<uint, PointerPoint> _activePointers = new();
         private bool _isMultiTouch = false;
@@ -358,183 +406,27 @@ namespace FSGaryityTool_Win11.Controls
 
         private void OnWaveformPointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            var point = e.GetCurrentPoint(WaveformDemonstratorCanvasControl);
-            _cursorX = (float)point.Position.X;
-            _cursorY = (float)point.Position.Y;
-            InvalidateCanvas();
+            HandleWaveformPointerMoved(e);
         }
 
         private void UserControl_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            var point = e.GetCurrentPoint(WaveformDemonstratorCanvasControl);
-            _activePointers[point.PointerId] = point;
-
-            // 多指触摸支持
-            if (_activePointers.Count == 2)
-            {
-                _isMultiTouch = true;
-                var pts = _activePointers.Values.ToList();
-                _lastDistance = GetDistance(pts[0].Position, pts[1].Position);
-                _lastCenter = GetCenter(pts[0].Position, pts[1].Position);
-                return;
-            }
-
-            // 单指拖动（支持鼠标和触摸）
-            if (_activePointers.Count == 1)
-            {
-                _isDragging = true;
-                _lastDragPosition = point.Position;
-                this.CapturePointer(e.Pointer);
-                // cancel any running inertia when starting a new drag
-                StopInertia();
-                // clear any previous drag samples
-                _dragSamples.Clear();
-                // record initial sample (high-resolution timestamp)
-                _dragSamples.Enqueue((point.Position, Stopwatch.GetTimestamp()));
-                e.Handled = true;
-            }
+            HandlePointerPressed(e);
         }
 
         private void UserControl_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            var point = e.GetCurrentPoint(WaveformDemonstratorCanvasControl);
-            if (_activePointers.ContainsKey(point.PointerId))
-                _activePointers[point.PointerId] = point;
-
-            // 多指缩放与拖动
-            if (_isMultiTouch && _activePointers.Count == 2)
-            {
-                var pts = _activePointers.Values.ToList();
-                Point p1 = pts[0].Position;
-                Point p2 = pts[1].Position;
-
-                Point newCenter = GetCenter(p1, p2);
-                double newDistance = GetDistance(p1, p2);
-                double scale = newDistance / _lastDistance;
-
-                var grid = GetGridBounds(WaveformDemonstratorCanvasControl.ActualWidth, WaveformDemonstratorCanvasControl.ActualHeight);
-
-                // 逻辑锚点
-                var logicalAnchor = MapToLogical(_lastCenter, grid, ViewMinX, ViewMaxX, ViewMinY, ViewMaxY);
-
-                // 计算缩放
-                double targetScaleX = HorizontalZoomScale * scale;
-                double targetScaleY = VerticalZoomScale * scale;
-                double rangeX = (MaxHorizontalValue - MinHorizontalValue) / targetScaleX;
-                double rangeY = (MaxVerticalValue - MinVerticalValue) / targetScaleY;
-
-                // 反推新的逻辑中心点
-                double percentX = (_lastCenter.X - grid.Left) / grid.Width;
-                double percentY = 1.0 - (_lastCenter.Y - grid.Top) / grid.Height;
-                double newCenterX = logicalAnchor.X - (percentX - 0.5) * rangeX;
-                double newCenterY = logicalAnchor.Y - (percentY - 0.5) * rangeY;
-
-                // 平移补偿
-                double dx = newCenter.X - _lastCenter.X;
-                double dy = newCenter.Y - _lastCenter.Y;
-                double logicDeltaX = -dx * rangeX / grid.Width;
-                double logicDeltaY = dy * rangeY / grid.Height;
-
-                // 直接同步更新（无动画，提升流畅度） — 立即反馈
-                HorizontalZoomScale = targetScaleX;
-                VerticalZoomScale = targetScaleY;
-                RuntimeCenter = new Point(newCenterX + logicDeltaX, newCenterY + logicDeltaY);
-                InvalidateCanvas();
-                UpdateResetViewVisibility();
-                StartAnimationLoop();
-
-                _lastDistance = newDistance;
-                _lastCenter = newCenter;
-                e.Handled = true;
-                return;
-            }
-
-            // 单指拖动（支持鼠标和触摸）
-            if (_isDragging && ZoomMode != WaveformZoomMode.Disabled)
-            {
-                var curPos = point.Position;
-                var delta = new Vector2(
-                    (float)(curPos.X - _lastDragPosition.X),
-                    (float)(curPos.Y - _lastDragPosition.Y)
-                );
-
-                if (delta.Length() < 0.5f) return;
-
-                var margin = WaveGridBorderMargin;
-                double drawableWidth = ActualWidth - margin.Left - margin.Right;
-                double drawableHeight = ActualHeight - margin.Top - margin.Bottom;
-                if (drawableWidth <= 0 || drawableHeight <= 0) return;
-
-                double viewW = ViewMaxX - ViewMinX;
-                double viewH = ViewMaxY - ViewMinY;
-
-                double logicDeltaX = delta.X * viewW / drawableWidth;
-                double logicDeltaY = -delta.Y * viewH / drawableHeight;
-
-                // Immediate update for drag (direct feedback)
-                RuntimeCenter = new Point(
-                    RuntimeCenter.X - logicDeltaX * DragSensitivity,
-                    RuntimeCenter.Y - logicDeltaY * DragSensitivity);
-                InvalidateCanvas();
-                UpdateResetViewVisibility();
-
-                _lastDragPosition = curPos;
-                // record sample for velocity estimation (high-resolution timestamp)
-                _dragSamples.Enqueue((curPos, Stopwatch.GetTimestamp()));
-                while (_dragSamples.Count > 8) _dragSamples.Dequeue();
-
-                e.Handled = true;
-            }
+            HandlePointerMoved(e);
         }
 
         private void UserControl_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            var point = e.GetCurrentPoint(WaveformDemonstratorCanvasControl);
-            _activePointers.Remove(point.PointerId);
-
-            if (_activePointers.Count < 2)
-                _isMultiTouch = false;
-
-                if (_isDragging)
-            {
-                _isDragging = false;
-                this.ReleasePointerCapture(e.Pointer);
-
-                    // 建议阈值调整为 20~50 像素/秒（根据实际手感调）
-                    // compute velocity from samples
-                    if (_dragSamples.Count >= 2)
-                    {
-                    var first = _dragSamples.Peek();
-                    var last = _dragSamples.Last();
-                    double dt = (last.time - first.time) / (double)Stopwatch.Frequency; // seconds
-                    if (dt > 0.001) // ignore too-short intervals
-                    {
-                        var dx = last.pos.X - first.pos.X;
-                        var dy = last.pos.Y - first.pos.Y;
-                        var vel = new Vector2((float)(dx / dt), (float)(dy / dt)); // pixels/sec
-                        // clamp extreme velocities to avoid 'fly' due to noise
-                        const float maxVel = 8000f;
-                        if (vel.Length() > maxVel)
-                            vel = Vector2.Normalize(vel) * maxVel;
-
-                        // set inertia velocity (pixel/sec)
-                        _inertiaVelocity = vel;
-                        if (_inertiaVelocity.Length() > 30f)
-                            StartInertiaAnimation();
-                    }
-                        _dragSamples.Clear();
-                    }
-
-                e.Handled = true;
-            }
+            HandlePointerReleased(e);
         }
 
         private void UserControl_PointerCanceled(object sender, PointerRoutedEventArgs e)
         {
-            var point = e.GetCurrentPoint(WaveformDemonstratorCanvasControl);
-            _activePointers.Remove(point.PointerId);
-            if (_activePointers.Count < 2)
-                _isMultiTouch = false;
+            HandlePointerCanceled(e);
         }
         private void UserControl_PointerExited(object sender, PointerRoutedEventArgs e)
         {

@@ -13,6 +13,7 @@ using Microsoft.UI;           // Needed for WindowId.
 using Microsoft.UI.Windowing; // Needed for AppWindow.
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
@@ -450,7 +451,10 @@ public sealed partial class MainWindow : Window
         KeyboardI.Content = Page1.LanguageText("keyboard");
         MouseI.Content = Page1.LanguageText("mouse");
     }
-
+    public void SetAppBackground(Color color)
+    {
+        AppWindowBackgroundBorder.Background = new SolidColorBrush(color);
+    }
     public void WindowBackSetting(WindowTheme windowTheme)
     {
         var defPageBackground = int.Parse(SettingsCoreServices.GetSoftBackgroundSetting());
@@ -493,7 +497,7 @@ public sealed partial class MainWindow : Window
         WindowBackgroundBrushControl.SetWindowBackgroundBrush(BackgroundBrushKind);
     }
 
-
+    
     private void Window_Activated(object sender, WindowActivatedEventArgs args)
     {
         SetConfigurationSourceTheme(SettingsPage.windowTheme);

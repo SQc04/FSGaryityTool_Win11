@@ -46,11 +46,7 @@
                    Stretch="UniformToFill" />
         </Grid>
 
-        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="4">
-            <Border.Background>
-                <AcrylicBrush FallbackColor="Transparent" Opacity="0.0" TintColor="Transparent" TintOpacity="0.1" />
-            </Border.Background>
-        </Border>
+        <Border x:Name="AppWindowBackgroundBorder" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="4" />
 
         <controls:AppTitleBar x:Name="AppTitleBars"
                               Grid.Row="0"

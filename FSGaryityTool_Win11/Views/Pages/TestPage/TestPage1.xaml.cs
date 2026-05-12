@@ -1,4 +1,5 @@
-﻿using Microsoft.UI;
+﻿using FSGaryityTool_Win11.Controls;
+using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -77,6 +78,29 @@ public sealed partial class TestPage1 : Page
         Webview4.Source = uri4;
         */
         InitLampArrayDevice();
+
+
+        var testData = new System.Collections.ObjectModel.ObservableCollection<(double x, double y)>();
+        var dataSource = new PolyViewDataSource();
+        dataSource.PointsData = testData;
+
+        // 固定起点
+        testData.Add((0.0, 0.0));
+
+        // 五个可动点（位置示例，可按需调整）
+        testData.Add((16.0, 16.0));
+        testData.Add((32.0, 48.0));
+        testData.Add((48.0, 32.0));
+        testData.Add((64.0, 80.0));
+        testData.Add((80.0, 64.0));
+
+        // 固定终点
+        testData.Add((100.0, 100.0));
+
+        TestPolyView.DataSource = dataSource;
+        // 如果你有 PolyView 控件实例需要绑定，请在此处把 dataSource 赋给控件或 DataContext，例如：
+        // myPolyView.DataSource = dataSource;   // （仅当控件有该属性时）
+        // this.DataContext = dataSource;        // 或者设置 DataContext 以便绑定
     }
 
     private void Timer_Tick(object sender, object e)

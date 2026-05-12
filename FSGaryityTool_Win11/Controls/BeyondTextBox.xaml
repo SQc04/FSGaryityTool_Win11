@@ -208,7 +208,7 @@
         <Grid x:Name="TextPresenterRootGrid" Padding="10,6,0,6">
             <ScrollViewer>
                 <Grid>
-                    <win2d:CanvasControl x:Name="TextPresenterCanvasControl" Draw="TextPresenterCanvasControl_Draw" />
+                    <win2d:CanvasVirtualControl x:Name="TextPresenterCanvasVirtualControl" RegionsInvalidated="TextPresenterCanvasVirtualControl_RegionsInvalidated" />
                     <Border x:Name="CaretBorder"
                             Width="{x:Bind CaretWidth, Mode=OneWay}"
                             Height="{x:Bind FontSize, Mode=OneWay, Converter={StaticResource FontSizeToCaretHeightConverter}}"

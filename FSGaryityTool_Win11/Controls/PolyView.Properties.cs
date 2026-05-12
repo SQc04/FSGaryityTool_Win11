@@ -369,7 +369,7 @@ namespace FSGaryityTool_Win11.Controls
         }
 
         public static readonly DependencyProperty MinHorizontalValueProperty =
-            DependencyProperty.Register(nameof(MinHorizontalValue), typeof(double), typeof(WaveformView), new PropertyMetadata(-100.0, OnVisualPropertyChanged));
+            DependencyProperty.Register(nameof(MinHorizontalValue), typeof(double), typeof(WaveformView), new PropertyMetadata(0.0, OnVisualPropertyChanged));
         public double MinHorizontalValue
         {
             get => (double)GetValue(MinHorizontalValueProperty);
@@ -383,7 +383,7 @@ namespace FSGaryityTool_Win11.Controls
             set => SetValue(MaxHorizontalValueProperty, value);
         }
         public static readonly DependencyProperty MinVerticalValueProperty =
-            DependencyProperty.Register(nameof(MinVerticalValue), typeof(double), typeof(WaveformView), new PropertyMetadata(-100.0, OnVisualPropertyChanged));
+            DependencyProperty.Register(nameof(MinVerticalValue), typeof(double), typeof(WaveformView), new PropertyMetadata(0.0, OnVisualPropertyChanged));
         public double MinVerticalValue
         {
             get => (double)GetValue(MinVerticalValueProperty);
@@ -416,6 +416,28 @@ namespace FSGaryityTool_Win11.Controls
             set => SetValue(ViewDrawModeProperty, value);
         }
 
+        private static readonly DependencyProperty IsEditPointProperty
+            = DependencyProperty.Register(nameof(IsEditPoint), typeof(bool), typeof(WaveformView), new PropertyMetadata(true, OnVisualPropertyChanged));
+        public bool IsEditPoint
+        {
+            get => (bool)GetValue(IsEditPointProperty);
+            set => SetValue(IsEditPointProperty, value);
+        }
 
+        private static readonly DependencyProperty IsStartEndPointMovedProperty
+            = DependencyProperty.Register(nameof(IsStartEndPointMoved), typeof(bool), typeof(WaveformView), new PropertyMetadata(true, OnVisualPropertyChanged));
+        public bool IsStartEndPointMoved
+        {
+            get => (bool)GetValue(IsStartEndPointMovedProperty);
+            set => SetValue(IsStartEndPointMovedProperty, value);
+        }
+
+        private static readonly DependencyProperty IsIntegerScaleModeProperty
+            = DependencyProperty.Register(nameof(IsIntegerScaleMode), typeof(bool), typeof(WaveformView), new PropertyMetadata(true, OnVisualPropertyChanged));
+        public bool IsIntegerScaleMode
+        {
+            get => (bool)GetValue(IsIntegerScaleModeProperty);
+            set => SetValue(IsIntegerScaleModeProperty, value);
+        }
     }
 }

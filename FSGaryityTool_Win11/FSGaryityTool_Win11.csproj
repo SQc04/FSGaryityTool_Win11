@@ -47,6 +47,7 @@
       <None Remove="Controls\WS64LedBoardBox.xaml" />
       <None Remove="Views\Pages\SerialPortPage\CopilotPage.xaml" />
       <None Remove="Views\Pages\SerialPortPage\SerialMultipltxerPage.xaml" />
+      <None Remove="Views\Pages\SerialPortPage\SerialPortPage.xaml" />
       <None Remove="Views\Pages\TestPage\AudioTestPage.xaml" />
       <None Remove="Views\Pages\TestPage\LivePage.xaml" />
       <None Remove="Views\Pages\TestPage\Star.xaml" />
@@ -150,6 +151,12 @@
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>Resources.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Views\Pages\SerialPortPage\SerialPortPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
 
     <ItemGroup>

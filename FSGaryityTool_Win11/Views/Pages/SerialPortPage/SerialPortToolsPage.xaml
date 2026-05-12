@@ -1201,22 +1201,7 @@
                                 <StackPanel>
                                     <StackPanel.Resources />
 
-                                    <Grid Margin="6,3,6,3" HorizontalAlignment="Stretch">
-                                        <StackPanel>
-                                            <TextBlock Margin="0" VerticalAlignment="Stretch" TextAlignment="Left">
-                                                <Run Text="{x:Bind BaudTextBlock.Text, Mode=OneWay}" />
-                                                <Run Text=":" />
-                                                <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind BandComboBox.SelectedValue, Mode=OneWay}" />
-                                            </TextBlock>
-                                            <ComboBox x:Name="BandComboBox"
-                                                      HorizontalAlignment="Stretch"
-                                                      Background="{ThemeResource CustomBoxSolidColorBrush}"
-                                                      IsEditable="True"
-                                                      SelectionChanged="BANDComboBox_SelectionChanged"
-                                                      Style="{StaticResource ComboBoxStyle}" />
-                                        </StackPanel>
-                                        <TextBlock x:Name="BaudTextBlock" Visibility="Collapsed" />
-                                    </Grid>
+                                    <Grid Margin="6,3,6,3" HorizontalAlignment="Stretch" />
                                 </StackPanel>
                             </Border>
                         </StackPanel>
@@ -1394,7 +1379,7 @@
                                 AUTOScroll
                             </ToggleButton>
 
-                        </StackPanel>                        -->
+                        </StackPanel>-->
                         <StackPanel.ChildrenTransitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition FromVerticalOffset="100" IsStaggeringEnabled="True" />

@@ -33,7 +33,7 @@ public sealed partial class SerialPlotterPage : Page
     private WaveformDataSource _micRightWave;
     private WaveformDataSource _micXYWave;
     private float _micSampleX = 0f;
-    private const int _micMaxPoints = 4800; // rolling window for display
+    private const int _micMaxPoints = 800; // rolling window for display
     // ring buffer for 1s of audio at 48kHz
     private const int _micRingCapacity = 48000; // 1 second @48k
     private readonly float[] _micRingLeft = new float[_micRingCapacity];
@@ -115,7 +115,7 @@ public sealed partial class SerialPlotterPage : Page
             LineStyle = LineStyle.Solid,
             TickMode = TickModeStyle.None,
             OffSetX = 0,
-            OffSetY = -405,
+            OffSetY = -400.1,
             PolylinePointsData = new ObservableCollection<(float x, float y)>()
         };
         WaveformSources.Add(_micRightWave);
@@ -126,7 +126,7 @@ public sealed partial class SerialPlotterPage : Page
             Name = "Oscilloscope XY",
             StrokeBrush = new SolidColorBrush(Colors.Cyan),
             StrokeThickness = 1.5f,
-            LineStyle = LineStyle.None,
+            LineStyle = LineStyle.Solid,
             TickMode = TickModeStyle.Pointed,
             OffSetX = -50,
             OffSetY = -50,

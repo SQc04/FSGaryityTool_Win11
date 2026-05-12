@@ -74,6 +74,7 @@
                 </Grid>
                 <TextBlock Grid.Row="1"
                            Grid.Column="1"
+                           x:Name="DebugInfoTextBlock"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Bottom"
                            FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
